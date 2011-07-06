@@ -12,6 +12,7 @@ class Nmf_std(nmf.Nmf):
     .. attribute:: H
     
         Mixture matrix -- the second matrix factor in standard factorization
+        
     '''
 
 

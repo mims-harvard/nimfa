@@ -5,7 +5,7 @@ import utils.utils as utils
 
 class Nmf(object):
     '''
-    This class defines a common interface to handle NMF models in generic way.
+    This class defines a common interface / model to handle NMF models in generic way.
     
     It contains definitions of the minimum set of generic methods that are used in 
     common computations and NM factorizations. 
@@ -16,8 +16,40 @@ class Nmf(object):
         
     .. attribute:: V
         
-        Target matrix. The columns of target matrix V are called samples, the rows of target
+        Target matrix, the matrix for MF method to estimate. The columns of target matrix V are called samples, the rows of target
         matrix V are called features. 
+        
+    .. attribute:: seed
+    
+        Method to seed the computation of a factorization
+        
+    .. attribute:: method
+    
+        The algorithm to use to perform MF on target matrix
+        
+    .. attribute:: n_run 
+    
+        The number of runs of the algorithm
+        
+    .. attribute:: model
+    
+        The underlying model of matrix factorization
+        
+    .. attribute:: callback
+    
+        A callback function that is called after each run if performing multiple runs 
+        
+    .. attribute:: options
+    
+        Runtime / algorithm specific options
+        
+    .. attribute:: max_iters
+    
+        Maximum number of factorization iterations
+        
+    .. attribute:: min_residuals
+    
+        Minimal required improvement of the residuals from the previous iteration
     '''
 
     def __init__(self, **params):
