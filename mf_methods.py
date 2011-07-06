@@ -36,7 +36,7 @@ def mf(target = None, seed = None, W = None, H = None,
     :param target: The target matrix to estimate.
     :type target: One of the :class:`scipy.sparse` sparse matrices types or :class:`numpy.ndarray` or :class:`numpy.matrix` 
     :param seed: Specify method to seed the computation of a factorization. If specified :param:`W` and :param:`H` must be None.
-    :type seed: `str` naming the method or :class:`methods.seeding.nndsvd` or None
+    :type seed: `str` naming the method or :class:`methods.seeding.nndsvd.Nndsvd` or None
     :param W: Specify initial factorization of basis matrix W. Default is None. When specified, :param:`seed` must be None.
     :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or None
     :param H: Specify initial factorization of mixture matrix H. Default is None. When specified, :param:`seed` must be None.
@@ -44,14 +44,14 @@ def mf(target = None, seed = None, W = None, H = None,
     :param rank: The factorization rank to achieve. Default is 30.
     :type rank: `int`
     :param method: The algorithm to use to perform MF on target matrix. Default is :class:`methods.mf.nmf`
-    :type method: `str` naming the algorithm or :class:`methods.mf.bd`, :class:`methods.mf.icm`, :class:`methods.mf.lnmf`
-                :class:`methods.mf.lsnmf`, :class:`methods.mf.nmf`, :class:`methods.mf.nsnmf`, :class:`methods.mf.pmf`, 
-                :class:`methods.mf.psmf`, :class:`methods.mf.snmf`
+    :type method: `str` naming the algorithm or :class:`methods.mf.bd.Bd`, :class:`methods.mf.icm.Icm`, :class:`methods.mf.lnmf.Lnmf`
+                :class:`methods.mf.lsnmf.Lsnmf`, :class:`methods.mf.nmf.Nmf`, :class:`methods.mf.nsnmf.Nsmf`, :class:`methods.mf.pmf.Pmf`, 
+                :class:`methods.mf.psmf.Psmf`, :class:`methods.mf.snmf.Snmf`
     :param n_run: It specifies the number of runs of the algorithm. Default is 1.
     :type n_run: `int`
-    :param model: If not specified in the call, the standard MF model :class:`models.nmf_std` is used. Some MF algorithms
+    :param model: If not specified in the call, the standard MF model :class:`models.nmf_std.Nmf_std` is used. Some MF algorithms
                 have different underlying models, such as nonsmooth NMF, which uses an extra matrix factor.
-    :type model: `str` naming the model or :class:`models.nmf_std`
+    :type model: `str` naming the model or :class:`models.nmf_std.Nmf_std`
     :param callback: Pass a callback function that is called after each run when performing multiple runs. This is useful
                 if one wants to save summary measures or process the result before it gets discarded. The callback
                 function is called with only one argument :class:`model.nmf_fit` that contains the fitted model. Default is None.
@@ -77,9 +77,9 @@ def mf(target = None, seed = None, W = None, H = None,
     if method not in l_mf or None and method.name not in l_mf:
         raise utils.utils.MFError("Unrecognized MF method. Choose from: %s" % ", ".join(l_mf))
     mf_model = model(V = target, seed = seed, W = W, H = H,  
-                     rank = rank, method = methods.mf.nmf,
+                     rank = rank, method = method,
                      max_iters = max_iters, min_residuals = min_residuals, 
-                     n_run = 1, model = std.Nmf_std, callback = callback, options = options)
+                     n_run = n_run, callback = callback, options = options)
     if not initialize_only:
         res = mf_model.run()
     return res

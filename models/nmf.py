@@ -31,10 +31,6 @@ class Nmf(object):
     
         The number of runs of the algorithm
         
-    .. attribute:: model
-    
-        The underlying model of matrix factorization
-        
     .. attribute:: callback
     
         A callback function that is called after each run if performing multiple runs 
