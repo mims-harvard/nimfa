@@ -37,7 +37,7 @@ def mf(target = None, seed = None, W = None, H = None,
     :type target: :class:`scipy.sparse` or :class:`numpy.ndarray`
     :param seed: Specify method to seed the computation of a factorization. If specified :param:`W` and :param:`H` must be None.
     :type seed: `str` naming the method or :class:`methods.seeding.nnsvd` or None
-    :param W: Specify initial factorization of mixture matrix H. Default is None. When specified, :param:`seed` must be None.
+    :param W: Specify initial factorization of basis matrix W. Default is None. When specified, :param:`seed` must be None.
     :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or None
     :param H: Specify initial factorization of mixture matrix H. Default is None. When specified, :param:`seed` must be None.
     :type H: :class:`scipy.sparse` or :class:`numpy.ndarray` or None
@@ -67,7 +67,7 @@ def mf(target = None, seed = None, W = None, H = None,
     :param max_iters: Maximum number of factorization iterations. When not specified, the number of iterations depends
                 on the speed of method convergence. Default is None
     :type max_iters: `int`
-    :param min_residuals: Minimal required improvement of the residuals from previous iteration. They are computed 
+    :param min_residuals: Minimal required improvement of the residuals from the previous iteration. They are computed 
                 between the target matrix and its MF estimate using the objective function associated to the MF algorithm. 
                 Default is None.
     :type min_residuals: `float` 
@@ -76,7 +76,7 @@ def mf(target = None, seed = None, W = None, H = None,
         raise utils.utils.MFError("Unrecognized seeding method. Choose from: %s" % ", ".join(l_seed))
     if method not in l_mf or None and method.name not in l_mf:
         raise utils.utils.MFError("Unrecognized MF method. Choose from: %s" % ", ".join(l_mf))
-    mf_model = model(target = target, seed = seed, W = W, H = H,  
+    mf_model = model(V = target, seed = seed, W = W, H = H,  
                      rank = rank, method = methods.mf.nmf,
                      max_iters = max_iters, min_residuals = min_residuals, 
                      n_run = 1, model = std.Nmf_std, callback = callback, options = options)
