@@ -1,3 +1,3 @@
-from methods.seeding import nnsvd
+from methods.seeding import nndsvd
 
-methods = {"nnsvd": nnsvd.Nnsvd}
+methods = {"nndsvd": nndsvd.Nndsvd}
