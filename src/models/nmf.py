@@ -55,8 +55,6 @@ class Nmf(object):
         Constructor
         '''
         self.__dict__.update(params)
-        if self.V is not None:
-            self.V = sp.csr_matrix(self.V)
         if type(self.method) is str:
             if self.method in mf.methods:
                 self.method = mf.methods[self.method]()
