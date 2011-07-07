@@ -1,3 +1,4 @@
+import numpy as np
 
 class Nmf(object):
     """
@@ -40,5 +41,14 @@ class Nmf(object):
         :type model: :class:`models.nmf_std.Nmf_std`
         """
         self.__dict__.update(model.__dict__)
+        self.W, self.H = self.seed.initialize(self.V, self.rank)
         
+    def euclidean_update(self):
+        """Update basis and mixture matrix based on euclidean distance multiplicative update rules."""
+        self.H = np.multiply(self.H, (self.W.T * self.V) / (self.W.T * self.W * self.H))
+        self.W = np.multiply(self.W , (self.V * self.H.T) / (self.W * self.H * self.H.T))
+        
+    def divergence_update(self):
+        """Update basis and mixture matrix based on divergence multiplicative update rules."""
+        # self.H = np.multiply(self.H / , self.W.T * (self.V / (self.W * self.H)))
         

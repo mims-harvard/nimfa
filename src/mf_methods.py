@@ -38,9 +38,9 @@ def mf(target = None, seed = None, W = None, H = None,
     :param seed: Specify method to seed the computation of a factorization. If specified :param:`W` and :param:`H` must be None.
     :type seed: `str` naming the method or :class:`methods.seeding.nndsvd.Nndsvd` or None
     :param W: Specify initial factorization of basis matrix W. Default is None. When specified, :param:`seed` must be None.
-    :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or None
+    :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or :class:`numpy.matrix` or None
     :param H: Specify initial factorization of mixture matrix H. Default is None. When specified, :param:`seed` must be None.
-    :type H: :class:`scipy.sparse` or :class:`numpy.ndarray` or None
+    :type H: :class:`scipy.sparse` or :class:`numpy.ndarray` or :class:`numpy.matrix` or None
     :param rank: The factorization rank to achieve. Default is 30.
     :type rank: `int`
     :param method: The algorithm to use to perform MF on target matrix. Default is :class:`methods.mf.nmf`

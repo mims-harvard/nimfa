@@ -23,7 +23,7 @@ class Nndsvd(object):
     """
 
 
-    def __init__(self, V, rank, flag = 0):
+    def __init__(self):
         """
         :param V: Data instances to be clustered. If not None, clustering will be executed immediately after initialization unless initialize_only=True.
         :type V: One of the :class:`scipy.sparse` sparse matrices types or :class:`numpy.ndarray` or or :class:`numpy.matrix`
@@ -36,12 +36,12 @@ class Nndsvd(object):
         :type flag: `int`
         """
         self.name = "nndsvd"
+        
+    def initialize(self, V, rank, flag = 0):
         self.V = V
         self.rank = rank
         self.flag = 0
-        
-    def initialize(self):
-        if sp.issparse(self.V) or sp.isspmatrix(self.V):
+        if sp.isspmatrix(self.V):
             if any(self.V.data < 0):
                 raise utils.MFError("The input matrix contains negative elements.")
             U, S, V = sla.svd(self.V, self.rank)
@@ -51,8 +51,8 @@ class Nndsvd(object):
                 raise utils.MFError("The input matrix contains negative elements.")
             U, S, V = nla.svd(self.V)
             avg = np.average(self.V)
-        self.W = np.zeros((self.V.shape[0], self.rank))
-        self.H = np.zeros((self.rank, self.V.shape[1]))
+        self.W = np.matrix(np.zeros((self.V.shape[0], self.rank)))
+        self.H = np.matrix(np.zeros((self.rank, self.V.shape[1])))
         
         # choose the first singular triplet to be nonnegative
         self.W[:,0] = sqrt(S[0]) * abs(U[:,0])
@@ -69,10 +69,10 @@ class Nndsvd(object):
             termp = n_uup * n_vvp; termn = n_uun * n_vvn
             if (termp >= termn):
                 self.W[:,i] = sqrt(S[i] * termp) * uup / n_uup 
-                self.H[i,:] = sqrt(S[i] * termp) * np.transpose(vvp) / n_vvp
+                self.H[i,:] = sqrt(S[i] * termp) * vvp.T / n_vvp
             else:
                 self.W[:,i] = sqrt(S[i] * termn) * uun / n_uun
-                self.H[i,:] = sqrt(S[i] * termn) * np.transpose(vvn) / n_vvn
+                self.H[i,:] = sqrt(S[i] * termn) * vvn.T / n_vvn
         
         self.W[self.W < 1e-11] = 0
         self.H[self.H < 1e-11] = 0 
@@ -92,11 +92,11 @@ class Nndsvd(object):
             
     def _pos(self, X):
         """Return positive section of matrix or vector."""
-        return (X >= 0) * X
+        return np.multiply(X >= 0, X)
     
     def _neg(self, X):
         """Return negative section of matrix or vector."""
-        return (X < 0) * (-X)
+        return np.multiply(X < 0, -X)
             
             
             
