@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import scipy.sparse as sp
 from math import sqrt
 
 from utils.utils import *
@@ -67,14 +68,18 @@ class Nndsvd(object):
         
         self.W[self.W < 1e-11] = 0
         self.H[self.H < 1e-11] = 0 
+        if self.flag == 0:
+            return sp.csr_matrix(self.W), sp.csr_matrix(self.H)
         
         # NNDSVDa
         if self.flag == 1:
+            avg = self.V.mean()
             self.W[self.W == 0] = avg
             self.H[self.H == 0] = avg
         
         # NNDSVDar
         if self.flag == 2:
+            avg = self.V.mean()
             n1 = len(self.W[self.W == 0])
             n2 = len(self.H[self.H == 0])
             self.W[self.W == 0] = avg * random.uniform(n1, 1) / 100

@@ -1,0 +1,113 @@
+import numpy as np
+import scipy.sparse as sp
+import scipy.sparse.linalg as sla
+import numpy.linalg as nla
+
+"""
+    Linear algebra helper routines
+"""
+
+#######
+###    Wrapper functions for handling sparse matrices and dense matrices representation.
+###    scipy.sparse, numpy.matrix
+#######
+
+def negative(X):
+    """Check if X contains negative elements."""
+    if sp.isspmatrix(X):
+        if any(X.data < 0):
+                return True
+    else:
+        if any(np.asmatrix(X) < 0):
+            return True
+        
+def argmax():
+    pass
+
+def repmat(X, m, n):
+    """Construct matrix consisting of an m-by-n tiling of copies of X."""
+    if sp.isspmatrix(X):
+        return sp.hstack([sp.vstack([X for _ in xrange(m)], format = X.format) for _ in xrange(n)], format = X.format)
+    else:
+        return np.tile(X, (m, n))
+    
+def svd(X, k):
+    """Compute standard SVD on X."""
+    if sp.isspmatrix(X): 
+        U, S, V = sla.svd(X, k)
+    else: 
+        U, S, V = nla.svd(np.asmatrix(X))
+    return U, S, V
+
+def dot(X, Y):
+    """Compute dot product of X and Y."""
+    if sp.isspmatrix(X) and sp.isspmatrix(Y):
+        return X * Y
+    elif sp.isspmatrix(X) or sp.isspmatrix(Y):
+        # avoid dense dot product with mixed factors
+        # avoid copying sparse matrix
+        return sp.csc_matrix(X) * sp.csr_matrix(Y)
+    else:
+        return np.asmatrix(X) * np.asmatrix(Y)
+
+def multiply(X, Y):
+    """Compute element-wise multiplication of X and Y."""
+    if sp.isspmatrix(X) and sp.isspmatrix(Y):
+        return X.multiply(Y)
+    elif sp.isspmatrix(X) or sp.isspmatrix(Y):
+        return _scale_spmatrix(X, Y) 
+    else:
+        return np.multiply(X,Y)
+    
+def _scale_spmatrix(X, Y):
+    """Compute sparse element-wise multiplication, sparseness preserved."""
+    if not sp.isspmatrix(X):
+        X, Y = Y, X
+    assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+    assert X.shape == Y.shape, "Matrices are not aligned."
+    R = X.copy()
+    now = 0
+    for row in range(X.shape[0]):
+        upto = X.indptr[row+1]
+        while now < upto:
+            col = X.indices[now]
+            R.data[now] = X.data[now] * Y[row, col]
+            now += 1
+    return R
+    
+def elop(X, Y, op):
+    """Compute element-wise operation of matrix X and matrix Y."""
+    if sp.isspmatrix(X) and sp.isspmatrix(Y):
+        return op(X,Y)
+    elif sp.isspmatrix(X) or sp.isspmatrix(Y):
+        return _op_spmatrix(X, Y, op)
+    else:
+        return op(X,Y)
+
+def _op_spmatrix(X, Y, op):
+    """Compute sparse element-wise operation for operations not preserving zeros."""
+    # operation is not necessarily commutative 
+    assert X.shape == Y.shape, "Matrices are not aligned."
+    return np.matrix([[op(X[i,j], Y[i,j]) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+
+def inf_norm(X):
+    """Infinity norm of a matrix (maximum absolute row sum).
+    :param X: sparse or dense matrix
+    :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix` or any sparse or dense matrix
+    """
+    if sp.isspmatrix_csr(X) or sp.isspmatrix_csc(X):
+        # avoid copying index and ptr arrays
+        abs_X = X.__class__((abs(X.data), X.indices, X.indptr), shape = X.shape)
+        return (abs_X * np.ones((X.shape[1]), dtype = X.dtype)).max()
+    elif sp.isspmatrix(X):
+        return (abs(X) * np.ones((X.shape[1]), dtype = X.dtype)).max()
+    else:
+        return nla.norm(X, inf)
+
+def pvnorm(X, p = 2):
+    """Compute p-vector norm."""
+    if sp.isspmatrix(X):
+        n = sum(abs(x)**p for x in X.data)**(1. / p)
+    else:
+        n = nla.norm(np.asmatrix(X), p)
+    return n
