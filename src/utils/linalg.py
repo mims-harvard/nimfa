@@ -21,15 +21,43 @@ def negative(X):
         if any(np.asmatrix(X) < 0):
             return True
         
-def argmax():
-    pass
+def argmax(X, axis = None):
+    """Return indices of the maximum values along an axis. Row major order.
+    :param X: sparse or dense matrix
+    :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix`
+    """
+    if sp.isspmatrix(X):
+        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+        assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
+        res = [[float('-inf'), 0] for _ in xrange(X.shape[1 - axis])] if axis is not None else [float('-inf'), 0]
+        def _caxis(now, row, col):
+            if X.data[now] > res[col][0]:
+                    res[col] = (X.data[now], row)
+        def _raxis(now, row, col):
+            if X.data[now] > res[row][0]:
+                res[row] = (X.data[now], col)
+        def _naxis(now, row, col):
+            if X.data[now] > res[0]:
+                res[0] = X.data[now]
+                res[1] = row * X.shape[0] + col 
+        check = _caxis if axis == 0 else _raxis if axis == 1 else _naxis
+        now = 0
+        for row in range(X.shape[0]):
+            upto = X.indptr[row+1]
+            while now < upto:
+                col = X.indices[now]
+                check(now, row, col)
+                now += 1
+        return res[1] if axis == None else np.matrix(zip(*res)[1]) if axis == 0 else np.matrix(zip(*res)[1]).T
+    else:
+        return np.asmatrix(X).argmax(axis)
 
 def repmat(X, m, n):
     """Construct matrix consisting of an m-by-n tiling of copies of X."""
     if sp.isspmatrix(X):
         return sp.hstack([sp.vstack([X for _ in xrange(m)], format = X.format) for _ in xrange(n)], format = X.format)
     else:
-        return np.tile(X, (m, n))
+        return np.tile(np.asmatrix(X), (m, n))
     
 def svd(X, k):
     """Compute standard SVD on X."""
@@ -57,7 +85,7 @@ def multiply(X, Y):
     elif sp.isspmatrix(X) or sp.isspmatrix(Y):
         return _scale_spmatrix(X, Y) 
     else:
-        return np.multiply(X,Y)
+        return np.multiply(np.asmatrix(X), np.asmatrix(Y))
     
 def _scale_spmatrix(X, Y):
     """Compute sparse element-wise multiplication, sparseness preserved."""
@@ -82,7 +110,7 @@ def elop(X, Y, op):
     elif sp.isspmatrix(X) or sp.isspmatrix(Y):
         return _op_spmatrix(X, Y, op)
     else:
-        return op(X,Y)
+        return op(np.asmatrix(X), np.asmatrix(Y))
 
 def _op_spmatrix(X, Y, op):
     """Compute sparse element-wise operation for operations not preserving zeros."""
@@ -93,7 +121,7 @@ def _op_spmatrix(X, Y, op):
 def inf_norm(X):
     """Infinity norm of a matrix (maximum absolute row sum).
     :param X: sparse or dense matrix
-    :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix` or any sparse or dense matrix
+    :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix`
     """
     if sp.isspmatrix_csr(X) or sp.isspmatrix_csc(X):
         # avoid copying index and ptr arrays
@@ -102,7 +130,7 @@ def inf_norm(X):
     elif sp.isspmatrix(X):
         return (abs(X) * np.ones((X.shape[1]), dtype = X.dtype)).max()
     else:
-        return nla.norm(X, inf)
+        return nla.norm(np.asmatrix(X), float('inf'))
 
 def pvnorm(X, p = 2):
     """Compute p-vector norm."""
