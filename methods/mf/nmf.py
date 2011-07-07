@@ -1,4 +1,7 @@
 import numpy as np
+from operator import div
+
+from utils.linalg import *
 
 class Nmf(object):
     """
@@ -45,8 +48,8 @@ class Nmf(object):
         
     def euclidean_update(self):
         """Update basis and mixture matrix based on euclidean distance multiplicative update rules."""
-        self.H = np.multiply(self.H, (self.W.T * self.V) / (self.W.T * self.W * self.H))
-        self.W = np.multiply(self.W , (self.V * self.H.T) / (self.W * self.H * self.H.T))
+        self.H = multiply(self.H, elop(dot(self.W.T, self.V), dot(self.W.T, dot(self.W, self.H)), div))
+        self.W = multiply(self.W , elop(dot(self.V, self.H.T), dot(self.W, dot(self.H, self.H.T)), div)) 
         
     def divergence_update(self):
         """Update basis and mixture matrix based on divergence multiplicative update rules."""

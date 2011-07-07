@@ -1,11 +1,9 @@
-import scipy.sparse as sp
-import numpy as np
-import scipy.sparse.linalg as sla
-import numpy.linalg as nla
 import random
+import numpy as np
 from math import sqrt
 
-import utils.utils as utils
+from utils.utils import *
+from utils.linalg import *
 
 
 class Nndsvd(object):
@@ -41,16 +39,9 @@ class Nndsvd(object):
         self.V = V
         self.rank = rank
         self.flag = 0
-        if sp.isspmatrix(self.V):
-            if any(self.V.data < 0):
-                raise utils.MFError("The input matrix contains negative elements.")
-            U, S, V = sla.svd(self.V, self.rank)
-            avg = np.average(self.V.data)
-        else:
-            if any(self.V < 0):
-                raise utils.MFError("The input matrix contains negative elements.")
-            U, S, V = nla.svd(self.V)
-            avg = np.average(self.V)
+        if negative(self.V):
+            raise MFError("The input matrix contains negative elements.")
+        U, S, V = svd(self.V, self.rank)
         self.W = np.matrix(np.zeros((self.V.shape[0], self.rank)))
         self.H = np.matrix(np.zeros((self.rank, self.V.shape[1])))
         
@@ -64,15 +55,15 @@ class Nndsvd(object):
             vv = V[:,i]
             uup = self.pos(uu); uun = self.neg(uu)
             vvp = self.pos(vv); vvn = self.neg(vv)
-            n_uup = nla.norm(uup, 2); n_vvp = nla.norm(vvp, 2)
-            n_uun = nla.norm(uun, 2); n_vvn = nla.norm(vvn, 2)
+            n_uup = pvnorm(uup, 2); n_vvp = pvnorm(vvp, 2)
+            n_uun = pvnorm(uun, 2); n_vvn = pvnorm(vvn, 2)
             termp = n_uup * n_vvp; termn = n_uun * n_vvn
             if (termp >= termn):
-                self.W[:,i] = sqrt(S[i] * termp) * uup / n_uup 
-                self.H[i,:] = sqrt(S[i] * termp) * vvp.T / n_vvp
+                self.W[:,i] = sqrt(S[i] * termp) / n_uup * uup 
+                self.H[i,:] = sqrt(S[i] * termp) / n_vvp * vvp.T 
             else:
-                self.W[:,i] = sqrt(S[i] * termn) * uun / n_uun
-                self.H[i,:] = sqrt(S[i] * termn) * vvn.T / n_vvn
+                self.W[:,i] = sqrt(S[i] * termn) / n_uun * uun
+                self.H[i,:] = sqrt(S[i] * termn) / n_vvn * vvn.T
         
         self.W[self.W < 1e-11] = 0
         self.H[self.H < 1e-11] = 0 
@@ -92,11 +83,11 @@ class Nndsvd(object):
             
     def _pos(self, X):
         """Return positive section of matrix or vector."""
-        return np.multiply(X >= 0, X)
+        return multiply(X >= 0, X)
     
     def _neg(self, X):
         """Return negative section of matrix or vector."""
-        return np.multiply(X < 0, -X)
+        return multiply(X < 0, -X)
             
             
             
