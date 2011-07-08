@@ -3,6 +3,7 @@ import numpy as np
 
 import utils.utils as utils
 import nmf
+from utils.linalg import *
 
 class Nmf_std(nmf.Nmf):
     '''
@@ -27,4 +28,14 @@ class Nmf_std(nmf.Nmf):
         if any(self.V.data < 0):
             raise utils.MFError("The input matrix contains negative elements.")    
             
-            
+    def basis(self):
+        return self.W
+    
+    def coef(self):
+        return self.H
+    
+    def fitted(self):
+        return dot(self.W, self.H)
+    
+    def residuals(self):
+        return 
