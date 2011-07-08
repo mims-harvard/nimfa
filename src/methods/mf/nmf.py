@@ -2,6 +2,7 @@ import numpy as np
 from operator import div, pow, eq, ne
 from math import log
 
+import models.mf_fit as mfit
 from utils.linalg import *
 
 class Nmf(object):
@@ -45,7 +46,34 @@ class Nmf(object):
         :type model: :class:`models.nmf_std.Nmf_std`
         """
         self.__dict__.update(model.__dict__)
-        self.W, self.H = self.seed.initialize(self.V, self.rank)
+        self._set_params()
+                
+        for _ in xrange(self.n_run):
+            self.W, self.H = self.seed.initialize(self.V, self.rank)
+            pobj = cobj = self.objective()
+            iter = 0
+            while self._is_satisfied(pobj, cobj, iter):
+                pobj = cobj
+                self.update()
+                cobj = self.objective()
+                iter += 1
+            mffit = mfit.Mf_fit(self)
+            if self.callback: self.callback(mffit)
+        return mffit
+    
+    def _is_satisfied(self, pobj, cobj, iter):
+        """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
+        if self.max_iters and self.max_iters >= iter:
+            return False
+        if self.min_residuals and iter > 0 and cobj - pobj < self.min_residuals:
+            return False
+        if iter > 0 and cobj > pobj:
+            return False
+        return True
+        
+    def _set_params(self):
+        self.update = getattr(self, self.options['update'] + '_update') if self.options and 'update' in self.options else self.euclidean_update()
+        self.objective = getattr(self, self.options['objective'] + '_objective') if self.options and 'objective' in self.options else self.fro_error()
         
     def euclidean_update(self):
         """Update basis and mixture matrix based on euclidean distance multiplicative update rules."""
@@ -68,12 +96,13 @@ class Nmf(object):
         return (multiply(self.V, elop(self.V, dot(self.W, self.H), log)) - self.V + dot(self.W, self.H)).sum()
     
     def conn_error(self):
-        """Compute connectivity matrix changes -- number of changing elements."""
+        """Compute connectivity matrix changes -- number of changing elements.
+        if the number of instances changing the cluster is lower or equal to min_residuals, terminate factorization run."""
         idx = argmax(self.H, axis = 0)
         mat1 = repmat(idx, self.V.shape[1], 1)
         mat2 = repmat(idx.T, 1, self.V.shape[1])
         cons = elop(mat1, mat2, eq)
-        if not hasattr(self, consold):
+        if not hasattr(self, 'consold'):
             self.consold = np.ones_like(self.cons) - cons
             self.cons = cons
         else:

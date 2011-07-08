@@ -78,7 +78,23 @@ class Nmf(object):
     
     def run(self):
         """Run the specified MF algorithm."""
-        self.method.factorize(self)
+        return self.method.factorize(self)
+        
+    def basis(self):
+        """Return the matrix of basis vectors."""
+        pass
+        
+    def coef(self):
+        """Return the matrix of mixture coefficients."""
+        pass
+    
+    def fitted(self):
+        """Compute the estimated target matrix according to the NMF model."""
+        pass
+    
+    def distance(self):
+        """Return the loss function value."""
+        pass
         
     def connectivity(self):
         """Compute the connectivity matrix associated to the clusters based on NM factorization."""
@@ -117,8 +133,28 @@ class Nmf(object):
         """Compute Residual Sum of Squares (RSS) between NMF estimate and target (Hutchins, 2008)."""
         pass
     
-    def sparseness(self):
-        """Compute average sparseness of mixture coefficients and basis vectors. (Hoyer, 2004)"""
+    def sparseness(self, X):
+        """Compute average sparseness of matrix (mixture coefficients, basis vectors matrix). (Hoyer, 2004)"""
+        pass
+    
+    def residuals(self):
+        """Compute residuals between the target matrix and its NMF estimate."""
+        pass
+    
+    def cophcor(self):
+        """Compute cophenetic correlation coefficient of consensus matrix, generally obtained from multiple
+        NMF runs. 
+        The cophenetic correlation coefficient is based on the average of connectivity matrices. (Brunet, 2004) It
+        measures the stability of the clusters obtained from NMF. 
+        """
+        pass
+    
+    def dispersion(self):
+        """Compute the dispersion coefficient of consensus matrix, generally obtained from multiple
+        NMF runs.
+        The dispersion coefficient is based on the average of connectivity matrices. (Kim, Park, 2007) It 
+        measures the reproducibility of the clusters obtained from NMF. 
+        """
         pass
     
     

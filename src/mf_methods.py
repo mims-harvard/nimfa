@@ -63,6 +63,7 @@ def mf(target = None, seed = None, W = None, H = None,
     :type options: `dict`
     
      Stopping criteria:
+     If multiple criteria are passed, the satisfiability of one terminates the factorization run. 
 
     :param max_iters: Maximum number of factorization iterations. When not specified, the number of iterations depends
                 on the speed of method convergence. Default is None
