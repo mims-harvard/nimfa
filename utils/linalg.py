@@ -2,6 +2,7 @@ import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as sla
 import numpy.linalg as nla
+from operator import mul
 
 """
     Linear algebra helper routines
@@ -83,14 +84,31 @@ def multiply(X, Y):
     if sp.isspmatrix(X) and sp.isspmatrix(Y):
         return X.multiply(Y)
     elif sp.isspmatrix(X) or sp.isspmatrix(Y):
-        return _scale_spmatrix(X, Y) 
+        return _op_spmatrix(X, Y, mul) 
     else:
         return np.multiply(np.asmatrix(X), np.asmatrix(Y))
     
-def _scale_spmatrix(X, Y):
-    """Compute sparse element-wise multiplication, sparseness preserved."""
-    if not sp.isspmatrix(X):
-        X, Y = Y, X
+def elop(X, Y, op):
+    """Compute element-wise operation of matrix X and matrix Y."""
+    try:
+        zp = op(0, 1) if sp.isspmatrix(X) else op(1, 0)
+    except:
+        zp = 0
+    if sp.isspmatrix(X) and sp.isspmatrix(Y):
+        return _op_spmatrix(X, Y, op) if not zp else _op_matrix(X, Y, op)
+    elif sp.isspmatrix(X) or sp.isspmatrix(Y):
+        return _op_spmatrix(X, Y, op) if not zp else _op_matrix(X, Y, op)
+    else:
+        return op(np.asmatrix(X), np.asmatrix(Y))
+
+def _op_spmatrix(X, Y, op):
+    """Compute sparse element-wise operation for operations preserving zeros."""
+    # distinction as op is not necessarily commutative
+    return __op_spmatrixX(X, Y, op) if sp.isspmatrix(X) else __op_spmatrixY(X, Y, op)
+    
+
+def __op_spmatrixX(X, Y, op):
+    """Compute sparse element-wise operation for operations preserving zeros."""
     assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
     assert X.shape == Y.shape, "Matrices are not aligned."
     R = X.copy()
@@ -99,20 +117,25 @@ def _scale_spmatrix(X, Y):
         upto = X.indptr[row+1]
         while now < upto:
             col = X.indices[now]
-            R.data[now] = X.data[now] * Y[row, col]
+            R.data[now] = op(X.data[now], Y[row, col])
             now += 1
     return R
     
-def elop(X, Y, op):
-    """Compute element-wise operation of matrix X and matrix Y."""
-    if sp.isspmatrix(X) and sp.isspmatrix(Y):
-        return op(X,Y)
-    elif sp.isspmatrix(X) or sp.isspmatrix(Y):
-        return _op_spmatrix(X, Y, op)
-    else:
-        return op(np.asmatrix(X), np.asmatrix(Y))
+def __op_spmatrixY(X, Y, op):
+    """Compute sparse element-wise operation for operations preserving zeros."""
+    assert isinstance(Y, sp.csr_matrix) or isinstance(Y, sp.csc_matrix), "Incorrect sparse format."
+    assert X.shape == Y.shape, "Matrices are not aligned."
+    R = Y.copy()
+    now = 0
+    for row in range(Y.shape[0]):
+        upto = Y.indptr[row+1]
+        while now < upto:
+            col = Y.indices[now]
+            R.data[now] = op(X[row, col], Y.data[now])
+            now += 1
+    return R
 
-def _op_spmatrix(X, Y, op):
+def _op_matrix(X, Y, op):
     """Compute sparse element-wise operation for operations not preserving zeros."""
     # operation is not necessarily commutative 
     assert X.shape == Y.shape, "Matrices are not aligned."

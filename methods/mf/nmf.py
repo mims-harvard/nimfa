@@ -1,5 +1,5 @@
 import numpy as np
-from operator import div, pow
+from operator import div, pow, eq, ne
 from math import log
 
 from utils.linalg import *
@@ -68,5 +68,16 @@ class Nmf(object):
         return (multiply(self.V, elop(self.V, dot(self.W, self.H), log)) - self.V + dot(self.W, self.H)).sum()
     
     def conn_error(self):
-        pass    
+        """Compute connectivity matrix changes -- number of changing elements."""
+        idx = argmax(self.H, axis = 0)
+        mat1 = repmat(idx, self.V.shape[1], 1)
+        mat2 = repmat(idx.T, 1, self.V.shape[1])
+        cons = elop(mat1, mat2, eq)
+        if not hasattr(self, consold):
+            self.consold = np.ones_like(self.cons) - cons
+            self.cons = cons
+        else:
+            self.consold = self.cons
+            self.cons = cons
+        return elop(self.cons, self.consold, ne).sum()
         
