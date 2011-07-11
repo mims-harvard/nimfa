@@ -57,8 +57,8 @@ class Nndsvd(object):
             vv = V[:,i]
             uup = self.pos(uu); uun = self.neg(uu)
             vvp = self.pos(vv); vvn = self.neg(vv)
-            n_uup = pvnorm(uup, 2); n_vvp = pvnorm(vvp, 2)
-            n_uun = pvnorm(uun, 2); n_vvn = pvnorm(vvn, 2)
+            n_uup = norm(uup, 2); n_vvp = norm(vvp, 2)
+            n_uun = norm(uun, 2); n_vvn = norm(vvn, 2)
             termp = n_uup * n_vvp; termn = n_uun * n_vvn
             if (termp >= termn):
                 self.W[:,i] = sqrt(S[i] * termp) / n_uup * uup 
