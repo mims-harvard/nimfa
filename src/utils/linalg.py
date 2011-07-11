@@ -88,6 +88,29 @@ def multiply(X, Y):
     else:
         return np.multiply(np.asmatrix(X), np.asmatrix(Y))
     
+def sop(X, s, op):
+    """Compute scalar element wise operation of matrix X and scalar."""
+    if sp.isspmatrix(X):
+        return _sop_spmatrix(X, s, op)
+    else:
+        return _sop_matrix(X, s, op)
+    
+def _sop_spmatrix(X, s, op):
+    """Compute sparse scalar element wise operation of matrix X and scalar."""
+    assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+    R = X.copy()
+    now = 0
+    for row in range(X.shape[0]):
+        upto = X.indptr[row+1]
+        while now < upto:
+            R.data[now] = op(X.data[now], s)
+            now += 1
+    return R
+
+def _sop_matrix(X, s, op):
+    """Compute scalar element wise operation of matrix X and scalar."""
+    return np.matrix([[op(X[i,j], s) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    
 def elop(X, Y, op):
     """Compute element-wise operation of matrix X and matrix Y."""
     try:

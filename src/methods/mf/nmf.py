@@ -55,6 +55,7 @@ class Nmf(object):
             while self._is_satisfied(pobj, cobj, iter):
                 pobj = cobj
                 self.update()
+                self._adjustment()
                 cobj = self.objective()
                 iter += 1
             mffit = mfit.Mf_fit(self)
@@ -63,6 +64,8 @@ class Nmf(object):
     
     def _is_satisfied(self, pobj, cobj, iter):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
+        if self.test_conv and iter % self.test_conv != 0:
+            return True
         if self.max_iters and self.max_iters >= iter:
             return False
         if self.min_residuals and iter > 0 and cobj - pobj < self.min_residuals:
@@ -70,6 +73,11 @@ class Nmf(object):
         if iter > 0 and cobj > pobj:
             return False
         return True
+    
+    def _adjustment(self):
+        """Adjust small value to factors to avoid numerical underflow."""
+        self.H = sop(self.W, np.finfo(self.H.dtype).eps)
+        self.W = sop(self.H, np.finfo(self.W.dtype).eps)
         
     def _set_params(self):
         self.update = getattr(self, self.options['update'] + '_update') if self.options and 'update' in self.options else self.euclidean_update()
