@@ -1,11 +1,9 @@
-import random
 import numpy as np
 import scipy.sparse as sp
 from math import sqrt
 
 from utils.utils import *
 from utils.linalg import *
-
 
 class Nndsvd(object):
     """
@@ -21,25 +19,28 @@ class Nndsvd(object):
     doi:10.1016/j.patcog.2007.09.010 
     """
 
-
     def __init__(self):
+        self.name = "nndsvd"
+        
+    def initialize(self, V, rank, **options):
         """
-        :param V: Data instances to be clustered. If not None, clustering will be executed immediately after initialization unless initialize_only=True.
+        Return initialized basis and mixture matrix. 
+        
+        :param V: Target matrix, the matrix for MF method to estimate. Data instances to be clustered. 
         :type V: One of the :class:`scipy.sparse` sparse matrices types or :class:`numpy.ndarray` or or :class:`numpy.matrix`
         :param rank: Factorization rank. 
         :type rank: `int`
-        :param flag: Indicates the variant of the NNDSVD algorithm. Possible values are 
-                    0 -- NNDSVD
-                    1 -- NNDSVDa (fill in the zero elements with the average)
-                    2 -- NNDSVDar (fill in the zero elements with random values in the space [0:average/100])
-        :type flag: `int`
+        :param options: Specify algorithm or model specific options (e.g. initialization of extra matrix factor, seeding parameters).
+                        Option 'flag' Indicates the variant of the NNDSVD algorithm. Possible values are:
+                            #. 0 -- NNDSVD,
+                            #. 1 -- NNDSVDa (fill in the zero elements with the average),
+                            #. 2 -- NNDSVDar (fill in the zero elements with random values in the space [0:average/100]).
+                        Default is NNDSVD.
+        :type options: `dict`
         """
-        self.name = "nndsvd"
-        
-    def initialize(self, V, rank, flag = 0):
         self.V = V
         self.rank = rank
-        self.flag = 0
+        self.flag = options['flag'] if 'flag' in options else 0
         if negative(self.V):
             raise MFError("The input matrix contains negative elements.")
         U, S, V = svd(self.V, self.rank)
@@ -82,8 +83,8 @@ class Nndsvd(object):
             avg = self.V.mean()
             n1 = len(self.W[self.W == 0])
             n2 = len(self.H[self.H == 0])
-            self.W[self.W == 0] = avg * random.uniform(n1, 1) / 100
-            self.H[self.H == 0] = avg * random.uniform(n2, 1) / 100
+            self.W[self.W == 0] = avg * np.random.uniform(n1, 1) / 100
+            self.H[self.H == 0] = avg * np.random.uniform(n2, 1) / 100
         return self.W, self.H
             
     def _pos(self, X):

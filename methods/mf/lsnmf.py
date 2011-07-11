@@ -1,4 +1,9 @@
+import numpy as np
+from operator import div, pow, eq, ne
+from math import log
 
+import models.mf_fit as mfit
+from utils.linalg import *
 
 class Lsnmf(object):
     """
@@ -18,12 +23,41 @@ class Lsnmf(object):
     [4] ﻿Lin, C.J. (2007). Projected gradient methods for nonnegative matrix factorization. Neural computation, 19(10), 2756-79. doi: 10.1162/neco.2007.19.10.2756. 
     """
 
-
-    def __init__(self, params):
+    def __init__(self):
         self.aname = "lsnmf"
         self.amodels = ["nmf_std"]
-        self.aseeds = ["nndsvd"]
+        self.aseeds = ["random", "fixed", "nndsvd"]
         
     def factorize(self, model):
+        """
+        :param model: The underlying model of matrix factorization.
+        :type model: :class:`models.nmf_std.Nmf_std`
+        """
         self.__dict__.update(model.__dict__)
+        
+        for _ in xrange(self.n_run):
+            self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
+            pobj = cobj = self.objective()
+            iter = 0
+            while self._is_satisfied(pobj, cobj, iter):
+                pobj = cobj
+                self.update()
+                cobj = self.objective()
+                iter += 1
+            mffit = mfit.Mf_fit(self)
+            if self.callback: self.callback(mffit)
+        return mffit
+    
+    def _is_satisfied(self, pobj, cobj, iter):
+        """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
+        return True
+    
+    def update(self):
+        """Update basis and mixture matrix."""
+        pass
+    
+    def objective(self):
+        """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
+        pass
+    
         

@@ -48,6 +48,10 @@ class Nmf(object):
     .. attribute:: min_residuals
     
         Minimal required improvement of the residuals from the previous iteration
+        
+    .. attribute:: test_conv
+        
+        Indication how often convergence test is done.
     '''
 
     def __init__(self, **params):
@@ -55,6 +59,9 @@ class Nmf(object):
         Constructor
         '''
         self.__dict__.update(params)
+        
+    def _is_smdefined(self):
+        """Check if MF and seeding methods are well defined."""
         if type(self.method) is str:
             if self.method in mf.methods:
                 self.method = mf.methods[self.method]()
@@ -69,9 +76,9 @@ class Nmf(object):
         else:
             if not self.seed.name in seed.methods:
                 raise utils.MFError("Unrecognized seeding method.")
-        self.compatibility()
+        self._compatibility()
         
-    def compatibility(self):
+    def _compatibility(self):
         """Check if MF model is compatible with MF method and seeding method."""
         if not self.name in self.method.amodels and self.seed.name in self.method.aseeds:
             raise utils.MFError("MF model is incompatible with chosen MF method and seeding method.")   
