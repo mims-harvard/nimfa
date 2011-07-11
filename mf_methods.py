@@ -28,7 +28,7 @@ l_seed = methods.list_seeding_methods()
 
 def mf(target = None, seed = None, W = None, H = None,  
        rank = 30, method = methods.mf.nmf.Nmf,
-       max_iters = None, min_residuals = None, 
+       max_iters = None, min_residuals = None, test_conv = None,
        n_run = 1, model = std.Nmf_std, callback = None, initialize_only = False, **options):
     """
     Run the specified MF algorithm.
@@ -72,6 +72,8 @@ def mf(target = None, seed = None, W = None, H = None,
                 between the target matrix and its MF estimate using the objective function associated to the MF algorithm. 
                 Default is None.
     :type min_residuals: `float` 
+    :param test_conv: It indicates how often convergence test is done. By default convergence is tested each iteration. 
+    :type: `int`
     """
     if seed not in l_seed or None and seed.name not in l_seed:
         raise utils.utils.MFError("Unrecognized seeding method. Choose from: %s" % ", ".join(l_seed))
@@ -79,7 +81,7 @@ def mf(target = None, seed = None, W = None, H = None,
         raise utils.utils.MFError("Unrecognized MF method. Choose from: %s" % ", ".join(l_mf))
     mf_model = model(V = target, seed = seed, W = W, H = H,  
                      rank = rank, method = method,
-                     max_iters = max_iters, min_residuals = min_residuals, 
+                     max_iters = max_iters, min_residuals = min_residuals, test_conv = test_conv
                      n_run = n_run, callback = callback, options = options)
     if not initialize_only:
         res = mf_model.run()
