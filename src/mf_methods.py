@@ -81,7 +81,7 @@ def mf(target = None, seed = None, W = None, H = None,
         raise utils.utils.MFError("Unrecognized MF method. Choose from: %s" % ", ".join(l_mf))
     mf_model = model(V = target, seed = seed, W = W, H = H,  
                      rank = rank, method = method,
-                     max_iters = max_iters, min_residuals = min_residuals, test_conv = test_conv
+                     max_iters = max_iters, min_residuals = min_residuals, test_conv = test_conv,
                      n_run = n_run, callback = callback, options = options)
     if not initialize_only:
         res = mf_model.run()

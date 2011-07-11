@@ -27,7 +27,7 @@ class Nmf(object):
     def __init__(self):
         self.name = "nmf"
         self.amodels = ["nmf_std"]
-        self.aseeds = ["nndsvd"]
+        self.aseeds = ["random", "fixed", "nndsvd"]
         
     def factorize(self, model):
         """
@@ -42,14 +42,14 @@ class Nmf(object):
                           #. 'fro' for standard Frobenius distance cost function,
                           #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
                           #. 'conn' for connectivity matrix changed elements cost function. 
-                        Default are 'euclidean' update equations and 'euclidean' cost function. 
+                      Default are 'euclidean' update equations and 'euclidean' cost function. 
         :type model: :class:`models.nmf_std.Nmf_std`
         """
         self.__dict__.update(model.__dict__)
         self._set_params()
                 
         for _ in xrange(self.n_run):
-            self.W, self.H = self.seed.initialize(self.V, self.rank)
+            self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             pobj = cobj = self.objective()
             iter = 0
             while self._is_satisfied(pobj, cobj, iter):

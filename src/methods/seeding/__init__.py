@@ -1,3 +1,5 @@
-from methods.seeding import nndsvd
+from methods.seeding import nndsvd, random, fixed
 
-methods = {"nndsvd": nndsvd.Nndsvd}
+methods = {"random": random.Random,
+           "fixed": fixed.Fixed,
+           "nndsvd": nndsvd.Nndsvd }
