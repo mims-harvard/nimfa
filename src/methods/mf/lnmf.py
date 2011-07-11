@@ -6,7 +6,10 @@ class Lnmf(object):
 
 
     def __init__(self, params):
-        '''
-        Constructor
-        '''
+        self.aname = "lnmf"
+        self.amodels = ["nmf_std"]
+        self.aseeds = ["nndsvd"]
+        
+    def factorize(self, model):
+        self.__dict__.update(model.__dict__)
         
