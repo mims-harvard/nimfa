@@ -178,10 +178,64 @@ def inf_norm(X):
     else:
         return nla.norm(np.asmatrix(X), float('inf'))
 
-def pvnorm(X, p = 2):
-    """Compute p-vector norm."""
+def norm(X, p = "fro"):
+    """Compute entry-wise norms (! not induced/operator norms)."""
+    assert 1 not in X.shape and p == 2, "Computing entrywise norms only."
     if sp.isspmatrix(X):
-        n = sum(abs(x)**p for x in X.data)**(1. / p)
+        v = {
+         "fro": sum(abs(x)**2 for x in X.data)**(1. / 2),
+         "inf": max(abs(X).sum(axis = 1)) if 1 not in X.shape else max(abs(X)),
+        "-inf": min(abs(X).sum(axis = 1)) if 1 not in X.shape else min(abs(X)),
+             1: max(abs(X).sum(axis = 0)) if 1 not in X.shape else max(abs(X)),
+            -1: min(abs(X).sum(axis = 0)) if 1 not in X.shape else min(abs(X))
+            }
+        return v.get(p, sum(abs(x)**p for x in X.data)**(1. / p))
     else:
-        n = nla.norm(np.asmatrix(X), p)
-    return n
+        return nla.norm(np.asmatrix(X), p)
+    
+def vstack(X, format = None, dtype = None):
+    """Stack sparse or dense matrices vertically."""
+    if sp.isspmatrix(X):
+        return sp.vstack(X, format, dtype)
+    else:
+        return np.vstack(X)
+
+def hstack(X, format = None, dtype = None):
+    """Stack sparse or dense matrices horizontally."""
+    if sp.isspmatrix(X):
+        return sp.hstack(X, format, dtype)
+    else:
+        return np.hstack(X)
+    
+def max(X, s):
+    """Compute element-wise max(x,s) assignement for sparse or dense matrix."""
+    if sp.isspmatrix(X):
+        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+        R = X.copy()
+        now = 0
+        for row in range(X.shape[0]):
+            upto = X.indptr[row+1]
+            while now < upto:
+                col = X.indices[now]
+                R.data[now] = max(X[row, col], s)
+                now += 1
+        return R
+    else:
+        return np.matrix([[max(X[i,j], s) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    
+def min(X, s):
+    """Compute element-wise min(x,s) assignement for sparse or dense matrix."""
+    if sp.isspmatrix(X):
+        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+        R = X.copy()
+        now = 0
+        for row in range(X.shape[0]):
+            upto = X.indptr[row+1]
+            while now < upto:
+                col = X.indices[now]
+                R.data[now] = min(X[row, col], s)
+                now += 1
+        return R
+    else:
+        return np.matrix([[min(X[i,j], s) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    

@@ -1,4 +1,3 @@
-import numpy as np
 from operator import div, pow, eq, ne
 from math import log
 
@@ -56,7 +55,7 @@ class Nmf(object):
                 pobj = cobj
                 self.update()
                 self._adjustment()
-                cobj = self.objective()
+                cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
             mffit = mfit.Mf_fit(self)
             if self.callback: self.callback(mffit)
@@ -64,13 +63,11 @@ class Nmf(object):
     
     def _is_satisfied(self, pobj, cobj, iter):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
-        if self.test_conv and iter % self.test_conv != 0:
-            return True
-        if self.max_iters and self.max_iters >= iter:
+        if self.max_iters and self.max_iters > iter:
             return False
-        if self.min_residuals and iter > 0 and cobj - pobj < self.min_residuals:
+        if self.min_residuals and iter > 0 and cobj - pobj <= self.min_residuals:
             return False
-        if iter > 0 and cobj > pobj:
+        if iter > 0 and cobj >= pobj:
             return False
         return True
     
