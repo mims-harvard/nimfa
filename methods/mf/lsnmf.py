@@ -6,7 +6,7 @@ from utils.linalg import *
 class Lsnmf(object):
     """
     Alternating nonnegative least squares MF using the projected gradient (bound constrained optimization) method for 
-    each subproblem [4]. It converges faster than the popular multiplicative update approach.
+    each subproblem (LSNMF) [4]. It converges faster than the popular multiplicative update approach.
     
     Algorithm relies on efficiently solving bound constrained subproblems. They are solved using the projected gradient 
     method. Each subproblem contains some (m) independent nonnegative least squares problems. Not solving these separately
