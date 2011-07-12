@@ -5,8 +5,8 @@ from utils.linalg import *
 
 class Lsnmf(object):
     """
-    Alternating nonnegative least squares MF using the projected gradient (bound constrained optimization) method for 
-    each subproblem (LSNMF) [4]. It converges faster than the popular multiplicative update approach.
+    Alternating Nonnegative Least Squares Matrix Factorization Using Projected Gradient (bound constrained optimization)
+    method for each subproblem (LSNMF) [4]. It converges faster than the popular multiplicative update approach.
     
     Algorithm relies on efficiently solving bound constrained subproblems. They are solved using the projected gradient 
     method. Each subproblem contains some (m) independent nonnegative least squares problems. Not solving these separately
@@ -28,7 +28,10 @@ class Lsnmf(object):
         
     def factorize(self, model):
         """
+        Return fitted factorization model.
+        
         :param model: The underlying model of matrix factorization.
+                      If min_residuals of the underlying model is not specified, default value of min_residuals 0.001 is set.  
         :type model: :class:`models.nmf_std.Nmf_std`
         """
         self.__dict__.update(model.__dict__)
@@ -38,8 +41,8 @@ class Lsnmf(object):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             self.gW = dot(self.W, dot(self.H, self.H.T)) - dot(self.V, self.H.T)
             self.gH = dot(dot(self.W.T, self.W), self.H) - dot(self.W.T, self.V)
-            self.igrad = norm(vstack(self.gW, self.gH.T))
-            self.epsW = max(0.001, self.min_residuals) * self.igrad
+            self.init_grad = norm(vstack(self.gW, self.gH.T))
+            self.epsW = max(0.001, self.min_residuals) * self.init_grad
             self.epsH = self.epsW
             cobj = self.objective() 
             iter = 0
@@ -47,6 +50,7 @@ class Lsnmf(object):
                 self.update()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
+            self.final_obj = cobj
             mffit = mfit.Mf_fit(self)
             if self.callback: self.callback(mffit)
         return mffit
@@ -55,7 +59,7 @@ class Lsnmf(object):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
         if self.max_iters and self.max_iters > iter:
             return False
-        if iter > 0 and cobj < self.min_residuals * self.igrad:
+        if iter > 0 and cobj < self.min_residuals * self.init_grad:
             return False
         return True
             
