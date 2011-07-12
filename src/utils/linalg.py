@@ -88,14 +88,14 @@ def multiply(X, Y):
     else:
         return np.multiply(np.asmatrix(X), np.asmatrix(Y))
     
-def sop(X, s, op):
+def sop(X, s = None, op = None):
     """Compute scalar element wise operation of matrix X and scalar."""
     if sp.isspmatrix(X):
         return _sop_spmatrix(X, s, op)
     else:
         return _sop_matrix(X, s, op)
     
-def _sop_spmatrix(X, s, op):
+def _sop_spmatrix(X, s = None, op = None):
     """Compute sparse scalar element wise operation of matrix X and scalar."""
     assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
     R = X.copy()
@@ -103,13 +103,13 @@ def _sop_spmatrix(X, s, op):
     for row in range(X.shape[0]):
         upto = X.indptr[row+1]
         while now < upto:
-            R.data[now] = op(X.data[now], s)
+            R.data[now] = op(X.data[now], s) if s != None else op(X.data[now])
             now += 1
     return R
 
-def _sop_matrix(X, s, op):
+def _sop_matrix(X, s = None, op = None):
     """Compute scalar element wise operation of matrix X and scalar."""
-    return np.matrix([[op(X[i,j], s) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    return np.matrix([[op(X[i,j], s) if s != None else op(X[i,j]) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
     
 def elop(X, Y, op):
     """Compute element-wise operation of matrix X and matrix Y."""
@@ -186,8 +186,8 @@ def norm(X, p = "fro"):
          "fro": sum(abs(x)**2 for x in X.data)**(1. / 2),
          "inf": max(abs(X).sum(axis = 1)) if 1 not in X.shape else max(abs(X)),
         "-inf": min(abs(X).sum(axis = 1)) if 1 not in X.shape else min(abs(X)),
-             1: max(abs(X).sum(axis = 0)) if 1 not in X.shape else max(abs(X)),
-            -1: min(abs(X).sum(axis = 0)) if 1 not in X.shape else min(abs(X))
+             1: max(abs(X).sum(axis = 0)) if 1 not in X.shape else sum(abs(x)**p for x in X.data)**(1. / p),
+            -1: min(abs(X).sum(axis = 0)) if 1 not in X.shape else sum(abs(x)**p for x in X.data)**(1. / p)
             }
         return v.get(p, sum(abs(x)**p for x in X.data)**(1. / p))
     else:
@@ -195,14 +195,14 @@ def norm(X, p = "fro"):
     
 def vstack(X, format = None, dtype = None):
     """Stack sparse or dense matrices vertically."""
-    if sp.isspmatrix(X):
+    if len([0 for x in X if not sp.isspmatrix(x)]) == 0:
         return sp.vstack(X, format, dtype)
     else:
         return np.vstack(X)
 
 def hstack(X, format = None, dtype = None):
     """Stack sparse or dense matrices horizontally."""
-    if sp.isspmatrix(X):
+    if len([0 for x in X if not sp.isspmatrix(x)]) == 0:
         return sp.hstack(X, format, dtype)
     else:
         return np.hstack(X)
@@ -238,4 +238,19 @@ def min(X, s):
         return R
     else:
         return np.matrix([[min(X[i,j], s) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    
+def count(X, s):
+    """Return the number of occurrences of element s in sparse or dense matrix X."""
+    if sp.isspmatrix(X):
+        return sum([1 for x in X.data if s == x])
+    else:
+        return sum([1 for r in X.tolist() for x in r if s == x])
+    
+def nz_data(X):
+    """Return list of nonzero elements from X (! data, not indices)."""
+    if sp.isspmatrix(X):
+        return X.data.tolist()
+    else:
+        return [x for r in X.tolist() for x in r if x != 0]
+    
     

@@ -30,6 +30,8 @@ class Nmf(object):
         
     def factorize(self, model):
         """
+        Return fitted factorization model.
+        
         :param model: The underlying model of matrix factorization. Algorithm specific model options are type of 
                       update equations and type of objective function. 
                       When specifying model, user can pass 'update' keyword argument with one of
@@ -57,6 +59,7 @@ class Nmf(object):
                 self._adjustment()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
+            self.final_obj = cobj
             mffit = mfit.Mf_fit(self)
             if self.callback: self.callback(mffit)
         return mffit
@@ -97,7 +100,7 @@ class Nmf(object):
         return (elop(self.V - dot(self.W, self.H), 2, pow)).sum()
     
     def div_error(self):
-        """Compute divergence of traget matrix from its NMF estimate."""
+        """Compute divergence of target matrix from its NMF estimate."""
         return (multiply(self.V, elop(self.V, dot(self.W, self.H), log)) - self.V + dot(self.W, self.H)).sum()
     
     def conn_error(self):
