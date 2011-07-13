@@ -13,6 +13,70 @@ from operator import mul
 ###    scipy.sparse, numpy.matrix
 #######
 
+def any(X, axis = None):
+    """Test whether any element along a given axis of sparse or dense matrix X are nonzero."""
+    if sp.isspmatrix(X): 
+        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+        assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
+        if axis is None:
+            return len(X.data) != X.shape[0] * X.shape[1]
+        res = [0 for _ in xrange(X.shape[1 - axis])] 
+        def _caxis(now, row, col):
+            res[col] += 1
+        def _raxis(now, row, col):
+            res[row] += 1
+        check = _caxis if axis == 0 else _raxis 
+        now = 0
+        for row in range(X.shape[0]):
+            upto = X.indptr[row+1]
+            while now < upto:
+                col = X.indices[now]
+                check(now, row, col)
+                now += 1
+        return [x != 0 for x in res]
+    else:
+        return [x for r in X.any(axis).tolist() for x in r] if axis != None else X.any()
+        
+def all(X, axis = None):
+    """Test whether all elemens along a given axis of sparse or dense matrix X are nonzero."""
+    if sp.isspmatrix(X):
+        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+        assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
+        if axis is None:
+            return len(X.data) == X.shape[0] * X.shape[1]
+        res = [0 for _ in xrange(X.shape[1 - axis])] 
+        def _caxis(now, row, col):
+            res[col] += 1
+        def _raxis(now, row, col):
+            res[row] += 1
+        check = _caxis if axis == 0 else _raxis
+        now = 0
+        for row in range(X.shape[0]):
+            upto = X.indptr[row+1]
+            while now < upto:
+                col = X.indices[now]
+                check(now, row, col)
+                now += 1
+        return [x == X.shape[0] if axis == 0 else x == X.shape[1] for x in res]
+    else:
+        return [x for r in X.all(axis).tolist() for x in r] if axis != None else X.all()
+
+def find(X):
+    """Return all nonzero elements indices (linear indices) of sparse or dense matrix X. It is Matlab notation."""
+    if sp.isspmatrix(X):
+        res = []
+        now = 0
+        for row in range(X.shape[0]):
+            upto = X.indptr[row+1]
+            while now < upto:
+                col = X.indices[now]
+                if X.data[now]:
+                    res.append((col + 1) * X.shape[0] + row + 1)
+                now += 1
+        return res
+    else:
+        return [(j + 1) *  X.shape[0] + i + 1 for i in xrange(X.shape[0]) for j in xrange(X.shape[1]) if X[i,j]]
+
 def negative(X):
     """Check if X contains negative elements."""
     if sp.isspmatrix(X):
@@ -33,7 +97,7 @@ def argmax(X, axis = None):
         res = [[float('-inf'), 0] for _ in xrange(X.shape[1 - axis])] if axis is not None else [float('-inf'), 0]
         def _caxis(now, row, col):
             if X.data[now] > res[col][0]:
-                    res[col] = (X.data[now], row)
+                res[col] = (X.data[now], row)
         def _raxis(now, row, col):
             if X.data[now] > res[row][0]:
                 res[row] = (X.data[now], col)

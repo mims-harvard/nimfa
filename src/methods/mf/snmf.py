@@ -1,4 +1,4 @@
-from operator import div, ne
+from operator import div, ne, ge, le
 from math import sqrt
 
 import utils.utils as utils
@@ -12,7 +12,7 @@ class Snmf(object):
     In order to enforce sparseness on basis or mixture matrix, SNMF can be used, namely two formulations: SNMF/L for 
     sparse W (sparseness is imposed on the left factor) and SNMF/R for sparse H (sparseness imposed on the right factor).
     These formulations utilize L1-norm minimization. Each subproblem is solved by a fast nonnegativity constrained
-    least squares (NLS) algorithm (van Benthem ane Keenan, 2004) that is improved upon the active set based NLS method. 
+    least squares (FCNNLS) algorithm (van Benthem and Keenan, 2004) that is improved upon the active set based NLS method. 
     
     SNMF/R contains two subproblems for two-block minimization scheme. The objective function is coercive on the 
     feasible set. It can be shown (Grippo and Sciandrome, 2000) that two-block minimization process is convergent, 
@@ -143,8 +143,40 @@ class Snmf(object):
         return erravg
         
     def _fcnnls(self, C, A):
-        """NNLS using normal equations and fast combinatorial strategy."""
-        pass
+        """
+        NNLS using normal equations and fast combinatorial strategy (van Benthem and Keenan, 2004). 
         
+        Given A and C this algorithm solves for the optimal K in a least squares sense, using that A = C*K in the problem
+        ||A - C*K||, s.t. K>=0 for given A and C. 
+        
+        C is the nObs x lVar coefficient matrix
+        A is the nObs x pRHS matrix of observations
+        K is the lVar x pRHS solution matrix
+        
+        Pset is set of passive sets, one for each column. 
+        Fset is set of column indices for solutions that have not yet converged. 
+        Hset is set of column indices for currently infeasible solutions. 
+        Jset is working set of column indices for currently optimal solutions. 
+        """
+        nObs, lVar = C.shape
+        pRHS = A.shape[1]
+        W = np.matrix(np.zeros((lVar, pRHS)))
+        iter = 0
+        maxiter = 2 * lVar
+        # precompute parts of pseudoinverse
+        CtC = dot(C.T, C)
+        CtA = dot(C.T, A)
+        # obtain the initial feasible solution and corresponding passive set
+        K = self.__cssls(CtC, CtA)
+        Pset = sop(K, 0, ge)
+        K = sop(K, 0, le)
+        D = K 
+        Fset  = find(any(Pset, 0))
+        
+    
+    def __cssls(self, CtC, CtA, Pset):
+        """Solve the set of equations CtA = CtC * K for variables defined in set Pset
+        using the fast combinatorial approach (van Benthem and Keenan, 2004)."""
+        pass
         
         
