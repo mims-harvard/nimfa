@@ -103,7 +103,7 @@ class Snmf(object):
     def update(self):
         """Update basis and mixture matrix."""
         # min_h ||[[W; 1 ... 1]*H  - [A; 0 ... 0]||, s.t. H>=0, for given A and W.
-        self.H = self._fcnnls(vstack((self.W, self.betavec)), vstack((self.V, np.zeros((1, self.V.shape[1])))))
+        self.H, _ = self._fcnnls(vstack((self.W, self.betavec)), vstack((self.V, np.zeros((1, self.V.shape[1])))))
         if any(self.H.sum(1) == 0):
             self.nrestart += 1
             if self.nrestart >= 10:
@@ -116,7 +116,7 @@ class Snmf(object):
             self.W = elop(self.W, repmat(sop(sum(multiply(self.W, self.W), 0), sqrt), self.V[0], 1), div)
             return 
         # min_w ||[H'; I_k]*W' - [A'; 0]||, s.t. W>=0, for given A and H.
-        self.W = self._fcnnls(vstack((self.H.T, self.I_k)),vstack((self.V.T,  np.zeros((self.rank, self.V.shape[0]))))).T  
+        self.W, _ = self._fcnnls(vstack((self.H.T, self.I_k)),vstack((self.V.T,  np.zeros((self.rank, self.V.shape[0]))))).T  
     
     def fro_error(self):
         """Compute NMF objective value with additional sparsity constraints."""
@@ -167,12 +167,32 @@ class Snmf(object):
         CtC = dot(C.T, C)
         CtA = dot(C.T, A)
         # obtain the initial feasible solution and corresponding passive set
+        # K is not sparse
         K = self.__cssls(CtC, CtA)
         Pset = sop(K, 0, ge)
         K = sop(K, 0, le)
         D = K 
         Fset  = find(any(Pset, 0))
-        
+        # active set algorithm for NNLS main loop
+        oitr = 0
+        while Fset:
+            oitr += 1    
+            # solve for the passive variables
+            K[:, Fset] = self.__cssls(CtC, CtA[:, Fset], Pset[:, Fset])
+            # find any infeasible solutions
+            Hset = Fset[find(any(K[:, Fset] < 0))]
+            # make infeasible solutions feasible (standard NNLS inner loop)
+            if Hset:
+                nHset = len(Hset)
+                alpha = np.matrix(np.zeros((lVar, nHset)))
+                while Hset and iter < maxiter:
+                    iter += 1
+                    alpha[:,:nHset] = np.Inf
+                    # find indices of negative variables in passive set
+                    """TODO"""
+            # make sure the solution has converged and check solution for optimality
+            
+        return K, Pset
     
     def __cssls(self, CtC, CtA, Pset):
         """Solve the set of equations CtA = CtC * K for variables defined in set Pset

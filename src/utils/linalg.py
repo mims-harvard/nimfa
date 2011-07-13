@@ -38,7 +38,7 @@ def any(X, axis = None):
         return [x for r in X.any(axis).tolist() for x in r] if axis != None else X.any()
         
 def all(X, axis = None):
-    """Test whether all elemens along a given axis of sparse or dense matrix X are nonzero."""
+    """Test whether all elements along a given axis of sparse or dense matrix X are nonzero."""
     if sp.isspmatrix(X):
         assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
