@@ -124,8 +124,8 @@ class Snmf(object):
         
     def objective(self):
         """Compute convergence test."""
-        idxW = argmax(self.W, 1)
-        idxH = argmax(self.H, 0)
+        _, idxW = argmax(self.W, axis = 1).T
+        _, idxH = argmax(self.H, axis = 0)
         changedW = count(elop(idxW, self.idxWold, ne), 1)
         changedH = count(elop(idxH, self.idxHold, ne), 1)
         if changedW <= self.w_min_change and changedH == 0:
@@ -158,7 +158,9 @@ class Snmf(object):
         Hset is set of column indices for currently infeasible solutions. 
         Jset is working set of column indices for currently optimal solutions. 
         """
-        nObs, lVar = C.shape
+        C = C.todense() if sp.isspmatrix(C) else C
+        A = A.todense() if sp.isspmatrix(A) else A
+        _, lVar = C.shape
         pRHS = A.shape[1]
         W = np.matrix(np.zeros((lVar, pRHS)))
         iter = 0
@@ -175,28 +177,70 @@ class Snmf(object):
         Fset  = find(any(Pset, 0))
         # active set algorithm for NNLS main loop
         oitr = 0
-        while Fset:
+        while Fset.size > 0:
             oitr += 1    
             # solve for the passive variables
             K[:, Fset] = self.__cssls(CtC, CtA[:, Fset], Pset[:, Fset])
             # find any infeasible solutions
             Hset = Fset[find(any(K[:, Fset] < 0))]
             # make infeasible solutions feasible (standard NNLS inner loop)
-            if Hset:
+            if Hset.size > 0:
                 nHset = len(Hset)
                 alpha = np.matrix(np.zeros((lVar, nHset)))
                 while Hset and iter < maxiter:
                     iter += 1
                     alpha[:,:nHset] = np.Inf
                     # find indices of negative variables in passive set
-                    """TODO"""
+                    i,j = find(elop(Pset[:, Hset], (K[:, Hset] < 0), np.logical_and))
+                    if i.size == 0:
+                        break
+                    hIdx = sub2ind((lVar, nHset), i, j)
+                    if nHset == 1:
+                        negIdx = sub2ind(K.shape, i, Hset * np.matrix(np.ones((len(j),1))))
+                    else:
+                        negIdx = sub2ind(K.shape, i, Hset[j].T)
+                    alpha[hIdx] = D[negIdx] / (D[negIdx] - K[negIdx])
+                    alphaMin, minIdx =  argmin(alpha[:, :nHset])
+                    alpha[:, :nHset] = repmat(alphaMin, lVar, 1)
+                    D[:,Hset] = D[:,Hset] - multiply(alpha[:, :nHset], (D[:,Hset] - K[:,Hset]))
+                    idx2zero = sub2ind(D.shape, minIdx, Hset)
+                    D[idx2zero] = 0
+                    Pset[idx2zero] = 0
+                    K[:, Hset] = self.__cssls(CtC, CtA[:,Hset], Pset[:,Hset])
+                    Hset = find(any(K < 0))
+                    nHset = len(Hset)
             # make sure the solution has converged and check solution for optimality
-            
+            W[:,Fset] = CtA[:,Fset] - dot(CtC, K[:,Fset])
+            Jset = find(all(multiply(np.logical_not(Pset[:,Fset]), W[:,Fset] <= 0)))
+            Fset = np.setdiff1d(np.asarray(Fset), np.asarray(Fset[Jset]))
+            # for non-optimal solutions, add the appropriate variable to Pset
+            if Fset.size > 0:
+                _, mxidx = argmax(multiply(np.logical_not(Pset[:,Fset]), W[:,Fset]))
+                Pset[sub2ind((lVar, pRHS), mxidx, Fset)] = 1
+                D[:,Fset] = K[:,Fset]
         return K, Pset
     
     def __cssls(self, CtC, CtA, Pset):
         """Solve the set of equations CtA = CtC * K for variables defined in set Pset
         using the fast combinatorial approach (van Benthem and Keenan, 2004)."""
-        pass
+        K = np.matrix(np.zeros(CtA.shape))
+        if Pset.size == 0 or all(Pset):
+            # equivalent if CtC is square matrix
+            K = dot(np.linalg.inv(CtC), CtA)
+            # K = pinv(CtC) * CtA
+        else:
+            lVar, pRHS = Pset.shape
+            codedPset = dot(sop(np.matrix(range(lVar - 1, 0, -1)).T, 2, pow), Pset)
+            sortedPset, sortedEset = sort(codedPset)
+            breaks = diff(sortedPset)
+            breakIdx = [0] + find(breaks) + [pRHS]
+            for k in xrange(len(breakIdx) - 1):
+                cols2solve = sortedEset[breakIdx[k] + 1 : breakIdx[k + 1]]
+                vars = Pset[:, sortedEset[breakIdx[k] + 1]]
+                K[vars,cols2solve] = dot(np.linalg.inv(CtC[vars,vars]), CtA[vars,cols2solve])
+                # K(vars,cols2solve) = pinv(CtC(vars,vars)) * CtA(vars,cols2solve);
+        return K
+    
+    
         
         

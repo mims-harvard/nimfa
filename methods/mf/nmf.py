@@ -106,7 +106,7 @@ class Nmf(object):
     def conn_error(self):
         """Compute connectivity matrix changes -- number of changing elements.
         if the number of instances changing the cluster is lower or equal to min_residuals, terminate factorization run."""
-        idx = argmax(self.H, axis = 0)
+        _, idx = argmax(self.H, axis = 0)
         mat1 = repmat(idx, self.V.shape[1], 1)
         mat2 = repmat(idx.T, 1, self.V.shape[1])
         cons = elop(mat1, mat2, eq)
