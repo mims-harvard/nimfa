@@ -3,6 +3,7 @@ import scipy.sparse as sp
 import scipy.sparse.linalg as sla
 import numpy.linalg as nla
 from operator import mul
+from itertools import izip
 
 """
     Linear algebra helper routines
@@ -12,6 +13,19 @@ from operator import mul
 ###    Wrapper functions for handling sparse matrices and dense matrices representation.
 ###    scipy.sparse, numpy.matrix
 #######
+
+def diff(X):
+    """Compute differences between adjacent elements of X."""   
+    assert 1 in X.shape, "X should be a vector."
+    assert not sp.isspmatrix(X), "X is sparse matrix."
+    X = X.flatten()
+    return [X[0, j + 1] - X[0, j] for j in xrange(X.shape[1] - 1)]
+
+def sub2ind(shape, row_sub, col_sub):
+    """Return the linear index equivalents to the row and column subscripts for given matrix shape"""
+    assert len(row_sub) == len(col_sub), "Row and column subscripts do not match."
+    res = [j * shape[0] + i for i,j in zip(row_sub, col_sub)]
+    return res
 
 def any(X, axis = None):
     """Test whether any element along a given axis of sparse or dense matrix X are nonzero."""
@@ -35,7 +49,7 @@ def any(X, axis = None):
                 now += 1
         return [x != 0 for x in res]
     else:
-        return [x for r in X.any(axis).tolist() for x in r] if axis != None else X.any()
+        return X.any(axis)
         
 def all(X, axis = None):
     """Test whether all elements along a given axis of sparse or dense matrix X are nonzero."""
@@ -59,7 +73,7 @@ def all(X, axis = None):
                 now += 1
         return [x == X.shape[0] if axis == 0 else x == X.shape[1] for x in res]
     else:
-        return [x for r in X.all(axis).tolist() for x in r] if axis != None else X.all()
+        return X.all(axis)
 
 def find(X):
     """Return all nonzero elements indices (linear indices) of sparse or dense matrix X. It is Matlab notation."""
@@ -71,11 +85,11 @@ def find(X):
             while now < upto:
                 col = X.indices[now]
                 if X.data[now]:
-                    res.append((col + 1) * X.shape[0] + row + 1)
+                    res.append(col * X.shape[0] + row)
                 now += 1
         return res
     else:
-        return [(j + 1) *  X.shape[0] + i + 1 for i in xrange(X.shape[0]) for j in xrange(X.shape[1]) if X[i,j]]
+        return [j * X.shape[0] + i for i in xrange(X.shape[0]) for j in xrange(X.shape[1]) if X[i,j]]
 
 def negative(X):
     """Check if X contains negative elements."""
@@ -86,6 +100,13 @@ def negative(X):
         if any(np.asmatrix(X) < 0):
             return True
         
+def sort(X):
+    """Return sorted elements of X and also array of indices."""
+    assert 1 in X.shape, "X should be vector."
+    X = X.flatten().tolist()[0]
+    return sorted(X), sorted(range(len(X)), key = X.__getitem__)
+    
+    
 def argmax(X, axis = None):
     """Return indices of the maximum values along an axis. Row major order.
     :param X: sparse or dense matrix
@@ -95,27 +116,74 @@ def argmax(X, axis = None):
         assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
         res = [[float('-inf'), 0] for _ in xrange(X.shape[1 - axis])] if axis is not None else [float('-inf'), 0]
-        def _caxis(now, row, col):
-            if X.data[now] > res[col][0]:
-                res[col] = (X.data[now], row)
-        def _raxis(now, row, col):
-            if X.data[now] > res[row][0]:
-                res[row] = (X.data[now], col)
-        def _naxis(now, row, col):
-            if X.data[now] > res[0]:
-                res[0] = X.data[now]
+        def _caxis(row, col):
+            if X[row, col] > res[col][0]:
+                res[col] = (X[row, col], row)
+        def _raxis(row, col):
+            if X[row, col] > res[row][0]:
+                res[row] = (X[row, col], col)
+        def _naxis(row, col):
+            if X[row, col] > res[0]:
+                res[0] = X[row, col]
+                res[1] = row * X.shape[0] + col 
+        check = _caxis if axis == 0 else _raxis if axis == 1 else _naxis        
+        [check(row, col) for row in xrange(X.shape[0]) for col in xrange(X.shape[1])]
+        if axis == None:
+            return res
+        elif axis == 0:
+            t = zip(*res)
+            return list(t[0]), np.matrix(t[1])
+        else:
+            t = zip(*res)
+            return list(t[0]), np.matrix(t[1]).T
+    else:
+        idxX = np.asmatrix(X).argmax(axis)
+        if axis == None:
+            eX = X[idxX / X.shape[1], idxX % X.shape[1]]
+        elif axis == 0:
+            eX = [X[idxX[0,idx], col] for idx, col in izip(xrange(X.shape[1]), xrange(X.shape[1]))]
+        else:
+            eX = [X[row, idxX[idx, 0]] for row, idx in izip(xrange(X.shape[0]), xrange(X.shape[0]))]
+        return eX, idxX 
+    
+def argmin(X, axis = None):
+    """Return indices of the minimum values along an axis. Row major order.
+    :param X: sparse or dense matrix
+    :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix`
+    """
+    if sp.isspmatrix(X):
+        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+        assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
+        res = [[float('inf'), 0] for _ in xrange(X.shape[1 - axis])] if axis is not None else [float('inf'), 0]
+        def _caxis(row, col):
+            if X[row, col] < res[col][0]:
+                res[col] = (X[row, col], row)
+        def _raxis(row, col):
+            if X[row, col] < res[row][0]:
+                res[row] = (X[row, col], col)
+        def _naxis(row, col):
+            if X[row, col] < res[0]:
+                res[0] = X[row, col]
                 res[1] = row * X.shape[0] + col 
         check = _caxis if axis == 0 else _raxis if axis == 1 else _naxis
-        now = 0
-        for row in range(X.shape[0]):
-            upto = X.indptr[row+1]
-            while now < upto:
-                col = X.indices[now]
-                check(now, row, col)
-                now += 1
-        return res[1] if axis == None else np.matrix(zip(*res)[1]) if axis == 0 else np.matrix(zip(*res)[1]).T
+        [check(row, col) for row in xrange(X.shape[0]) for col in xrange(X.shape[1])]
+        if axis == None:
+            return res
+        elif axis == 0:
+            t = zip(*res)
+            return list(t[0]), np.matrix(t[1])
+        else:
+            t = zip(*res)
+            return list(t[0]), np.matrix(t[1]).T
     else:
-        return np.asmatrix(X).argmax(axis)
+        idxX = np.asmatrix(X).argmin(axis)
+        if axis == None:
+            eX = X[idxX / X.shape[1], idxX % X.shape[1]]
+        elif axis == 0:
+            eX = [X[idxX[0,idx], col] for idx, col in izip(xrange(X.shape[1]), xrange(X.shape[1]))]
+        else:
+            eX = [X[row, idxX[idx, 0]] for row, idx in izip(xrange(X.shape[0]), xrange(X.shape[0]))]
+        return eX, idxX 
 
 def repmat(X, m, n):
     """Construct matrix consisting of an m-by-n tiling of copies of X."""
