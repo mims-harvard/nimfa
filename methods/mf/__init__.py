@@ -1,4 +1,4 @@
-from methods.mf import bd, icm, lnmf, lsnmf, nmf, nsnmf, pmf, psmf, snmf
+from methods.mf import bd, icm, lnmf, lsnmf, nmf, nsnmf, pmf, psmf, snmf, bnmf
 
 methods = {"bd": bd.Bd, 
            "icm": icm.Icm,
@@ -8,4 +8,5 @@ methods = {"bd": bd.Bd,
            "nsnmf": nsnmf.Nsnmf,
            "pmf": pmf.Pmf,
            "psmf": psmf.Psmf,
-           "snmf": snmf.Snmf}
+           "snmf": snmf.Snmf,
+           "bnmf": bnmf.Bnmf}
