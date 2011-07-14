@@ -7,7 +7,7 @@ from utils.linalg import *
 
 class Snmf(object):
     """
-    Sparse Nonnegative Matrix Factorization (SNMF) based on alternating nonnegativity constrained least squares. [5]
+    Sparse Nonnegative Matrix Factorization (SNMF) based on alternating nonnegativity constrained least squares [5].
     
     In order to enforce sparseness on basis or mixture matrix, SNMF can be used, namely two formulations: SNMF/L for 
     sparse W (sparseness is imposed on the left factor) and SNMF/R for sparse H (sparseness imposed on the right factor).
@@ -30,6 +30,8 @@ class Snmf(object):
         
     def factorize(self, model):
         """
+        Compute matrix factorization. 
+                
         Return fitted factorization model.
         
         :param model: The underlying model of matrix factorization. Algorithm specific model options are 
