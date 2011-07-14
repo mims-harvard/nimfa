@@ -1,5 +1,5 @@
 
-class Lnmf(object):
+class Lfnmf(object):
     '''
     classdocs
     '''
