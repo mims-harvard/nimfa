@@ -1,5 +1,5 @@
 
-class Bd(object):
+class Bnmf(object):
     '''
     classdocs
     '''
