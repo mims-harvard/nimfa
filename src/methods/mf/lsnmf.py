@@ -28,6 +28,8 @@ class Lsnmf(object):
         
     def factorize(self, model):
         """
+        Compute matrix factorization.
+         
         Return fitted factorization model.
         
         :param model: The underlying model of matrix factorization.
