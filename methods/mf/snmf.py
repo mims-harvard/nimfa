@@ -96,7 +96,7 @@ class Snmf(object):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
         if iter == 0:
             self.init_erravg = cobj
-        if self.max_iters and self.max_iters > iter:
+        if self.max_iters and self.max_iters < iter:
             return False
         if self.inc >= self.i_conv and cobj <= self.min_residuals * self.init_erravg:
             return False
@@ -126,7 +126,7 @@ class Snmf(object):
         
     def objective(self):
         """Compute convergence test."""
-        _, idxW = argmax(self.W, axis = 1).T
+        _, idxW = argmax(self.W, axis = 1)
         _, idxH = argmax(self.H, axis = 0)
         changedW = count(elop(idxW, self.idxWold, ne), 1)
         changedH = count(elop(idxH, self.idxHold, ne), 1)

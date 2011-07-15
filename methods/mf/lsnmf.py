@@ -59,7 +59,7 @@ class Lsnmf(object):
     
     def _is_satisfied(self, cobj, iter):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
-        if self.max_iters and self.max_iters > iter:
+        if self.max_iters and self.max_iters < iter:
             return False
         if iter > 0 and cobj < self.min_residuals * self.init_grad:
             return False
