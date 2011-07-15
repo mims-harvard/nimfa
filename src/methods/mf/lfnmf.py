@@ -94,7 +94,7 @@ class Lfnmf(object):
         w2 = repmat(self.W.sum(0), self.V.shape[0], 1)
         self.W = elop(self.W, w2, div)
         self.Sw = 1/C * sum(1/len(cls[i]) * sum(dot((self.H[:, cls[i][j]] - avgs[i]).T, self.H[:, cls[i][j]] - avgs[i]) for j in xrange(len(cls[i]))) for i in cls)
-        self.Sb = 1/(C * (C - 1)) * sum( dot((avgs[i] - avgs[j]).T, avgs[i] - avgs[j]) for i in cls for j in cls)
+        self.Sb = 1/(C * (C - 1)) * sum(dot((avgs[i] - avgs[j]).T, avgs[i] - avgs[j]) for i in cls for j in cls)
          
     def _encoding(self, idxH):
         """Compute class membership and mean class value of encoding (mixture) matrix H."""
