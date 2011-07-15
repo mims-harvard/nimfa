@@ -19,7 +19,7 @@ class Nmf(object):
     Besides usages in bioinformatics NMF can be applied to text analysis, image processing, multiway clustering,
     environmetrics etc. 
     
-    [2] Lee, D..D., and Seung, H.S., (2001), 'Algorithms for Non-negative Matrix Factorization', Adv. Neural Info. Proc. Syst. 13, 556-562.
+    [2] Lee, D..D., and Seung, H.S., (2001), Algorithms for Non-negative Matrix Factorization, Adv. Neural Info. Proc. Syst. 13, 556-562.
     [3] ﻿Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P. (2004). Metagenes and molecular pattern discovery using matrix factorization. Proceedings of the National Academy of Sciences of the United States of America, 101(12), 4164-9. doi: 10.1073/pnas.0308531101.
     """
 
@@ -68,7 +68,7 @@ class Nmf(object):
     
     def _is_satisfied(self, pobj, cobj, iter):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
-        if self.max_iters and self.max_iters > iter:
+        if self.max_iters and self.max_iters < iter:
             return False
         if self.min_residuals and iter > 0 and cobj - pobj <= self.min_residuals:
             return False
@@ -92,10 +92,10 @@ class Nmf(object):
         
     def divergence_update(self):
         """Update basis and mixture matrix based on divergence multiplicative update rules."""
-        x1 = repmat(self.W.sum(0).T, 1, self.V.shape[1])
-        self.H = multiply(self.H, elop(dot(self.W.T, elop(self.V, dot(self.W, self.H), div)), x1, div))
-        x2 = repmat(self.H.sum(1).T, self.V.shape[0], 1)
-        self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, self.H), div), self.H.T), x2, div))
+        h1 = repmat(self.W.sum(0).T, 1, self.V.shape[1])
+        self.H = multiply(self.H, elop(dot(self.W.T, elop(self.V, dot(self.W, self.H), div)), h1, div))
+        w1 = repmat(self.H.sum(1).T, self.V.shape[0], 1)
+        self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, self.H), div), self.H.T), w1, div))
         
     def fro_error(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
@@ -103,7 +103,8 @@ class Nmf(object):
     
     def div_error(self):
         """Compute divergence of target matrix from its NMF estimate."""
-        return (multiply(self.V, elop(self.V, dot(self.W, self.H), log)) - self.V + dot(self.W, self.H)).sum()
+        Va = dot(self.W, self.H)
+        return (multiply(self.V, elop(self.V, Va, log)) - self.V + Va).sum()
     
     def conn_error(self):
         """Compute connectivity matrix changes -- number of changing elements.
