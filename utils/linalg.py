@@ -108,9 +108,12 @@ def sort(X):
     
     
 def argmax(X, axis = None):
-    """Return indices of the maximum values along an axis. Row major order.
+    """
+    Return tuple of values and indices of the maximum entries along an axis. Row major order.
     :param X: sparse or dense matrix
     :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix`
+    :param axis: Specify axis along which to operate.
+    :type axis: `int`
     """
     if sp.isspmatrix(X):
         assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
@@ -147,9 +150,12 @@ def argmax(X, axis = None):
         return eX, idxX 
     
 def argmin(X, axis = None):
-    """Return indices of the minimum values along an axis. Row major order.
+    """
+    Return tuple of values and indices of the minimum entries along an axis. Row major order.
     :param X: sparse or dense matrix
     :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix`
+    :param axis: Specify axis along which to operate.
+    :type axis: `int`
     """
     if sp.isspmatrix(X):
         assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."

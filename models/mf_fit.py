@@ -50,12 +50,18 @@ class Mf_fit():
     def coef(self):
         return self.fit.coef()  
     
-    def distance(self, metric = "KL"):
-        """Return the loss function value."""
-        if self.distance_method:
-            self.fit.distance(metric)
+    def distance(self, metric = None):
+        """
+        Return the loss function value. If metric is not supplied, final objective function value is returned
+        
+        :param metric: Measure of distance between a target matrix and a MF estimate. Metric 'kl' and 'euclidean' 
+                       are defined.  
+        :type metric: 'str'
+        """
+        if not metric:
+            return self.fit.final_obj
         else:
-            print "Distance function not defined."
+            self.fit.distance(metric)
             
     def fitted(self):
         """Compute the estimated target matrix according to the NMF model."""

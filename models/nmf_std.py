@@ -1,5 +1,4 @@
-import scipy.sparse as sp
-import numpy as np
+from math import log
 
 import utils.utils as utils
 import nmf
@@ -19,8 +18,7 @@ class Nmf_std(nmf.Nmf):
         Mixture matrix -- the second matrix factor in standard factorization
         
     '''
-
-
+    
     def __init__(self, **params):
         '''
         Constructor
@@ -38,13 +36,28 @@ class Nmf_std(nmf.Nmf):
             raise utils.MFError("The input matrix contains negative elements.")    
             
     def basis(self):
+        """Return the matrix of basis vectors."""
         return self.W
     
     def coef(self):
+        """Return the matrix of mixture coefficients."""
         return self.H
     
     def fitted(self):
+        """Compute the estimated target matrix according to the NMF model."""
         return dot(self.W, self.H)
     
+    def distance(self, metric):
+        """Return the loss function value."""
+        if metric == 'euclidean':
+            return (elop(self.V - dot(self.W, self.H), 2, pow)).sum()
+        elif metric == 'kl':
+            Va = dot(self.W, self.H)
+            return (multiply(self.V, elop(self.V, Va, log)) - self.V + Va).sum()
+        else:
+            raise utils.MFError("Unknown distance metric.")
+    
     def residuals(self):
-        return 
+        """Return residuals between the target matrix and its NMF estimate."""
+        return self.V - dot(self.W, self.H)
+        
