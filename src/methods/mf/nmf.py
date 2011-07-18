@@ -92,10 +92,10 @@ class Nmf(object):
         
     def divergence_update(self):
         """Update basis and mixture matrix based on divergence multiplicative update rules."""
-        h1 = repmat(self.W.sum(0).T, 1, self.V.shape[1])
-        self.H = multiply(self.H, elop(dot(self.W.T, elop(self.V, dot(self.W, self.H), div)), h1, div))
-        w1 = repmat(self.H.sum(1).T, self.V.shape[0], 1)
-        self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, self.H), div), self.H.T), w1, div))
+        H1 = repmat(self.W.sum(0).T, 1, self.V.shape[1])
+        self.H = multiply(self.H, elop(dot(self.W.T, elop(self.V, dot(self.W, self.H), div)), H1, div))
+        W1 = repmat(self.H.sum(1).T, self.V.shape[0], 1)
+        self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, self.H), div), self.H.T), W1, div))
         
     def fro_error(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
