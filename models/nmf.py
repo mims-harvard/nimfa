@@ -1,4 +1,4 @@
-from math import sqrt
+from math import sqrt, log
 
 import methods.mf as mf
 import methods.seeding as seed
@@ -114,9 +114,27 @@ class Nmf(object):
         """Return triple containing the dimension of the target matrix and NM factorization rank."""
         return (self.V.shape, self.rank)
     
-    def entropy(self):
-        """Compute the entropy of the NMF model given a priori known groups of samples (Kim, Park, 2007)."""
+    def entropy(self, membership = None):
+        """
+        Compute the entropy of the NMF model given a priori known groups of samples (Kim, Park, 2007).
         
+        The entropy is a measure of performance of a clustering method in recovering classes defined by a list a priori known (true class
+        labels). 
+        
+        Return the real number. The smaller the entropy, the better the clustering performance.
+        
+        :param membership: Specify known class membership for each sample. 
+        :type membership: `list`
+        """
+        if not membership:
+            raise utils.MFError("Known class membership for each sample is not specified.")
+        n = self.V.shape[1]
+        mbs = self.predict(what = "samples", prob = False)
+        dmbs, dmembership = {}, {}
+        [dmbs.setdefault(mbs[i], set()).add(i) for i in xrange(len(mbs))]
+        [dmembership.setdefault(membership[i], set()).add(i) for i in xrange(len(membership))]
+        return -1. / (n * log(len(dmembership), 2)) * sum(sum( len(dmbs[k].intersection(dmembership[j])) * 
+               log(len(dmbs[k].intersection(dmembership[j])) / float(len(dmbs[k])), 2) for j in dmembership) for k in dmbs)
         
     def predict(self, what = 'samples', prob = False):
         """
@@ -167,7 +185,7 @@ class Nmf(object):
         """
         Compute the purity given a priori known groups of samples (Kim, Park, 2007).
         
-        The purity is a measure of performance of a clustering method in recovering the classes defined by a list a priori known (true class
+        The purity is a measure of performance of a clustering method in recovering classes defined by a list a priori known (true class
         labels). 
         
         Return the real number in [0,1]. The larger the purity, the better the clustering performance. 
