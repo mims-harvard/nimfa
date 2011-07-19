@@ -10,7 +10,8 @@ class Nmf(object):
     This class defines a common interface / model to handle NMF models in generic way.
     
     It contains definitions of the minimum set of generic methods that are used in 
-    common computations and NM factorizations. 
+    common computations and matrix factorizations. Besides it contains some quality and performance measures 
+    about factorizations. 
     
     .. attribute:: rank
     
@@ -153,7 +154,7 @@ class Nmf(object):
         :param prob: Specify dominant basis components probability inclusion. 
         :type prob: `bool` equivalent
         """
-        X = self.H if what == "samples" else self.W.T if what == "features" else None
+        X = self.coef() if what == "samples" else self.basis().T if what == "features" else None
         if not X:
             raise utils.MFError("Dominant basis components can be computed for samples or features.")
         eX, idxX = argmax(X, axis = 0)
@@ -173,13 +174,45 @@ class Nmf(object):
         """
         return 1. - self.rss() / multiply(self.V, self.V).sum()
         
-    def feature_score(self):
-        """Compute the score for each feature representing specificity to basis vectors (Kim, Park, 2007)."""
-        pass
+    def score_features(self):
+        """
+        Compute the score for each feature that represents its specificity to one of the basis vector (Kim, Park, 2007).
+        
+        A row vector of the basis matrix (W) indicates the contributions of a gene to the r (i.e. columns of W) biological pathways or
+        processes. As genes can participate in more than one biological process, it is beneficial to investigate genes that have relatively 
+        large coefficient in each biological process. 
+        
+        Return the list containing score for each feature. The feature scores are real values in [0,1]. The higher the feature score the more 
+        basis-specific the corresponding feature.  
+        """
+        W = self.basis()
+        def prob(i, q):
+            """Return probability that the i-th feature contributes to the basis q."""
+            return W[i, q] / sum(W[i, :])
+        res = []
+        for f in xrange(W.shape[0]):
+            res.append(1 + 1 / log(W.shape[1], 2) * sum( prob(f, q) * log(prob(f,q), 2) for q in W.shape[1]))
+        return res
     
-    def extract_feature(self):
-        """Compute most specific features for basis vectors (Kim, Park, 2007)."""
-        pass
+    def select_features(self):
+        """
+        Compute the most basis-specific features for each basis vector (Kim, Park, 2007).
+        
+        (Kim, Park, 2007) scoring schema and feature selection method is used. The features are first scored using the :func:`score_features`.
+        Then only the features that fulfill both the following criteria are retained:
+        #. score greater than u + 3s, where u and s are the median and the median absolute deviation (MAD) of the scores, resp.,
+        #. the maximum contribution to a basis component (i.e the maximal value in the corresponding row of the basis matrix (W)) is larger 
+           than the median of all contributions (i.e. of all elements of basis matrix (W)).
+        
+        Return list of retained features' indices.  
+        """
+        scores = self.score_features()
+        u = np.median(scores)
+        s = np.median(abs(scores - u))
+        res = [i for i in xrange(len(scores)) if scores[i] > u + 3. * s]
+        W = self.basis()
+        m = np.median(W.toarray() if sp.isspmatrix(W) else W.tolist())
+        return [i for i in res if np.max(W[:, i].toarray() if sp.isspmatrix(W) else W[:, i]) > m]
     
     def purity(self, membership = None):
         """
