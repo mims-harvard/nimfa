@@ -1,4 +1,5 @@
 from math import sqrt, log
+from operator import eq
 
 import methods.mf as mf
 import methods.seeding as seed
@@ -104,15 +105,26 @@ class Nmf(object):
         """Compute residuals between the target matrix and its NMF estimate."""
         
     def connectivity(self):
-        """Compute the connectivity matrix associated to the clusters based on NM factorization."""
-        pass
+        """
+        Compute the connectivity matrix for the samples based on their mixture coefficients. 
+        
+        The connectivity matrix C is a symmetric matrix which shows the shared membership of the samples: entry C_ij is 1 iff sample i and 
+        sample j belong to the same cluster, 0 otherwise.  
+        
+        Return connectivity matrix.
+        """
+        H = self.coef()
+        _, idx = argmax(H, axis = 0)
+        mat1 = repmat(idx, self.V.shape[1], 1)
+        mat2 = repmat(idx.T, 1, self.V.shape[1])
+        return elop(mat1, mat2, eq)
     
     def consensus(self):
         """Compute consensus matrix as the mean connectivity matrix across the runs."""
         pass
         
     def dim(self):
-        """Return triple containing the dimension of the target matrix and NM factorization rank."""
+        """Return triple containing the dimension of the target matrix and matrix factorization rank."""
         return (self.V.shape, self.rank)
     
     def entropy(self, membership = None):

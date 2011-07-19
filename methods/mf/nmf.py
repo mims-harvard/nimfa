@@ -107,7 +107,8 @@ class Nmf(object):
         return (multiply(self.V, elop(self.V, Va, log)) - self.V + Va).sum()
     
     def conn_error(self):
-        """Compute connectivity matrix changes -- number of changing elements.
+        """
+        Compute connectivity matrix changes -- number of changing elements.
         if the number of instances changing the cluster is lower or equal to min_residuals, terminate factorization run.
         """
         _, idx = argmax(self.H, axis = 0)
