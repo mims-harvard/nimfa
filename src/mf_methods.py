@@ -44,9 +44,9 @@ def mf(target = None, seed = None, W = None, H = None,
     :param rank: The factorization rank to achieve. Default is 30.
     :type rank: `int`
     :param method: The algorithm to use to perform MF on target matrix. Default is :class:`methods.mf.nmf`
-    :type method: `str` naming the algorithm or :class:`methods.mf.bd.Bd`, :class:`methods.mf.icm.Icm`, :class:`methods.mf.lnmf.Lnmf`
+    :type method: `str` naming the algorithm or :class:`methods.mf.bd.Bd`, :class:`methods.mf.icm.Icm`, :class:`methods.mf.lfnmf.Lfnmf`
                 :class:`methods.mf.lsnmf.Lsnmf`, :class:`methods.mf.nmf.Nmf`, :class:`methods.mf.nsnmf.Nsmf`, :class:`methods.mf.pmf.Pmf`, 
-                :class:`methods.mf.psmf.Psmf`, :class:`methods.mf.snmf.Snmf`
+                :class:`methods.mf.psmf.Psmf`, :class:`methods.mf.snmf.Snmf`, :class:`methods.mf.bmf.Bmf`
     :param n_run: It specifies the number of runs of the algorithm. Default is 1.
     :type n_run: `int`
     :param model: If not specified in the call, the standard MF model :class:`models.nmf_std.Nmf_std` is used. Some MF algorithms
@@ -59,7 +59,14 @@ def mf(target = None, seed = None, W = None, H = None,
     :param initialize_only: If specified the MF model and its parameters will be only initialized. Factorization will not
                 run. Default is False.
     :type initialize_only: `bool`
-    :param options: Specify some runtime or algorithm specific options. Default is None.
+    :param options: Specify some runtime or algorithm specific options. For details on algorithm specific options see specific algorithm
+                    documentation. Runtime specific options are:
+                    #. When option track=True is specified, the fitted factorization model is tracked during the multiple runs of the algorithm. 
+                       This option is taken into account only when multiple runs are executed (:param:`n_run` > 1). From each run of the 
+                       factorization all matrix factors are retained, which can very space consuming. In that case setting the callback 
+                       function with :param:`callback` is advised which is executed after each run. Tracking is useful for performing some
+                       quality or performance measures (e.g. cophenetic correlation, consensus matrix, dispersion).
+                    Default is None. 
     :type options: `dict`
     
      Stopping criteria:
