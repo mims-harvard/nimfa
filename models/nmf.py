@@ -1,5 +1,6 @@
 from math import sqrt, log
-from operator import eq
+from operator import eq, div
+import warnings
 
 import methods.seeding as seed
 import utils.utils as utils
@@ -99,7 +100,7 @@ class Nmf(object):
     def residuals(self):
         """Compute residuals between the target matrix and its NMF estimate."""
         
-    def connectivity(self):
+    def connectivity(self, H = None):
         """
         Compute the connectivity matrix for the samples based on their mixture coefficients. 
         
@@ -108,15 +109,26 @@ class Nmf(object):
         
         Return connectivity matrix.
         """
-        H = self.coef()
+        H = self.coef() if not H else H
         _, idx = argmax(H, axis = 0)
         mat1 = repmat(idx, self.V.shape[1], 1)
         mat2 = repmat(idx.T, 1, self.V.shape[1])
         return elop(mat1, mat2, eq)
     
     def consensus(self):
-        """Compute consensus matrix as the mean connectivity matrix across the runs."""
+        """
+        Compute consensus matrix as the mean connectivity matrix across multiple runs of the factorization. It has been
+        proposed by Brunet et. all (2004) to help visualize and measure the stability of the clusters obtained by NMF.
         
+        Tracking of matrix factors across multiple runs must be enabled for computing consensus matrix. For results
+        of a single NMF run, the consensus matrix reduces to the connectivity matrix.
+        """
+        if not self.tracker:
+            warnings.warn("Tracking matrix factors across runs is not enabled. Connectivity matrix will be computed.")
+        cons = np.matrix(np.zeros((self.V.shape[1], self.V.shape[1])))
+        for i in xrange(self.n_run):
+            cons += self.connectivity(self.tracker[i].H)
+        return sop(cons, self.n_run, div)
         
     def dim(self):
         """Return triple containing the dimension of the target matrix and matrix factorization rank."""

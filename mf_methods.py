@@ -6,8 +6,7 @@
     Returned object can be directly passed to visualization or comparison utilities or as initialization 
     to another factorization method.
     
-    #. [mandatory] Choose the algorithm to perform MF on target matrix.
-    #. Choose the MF model.
+    #. [mandatory] Choose the MF model by specifying the algorithm to perform MF on target matrix.
     #. Choose the number of runs of the MF algorithm. Useful for achieving stability when using random
        seeding method.  
     #. Pass a callback function which is called after each run when performing multiple runs of the algorithm.
@@ -16,9 +15,7 @@
     #. [mandatory] Choose the factorization rank to achieve.
     #. [mandatory] Choose the seeding method to compute the starting point passed to te algorithm. 
     #. [mandatory] Provide the target object to estimate. 
-    
 """
-
 import methods
 import methods.mf as mf
 import utils.utils as utils
