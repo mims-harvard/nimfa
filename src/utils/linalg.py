@@ -252,12 +252,12 @@ def _sop_matrix(X, s = None, op = None):
 def elop(X, Y, op):
     """Compute element-wise operation of matrix X and matrix Y."""
     try:
-        zp = op(0, 1) if sp.isspmatrix(X) else op(1, 0)
+        zp1 = op(0, 1) if sp.isspmatrix(X) else op(1, 0)
+        zp2 = op(0, 0) 
+        zp = zp1 != 0 or zp2 != 0
     except:
         zp = 0
-    if sp.isspmatrix(X) and sp.isspmatrix(Y):
-        return _op_spmatrix(X, Y, op) if not zp else _op_matrix(X, Y, op)
-    elif sp.isspmatrix(X) or sp.isspmatrix(Y):
+    if sp.isspmatrix(X) or sp.isspmatrix(Y):
         return _op_spmatrix(X, Y, op) if not zp else _op_matrix(X, Y, op)
     else:
         return op(np.asmatrix(X), np.asmatrix(Y))
