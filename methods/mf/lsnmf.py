@@ -1,9 +1,11 @@
 from operator import ne
 
+import models.nmf_std as mstd
 import models.mf_fit as mfit
+import models.mf_track as mtrack
 from utils.linalg import *
 
-class Lsnmf(object):
+class Lsnmf(mstd.Nmf_std):
     """
     Alternating Nonnegative Least Squares Matrix Factorization Using Projected Gradient (bound constrained optimization)
     method for each subproblem (LSNMF) [4]. It converges faster than the popular multiplicative update approach.
@@ -21,23 +23,23 @@ class Lsnmf(object):
     [4] ﻿Lin, C.-J. (2007). Projected gradient methods for nonnegative matrix factorization. Neural computation, 19(10), 2756-79. doi: 10.1162/neco.2007.19.10.2756. 
     """
 
-    def __init__(self):
+    def __init__(self, **params):
+        """
+        For detailed explanation of the general model parameters see :mod:`mf_methods`.
+        
+        If min_residuals of the underlying model is not specified, default value of min_residuals 0.001 is set.  
+        """
+        mstd.Nmf_std.__init__(self, params)
         self.aname = "lsnmf"
-        self.amodels = ["nmf_std"]
         self.aseeds = ["random", "fixed", "nndsvd"]
         
-    def factorize(self, model):
+    def factorize(self):
         """
         Compute matrix factorization.
          
         Return fitted factorization model.
-        
-        :param model: The underlying model of matrix factorization.
-                      If min_residuals of the underlying model is not specified, default value of min_residuals 0.001 is set.  
-        :type model: :class:`models.nmf_std.Nmf_std`
         """
-        self.__dict__.update(model.__dict__)
-        if not self.min_residuals: self.min_residuals = 0.001
+        self._set_params()
         
         for _ in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
@@ -52,9 +54,15 @@ class Lsnmf(object):
                 self.update()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
-            self.final_obj = cobj
-            mffit = mfit.Mf_fit(self)
-            if self.callback: self.callback(mffit)
+            if self.callback:
+                self.final_obj = cobj
+                mffit = mfit.Mf_fit(self) 
+                self.callback(mffit)
+            if self.tracker != None:
+                self.tracker.append(mtrack.Mf_track(W = self.W.copy(), H = self.H.copy()))
+        
+        self.final_obj = cobj
+        mffit = mfit.Mf_fit(self)
         return mffit
     
     def _is_satisfied(self, cobj, iter):
@@ -64,6 +72,10 @@ class Lsnmf(object):
         if iter > 0 and cobj < self.min_residuals * self.init_grad:
             return False
         return True
+    
+    def _set_params(self):
+        if not self.min_residuals: self.min_residuals = 0.001
+        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
             
     def update(self):
         """Update basis and mixture matrix."""

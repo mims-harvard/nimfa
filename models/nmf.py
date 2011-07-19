@@ -1,7 +1,6 @@
 from math import sqrt, log
 from operator import eq
 
-import methods.mf as mf
 import methods.seeding as seed
 import utils.utils as utils
 from utils.linalg import *
@@ -59,18 +58,14 @@ class Nmf(object):
     def __init__(self, params):
         """
         Construct generic factorization model.
+        
+        :param params: MF runtime and algorithm parameters and options.
+        :type params: `dict`
         """
         self.__dict__.update(params)
         
     def _is_smdefined(self):
         """Check if MF and seeding methods are well defined."""
-        if type(self.method) is str:
-            if self.method in mf.methods:
-                self.method = mf.methods[self.method]()
-            else: raise utils.MFError("Unrecognized MF method.")
-        else:
-            if not self.method.name in mf.methods:
-                raise utils.MFError("Unrecognized MF method.")
         if type(self.seed) is str:
             if self.seed in seed.methods:
                 self.seed = seed.methods[self.seed]()
@@ -81,13 +76,13 @@ class Nmf(object):
         self._compatibility()
         
     def _compatibility(self):
-        """Check if MF model is compatible with MF method and seeding method."""
-        if not self.name in self.method.amodels and self.seed.name in self.method.aseeds:
-            raise utils.MFError("MF model is incompatible with chosen MF method and seeding method.")   
+        """Check if MF model is compatible with the seeding method."""
+        if not self.seed.name in self.aseeds:
+            raise utils.MFError("MF model is incompatible with chosen seeding method.")   
     
     def run(self):
         """Run the specified MF algorithm."""
-        return self.method.factorize(self)
+        return self.method.factorize()
         
     def basis(self):
         """Return the matrix of basis vectors."""
@@ -121,7 +116,7 @@ class Nmf(object):
     
     def consensus(self):
         """Compute consensus matrix as the mean connectivity matrix across the runs."""
-        pass
+        
         
     def dim(self):
         """Return triple containing the dimension of the target matrix and matrix factorization rank."""

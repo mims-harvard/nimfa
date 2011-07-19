@@ -1,11 +1,13 @@
 from operator import div, ne, ge, le
 from math import sqrt
 
+import models.nmf_std as mstd
 import utils.utils as utils
 import models.mf_fit as mfit
+import models.mf_track as mtrack
 from utils.linalg import *
 
-class Snmf(object):
+class Snmf(mstd.Nmf_std):
     """
     Sparse Nonnegative Matrix Factorization (SNMF) based on alternating nonnegativity constrained least squares [5].
     
@@ -23,37 +25,36 @@ class Snmf(object):
         Hyunsoo Kim and Haesun Park, Bioinformatics, 2007.
     """
 
-    def __init__(self, params):
+    def __init__(self, **params):
+        """
+        For detailed explanation of the general model parameters see :mod:`mf_methods`.
+        
+        Algorithm specific model options are 'version', 'eta', 'beta', 'i_conv', 'w_min_change' which can be passed 
+        with values as keyword arguments.
+        The parameter min_residuals of the underlying model is used as KKT convergence test and should have positive value. If not specified, value 1e-4 is used. 
+            #. Parameter version specifies version of the SNMF algorithm. it has two accepting values,
+               'r' and 'l' for SNMF/R and SNMF/L, respectively. Default choice is SNMF/R.
+            #. Parameter eta is used for suppressing Frobenius norm on basis matrix (W). Default value
+               is maximum value in target matrix (V). If eta is negative, maximum value in target matrix is
+               used for it. 
+            #. Parameter beta controls sparseness. Larger beta generates higher sparseness on H. Too large
+               beta is not recommended. It should have positive value. Default value is 0.01
+            #. Parameter i_conv is part of biclustering convergence test. Decide convergence if row clusters
+               and column clusters have not changed for i_conv convergence checks. It should have nonnegative value.
+               Default value is 10.
+            #. Parameter w_min_change is part of biclustering convergence test. It specifies the minimal allowance
+               of the change of row clusters. It should have nonnegative value. Default value is 0.
+        """
+        mstd.Nmf_std.__init__(self, params)
         self.aname = "snmf"
-        self.amodels = ["nmf_std"]
         self.aseeds = ["random", "fixed", "nndsvd"]
         
-    def factorize(self, model):
+    def factorize(self):
         """
         Compute matrix factorization. 
                 
         Return fitted factorization model.
-        
-        :param model: The underlying model of matrix factorization. Algorithm specific model options are 
-                      'version', 'eta', 'beta', 'i_conv', 'w_min_change' which can be passed with values as 
-                      keyword arguments to the underlying model. 
-                      The parameter min_residuals of the underlying model is used as KKT convergence test and 
-                      should have positive value. If not specified, value 1e-4 is used. 
-                      #. Parameter version specifies version of the SNMF algorithm. it has two accepting values,
-                         'r' and 'l' for SNMF/R and SNMF/L, respectively. Default choice is SNMF/R.
-                      #. Parameter eta is used for suppressing Frobenius norm on basis matrix (W). Default value
-                         is maximum value in target matrix (V). If eta is negative, maximum value in target matrix is
-                         used for it. 
-                      #. Parameter beta controls sparseness. Larger beta generates higher sparseness on H. Too large
-                         beta is not recommended. It should have positive value. Default value is 0.01
-                      #. Parameter i_conv is part of biclustering convergence test. Decide convergence if row clusters
-                         and column clusters have not changed for i_conv convergence checks. It should have nonnegative value.
-                         Default value is 10.
-                      #. Parameter w_min_change is part of biclustering convergence test. It specifies the minimal allowance
-                         of the change of row clusters. It should have nonnegative value. Default value is 0.
-        :type model: :class:`models.nmf_std.Nmf_std`
         """
-        self.__dict__.update(model.__dict__)
         self._set_params()
         
         for _ in xrange(self.n_run):
@@ -77,9 +78,15 @@ class Snmf(object):
             if self.version == 'l':
                 self.V = self.V.T
                 self.W, self.H = self.H.T, self.W.T
-            self.final_obj = cobj
-            mffit = mfit.Mf_fit(self)
-            if self.callback: self.callback(mffit)
+            if self.callback:
+                self.final_obj = cobj
+                mffit = mfit.Mf_fit(self) 
+                self.callback(mffit)
+            if self.tracker != None:
+                self.tracker.append(mtrack.Mf_track(W = self.W.copy(), H = self.H.copy()))
+        
+        self.final_obj = cobj
+        mffit = mfit.Mf_fit(self)
         return mffit
     
     def _set_params(self):    
@@ -91,6 +98,7 @@ class Snmf(object):
         self.i_conv = self.options['i_conv'] if self.options and 'i_conv' in self.options else 10
         self.w_min_change = self.options['w_min_change'] if self.options and 'w_min_change' in self.options else 0
         self.min_residuals = self.min_residuals if self.min_residuals else 1e-4
+        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
     
     def _is_satisfied(self, cobj, iter):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""

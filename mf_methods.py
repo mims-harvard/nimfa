@@ -20,8 +20,8 @@
 """
 
 import methods
-import utils
-import models.nmf_std as std
+import methods.mf as mf
+import utils.utils as utils
 
 l_mf = methods.list_mf_methods()
 l_seed = methods.list_seeding_methods()
@@ -29,7 +29,7 @@ l_seed = methods.list_seeding_methods()
 def mf(target = None, seed = None, W = None, H = None,  
        rank = 30, method = methods.mf.nmf.Nmf,
        max_iters = None, min_residuals = None, test_conv = None,
-       n_run = 1, model = std.Nmf_std, callback = None, initialize_only = False, **options):
+       n_run = 1, callback = None, initialize_only = False, **options):
     """
     Run the specified MF algorithm.
     
@@ -37,7 +37,8 @@ def mf(target = None, seed = None, W = None, H = None,
     
     :param target: The target matrix to estimate.
     :type target: One of the :class:`scipy.sparse` sparse matrices types or :class:`numpy.ndarray` or :class:`numpy.matrix` 
-    :param seed: Specify method to seed the computation of a factorization. If specified :param:`W` and :param:`H` must be None.
+    :param seed: Specify method to seed the computation of a factorization. If specified :param:`W` and :param:`H` seeding 
+                 must be None. If neither seeding method or initial fixed factorization is specified, random initialization is used
     :type seed: `str` naming the method or :class:`methods.seeding.nndsvd.Nndsvd` or None
     :param W: Specify initial factorization of basis matrix W. Default is None. When specified, :param:`seed` must be None.
     :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or :class:`numpy.matrix` or None
@@ -47,25 +48,22 @@ def mf(target = None, seed = None, W = None, H = None,
     :type rank: `int`
     :param method: The algorithm to use to perform MF on target matrix. Default is :class:`methods.mf.nmf`
     :type method: `str` naming the algorithm or :class:`methods.mf.bd.Bd`, :class:`methods.mf.icm.Icm`, :class:`methods.mf.lfnmf.Lfnmf`
-                :class:`methods.mf.lsnmf.Lsnmf`, :class:`methods.mf.nmf.Nmf`, :class:`methods.mf.nsnmf.Nsmf`, :class:`methods.mf.pmf.Pmf`, 
-                :class:`methods.mf.psmf.Psmf`, :class:`methods.mf.snmf.Snmf`, :class:`methods.mf.bmf.Bmf`
+                  :class:`methods.mf.lsnmf.Lsnmf`, :class:`methods.mf.nmf.Nmf`, :class:`methods.mf.nsnmf.Nsmf`, :class:`methods.mf.pmf.Pmf`, 
+                  :class:`methods.mf.psmf.Psmf`, :class:`methods.mf.snmf.Snmf`, :class:`methods.mf.bmf.Bmf`
     :param n_run: It specifies the number of runs of the algorithm. Default is 1.
     :type n_run: `int`
-    :param model: If not specified in the call, the standard MF model :class:`models.nmf_std.Nmf_std` is used. Some MF algorithms
-                have different underlying models, such as nonsmooth NMF, which uses an extra matrix factor.
-    :type model: `str` naming the model or :class:`models.nmf_std.Nmf_std`
     :param callback: Pass a callback function that is called after each run when performing multiple runs. This is useful
-                if one wants to save summary measures or process the result before it gets discarded. The callback
-                function is called with only one argument :class:`model.nmf_fit` that contains the fitted model. Default is None.
+                     if one wants to save summary measures or process the result before it gets discarded. The callback
+                     function is called with only one argument :class:`model.nmf_fit` that contains the fitted model. Default is None.
     :type callback: `function`
     :param initialize_only: If specified the MF model and its parameters will be only initialized. Factorization will not
-                run. Default is False.
+                            run. Default is False.
     :type initialize_only: `bool`
     :param options: Specify some runtime or algorithm specific options. For details on algorithm specific options see specific algorithm
                     documentation. Runtime specific options are:
                     #. When option track=True is specified, the fitted factorization model is tracked during the multiple runs of the algorithm. 
                        This option is taken into account only when multiple runs are executed (:param:`n_run` > 1). From each run of the 
-                       factorization all matrix factors are retained, which can very space consuming. In that case setting the callback 
+                       factorization all matrix factors are retained, which can be very space consuming. In that case setting the callback 
                        function with :param:`callback` is advised which is executed after each run. Tracking is useful for performing some
                        quality or performance measures (e.g. cophenetic correlation, consensus matrix, dispersion).
                     Default is None. 
@@ -84,14 +82,21 @@ def mf(target = None, seed = None, W = None, H = None,
     :param test_conv: It indicates how often convergence test is done. By default convergence is tested each iteration. 
     :type: `int`
     """
-    if seed not in l_seed or None and seed.name not in l_seed:
-        raise utils.utils.MFError("Unrecognized seeding method. Choose from: %s" % ", ".join(l_seed))
-    if method not in l_mf or None and method.name not in l_mf:
-        raise utils.utils.MFError("Unrecognized MF method. Choose from: %s" % ", ".join(l_mf))
-    mf_model = model(V = target, seed = seed, W = W, H = H,  
-                     rank = rank, method = method,
+    if seed not in l_seed and seed.name not in l_seed:
+        raise utils.MFError("Unrecognized seeding method. Choose from: %s" % ", ".join(l_seed))
+    if method not in l_mf and method.name not in l_mf:
+        raise utils.MFError("Unrecognized MF method. Choose from: %s" % ", ".join(l_mf))
+    try:
+        if type(method) is str:
+            mf_model = mf.methods[method](V = target, seed = seed, W = W, H = H, rank = rank,
                      max_iters = max_iters, min_residuals = min_residuals, test_conv = test_conv,
                      n_run = n_run, callback = callback, options = options)
+        else:
+            mf_model = method(V = target, seed = seed, W = W, H = H, rank = rank,
+                     max_iters = max_iters, min_residuals = min_residuals, test_conv = test_conv,
+                     n_run = n_run, callback = callback, options = options)
+    except:
+        print "Model initialization has been unsuccessful."
     if not initialize_only:
         return mf_model.run()
     else:
@@ -104,7 +109,9 @@ def mf_run(mf_model):
     Return fitted factorization model storing MF results. 
     
     :param mf_model: The underlying initialized model of matrix factorization.
-    :type mf_model: :class:`models.nmf_std.Nmf_std`
+    :type mf_model: Class inheriting :class:`models.nmf.Nmf`
     """
+    if mf_model.name not in mf.methods:
+        raise utils.MFError("Unrecognized MF method.")
     return mf_model.run()
 
