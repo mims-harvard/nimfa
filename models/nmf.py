@@ -7,7 +7,7 @@ import utils.utils as utils
 from utils.linalg import *
 
 class Nmf(object):
-    '''
+    """
     This class defines a common interface / model to handle NMF models in generic way.
     
     It contains definitions of the minimum set of generic methods that are used in 
@@ -54,12 +54,12 @@ class Nmf(object):
     .. attribute:: test_conv
         
         Indication how often convergence test is done.
-    '''
+    """
 
-    def __init__(self, **params):
-        '''
-        Constructor
-        '''
+    def __init__(self, params):
+        """
+        Construct generic factorization model.
+        """
         self.__dict__.update(params)
         
     def _is_smdefined(self):
@@ -109,7 +109,7 @@ class Nmf(object):
         Compute the connectivity matrix for the samples based on their mixture coefficients. 
         
         The connectivity matrix C is a symmetric matrix which shows the shared membership of the samples: entry C_ij is 1 iff sample i and 
-        sample j belong to the same cluster, 0 otherwise.  
+        sample j belong to the same cluster, 0 otherwise. Sample assignment is determined by its largest metagene expression value. 
         
         Return connectivity matrix.
         """
@@ -261,7 +261,7 @@ class Nmf(object):
     
     def sparseness(self):
         """
-        Compute sparseness of matrix (mixture coefficients, basis vectors matrix) (Hoyer, 2004). This sparseness 
+        Compute sparseness of matrix (basis vectors matrix, mixture coefficients) (Hoyer, 2004). This sparseness 
         measure quantifies how much energy of a vector is packed into only few components. The sparseness of a vector
         is a real number in [0, 1]. Sparser vector has value closer to 1. The measure is 1 iff vector contains single
         nonzero component and the measure is equal to 0 iff all components are equal. 

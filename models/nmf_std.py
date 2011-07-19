@@ -6,7 +6,7 @@ from utils.linalg import *
 from methods.seeding.fixed import *
 
 class Nmf_std(nmf.Nmf):
-    '''
+    """
     Implementation of the standard model to manage factorizations that follow NMF standard model. 
     
     .. attribute:: W
@@ -17,12 +17,12 @@ class Nmf_std(nmf.Nmf):
     
         Mixture matrix -- the second matrix factor in standard factorization
         
-    '''
+    """
     
     def __init__(self, **params):
-        '''
+        """
         Constructor
-        '''
+        """
         nmf.Nmf.__init__(self, params)
         if not self.seed and not self.W and not self.H: self.seed = "random"
         if self.W and self.H:
@@ -44,7 +44,7 @@ class Nmf_std(nmf.Nmf):
         return self.H
     
     def fitted(self):
-        """Compute the estimated target matrix according to the NMF model."""
+        """Compute the estimated target matrix according to the NMF algorithm model."""
         return dot(self.W, self.H)
     
     def distance(self, metric):

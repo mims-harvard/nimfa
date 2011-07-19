@@ -1,7 +1,7 @@
 
 
 class Mf_fit():
-    '''
+    """
     Base class for storing NMF results.
     
     It contains generic functions and structure for handling the results of NMF algorithms. 
@@ -35,24 +35,28 @@ class Mf_fit():
     .. attribute:: options
 
         Extra parameters specific to the algorithm used to fit the model.
-    
-    '''
+    """
 
     def __init__(self, fit):
-        '''
-        Constructor
-        '''
+        """
+        Construct fitted factorization model. 
+        
+        :param fit: Matrix factorization algorithm model. 
+        :type fit: class from methods.mf package
+        """
         self.fit = fit
         
     def basis(self):
+        """Return the matrix of basis vectors."""
         return self.fit.basis()
     
     def coef(self):
+        """Return the matrix of mixture coefficients."""
         return self.fit.coef()  
     
     def distance(self, metric = None):
         """
-        Return the loss function value. If metric is not supplied, final objective function value is returned
+        Return the loss function value. If metric is not supplied, final objective function value associated to the MF algorithm is returned.
         
         :param metric: Measure of distance between a target matrix and a MF estimate. Metric 'kl' and 'euclidean' 
                        are defined.  
@@ -64,22 +68,27 @@ class Mf_fit():
             self.fit.distance(metric)
             
     def fitted(self):
-        """Compute the estimated target matrix according to the NMF model."""
+        """Compute the estimated target matrix according to the MF algorithm model."""
         return self.fit.fitted()
     
     def fit(self):
-        """Return the MF model."""
+        """Return the MF algorithm model."""
         return self.fit 
     
     def summary(self):
         """Compute generic set of measures to evaluate the quality of the factorization."""
         return {
                 'rank': self.fit.rank,
-                'sparseness basis': self.fit.sparseness(self.fit.basis()),
-                'sparseness coef': self.fit.sparseness(self.fit.coef()),
+                'sparseness basis': self.fit.sparseness()[0],
+                'sparseness coef': self.fit.sparseness()[1],
                 'rss': self.fit.rss(),
                 'evar': self.fit.evar(),
                 'residuals': self.fit.residuals(),
+                'connectivity': self.fit.connectivity(),
+                'predict_samples': self.fit.predict(what = 'samples', prob = True),
+                'predict_features': self.fit.predict(what = 'features', prob = True),
+                'score_features': self.fit.score_features(),
+                'select_features': self.fit.select_features(), 
                 'niter': self.fit.niter,
                 'nrun': self.fit.nrun
                 }
