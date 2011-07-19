@@ -33,6 +33,8 @@ def mf(target = None, seed = None, W = None, H = None,
     """
     Run the specified MF algorithm.
     
+    Return fitted factorization model storing MF results. If :param:`initialize_only` is set, only initialized model is returned.
+    
     :param target: The target matrix to estimate.
     :type target: One of the :class:`scipy.sparse` sparse matrices types or :class:`numpy.ndarray` or :class:`numpy.matrix` 
     :param seed: Specify method to seed the computation of a factorization. If specified :param:`W` and :param:`H` must be None.
@@ -67,7 +69,7 @@ def mf(target = None, seed = None, W = None, H = None,
                        function with :param:`callback` is advised which is executed after each run. Tracking is useful for performing some
                        quality or performance measures (e.g. cophenetic correlation, consensus matrix, dispersion).
                     Default is None. 
-    :type options: `dict`
+    :type options: option specific
     
      Stopping criteria:
      If multiple criteria are passed, the satisfiability of one terminates the factorization run. 
@@ -91,5 +93,18 @@ def mf(target = None, seed = None, W = None, H = None,
                      max_iters = max_iters, min_residuals = min_residuals, test_conv = test_conv,
                      n_run = n_run, callback = callback, options = options)
     if not initialize_only:
-        res = mf_model.run()
-    return res
+        return mf_model.run()
+    else:
+        return mf_model
+    
+def mf_run(mf_model):
+    """
+    Run the specified MF algorithm.
+    
+    Return fitted factorization model storing MF results. 
+    
+    :param mf_model: The underlying initialized model of matrix factorization.
+    :type mf_model: :class:`models.nmf_std.Nmf_std`
+    """
+    return mf_model.run()
+
