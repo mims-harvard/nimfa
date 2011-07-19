@@ -1,16 +1,20 @@
 
+import models.nmf_std as mstd
 
-class Psmf(object):
+class Psmf(mstd.Nmf_std):
     '''
     classdocs
     '''
 
 
-    def __init__(self, params):
+    def __init__(self, **params):
+        mstd.Nmf_std.__init__(self, params)
         self.aname = "psmf"
-        self.amodels = ["nmf_std"]
         self.aseeds = ["random", "fixed", "nndsvd"]
         
-    def factorize(self, model):
-        self.__dict__.update(model.__dict__)
-        
+    def factorize(self):
+        """
+        Compute matrix factorization.
+         
+        Return fitted factorization model.
+        """

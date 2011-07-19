@@ -7,7 +7,8 @@ from methods.seeding.fixed import *
 
 class Nmf_std(nmf.Nmf):
     """
-    Implementation of the standard model to manage factorizations that follow NMF standard model. 
+    Implementation of the standard model to manage factorizations that follow NMF standard model. The underlying model of 
+    matrix factorization.
     
     .. attribute:: W
         
@@ -16,10 +17,9 @@ class Nmf_std(nmf.Nmf):
     .. attribute:: H
     
         Mixture matrix -- the second matrix factor in standard factorization
-        
     """
     
-    def __init__(self, **params):
+    def __init__(self, params):
         """
         Constructor
         """

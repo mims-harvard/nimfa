@@ -1,10 +1,12 @@
 from operator import div, pow, eq, ne
 from math import log
 
+import models.nmf_std as mstd
 import models.mf_fit as mfit
+import models.mf_track as mtrack
 from utils.linalg import *
 
-class Nmf(object):
+class Nmf(mstd.Nmf_std):
     """
     Standard Nonnegative Matrix Factorization (NMF). Based on Kullbach-Leibler divergence, it uses simple multiplicative
     updates [2], enhanced to avoid numerical underflow [3]. Based on euclidean distance, it uses simple multiplicative
@@ -23,32 +25,30 @@ class Nmf(object):
     [3] ﻿Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P. (2004). Metagenes and molecular pattern discovery using matrix factorization. Proceedings of the National Academy of Sciences of the United States of America, 101(12), 4164-9. doi: 10.1073/pnas.0308531101.
     """
 
-    def __init__(self):
+    def __init__(self, **params):
+        """
+        For detailed explanation of the general model parameters see :mod:`mf_methods`.
+        
+        Algorithm specific model options are type of update equations and type of objective function. 
+        When specifying model, user can pass 'update' keyword argument with one of possible values: 
+            #. 'euclidean' for classic Euclidean distance update equations, 
+            #. 'divergence' for divergence update equations.
+        When specifying model, user can pass 'objective' keyword argument with one of possible values:
+            #. 'fro' for standard Frobenius distance cost function,
+            #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
+            #. 'conn' for connectivity matrix changed elements cost function. 
+        Default are 'euclidean' update equations and 'euclidean' cost function. 
+        """
+        mstd.Nmf_std.__init__(self, params)
         self.name = "nmf"
-        self.amodels = ["nmf_std"]
         self.aseeds = ["random", "fixed", "nndsvd"]
         
-    def factorize(self, model):
+    def factorize(self):
         """
         Compute matrix factorization.
          
         Return fitted factorization model.
-        
-        :param model: The underlying model of matrix factorization. Algorithm specific model options are type of 
-                      update equations and type of objective function. 
-                      When specifying model, user can pass 'update' keyword argument with one of
-                      possible values: 
-                          #. 'euclidean' for classic Euclidean distance update equations, 
-                          #. 'divergence' for divergence update equations.
-                      When specifying model, user can pass 'objective' keyword argument with one of
-                      possible values:
-                          #. 'fro' for standard Frobenius distance cost function,
-                          #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
-                          #. 'conn' for connectivity matrix changed elements cost function. 
-                      Default are 'euclidean' update equations and 'euclidean' cost function. 
-        :type model: :class:`models.nmf_std.Nmf_std`
         """
-        self.__dict__.update(model.__dict__)
         self._set_params()
                 
         for _ in xrange(self.n_run):
@@ -61,9 +61,15 @@ class Nmf(object):
                 self._adjustment()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
-            self.final_obj = cobj
-            mffit = mfit.Mf_fit(self)
-            if self.callback: self.callback(mffit)
+            if self.callback:
+                self.final_obj = cobj
+                mffit = mfit.Mf_fit(self) 
+                self.callback(mffit)
+            if self.tracker != None:
+                self.tracker.append(mtrack.Mf_track(W = self.W.copy(), H = self.H.copy()))
+        
+        self.final_obj = cobj
+        mffit = mfit.Mf_fit(self)
         return mffit
     
     def _is_satisfied(self, pobj, cobj, iter):
@@ -84,6 +90,7 @@ class Nmf(object):
     def _set_params(self):
         self.update = getattr(self, self.options['update'] + '_update') if self.options and 'update' in self.options else self.euclidean_update()
         self.objective = getattr(self, self.options['objective'] + '_objective') if self.options and 'objective' in self.options else self.fro_error()
+        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
         
     def euclidean_update(self):
         """Update basis and mixture matrix based on euclidean distance multiplicative update rules."""

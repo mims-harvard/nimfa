@@ -1,11 +1,10 @@
 
-
 class Mf_fit():
     """
-    Base class for storing NMF results.
+    Base class for storing MF results.
     
-    It contains generic functions and structure for handling the results of NMF algorithms. 
-    It contains a slot with the fitted NMF model and data about parameters and methods used for
+    It contains generic functions and structure for handling the results of MF algorithms. 
+    It contains a slot with the fitted MF model and data about parameters and methods used for
     factorization. 
     
     The purpose of this class is to handle in a generic way the results of MF algorithms and acts as a wrapper for the 

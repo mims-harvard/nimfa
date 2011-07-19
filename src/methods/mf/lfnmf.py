@@ -1,10 +1,12 @@
 from math import log, sqrt
 from operator import div
 
+import models.nmf_std as mstd
 import models.mf_fit as mfit
+import models.mf_track as mtrack
 from utils.linalg import *
 
-class Lfnmf(object):
+class Lfnmf(mstd.Nmf_std):
     """
     Fisher Nonnegative Matrix Factorization for learning Local features (LFNMF) [6].
     
@@ -29,24 +31,24 @@ class Lfnmf(object):
         Conf. on Comp. Vision and Pattern Recognition. CVPR 2001, I-207-I-212. IEEE Comp. Soc. doi: 10.1109/CVPR.2001.990477.
     """
 
-    def __init__(self, params):
+    def __init__(self, **params):
+        """
+        For detailed explanation of the general model parameters see :mod:`mf_methods`.
+        
+        Algorithm specific model option is 'alpha' which can be passed with value as keyword argument.
+        Parameter alpha is weight within class scatter and between class scatter of encoding mixture matrix. It should 
+        be nonnegative.
+        """
+        mstd.Nmf_std.__init__(self, params)
         self.aname = "lnmf"
-        self.amodels = ["nmf_std"]
         self.aseeds = ["random", "fixed", "nndsvd"]
         
-    def factorize(self, model):
+    def factorize(self):
         """
         Compute matrix factorization. 
         
         Return fitted factorization model.
-        
-        :param model: The underlying model of matrix factorization. Algorithm specific model option is 'alpha'
-                      which can be passed with value as keyword argument to the underlying model.
-                      Parameter alpha is weight within class scatter and between class scatter of encoding mixture
-                      matrix. It should be nonnegative.
-        :type model: :class:`models.nmf_std.Nmf_std`
         """
-        self.__dict__.update(model.__dict__)
         self._set_params()
         
         for _ in xrange(self.n_run):
@@ -59,9 +61,15 @@ class Lfnmf(object):
                 self.update()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
-            self.final_obj = cobj
-            mffit = mfit.Mf_fit(self)
-            if self.callback: self.callback(mffit)
+            if self.callback:
+                self.final_obj = cobj
+                mffit = mfit.Mf_fit(self) 
+                self.callback(mffit)
+            if self.tracker != None:
+                self.tracker.append(mtrack.Mf_track(W = self.W.copy(), H = self.H.copy()))
+        
+        self.final_obj = cobj
+        mffit = mfit.Mf_fit(self)
         return mffit
      
     def _is_satisfied(self, pobj, cobj, iter):
@@ -76,6 +84,7 @@ class Lfnmf(object):
     
     def _set_params(self):
         self.alpha = self.options['alpha'] if self.options and 'alpha' in self.options else 0.01
+        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
     
     def update(self):
         """Update basis and mixture matrix."""
