@@ -1,5 +1,6 @@
 from math import sqrt, log
 from operator import eq, div
+from scipy.cluster.hierarchy import linkage, cophenet
 import warnings
 
 import methods.seeding as seed
@@ -301,7 +302,14 @@ class Nmf(object):
         scattered between 0 and 1, the cophenetic correlation is < 1. We observe how this coefficient changes as factorization rank 
         increases. We select the first rank, where the magnitude of the cophenetic correlation coefficient begins to fall (Brunet, 2004).  
         """
-        
+        A = self.consensus()
+        # upper diagonal elements of consensus
+        avec = np.array([A[i,j] for i in xrange(A.shape[0] - 1) for j in xrange(i + 1, A.shape[1])])
+        # consensus entries are similarities, conversion to distances
+        Y = 1 - avec
+        Z = linkage(Y, method = 'average')
+        # cophenetic correlation coefficient of a hierarchical clustering defined by the linkage matrix Z and matrix Y from which Z was generated
+        return cophenet(Z, Y)[0]
     
     def dispersion(self):
         """
