@@ -259,8 +259,10 @@ class Nmf(object):
         Compute Residual Sum of Squares (RSS) between NMF estimate and target matrix (Hutchins, 2008).
         
         This measure can be used to estimate optimal factorization rank. (Hutchins et. al., 2008) suggested to choose
-        the first value where the RSS curve presents an inflection point. (Frigyesi, 2008) suggested to use the 
-        smallest value at which the decrease in the RSS is lower than decrease of the RSS obtained from random data. 
+        the first value where the RSS curve presents an inflection point. (Frigyesi and Hoglund, 2008) suggested to use the 
+        smallest value at which the decrease in the RSS is lower than the decrease of the RSS obtained from random data. 
+        
+        Return real value
         """
         X = self.residuals()
         xX = self.V - X 
@@ -289,10 +291,17 @@ class Nmf(object):
         """
         Compute cophenetic correlation coefficient of consensus matrix, generally obtained from multiple NMF runs. 
         
-        The cophenetic correlation coefficient is based on the average of connectivity matrices (Brunet, 2004). It
-        measures the stability of the clusters obtained from NMF. 
+        The cophenetic correlation coefficient is measure which indicates the dispersion of the consensus matrix and is based 
+        on the average of connectivity matrices. It measures the stability of the clusters obtained from NMF. 
+        It is computed as the Pearson correlation of two distance matrices: the first is the distance between samples induced by the 
+        consensus matrix; the second is the distance between samples induced by the linkage used in the reordering of the consensus 
+        matrix (Brunet, 2004).
+        
+        Return real number. In a perfect consensus matrix, cophenetic correlation equals 1. When the entries in consensus matrix are
+        scattered between 0 and 1, the cophenetic correlation is < 1. We observe how this coefficient changes as factorization rank 
+        increases. We select the first rank, where the magnitude of the cophenetic correlation coefficient begins to fall (Brunet, 2004).  
         """
-        pass
+        
     
     def dispersion(self):
         """
