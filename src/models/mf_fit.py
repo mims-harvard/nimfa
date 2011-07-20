@@ -78,8 +78,8 @@ class Mf_fit():
         """Compute generic set of measures to evaluate the quality of the factorization."""
         return {
                 'rank': self.fit.rank,
-                'sparseness basis': self.fit.sparseness()[0],
-                'sparseness coef': self.fit.sparseness()[1],
+                'sparseness_basis': self.fit.sparseness()[0],
+                'sparseness_coef': self.fit.sparseness()[1],
                 'rss': self.fit.rss(),
                 'evar': self.fit.evar(),
                 'residuals': self.fit.residuals(),
@@ -87,9 +87,14 @@ class Mf_fit():
                 'predict_samples': self.fit.predict(what = 'samples', prob = True),
                 'predict_features': self.fit.predict(what = 'features', prob = True),
                 'score_features': self.fit.score_features(),
-                'select_features': self.fit.select_features(), 
-                'niter': self.fit.niter,
-                'nrun': self.fit.nrun
+                'select_features': self.fit.select_features(),
+                'dispersion': self.fit.dispersion(),
+                'cophenetic': self.fit.cophor(),
+                'consensus': self.fit.consensus(),
+                'euclidean': self.fit.distance(metric = 'euclidean'),
+                'kl': self.fit.distance(metric = 'kl'), 
+                'niter': self.fit.n_iter,
+                'nrun': self.fit.n_run
                 }
     
     

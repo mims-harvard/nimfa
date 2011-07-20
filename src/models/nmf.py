@@ -300,8 +300,12 @@ class Nmf(object):
         NMF runs.
         
         The dispersion coefficient is based on the average of connectivity matrices (Kim, Park, 2007). It 
-        measures the reproducibility of the clusters obtained from NMF. 
+        measures the reproducibility of the clusters obtained from multiple NMF runs.
+        
+        Return the real value in [0,1]. Dispersion is 1 iff for a perfect consensus matrix, where all entries are 0 or 1.
+        A perfect consensus matrix is obtained only when all the connectivity matrices are the same, meaning that
+        the algorithm gave the same clusters at each run.  
         """
-        pass
-    
+        C = self.consensus()
+        return sum(sum(4 * (C[i,j] - 0.5)**2 for j in xrange(C.shape[1])) for i in xrange(C.shape[0]))
     
