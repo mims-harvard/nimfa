@@ -9,7 +9,7 @@ class Nsnmf(mstd.Nmf_std):
 
     def __init__(self, **params):
         mstd.Nmf_std.__init__(self, params)
-        self.aname = "nsnmf"
+        self.name = "nsnmf"
         self.aseeds = ["random", "fixed", "nndsvd"]
         
     def factorize(self):

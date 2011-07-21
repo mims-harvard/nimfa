@@ -46,7 +46,7 @@ class Snmf(mstd.Nmf_std):
                of the change of row clusters. It should have nonnegative value. Default value is 0.
         """
         mstd.Nmf_std.__init__(self, params)
-        self.aname = "snmf"
+        self.name = "snmf"
         self.aseeds = ["random", "fixed", "nndsvd"]
         
     def factorize(self):

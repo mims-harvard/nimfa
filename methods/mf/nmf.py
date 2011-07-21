@@ -9,8 +9,8 @@ from utils.linalg import *
 class Nmf(mstd.Nmf_std):
     """
     Standard Nonnegative Matrix Factorization (NMF). Based on Kullbach-Leibler divergence, it uses simple multiplicative
-    updates [2], enhanced to avoid numerical underflow [3]. Based on euclidean distance, it uses simple multiplicative
-    updates [2]. Different objective functions can be used, namely euclidean distance, divergence or connectivity 
+    updates [2], enhanced to avoid numerical underflow [3]. Based on Euclidean distance, it uses simple multiplicative
+    updates [2]. Different objective functions can be used, namely Euclidean distance, divergence or connectivity 
     matrix convergence. 
     
     Together with a novel model selection mechanism, NMF is an efficient method for identification of distinct molecular
@@ -31,13 +31,13 @@ class Nmf(mstd.Nmf_std):
         
         Algorithm specific model options are type of update equations and type of objective function. 
         When specifying model, user can pass 'update' keyword argument with one of possible values: 
-            #. 'euclidean' for classic Euclidean distance update equations, 
+            #. 'Euclidean' for classic Euclidean distance update equations, 
             #. 'divergence' for divergence update equations.
         When specifying model, user can pass 'objective' keyword argument with one of possible values:
             #. 'fro' for standard Frobenius distance cost function,
             #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
             #. 'conn' for connectivity matrix changed elements cost function. 
-        Default are 'euclidean' update equations and 'euclidean' cost function. 
+        Default are 'Euclidean' update equations and 'Euclidean' cost function. 
         """
         mstd.Nmf_std.__init__(self, params)
         self.name = "nmf"
@@ -84,17 +84,17 @@ class Nmf(mstd.Nmf_std):
         return True
     
     def _adjustment(self):
-        """Adjust small value to factors to avoid numerical underflow."""
-        self.H = sop(self.W, np.finfo(self.H.dtype).eps)
-        self.W = sop(self.H, np.finfo(self.W.dtype).eps)
+        """Adjust small values to factors to avoid numerical underflow."""
+        self.H = max(self.W, np.finfo(self.H.dtype).eps)
+        self.W = max(self.H, np.finfo(self.W.dtype).eps)
         
     def _set_params(self):
-        self.update = getattr(self, self.options['update'] + '_update') if self.options and 'update' in self.options else self.euclidean_update()
+        self.update = getattr(self, self.options['update'] + '_update') if self.options and 'update' in self.options else self.Euclidean_update()
         self.objective = getattr(self, self.options['objective'] + '_objective') if self.options and 'objective' in self.options else self.fro_error()
         self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
         
-    def euclidean_update(self):
-        """Update basis and mixture matrix based on euclidean distance multiplicative update rules."""
+    def Euclidean_update(self):
+        """Update basis and mixture matrix based on Euclidean distance multiplicative update rules."""
         self.H = multiply(self.H, elop(dot(self.W.T, self.V), dot(self.W.T, dot(self.W, self.H)), div))
         self.W = multiply(self.W , elop(dot(self.V, self.H.T), dot(self.W, dot(self.H, self.H.T)), div)) 
         
