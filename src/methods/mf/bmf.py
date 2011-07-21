@@ -30,7 +30,7 @@ class Bmf(mstd.Nmf_std):
         If parameters are not specified, default value of 1.1 is taken for both of them. 
         """
         mstd.Nmf_std.__init__(self, params)
-        self.aname = "bnmf"
+        self.name = "bnmf"
         self.aseeds = ["random", "fixed", "nndsvd"]
         
     def factorize(self):
@@ -96,8 +96,8 @@ class Bmf(mstd.Nmf_std):
         return (elop(self.V - dot(self.W, self.H), 2, pow)).sum()
     
     def _adjustment(self):
-        """Adjust small value to factors to avoid numerical underflow."""
-        self.H = sop(self.W, np.finfo(self.H.dtype).eps)
-        self.W = sop(self.H, np.finfo(self.W.dtype).eps)
+        """Adjust small values to factors to avoid numerical underflow."""
+        self.H = max(self.W, np.finfo(self.H.dtype).eps)
+        self.W = max(self.H, np.finfo(self.W.dtype).eps)
     
         

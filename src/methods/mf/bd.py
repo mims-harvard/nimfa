@@ -9,7 +9,7 @@ class Bd(mstd.Nmf_std):
 
     def __init__(self, **params):
         mstd.Nmf_std.__init__(self, params)
-        self.aname = "bd"
+        self.name = "bd"
         self.aseeds = ["random", "fixed", "nndsvd"]
         
     def factorize(self):

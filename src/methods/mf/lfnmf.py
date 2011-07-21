@@ -40,7 +40,7 @@ class Lfnmf(mstd.Nmf_std):
         be nonnegative.
         """
         mstd.Nmf_std.__init__(self, params)
-        self.aname = "lnmf"
+        self.name = "lnmf"
         self.aseeds = ["random", "fixed", "nndsvd"]
         
     def factorize(self):
