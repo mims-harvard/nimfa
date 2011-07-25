@@ -133,7 +133,7 @@ class Nmf(object):
         
     def dim(self):
         """Return triple containing the dimension of the target matrix and matrix factorization rank."""
-        return (self.V.shape, self.rank)
+        return (self.V.shape[0], self.V.shape[1], self.rank)
     
     def entropy(self, membership = None):
         """
