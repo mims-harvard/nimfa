@@ -1,4 +1,5 @@
 from math import log
+from operator import div, add
 
 import models.nmf_ns as mns
 import models.mf_fit as mfit
@@ -52,6 +53,8 @@ class Nsnmf(mns.Nmf_ns):
                 
         for _ in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
+            self.S = sop((1 - self.theta) * sp.spdiags([1 for _ in xrange(self.rank)], 0, self.rank, self.rank, 'csr'), 
+                         self.theta / self.rank, add)
             pobj = cobj = self.objective()
             iter = 0
             while self._is_satisfied(pobj, cobj, iter):
@@ -86,11 +89,22 @@ class Nsnmf(mns.Nmf_ns):
         self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
         
     def update(self):
-        """Update basis and mixture matrix."""
-        pass
+        """Update basis and mixture matrix based on modified divergence multiplicative update rules."""
+        # update mixture matrix
+        W = dot(self.W, self.S)
+        H1 = repmat(W.sum(0).T, 1, self.V.shape[1])
+        self.H = multiply(self.H, elop(dot(W.T, elop(self.V, dot(W, self.H), div)), H1, div))
+        # update basis matrix
+        H = dot(self.S, self.H)
+        W1 = repmat(H.sum(1).T, self.V.shape[0], 1)
+        self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, H), div), H.T), W1, div))
+        # normalize basis matrix
+        W2 = repmat(self.W.sum(0).T, 1, self.V.shape[1])
+        self.W = elop(self.W, W2, div)
     
     def objective(self):
-        """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
-        return (elop(self.V - dot(self.W, self.H), 2, pow)).sum()
+        """Compute divergence of target matrix from its NMF estimate."""
+        Va = dot(dot(self.W, self.S), self.H)
+        return (multiply(self.V, elop(self.V, Va, log)) - self.V + Va).sum()
     
         
