@@ -11,8 +11,8 @@ class Pmf(mstd.Nmf_std):
     Probabilistic Nonnegative Matrix Factorization (PMF) interpreting target matrix (V) as samples from a multinomial [9], [10], (Hansen, 2005)
     and using Euclidean distance for convergence test.
     
-    [9] ﻿Laurberg, H.,et. al. Theorems on positive data: on the uniqueness of NMF. Computational intelligence and neuroscience. 2008.
-    [10] Hansen, L. K. Generalization in high-dimensional factor models. 2008. Web: http://www.stanford.edu/group/mmds/slides2008/hansen.pdf.
+    [9] ﻿Laurberg, H.,et. al., (2008). Theorems on positive data: on the uniqueness of NMF. Computational intelligence and neuroscience.
+    [10] Hansen, L. K., (2008). Generalization in high-dimensional factor models. Web: http://www.stanford.edu/group/mmds/slides2008/hansen.pdf.
     """
 
     def __init__(self, **params):

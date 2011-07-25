@@ -21,8 +21,8 @@ class Nmf(mstd.Nmf_std):
     Besides usages in bioinformatics NMF can be applied to text analysis, image processing, multiway clustering,
     environmetrics etc. 
     
-    [2] Lee, D..D., and Seung, H.S., (2001), Algorithms for Non-negative Matrix Factorization, Adv. Neural Info. Proc. Syst. 13, 556-562.
-    [3] ﻿Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P. (2004). Metagenes and molecular pattern discovery using matrix factorization. Proceedings of the National Academy of Sciences of the United States of America, 101(12), 4164-9. doi: 10.1073/pnas.0308531101.
+    [2] Lee, D..D., and Seung, H.S., (2001). Algorithms for Non-negative Matrix Factorization, Adv. Neural Info. Proc. Syst. 13, 556-562.
+    [3] ﻿Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P., (2004). Metagenes and molecular pattern discovery using matrix factorization. Proceedings of the National Academy of Sciences of the United States of America, 101(12), 4164-9. doi: 10.1073/pnas.0308531101.
     """
 
     def __init__(self, **params):

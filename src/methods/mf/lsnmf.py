@@ -20,7 +20,7 @@ class Lsnmf(mstd.Nmf_std):
     procedure and requires a stopping condition. A common way to check whether current solution is close to a 
     stationary point is the form of the projected gradient [4].
     
-    [4] ﻿Lin, C.-J. (2007). Projected gradient methods for nonnegative matrix factorization. Neural computation, 19(10), 2756-79. doi: 10.1162/neco.2007.19.10.2756. 
+    [4] ﻿Lin, C.-J., (2007). Projected gradient methods for nonnegative matrix factorization. Neural computation, 19(10), 2756-79. doi: 10.1162/neco.2007.19.10.2756. 
     """
 
     def __init__(self, **params):

@@ -21,8 +21,8 @@ class Snmf(mstd.Nmf_std):
     every accumulation point is a critical point of the corresponding problem. Similarly, the algorithm SNMF/L converges
     to a stationary point. 
    
-    [5] Sparse Non-negative Matrix Factorizations via Alternating Non-negativity-constrained Least Squares for Microarray Data Analysis
-        Hyunsoo Kim and Haesun Park, Bioinformatics, 2007.
+    [5] Kim H., Park H., (2007). Sparse Non-negative Matrix Factorizations via Alternating Non-negativity-constrained Least Squares 
+        for Microarray Data Analysis, Bioinformatics.
     """
 
     def __init__(self, **params):

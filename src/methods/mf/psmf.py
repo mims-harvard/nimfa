@@ -11,23 +11,28 @@ class Psmf(mstd.Nmf_std):
     to explain each data vector stacked in target matrix (V). 
     
     This technique explicitly maximizes a lower bound on the log-likelihood of the data under a probability model. Found
-    sparse encoding can be used for a variety of tasks, such as functional prediction, capturing functionally relevant hidden 
-    factors that explain gene expression data and visualization. As this algorithm computes probabilities rather than making hard decisions, 
-    it can be shown that a higher data log-likelihood is obtained than from the versions (iterated conditional modes) that make hard 
-    decisions [13].
+    sparse encoding can be used for a variety of tasks, such as functional prediction, capturing functionally relevant
+    hidden factors that explain gene expression data and visualization. As this algorithm computes probabilities 
+    rather than making hard decisions, it can be shown that a higher data log-likelihood is obtained than from the 
+    versions (iterated conditional modes) that make hard decisions [13].
     
-    Given a target matrix (V [n, m]), containing n m-dimensional data points, basis matrix (factor loading matrix) (W) and mixture matrix 
-    (matrix of hidden factors) (H) are found under a structural sparseness constraint that each row of W contains at most N (of possible 
-    factorization rank number) non-zero entries. Intuitively, this corresponds to explaining each row vector of V as a linear combination
-    (weighted by the corresponding row in W) of a small subset of factors given by rows of H. This framework includes simple clustering by
-    setting N = 1 and ordinary low-rank approximation N = factorization rank as special cases. 
+    Given a target matrix (V [n, m]), containing n m-dimensional data points, basis matrix (factor loading matrix) (W) 
+    and mixture matrix (matrix of hidden factors) (H) are found under a structural sparseness constraint that each row 
+    of W contains at most N (of possible factorization rank number) non-zero entries. Intuitively, this corresponds to 
+    explaining each row vector of V as a linear combination (weighted by the corresponding row in W) of a small subset 
+    of factors given by rows of H. This framework includes simple clustering by setting N = 1 and ordinary low-rank 
+    approximation N = factorization rank as special cases. 
     
-    A probability model presuming Gaussian sensor noise in V (V = W * H + noise) and uniformly distributed factor assignments is constructed. 
-    Structured variational inference method is used to perform tractable inference on the latent variables and account for noise and uncertainty. 
+    A probability model presuming Gaussian sensor noise in V (V = WH + noise) and uniformly distributed factor 
+    assignments is constructed. Structured variational inference method is used to perform tractable inference on the 
+    latent variables and account for noise and uncertainty. 
     
-    [11] ﻿Dueck, D., Morris, Q. D., Frey, B. J. Multi-way clustering of microarray data using probabilistic sparse matrix factorization. Bioinformatics 21. Suppl 1, i144-51.
-    [12] ﻿Dueck, D., Frey, B. J. Probabilistic Sparse Matrix Factorization Probabilistic Sparse Matrix Factorization. University of Toronto Technical Report PSI-2004-23.
-    [13] Srebro, N. and Jaakkola, T. Sparse Matrix Factorization of Gene Expression Data. Unpublished note, MIT Artificial Intelligence Laboratory. 2001
+    [11] ﻿Dueck, D., Morris, Q. D., Frey, B. J, (2005). Multi-way clustering of microarray data using probabilistic sparse matrix factorization.
+         Bioinformatics 21. Suppl 1, i144-51.
+    [12] ﻿Dueck, D., Frey, B. J., (2004). Probabilistic Sparse Matrix Factorization Probabilistic Sparse Matrix Factorization. University of
+         Toronto Technical Report PSI-2004-23.
+    [13] Srebro, N. and Jaakkola, T., (2001). Sparse Matrix Factorization of Gene Expression Data. Unpublished note, MIT Artificial 
+         Intelligence Laboratory.
     """
 
     def __init__(self, **params):
