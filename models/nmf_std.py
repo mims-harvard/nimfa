@@ -1,14 +1,15 @@
 from math import log
 
 import utils.utils as utils
+import methods.seeding.fixed as fixed
 import nmf
 from utils.linalg import *
-from methods.seeding.fixed import *
 
 class Nmf_std(nmf.Nmf):
     """
-    Implementation of the standard model to manage factorizations that follow NMF standard model. The underlying model of 
-    matrix factorization.
+    Implementation of the standard model to manage factorizations that follow standard NMF model.
+     
+    It is the underlying model of matrix factorization and provides a general structure of standard NMF model.
     
     .. attribute:: W
         
@@ -29,7 +30,7 @@ class Nmf_std(nmf.Nmf):
             if self.seed:
                 raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
             else:
-                self.seed = Fixed()
+                self.seed = fixed.Fixed()
                 self.seed._set_fixed(self.W, self.H)
         self._is_smdefined()
         if any(self.V.data < 0):

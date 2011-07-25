@@ -26,8 +26,8 @@ class Lfnmf(mstd.Nmf_std):
     Example usages are pattern recognition problems in classification, feature generation and extraction for diagnostic 
     classification purposes, face recognition etc.  
     
-    [6] ﻿Wang, Y., et. al. Fisher non-negative matrix factorization for learning local features. Proc. Asian Conf. on Comp. Vision. 2004.                                                                                                                
-    [7] ﻿Li, S. Z., et. al. Learning spatially localized, parts-based representation. Proc. of the 2001 IEEE Comp. Soc.
+    [6] ﻿Wang, Y., et. al., (2004). Fisher non-negative matrix factorization for learning local features. Proc. Asian Conf. on Comp. Vision. 2004.                                                                                                                
+    [7] ﻿Li, S. Z., et. al., (2001). Learning spatially localized, parts-based representation. Proc. of the 2001 IEEE Comp. Soc.
         Conf. on Comp. Vision and Pattern Recognition. CVPR 2001, I-207-I-212. IEEE Comp. Soc. doi: 10.1109/CVPR.2001.990477.
     """
 

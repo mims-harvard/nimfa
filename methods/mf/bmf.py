@@ -14,7 +14,7 @@ class Bmf(mstd.Nmf_std):
     basis and mixture matrices, thus conserving the most important integer property of the target matrix. Common methodologies 
     include penalty function algorithm and thresholding algorithm. This class implements penalty function algorithm. 
     
-    [8] Z. Zhang, T. Li, C. H. Q. Ding, X. Zhang: Binary Matrix Factorization with Applications. ICDM 2007
+    [8] Zhang Z., Li T., Ding C. H. Q., Zhang X., (2007). Binary Matrix Factorization with Applications. ICDM 2007.
     """
 
     def __init__(self, **params):
