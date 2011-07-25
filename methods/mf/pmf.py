@@ -98,7 +98,7 @@ class Pmf(mstd.Nmf_std):
                 self.H[k, i] = dum[0, i] / s_dum
     
     def objective(self):
-        """Update basis and mixture matrix based on Euclidean distance."""
+        """Compute Euclidean distance cost function."""
         # relative error
         error_v_n =  abs(self.V_n - dot(self.W, self.H)).mean() / self.V_n.mean()
         # Euclidean distance
