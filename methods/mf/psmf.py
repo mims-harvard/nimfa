@@ -40,10 +40,10 @@ class Psmf(mstd.Nmf_std):
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
         Algorithm specific model option is 'prior' which can be passed with value as keyword argument.
-        Parameter prior is the prior on the number of factors explaining each vector. The prior can be passed as a list, formatted as
-        prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or as a scalar N, in which case uniform prior is taken, prior = 1 / N, reflecting no
-        knowledge about the distribution and giving equal preference to all values of a particular r_g. Default value is prior = factorization rank,
-        e. g. ordinary low-rank approximations is performed. 
+        Parameter prior is the prior on the number of factors explaining each vector. The prior can be passed as a list, 
+        formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or as a scalar N, in which case uniform prior is 
+        taken, prior = 1 / N, reflecting no knowledge about the distribution and giving equal preference to all values of 
+        a particular r_g. Default value is prior = factorization rank, e. g. ordinary low-rank approximations is performed. 
         """
         mstd.Nmf_std.__init__(self, params)
         self.name = "psmf"
@@ -89,7 +89,7 @@ class Psmf(mstd.Nmf_std):
         return True
     
     def _set_params(self):
-        self.nu = self.options['prior'] if self.options and 'prior' in self.options else self.rank
+        self.prior = self.options['prior'] if self.options and 'prior' in self.options else self.rank
         self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
         
     def update(self):
