@@ -90,15 +90,15 @@ class Nsnmf(mns.Nmf_ns):
         
     def update(self):
         """Update basis and mixture matrix based on modified divergence multiplicative update rules."""
-        # update mixture matrix
+        # update mixture matrix H
         W = dot(self.W, self.S)
         H1 = repmat(W.sum(0).T, 1, self.V.shape[1])
         self.H = multiply(self.H, elop(dot(W.T, elop(self.V, dot(W, self.H), div)), H1, div))
-        # update basis matrix
+        # update basis matrix W
         H = dot(self.S, self.H)
         W1 = repmat(H.sum(1).T, self.V.shape[0], 1)
         self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, H), div), H.T), W1, div))
-        # normalize basis matrix
+        # normalize basis matrix W
         W2 = repmat(self.W.sum(0).T, 1, self.V.shape[1])
         self.W = elop(self.W, W2, div)
     
