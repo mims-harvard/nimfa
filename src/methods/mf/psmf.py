@@ -25,7 +25,8 @@ class Psmf(mstd.Nmf_std):
     
     A probability model presuming Gaussian sensor noise in V (V = WH + noise) and uniformly distributed factor 
     assignments is constructed. Structured variational inference method is used to perform tractable inference on the 
-    latent variables and account for noise and uncertainty. 
+    latent variables and account for noise and uncertainty. The number of factors, r_g, contributing to each data point is
+    multinomially distributed such that P(r_g = n) = v_n, where v is a user specified N-vector. 
     
     [11] ﻿Dueck, D., Morris, Q. D., Frey, B. J, (2005). Multi-way clustering of microarray data using probabilistic sparse matrix factorization.
          Bioinformatics 21. Suppl 1, i144-51.
