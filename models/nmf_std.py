@@ -25,7 +25,7 @@ class Nmf_std(nmf.Nmf):
         Constructor
         """
         nmf.Nmf.__init__(self, params)
-        if not self.seed and not self.W and not self.H: self.seed = "random"
+        if not self.seed and not self.W and not self.H: self.seed = None if "none" in self.aseeds else "random"
         if self.W and self.H:
             if self.seed:
                 raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")

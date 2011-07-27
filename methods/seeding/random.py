@@ -31,3 +31,9 @@ class Random(object):
             if sn[0] is 'S' and sn[1:].isdigit():
                 mfs.append(sp.rand(sn[0], sn[1], density = 0.01, format = 'csr', dtype = 'd'))
         return mfs
+    
+    def __repr__(self):
+        return "random.Random()"
+    
+    def __str__(self):
+        return self.name

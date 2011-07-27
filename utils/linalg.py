@@ -106,6 +106,12 @@ def sort(X):
     X = X.flatten().tolist()[0]
     return sorted(X), sorted(range(len(X)), key = X.__getitem__)
     
+def std(X, axis = None, ddof = 0):
+    """Compute the standard deviation aong the specified axis."""
+    if sp.isspmatrix(X):
+        return None
+    else:
+        return np.std(X, axis, ddof)
     
 def argmax(X, axis = None):
     """
@@ -391,4 +397,17 @@ def nz_data(X):
     else:
         return [x for r in X.tolist() for x in r if x != 0]
     
+
+def choose(n, k):
+    """A fast way to calculate binomial coefficients. It is 10 times faster than scipy.mis.comb for exact answers."""
+    if 0 <= k <= n:
+        ntok = 1
+        ktok = 1
+        for t in xrange(1, min(k, n - k) + 1):
+            ntok *= n
+            ktok *= t
+            n -= 1
+        return ntok // ktok
+    else:
+        return 0
     

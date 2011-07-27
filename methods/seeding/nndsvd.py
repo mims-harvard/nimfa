@@ -94,6 +94,12 @@ class Nndsvd(object):
     def _neg(self, X):
         """Return negative section of matrix or vector."""
         return multiply(X < 0, -X)
+    
+    def __repr__(self):
+        return "nndsvd.Nndsvd()"
+    
+    def __str__(self):
+        return self.name
             
             
             

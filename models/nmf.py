@@ -68,18 +68,18 @@ class Nmf(object):
         
     def _is_smdefined(self):
         """Check if MF and seeding methods are well defined."""
-        if type(self.seed) is str:
+        if isinstance(self.seed, str):
             if self.seed in seed.methods:
                 self.seed = seed.methods[self.seed]()
             else: raise utils.MFError("Unrecognized seeding method.")
         else:
-            if not self.seed.name in seed.methods:
+            if not str(self.seed).lower() in seed.methods:
                 raise utils.MFError("Unrecognized seeding method.")
         self._compatibility()
         
     def _compatibility(self):
         """Check if MF model is compatible with the seeding method."""
-        if not self.seed.name in self.aseeds:
+        if not str(self.seed).lower() in self.aseeds:
             raise utils.MFError("MF model is incompatible with chosen seeding method.")   
     
     def run(self):

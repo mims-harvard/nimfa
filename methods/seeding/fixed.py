@@ -19,3 +19,9 @@ class Fixed(object):
         Return fixed matrix factors.
         """
         return self.ff
+    
+    def __repr__(self):
+        return "fixed.Fixed()"
+    
+    def __str__(self):
+        return self.name

@@ -1,3 +1,5 @@
+from math import sqrt
+from operator import div
 
 import models.nmf_std as mstd
 import models.mf_fit as mfit
@@ -24,9 +26,12 @@ class Psmf(mstd.Nmf_std):
     approximation N = factorization rank as special cases. 
     
     A probability model presuming Gaussian sensor noise in V (V = WH + noise) and uniformly distributed factor 
-    assignments is constructed. Structured variational inference method is used to perform tractable inference on the 
+    assignments is constructed. Factorized variational inference method is used to perform tractable inference on the 
     latent variables and account for noise and uncertainty. The number of factors, r_g, contributing to each data point is
-    multinomially distributed such that P(r_g = n) = v_n, where v is a user specified N-vector. 
+    multinomially distributed such that P(r_g = n) = v_n, where v is a user specified N-vector. PSMF model estimation using  
+    factorized variational inference has greater computational complexity than basic NMF methods [12]. 
+    
+    Example of usage of PSMF for identifying gene transcriptional modules from gene expression data is described in [15]. 
     
     [11] ﻿Dueck, D., Morris, Q. D., Frey, B. J, (2005). Multi-way clustering of microarray data using probabilistic sparse matrix factorization.
          Bioinformatics 21. Suppl 1, i144-51.
@@ -34,6 +39,7 @@ class Psmf(mstd.Nmf_std):
          Toronto Technical Report PSI-2004-23.
     [13] Srebro, N. and Jaakkola, T., (2001). Sparse Matrix Factorization of Gene Expression Data. Unpublished note, MIT Artificial 
          Intelligence Laboratory.
+    [15] ﻿Li, H., Sun, Y., Zhan, M., (2007). The discovery of transcriptional modules by a two-stage matrix decomposition approach. Bioinformatics, 23(4), 473-479. 
     """
 
     def __init__(self, **params):
@@ -41,14 +47,15 @@ class Psmf(mstd.Nmf_std):
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
         Algorithm specific model option is 'prior' which can be passed with value as keyword argument.
-        Parameter prior is the prior on the number of factors explaining each vector. The prior can be passed as a list, 
-        formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or as a scalar N, in which case uniform prior is 
-        taken, prior = 1 / N, reflecting no knowledge about the distribution and giving equal preference to all values of 
-        a particular r_g. Default value is prior = factorization rank, e. g. ordinary low-rank approximations is performed. 
+        Parameter prior is the prior on the number of factors explaining each vector and should be a positive row vector. The 
+        prior can be passed as a list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or as a scalar N, in 
+        which case uniform prior is taken, prior = 1. /(1:N), reflecting no knowledge about the distribution and giving equal 
+        preference to all values of a particular r_g. Default value is prior = factorization rank, e. g. ordinary 
+        low-rank approximations is performed. 
         """
         mstd.Nmf_std.__init__(self, params)
         self.name = "psmf"
-        self.aseeds = ["random", "fixed", "nndsvd"]
+        self.aseeds = ["none"]
         
     def factorize(self):
         """
@@ -57,9 +64,24 @@ class Psmf(mstd.Nmf_std):
         Return fitted factorization model.
         """
         self._set_params()
-                
+        self.N = len(self.prior)
+        sm = sum(self.prior)
+        self.prior = [p / sm for p in self.prior]
+        
         for _ in xrange(self.n_run):
-            self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
+            # initialize P and Q distributions
+            # internal computation is done with numpy array as n-(n > 2)dimensionality is needed 
+            self.W, self.H = sp.csr_matrix((self.V.shape[0], self.rank), dtype = 'd'), sp.csr_matrix((self.rank, self.V.shape[1]), dtype = 'd')
+            self.s = np.zeros((self.V.shape[0], self.N), dtype = 'd')
+            self.r = np.zeros((self.V.shape[0], 1), dtype = 'd')
+            self.psi = np.array(std(self.V, axis = 1, ddof = 0)) 
+            self.lamb = abs(np.tile(sqrt(self.psi), (1, self.rank)) * np.random.randn(self.V.shape[0], self.rank)) 
+            self.zeta = np.random.rand(self.rank, self.V.shape[1])
+            self.phi = np.random.rand(self.rank, 1)
+            self.sigma = np.random.rand(self.V.shape[0], self.rank, self.N)
+            self.sigma = self.sigma / np.tile(self.sigma.sum(axis = 1), (1, self.rank, 1))
+            self.rho = np.tile(self.prior, (self.V.shape[0], 1))
+            self._cross_terms()
             pobj = cobj = self.objective()
             iter = 0
             while self._is_satisfied(pobj, cobj, iter):
@@ -79,6 +101,17 @@ class Psmf(mstd.Nmf_std):
         mffit = mfit.Mf_fit(self)
         return mffit
     
+    def _cross_terms(self):
+        """Initialize the major cached parameter."""
+        outer_zeta = dot(self.zeta, self.zeta.T)
+        self.cross_terms = {}
+        for n1 in xrange(self.N):
+            for n2 in xrange(n1 + 1, self.N):
+                for c in xrange(self.rank):
+                    self.cross_terms[n1, n2] = np.zeros((self.V.shape[0], 1)) + sum(self.Q[:, :, 1] * self.lamb * 
+                                            np.tile(self.sigma[:, c, n2] * self.lamb[:, c], (1, self.rank)) * 
+                                            np.tile(outer_zeta[c, :], (self.V.shape[0], 1)), axis = 1)
+    
     def _is_satisfied(self, pobj, cobj, iter):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
         if self.max_iters and self.max_iters < iter:
@@ -91,6 +124,10 @@ class Psmf(mstd.Nmf_std):
     
     def _set_params(self):
         self.prior = self.options['prior'] if self.options and 'prior' in self.options else self.rank
+        try:
+            self.prior = [1. / self.prior for _ in xrange(int(round(self.prior)))]
+        except TypeError:
+            self.prior = self.optios['prior'] 
         self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
         
     def update(self):
