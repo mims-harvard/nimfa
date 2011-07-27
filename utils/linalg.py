@@ -4,6 +4,7 @@ import scipy.sparse.linalg as sla
 import numpy.linalg as nla
 from operator import mul
 from itertools import izip
+from math import sqrt
 
 """
     Linear algebra helper routines
@@ -107,9 +108,18 @@ def sort(X):
     return sorted(X), sorted(range(len(X)), key = X.__getitem__)
     
 def std(X, axis = None, ddof = 0):
-    """Compute the standard deviation aong the specified axis."""
+    """Compute the standard deviation along the specified axis."""
+    assert len(X.shape) == 2, "Input matrix X should be 2-D."
+    assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
     if sp.isspmatrix(X):
-        return None
+        if axis == None:
+            mean = X.mean()
+            no = X.shape[0] * X.shape[1]
+            return sqrt(1. / (no - ddof) * sum((x - mean)**2 for x in X.data) + (no - len(X.data) * mean**2))
+        if axis == 0:
+            return np.matrix([np.std(X[:, i].toarray(), axis, ddof) for i in xrange(X.shape[1])])
+        if axis == 1:
+            return np.matrix([np.std(X[i, :].toarray(), axis, ddof) for i in xrange(X.shape[0])]).T
     else:
         return np.std(X, axis, ddof)
     

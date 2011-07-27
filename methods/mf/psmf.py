@@ -70,7 +70,7 @@ class Psmf(mstd.Nmf_std):
         
         for _ in xrange(self.n_run):
             # initialize P and Q distributions
-            # internal computation is done with numpy array as n-(n > 2)dimensionality is needed 
+            # internal computation is done with numpy arrays as n-(n > 2)dimensionality is needed 
             self.W, self.H = sp.csr_matrix((self.V.shape[0], self.rank), dtype = 'd'), sp.csr_matrix((self.rank, self.V.shape[1]), dtype = 'd')
             self.s = np.zeros((self.V.shape[0], self.N), dtype = 'd')
             self.r = np.zeros((self.V.shape[0], 1), dtype = 'd')
