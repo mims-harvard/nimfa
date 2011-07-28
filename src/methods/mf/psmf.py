@@ -1,5 +1,3 @@
-from math import sqrt
-from operator import div
 
 import models.nmf_std as mstd
 import models.mf_fit as mfit
@@ -66,7 +64,7 @@ class Psmf(mstd.Nmf_std):
         self._set_params()
         self.N = len(self.prior)
         sm = sum(self.prior)
-        self.prior = [p / sm for p in self.prior]
+        self.prior = np.array([p / sm for p in self.prior])
         
         for _ in xrange(self.n_run):
             # initialize P and Q distributions
@@ -74,8 +72,8 @@ class Psmf(mstd.Nmf_std):
             self.W, self.H = sp.csr_matrix((self.V.shape[0], self.rank), dtype = 'd'), sp.csr_matrix((self.rank, self.V.shape[1]), dtype = 'd')
             self.s = np.zeros((self.V.shape[0], self.N), dtype = 'd')
             self.r = np.zeros((self.V.shape[0], 1), dtype = 'd')
-            self.psi = np.array(std(self.V, axis = 1, ddof = 0)) 
-            self.lamb = abs(np.tile(sqrt(self.psi), (1, self.rank)) * np.random.randn(self.V.shape[0], self.rank)) 
+            self.psi = np.array(std(self.V, axis = 1, ddof = 0))  
+            self.lamb = abs(np.tile(np.sqrt(self.psi), (1, self.rank)) * np.random.randn(self.V.shape[0], self.rank)) 
             self.zeta = np.random.rand(self.rank, self.V.shape[1])
             self.phi = np.random.rand(self.rank, 1)
             self.sigma = np.random.rand(self.V.shape[0], self.rank, self.N)
@@ -132,7 +130,23 @@ class Psmf(mstd.Nmf_std):
         
     def update(self):
         """Update basis and mixture matrix."""
-        pass
+        self._update_rho()
+        
+        
+    def _update_rho(self):
+        """Compute E-step and update rho."""
+        self.rho = - (self.sigma * np.log(1e-50 + self.sigma)).sum(axis = 1).cumsum(axis = 2).transpose([0, 2, 1])
+        temp = np.zeros((self.V.shape[0], self.rank))
+        for t in xrange(self.V.shape[1]):
+            temp -= 2 * self.lamb * dot(self.V[:, t].toarray(), self.zeta[:, t].T) + self.lamb**2 * np.tile(self.zeta[:, t].T**2 + self.phi.T, (self.V.shape[0], 1))
+        for n in xrange(1, self.N):
+            self.rho[:, n] -= 0.5 / self.psi * (self.sigma[:, :, 1:n].sum(axis = 2) * temp).sum(axis = 1)
+            for n1 in xrange(n):
+                for n2 in xrange(n1 + 1, n):
+                    self.rho -= 1. / self.psi * self.cross_terms[n1, n2]
+        self.rho = np.tile((self.prior / self.C)**np.array([i for i in xrange(1, self.N)]), (self.V.shape[0], 1)) * np.exp(self.rho - np.tile(np.amax(self.rho, 1), (1, self.N)))
+        self.rho = self.rho / np.tile(self.rho.sum(axis = 1), (1, self.N))
+        self.r = np.amax(self.rho, 1)
     
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
