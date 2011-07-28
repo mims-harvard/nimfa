@@ -65,6 +65,7 @@ class Psmf(mstd.Nmf_std):
         self.N = len(self.prior)
         sm = sum(self.prior)
         self.prior = np.array([p / sm for p in self.prior])
+        self.eps = 1e-5
         
         for _ in xrange(self.n_run):
             # initialize P and Q distributions
@@ -131,7 +132,53 @@ class Psmf(mstd.Nmf_std):
     def update(self):
         """Update basis and mixture matrix."""
         self._update_rho()
+        self._update_phi()
+        self._update_zeta()
+        self._update_sigma()
+        self._update_lamb()
+        self._update_psi()
         
+    def _update_psi(self):
+        """Compute M-step and update psi."""
+        pass
+        
+    def _update_lamb(self):
+        """Compute M-step and update lambda."""
+        pass    
+        
+    def _update_sigma(self):
+        """Compute E-step and update sigma."""
+        pass
+        
+    def _update_zeta(self):
+        """Compute E-step and update zeta."""
+        M = np.zeros((self.rank, self.rank))
+        V = np.zeros((self.rank, self.V.shape[1]))
+        for cc in xrange(self.rank): 
+            for n in xrange(self.N):
+                for nn in xrange(n + 1, self.N):
+                    M[cc, :] += sum(np.tile(self.rho[:, nn:self.N].sum(axis = 1) / self.psi, (1, self.rank)) * self.lamb * 
+                                self.sigma[:, :, n] * np.tile(self.lamb[:, cc] * self.sigma[:, cc, nn], (1, self.rank)), axis = 0)
+        M += M.T
+        temp = np.zeros((self.V.shape[0], self.rank))
+        for n in xrange(self.N):
+            temp += np.tile(self.rho[:, n:self.N].sum(axis = 1), (1, self.rank)) * self.sigma[:, :, n]
+        M += np.diag(sum(self.lamb**2 / np.tile(self.psi, (1, self.rank)) * temp, axis = 0))
+        for t in xrange(self.V.shape[1]):
+            V[:, t] = sum(np.tile(self.V[:, t].toarray() / self.psi, (1, self.rank)) * self.lamb * self.temp, axis = 0).T
+        self.zeta = np.linalg.solve(M + np.eye(self.rank), V)
+        # heuristic: negative expression levels not allowed
+        self.zeta[self.zeta < 0] = 0
+        self.z = self.zeta
+        
+    def _update_phi(self):
+        """Compute E-step and update phi."""
+        self.phi = np.ones(self.phi.shape)
+        for n in xrange(self.N): 
+            self.phi += self.lamb**2 / (np.tile(self.psi, (1, self.rank)) * self.sigma[:, :, n] * np.tile(self.rho[:, n:self.N].sum(axis = 1), (1, self.C))).sum(axis = 0).T
+        self.phi = 1. / self.phi
+        # heuristic: variances cannot go lower than epsilon
+        self.phi = np.maximum(self.phi, self.eps)
         
     def _update_rho(self):
         """Compute E-step and update rho."""
