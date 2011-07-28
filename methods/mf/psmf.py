@@ -74,8 +74,8 @@ class Psmf(mstd.Nmf_std):
             # initialize P and Q distributions
             # internal computation is done with numpy arrays as n-(n > 2)dimensionality is needed 
             self.W, self.H = sp.csr_matrix((self.V.shape[0], self.rank), dtype = 'd'), sp.csr_matrix((self.rank, self.V.shape[1]), dtype = 'd')
-            self.s = np.zeros((self.V.shape[0], self.N), dtype = 'd')
-            self.r = np.zeros((self.V.shape[0], 1), dtype = 'd')
+            self.s = np.zeros((self.V.shape[0], self.N), int)
+            self.r = np.zeros((self.V.shape[0], 1), int)
             self.psi = np.array(std(self.V, axis = 1, ddof = 0))  
             self.lamb = abs(np.tile(np.sqrt(self.psi), (1, self.rank)) * np.random.randn(self.V.shape[0], self.rank)) 
             self.zeta = np.random.rand(self.rank, self.V.shape[1])
@@ -159,7 +159,35 @@ class Psmf(mstd.Nmf_std):
         
     def _update_lamb(self):
         """Compute M-step and update lambda."""
-        pass    
+        D = np.zeros((self.rank, 1))
+        V = np.zeros((self.V.shape[0], self.rank))
+        for t in xrange(self.V.shape[1]):
+            D += self.zeta[:, t]**2 + self.phi
+            V += dot(self.V[:, t], self.zeta[:, t].T)
+        temp = np.zeros((self.V.shape[0], self.rank))
+        for n in xrange(self.N): 
+            temp += np.tile(sum(self.rho[:, n:self.N - 1], axis = 1), (1, self.rank)) * self.sigma[:, :, n]
+        V *= temp
+        D = np.tile(D.T, (self.V.shape[0], 1)) * temp
+        # heuristic: weak Gaussian prior on lambda for ill-conditioning prevention
+        D += self.eps
+        for g in xrange(self.V.shape[0]):
+            M = np.zeros((self.rank, self.rank))
+            for n in xrange(self.N):
+                for nn in xrange(n + 1, self.N):
+                    M += np.dot(sum(self.rho[g, nn:self.N - 1], axis = 0), np.dot(self.sigma[g, :, n].T, self.sigma[g, :, nn]))
+            M = (M + M.T) * np.dot(self.zeta, self.zeta.T)
+            self.lamb[g, :] = np.dot(V[g, :], np.linalg.inv(M + np.diag(D[g, :])))
+        # heuristic:  negative mixing proportions not allowed
+        self.lamb[self.lamb < 0] = 0 
+        self.W = sp.csr_matrix((self.V.shape[0], self.rank))
+        for n in xrange(self.N):
+            locs = (self.r >= n).ravel().nonzero()
+            if len(locs):
+                locs = sub2ind((self.V.shape[0], self.rank), locs, self.s[locs, n])
+                for l in locs:
+                    self.W[l % self.V.shape[0], l / self.rank] += self.lamb[l % self.V.shape[0], l / self.rank]
+        self.cross_terms = self._cross_terms()
         
     def _update_sigma(self):
         """Compute E-step and update sigma."""
@@ -202,7 +230,7 @@ class Psmf(mstd.Nmf_std):
         self.zeta = np.linalg.solve(M + np.eye(self.rank), V)
         # heuristic: negative expression levels not allowed
         self.zeta[self.zeta < 0] = 0
-        self.z = self.zeta
+        self.H = sp.csr_matrix(self.zeta)
         
     def _update_phi(self):
         """Compute E-step and update phi."""
