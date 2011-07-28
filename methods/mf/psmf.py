@@ -186,7 +186,7 @@ class Psmf(mstd.Nmf_std):
             if len(locs):
                 locs = sub2ind((self.V.shape[0], self.rank), locs, self.s[locs, n])
                 for l in locs:
-                    self.W[l % self.V.shape[0], l / self.rank] += self.lamb[l % self.V.shape[0], l / self.rank]
+                    self.W[l % self.V.shape[0], l / self.V.shape[0]] += self.lamb[l % self.V.shape[0], l / self.V.shape[0]]
         self.cross_terms = self._cross_terms()
         
     def _update_sigma(self):
