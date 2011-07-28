@@ -2,6 +2,7 @@
 import models.nmf_std as mstd
 import models.mf_fit as mfit
 import models.mf_track as mtrack
+import utils.utils as utils
 from utils.linalg import *
 
 class Psmf(mstd.Nmf_std):
@@ -62,6 +63,8 @@ class Psmf(mstd.Nmf_std):
         Return fitted factorization model.
         """
         self._set_params()
+        if not sp.isspmatrix(self.V):
+            raise utils.MFError("Target matrix is not in sparse format.")
         self.N = len(self.prior)
         sm = sum(self.prior)
         self.prior = np.array([p / sm for p in self.prior])
@@ -140,7 +143,19 @@ class Psmf(mstd.Nmf_std):
         
     def _update_psi(self):
         """Compute M-step and update psi."""
-        pass
+        self.psi = - sum(np.tile([i for i in xrange(1, self.N)], (self.V.shape[0], 1)) * 
+                    self.rho[:, 1:self.N - 1], axis = 1) * sum(multiply(self.V, self.V), axis = 1)
+        temp = np.zeros((self.V.shape[0], self.rank))
+        for t in xrange(self.V.shape[1]):
+            temp += (np.tile(self.V[:, t].toarray(), (1, self.rank)) -  self.lamb * np.tile(self.zeta[:,t].T, (self.V.shape[0], 1)))**2 + self.lamb**2 * np.tile(self.phi.T, (self.V.shape[0], 1))
+        for n in xrange(self.N):
+            self.psi += sum(self.rho[:, n:self.N - 1], axis = 1) * sum(self.sigma[:, :, n] * temp, axis = 1)
+        for n in xrange(self.N):
+            for nn in xrange(n + 1, self.N):
+                self.psi += 2 * sum(self.rho[:, nn:self.N - 1], axis = 1) * self.cross_terms[n, nn]
+        self.psi /= self.V.shape[1]
+        # heuristic: variances cannot go lower than epsilon
+        self.psi = np.maximum(self.psi, self.eps)
         
     def _update_lamb(self):
         """Compute M-step and update lambda."""
@@ -157,12 +172,12 @@ class Psmf(mstd.Nmf_std):
         for cc in xrange(self.rank): 
             for n in xrange(self.N):
                 for nn in xrange(n + 1, self.N):
-                    M[cc, :] += sum(np.tile(self.rho[:, nn:self.N].sum(axis = 1) / self.psi, (1, self.rank)) * self.lamb * 
+                    M[cc, :] += sum(np.tile(self.rho[:, nn:self.N - 1].sum(axis = 1) / self.psi, (1, self.rank)) * self.lamb * 
                                 self.sigma[:, :, n] * np.tile(self.lamb[:, cc] * self.sigma[:, cc, nn], (1, self.rank)), axis = 0)
         M += M.T
         temp = np.zeros((self.V.shape[0], self.rank))
         for n in xrange(self.N):
-            temp += np.tile(self.rho[:, n:self.N].sum(axis = 1), (1, self.rank)) * self.sigma[:, :, n]
+            temp += np.tile(self.rho[:, n:self.N - 1].sum(axis = 1), (1, self.rank)) * self.sigma[:, :, n]
         M += np.diag(sum(self.lamb**2 / np.tile(self.psi, (1, self.rank)) * temp, axis = 0))
         for t in xrange(self.V.shape[1]):
             V[:, t] = sum(np.tile(self.V[:, t].toarray() / self.psi, (1, self.rank)) * self.lamb * self.temp, axis = 0).T
@@ -175,7 +190,7 @@ class Psmf(mstd.Nmf_std):
         """Compute E-step and update phi."""
         self.phi = np.ones(self.phi.shape)
         for n in xrange(self.N): 
-            self.phi += self.lamb**2 / (np.tile(self.psi, (1, self.rank)) * self.sigma[:, :, n] * np.tile(self.rho[:, n:self.N].sum(axis = 1), (1, self.C))).sum(axis = 0).T
+            self.phi += self.lamb**2 / (np.tile(self.psi, (1, self.rank)) * self.sigma[:, :, n] * np.tile(self.rho[:, n:self.N - 1].sum(axis = 1), (1, self.C))).sum(axis = 0).T
         self.phi = 1. / self.phi
         # heuristic: variances cannot go lower than epsilon
         self.phi = np.maximum(self.phi, self.eps)
