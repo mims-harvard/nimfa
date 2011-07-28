@@ -105,12 +105,12 @@ class Psmf(mstd.Nmf_std):
     
     def _cross_terms(self):
         """Initialize the major cached parameter."""
-        outer_zeta = dot(self.zeta, self.zeta.T)
+        outer_zeta = np.dot(self.zeta, self.zeta.T)
         self.cross_terms = {}
         for n1 in xrange(self.N):
             for n2 in xrange(n1 + 1, self.N):
                 for c in xrange(self.rank):
-                    self.cross_terms[n1, n2] = np.zeros((self.V.shape[0], 1)) + sum(self.Q[:, :, 1] * self.lamb * 
+                    self.cross_terms[n1, n2] = np.zeros((self.V.shape[0], 1)) + sum(self.sigma[:, :, n1] * self.lamb * 
                                             np.tile(self.sigma[:, c, n2] * self.lamb[:, c], (1, self.rank)) * 
                                             np.tile(outer_zeta[c, :], (self.V.shape[0], 1)), axis = 1)
     
@@ -163,7 +163,25 @@ class Psmf(mstd.Nmf_std):
         
     def _update_sigma(self):
         """Compute E-step and update sigma."""
-        pass
+        self.cross_terms = np.zeros((self.V.shape[0], self.rank, self.N))
+        for cc in xrange(self.rank):
+            self.cross_terms += np.tile(self.sigma[:, cc, :], (1, self.rank, 1)) * np.tile(self.lamb * np.tile(self.lamb[:, cc], (1, self.rank)) *
+                                np.tile(np.dot(self.zeta[cc, :], self.zeta.T), (self.V.shape[0], 1) ), (1, 1, self.N))
+        self.sigma = np.zeros(self.sigma.shape)
+        for t in xrange(self.V.shape[1]):
+            self.sigma -= 0.5 * np.tile(((np.tile(self.V[:, t].toarray(), (1, self.rank)) - self.lamb * 
+                          np.tile(self.zeta[:, t].T, (self.V.shape[0], 1)))**2 + self.lamb**2 * np.tile(self.phi.T, (self.V.shape[1], 1))) 
+                          / np.tile(self.psi, (1, self.rank)), (1, 1, self.N))
+        for n in xrange(self.N):
+            for nn in xrange(self.N):
+                if nn != n:
+                    self.sigma[:, :, n] -= np.tile(sum(1e-50 + self.rho[:, np.max(n, nn):self.N], axis = 1) / 
+                                           sum(1e-50 + self.rho[:, n, self.N], axis = 1) / self.psi, (1, self.rank)) * self.cross_terms[:, :, nn]
+        self.sigma = np.exp(self.sigma - np.tile(np.amax(self.sigma, 1), (1, self.rank)))
+        self.sigma /= np.tile(self.sigma.sum(axis = 1), (1, self.rank))
+        self.cross_terms = self._cross_terms()
+        self.s = np.argmax(self.sigma, axis = 1)
+        self.s = self.s.transpose([0, 2, 1])
         
     def _update_zeta(self):
         """Compute E-step and update zeta."""
@@ -200,7 +218,7 @@ class Psmf(mstd.Nmf_std):
         self.rho = - (self.sigma * np.log(1e-50 + self.sigma)).sum(axis = 1).cumsum(axis = 2).transpose([0, 2, 1])
         temp = np.zeros((self.V.shape[0], self.rank))
         for t in xrange(self.V.shape[1]):
-            temp -= 2 * self.lamb * dot(self.V[:, t].toarray(), self.zeta[:, t].T) + self.lamb**2 * np.tile(self.zeta[:, t].T**2 + self.phi.T, (self.V.shape[0], 1))
+            temp -= 2 * self.lamb * np.dot(self.V[:, t].toarray(), self.zeta[:, t].T) + self.lamb**2 * np.tile(self.zeta[:, t].T**2 + self.phi.T, (self.V.shape[0], 1))
         for n in xrange(1, self.N):
             self.rho[:, n] -= 0.5 / self.psi * (self.sigma[:, :, 1:n].sum(axis = 2) * temp).sum(axis = 1)
             for n1 in xrange(n):
@@ -208,7 +226,7 @@ class Psmf(mstd.Nmf_std):
                     self.rho -= 1. / self.psi * self.cross_terms[n1, n2]
         self.rho = np.tile((self.prior / self.C)**np.array([i for i in xrange(1, self.N)]), (self.V.shape[0], 1)) * np.exp(self.rho - np.tile(np.amax(self.rho, 1), (1, self.N)))
         self.rho = self.rho / np.tile(self.rho.sum(axis = 1), (1, self.N))
-        self.r = np.amax(self.rho, 1)
+        self.r = np.argmax(self.rho, axis = 1)
     
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
