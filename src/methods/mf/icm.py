@@ -31,6 +31,24 @@ class Icm(mstd.Nmf_std):
     """
 
     def __init__(self, **params):
+        """
+        For detailed explanation of the general model parameters see :mod:`mf_methods`.
+        
+        The following are algorithm specific model options which can be passed with values as keyword arguments.
+        
+        :param iiter: Number of inner iterations. Default is 20. 
+        :type iiter: `int`
+        :param alpha: The prior for basis matrix (W) of proper dimensions. Default is zeros matrix prior.
+        :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
+        :param beta: The prior for mixture matrix (H) of proper dimensions. Default is zeros matrix prior.
+        :type beta: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
+        :param theta: The prior for :param:`sigma`. Default is 0.
+        :type theta: `float`
+        :param k: The prior for :param:`sigma`. Default is 0. 
+        :type k: `float`
+        :param sigma: Initial value for noise variance (sigma**2). Default is 1. 
+        :type sigma: `float`       
+        """
         mstd.Nmf_std.__init__(self, params)
         self.name = "icm"
         self.aseeds = ["random", "fixed", "nndsvd"]
@@ -75,6 +93,12 @@ class Icm(mstd.Nmf_std):
         return True
     
     def _set_params(self):
+        self.iiter = self.options['iiter'] if self.options and 'iiter' in self.options else 20
+        self.alpha = self.options['alpha'] if self.options and 'alpha' in self.options else sp.csr_matrix((self.V.shape[0], self.rank))
+        self.beta = self.options['beta'] if self.options and 'beta' in self.options else sp.csr_matrix((self.rank, self.V.shape[1]))
+        self.theta = self.options['theta'] if self.options and 'theta' in self.options else .0
+        self.k = self.options['k'] if self.options and 'k' in self.options else .0
+        self.sigma = self.options['sigma'] if self.options and 'sigma' in self.options else 1. 
         self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
         
     def update(self):

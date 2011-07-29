@@ -53,7 +53,7 @@ def mf(target = None, seed = None, W = None, H = None,
                      if one wants to save summary measures or process the result before it gets discarded. The callback
                      function is called with only one argument :class:`model.nmf_fit` that contains the fitted model. Default is None.
     :type callback: `function`
-    :param initialize_only: If specified the MF model and its parameters will be only initialized. Factorization will not
+    :param initialize_only: The specified MF model and its parameters will only be initialized. Factorization will not
                             run. Default is False.
     :type initialize_only: `bool`
     :param options: Specify some runtime or algorithm specific options. For details on algorithm specific options see specific algorithm
