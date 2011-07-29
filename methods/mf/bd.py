@@ -2,9 +2,9 @@
 import models.nmf_std as mstd
 
 class Bd(mstd.Nmf_std):
-    '''
+    """
     classdocs
-    '''
+    """
 
 
     def __init__(self, **params):
