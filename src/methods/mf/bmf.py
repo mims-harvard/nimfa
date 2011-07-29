@@ -21,7 +21,7 @@ class Bmf(mstd.Nmf_std):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
-        Algorithm specific model options are 'lambda_w' and 'lambda_h' parameters which controls how fast lambda 
+        Algorithm specific model options are :param:`lambda_w` and :param:`lambda_h` parameters which controls how fast lambda 
         should increase. This influences convergence of basis (W) and mixture (H) matrices to binary values during the 
         update. 
             #. A value lambda < 1 will result in a nonbinary decompositions as the update rule effectively

@@ -29,20 +29,21 @@ class Snmf(mstd.Nmf_std):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
-        Algorithm specific model options are 'version', 'eta', 'beta', 'i_conv', 'w_min_change' which can be passed 
-        with values as keyword arguments.
-        The parameter min_residuals of the underlying model is used as KKT convergence test and should have positive value. If not specified, value 1e-4 is used. 
-            #. Parameter version specifies version of the SNMF algorithm. it has two accepting values,
+        Algorithm specific model options are :param:`version`, :param:`eta`, :param:`beta`, :param:`i_conv` and 
+        param:`w_min_change` which can be passed with values as keyword arguments.
+        The parameter :param:`min_residuals` of the underlying model is used as KKT convergence test and should have 
+        positive value. If not specified, value 1e-4 is used. 
+            #. Parameter param:`version` specifies version of the SNMF algorithm. it has two accepting values,
                'r' and 'l' for SNMF/R and SNMF/L, respectively. Default choice is SNMF/R.
-            #. Parameter eta is used for suppressing Frobenius norm on basis matrix (W). Default value
-               is maximum value in target matrix (V). If eta is negative, maximum value in target matrix is
+            #. Parameter :param:`eta` is used for suppressing Frobenius norm on basis matrix (W). Default value
+               is maximum value in target matrix (V). If :param:`eta` is negative, maximum value in target matrix is
                used for it. 
-            #. Parameter beta controls sparseness. Larger beta generates higher sparseness on H. Too large
-               beta is not recommended. It should have positive value. Default value is 0.01
-            #. Parameter i_conv is part of biclustering convergence test. Decide convergence if row clusters
-               and column clusters have not changed for i_conv convergence checks. It should have nonnegative value.
+            #. Parameter :param:`beta` controls sparseness. Larger :param:`beta` generates higher sparseness on H. Too large
+               :param:`beta` is not recommended. It should have positive value. Default value is 0.01
+            #. Parameter :param:`i_conv` is part of biclustering convergence test. It decides convergence if row clusters
+               and column clusters have not changed for :param:`i_conv` convergence checks. It should have nonnegative value.
                Default value is 10.
-            #. Parameter w_min_change is part of biclustering convergence test. It specifies the minimal allowance
+            #. Parameter :param:`w_min_change` is part of biclustering convergence test. It specifies the minimal allowance
                of the change of row clusters. It should have nonnegative value. Default value is 0.
         """
         mstd.Nmf_std.__init__(self, params)
