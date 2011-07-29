@@ -45,9 +45,9 @@ class Psmf(mstd.Nmf_std):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
-        Algorithm specific model option is 'prior' which can be passed with value as keyword argument.
-        Parameter prior is the prior on the number of factors explaining each vector and should be a positive row vector. The 
-        prior can be passed as a list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or as a scalar N, in 
+        Algorithm specific model option is :param:`prior` which can be passed with value as keyword argument.
+        Parameter :param:`prior` is the prior on the number of factors explaining each vector and should be a positive row vector. 
+        The :param:`prior` can be passed as a list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or as a scalar N, in 
         which case uniform prior is taken, prior = 1. /(1:N), reflecting no knowledge about the distribution and giving equal 
         preference to all values of a particular r_g. Default value is prior = factorization rank, e. g. ordinary 
         low-rank approximations is performed. 

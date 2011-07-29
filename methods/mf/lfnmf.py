@@ -35,7 +35,7 @@ class Lfnmf(mstd.Nmf_std):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
-        Algorithm specific model option is 'alpha' which can be passed with value as keyword argument.
+        Algorithm specific model option is :param:`alpha` which can be passed with value as keyword argument.
         Parameter alpha is weight within class scatter and between class scatter of encoding mixture matrix. It should 
         be nonnegative.
         """

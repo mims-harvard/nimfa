@@ -30,14 +30,14 @@ class Nmf(mstd.Nmf_std):
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
         Algorithm specific model options are type of update equations and type of objective function. 
-        When specifying model, user can pass 'update' keyword argument with one of possible values: 
+        When specifying model, user can pass :param:`update` parameter with one of possible values: 
             #. 'Euclidean' for classic Euclidean distance update equations, 
             #. 'divergence' for divergence update equations.
-        When specifying model, user can pass 'objective' keyword argument with one of possible values:
+        When specifying model, user can pass :param:`objective` parameter with one of possible values:
             #. 'fro' for standard Frobenius distance cost function,
             #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
             #. 'conn' for connectivity matrix changed elements cost function. 
-        Default are 'Euclidean' update equations and 'Euclidean' cost function. 
+        Default are 'Euclidean' for :param:`update` equations and 'Euclidean' for :param:`objective` function. 
         """
         mstd.Nmf_std.__init__(self, params)
         self.name = "nmf"
