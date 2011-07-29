@@ -1,3 +1,4 @@
+from operator import div
 
 import models.nmf_std as mstd
 import models.mf_fit as mfit
@@ -60,6 +61,7 @@ class Icm(mstd.Nmf_std):
         Return fitted factorization model.
         """
         self._set_params()
+        self.v = multiply(self.V, self.V).sum() / 2.
                 
         for _ in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
@@ -103,7 +105,25 @@ class Icm(mstd.Nmf_std):
         
     def update(self):
         """Update basis and mixture matrix."""
-        pass
+        # update basis matrix
+        C = dot(self.H, self.H.T)
+        D = dot(self.V, self.B.T)
+        for _ in xrange(self.iiter):
+            for n in xrange(self.rank):
+                nn = list(xrange(n - 1)) + list(xrange(n, self.rank))
+                temp = max(sop(D[:, n] - dot(self.W[:, nn], C[nn, n]) - self.sigma * self.alpha[:, n], C[n, n], div), 0)
+                for i in xrange(self.W.shape[0]):
+                    self.W[i, n] = temp[i, 0]
+        self.sigma = (self.theta + self.v + multiply(self.W, dot(self.W, C) - 2 * D).sum() / 2.) / (self.V.shape[0] * self.V.shape[1] / 2. + self.k + 1.)
+        # update mixture matrix
+        E = dot(self.W.T, self.W)
+        F = dot(self.W.T, self.V)
+        for _ in xrange(self.iiter):
+            for n in xrange(self.rank):
+                nn = list(xrange(n - 1)) + list(xrange(n, self.rank))
+                temp = max(sop(F[n, :] - dot(E[n, nn], self.H[nn, :]) - self.sigma * self.beta[n, :], E[n, n], div), 0)
+                for i in xrange(self.H.shape[1]):
+                    self.H[n, i] = temp[0, i]
     
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 

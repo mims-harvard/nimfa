@@ -362,7 +362,7 @@ def hstack(X, format = None, dtype = None):
         return np.hstack(X)
     
 def max(X, s):
-    """Compute element-wise max(x,s) assignement for sparse or dense matrix."""
+    """Compute element-wise max(x,s) assignment for sparse or dense matrix."""
     if sp.isspmatrix(X):
         assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
         R = X.copy()
@@ -375,10 +375,10 @@ def max(X, s):
                 now += 1
         return R
     else:
-        return np.matrix([[max(X[i,j], s) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+        return np.maximum(X, s)
     
 def min(X, s):
-    """Compute element-wise min(x,s) assignement for sparse or dense matrix."""
+    """Compute element-wise min(x,s) assignment for sparse or dense matrix."""
     if sp.isspmatrix(X):
         assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
         R = X.copy()
@@ -391,7 +391,7 @@ def min(X, s):
                 now += 1
         return R
     else:
-        return np.matrix([[min(X[i,j], s) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+        return np.minimum(X, s)
     
 def count(X, s):
     """Return the number of occurrences of element s in sparse or dense matrix X."""
