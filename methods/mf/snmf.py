@@ -93,14 +93,15 @@ class Snmf(mstd.Nmf_std):
     
     def _set_params(self):    
         # in version l, V is transposed while W and H are swapped and transposed.
-        self.version = self.options['version'] if self.options and 'version' in self.options else 'r'
+        self.version = self.options.get('version', 'r')
         self.V = self.V.T if self.version == 'l' else self.V
-        self.eta = max(self.V) if not self.options or 'eta' not in self.options or self.options['eta'] < 0 else self.options['eta']
-        self.beta = self.options['beta'] if self.options and 'beta' in self.options else 0.01
-        self.i_conv = self.options['i_conv'] if self.options and 'i_conv' in self.options else 10
-        self.w_min_change = self.options['w_min_change'] if self.options and 'w_min_change' in self.options else 0
+        self.eta = self.options.get('eta', max(self.V))
+        if self.eta < 0: self.eta = max(self.V)
+        self.beta = self.options.get('beta', 0.01)
+        self.i_conv = self.options.egt('i_conv', 10)
+        self.w_min_change = self.options.get('w_min_change', 0)
         self.min_residuals = self.min_residuals if self.min_residuals else 1e-4
-        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
+        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
     
     def _is_satisfied(self, cobj, iter):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""

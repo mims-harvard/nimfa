@@ -85,9 +85,9 @@ class Nsnmf(mns.Nmf_ns):
         return True
     
     def _set_params(self):
-        self.theta = self.options['theta'] if self.options and 'theta' in self.options else .5
-        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
-        
+        self.theta = self.options.get('theta', .5)
+        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
+            
     def update(self):
         """Update basis and mixture matrix based on modified divergence multiplicative update rules."""
         # update mixture matrix H

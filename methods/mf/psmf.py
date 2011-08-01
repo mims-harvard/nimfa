@@ -125,12 +125,12 @@ class Psmf(mstd.Nmf_std):
         return True
     
     def _set_params(self):
-        self.prior = self.options['prior'] if self.options and 'prior' in self.options else self.rank
+        self.prior = self.options.get('prior', self.rank)
         try:
             self.prior = [1. / self.prior for _ in xrange(int(round(self.prior)))]
         except TypeError:
             self.prior = self.optios['prior'] 
-        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
+        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
         
     def update(self):
         """Update basis and mixture matrix."""

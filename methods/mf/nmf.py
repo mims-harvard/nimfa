@@ -89,11 +89,11 @@ class Nmf(mstd.Nmf_std):
         self.W = max(self.H, np.finfo(self.W.dtype).eps)
         
     def _set_params(self):
-        self.update = getattr(self, self.options['update'] + '_update') if self.options and 'update' in self.options else self.Euclidean_update()
-        self.objective = getattr(self, self.options['objective'] + '_objective') if self.options and 'objective' in self.options else self.fro_error()
-        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
+        self.update = getattr(self, self.options.get('update', 'euclidean') + '_update') 
+        self.objective = getattr(self, self.options.get('objective', 'fro') + '_objective')
+        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
         
-    def Euclidean_update(self):
+    def euclidean_update(self):
         """Update basis and mixture matrix based on Euclidean distance multiplicative update rules."""
         self.H = multiply(self.H, elop(dot(self.W.T, self.V), dot(self.W.T, dot(self.W, self.H)), div))
         self.W = multiply(self.W , elop(dot(self.V, self.H.T), dot(self.W, dot(self.H, self.H.T)), div)) 
@@ -105,16 +105,16 @@ class Nmf(mstd.Nmf_std):
         W1 = repmat(self.H.sum(1).T, self.V.shape[0], 1)
         self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, self.H), div), self.H.T), W1, div))
         
-    def fro_error(self):
+    def fro_objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
         return (elop(self.V - dot(self.W, self.H), 2, pow)).sum()
     
-    def div_error(self):
+    def div_objective(self):
         """Compute divergence of target matrix from its NMF estimate."""
         Va = dot(self.W, self.H)
         return (multiply(self.V, elop(self.V, Va, log)) - self.V + Va).sum()
     
-    def conn_error(self):
+    def conn_objective(self):
         """
         Compute connectivity matrix changes -- number of changing elements.
         if the number of instances changing the cluster is lower or equal to min_residuals, terminate factorization run.

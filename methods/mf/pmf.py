@@ -77,7 +77,7 @@ class Pmf(mstd.Nmf_std):
         self.W = max(self.H, np.finfo(self.W.dtype).eps)
         
     def _set_params(self):
-        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
+        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
         
     def update(self):
         """Update basis and mixture matrix."""
