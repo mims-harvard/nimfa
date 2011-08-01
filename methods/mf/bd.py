@@ -17,7 +17,7 @@ class Bd(mstd.Nmf_std):
     
     In Gibbs sampling a sequence of samples is drawn from the conditional posterior densities of the model parameters and this
     converges to a sample from the joint posterior. The conditional densities of basis and mixture matrices are proportional 
-    to a normal multiplied by an exponential, i.e. rectified normal density. The conditional density of sigma**2 is an inverse 
+    to a normal multiplied by an exponential, i. e. rectified normal density. The conditional density of sigma**2 is an inverse 
     Gamma density. The posterior can be approximated by sequentially sampling from these conditional densities. 
     
     Bayesian NMF is concerned with the sampling from the posterior distribution of basis and mixture factors. Algorithm outline
@@ -27,12 +27,45 @@ class Bd(mstd.Nmf_std):
         #. Sample from rectified Gaussian for each row in mixture matrix. 
         #. Sample from inverse Gamma for noise variance
         #. Repeat the previous three steps until some convergence criterion is met. 
+        
+    The sampling procedure could be used for estimating the marginal likelihood, which is useful for model selection, i. e. 
+    choosing factorization rank. 
     
     [16] Schmidt, M.N., Winther, O.,  and Hansen, L.K., (2009). Bayesian Non-negative Matrix Factorization. 
         In Proceedings of ICA. 2009, 540-547.
     """
 
     def __init__(self, **params):
+        """
+        For detailed explanation of the general model parameters see :mod:`mf_methods`.
+        
+        The following are algorithm specific model options which can be passed with values as keyword arguments.
+        
+        :param m: Number of Gibbs samples to compute. Default is 30. 
+        :type m: `int`
+        :param alpha: The prior for basis matrix (W) of proper dimensions. Default is zeros matrix prior.
+        :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
+        :param beta: The prior for mixture matrix (H) of proper dimensions. Default is zeros matrix prior.
+        :type beta: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
+        :param theta: The prior for :param:`sigma`. Default is 0.
+        :type theta: `float`
+        :param k: The prior for :param:`sigma`. Default is 0. 
+        :type k: `float`
+        :param sigma: Initial value for noise variance (sigma**2). Default is 1. 
+        :type sigma: `float`  
+        :param chains: Number of chains to run. Default is 1.
+        :type chains: `int`
+        :param skip: Number of initial samples to skip. Default is 100.
+        :type skip: `int`
+        :param stride: Return every stride'th sample. Default is 1. 
+        :type stride: `int`
+        :param n_w: Method does not sample from these columns of basis matrix. Default is sampling from all columns. 
+        :type n_w: :class:`numpy.ndarray` or list of shape (factorization rank, 1) with logical values
+        :param n_h: Method does not sample from these rows of mixture matrix. Default is sampling from all rows. 
+        :type n_h: :class:`numpy.ndarray` or list of shape (factorization rank, 1) with logical values
+        :param n_sigma: Method does not sample from :param:`sigma`. By default sampling is done. 
+        :type ns: logical    
+        """
         mstd.Nmf_std.__init__(self, params)
         self.name = "bd"
         self.aseeds = ["random", "fixed", "nndsvd"]
@@ -78,6 +111,18 @@ class Bd(mstd.Nmf_std):
         return True
     
     def _set_params(self):
+        self.m = self.options['m'] if self.options and 'm' in self.options else 30
+        self.alpha = self.options['alpha'] if self.options and 'alpha' in self.options else sp.csr_matrix((self.V.shape[0], self.rank))
+        self.beta = self.options['beta'] if self.options and 'beta' in self.options else sp.csr_matrix((self.rank, self.V.shape[1]))
+        self.theta = self.options['theta'] if self.options and 'theta' in self.options else .0
+        self.k = self.options['k'] if self.options and 'k' in self.options else .0
+        self.sigma = self.options['sigma'] if self.options and 'sigma' in self.options else 1. 
+        self.skip = self.options.get('skip', 100) 
+        self.stride = self.options.get('stride', 1)  
+        self.chains = self.options['chains'] if self.options and 'chains' in self.options else 1
+        self.n_w = self.options.get('n_w', np.zeros((self.rank, 1)))
+        self.n_h = self.options.get('n_h', np.zeros((self.rank, 1)))
+        self.n_sigma = self.options.get('n_sigma', 0)
         self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
         
     def update(self):
