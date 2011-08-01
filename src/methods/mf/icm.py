@@ -95,13 +95,13 @@ class Icm(mstd.Nmf_std):
         return True
     
     def _set_params(self):
-        self.iiter = self.options['iiter'] if self.options and 'iiter' in self.options else 20
-        self.alpha = self.options['alpha'] if self.options and 'alpha' in self.options else sp.csr_matrix((self.V.shape[0], self.rank))
-        self.beta = self.options['beta'] if self.options and 'beta' in self.options else sp.csr_matrix((self.rank, self.V.shape[1]))
-        self.theta = self.options['theta'] if self.options and 'theta' in self.options else .0
-        self.k = self.options['k'] if self.options and 'k' in self.options else .0
-        self.sigma = self.options['sigma'] if self.options and 'sigma' in self.options else 1. 
-        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
+        self.iiter = self.options.get('iiter', 20)
+        self.alpha = self.options.get('alpha', sp.csr_matrix((self.V.shape[0], self.rank)))
+        self.beta = self.options.get('beta', sp.csr_matrix((self.rank, self.V.shape[1])))
+        self.theta = self.options.get('theta', .0)
+        self.k = self.options.get('k', .0)
+        self.sigma = self.options.get('sigma', 1.) 
+        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
         
     def update(self):
         """Update basis and mixture matrix."""

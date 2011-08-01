@@ -76,9 +76,9 @@ class Bmf(mstd.Nmf_std):
         return True
     
     def _set_params(self):
-        self.lambda_w = self.options['lambda_w'] if self.options and 'lambda_w' in self.options else 1.1
-        self.lambda_h = self.options['lambda_h'] if self.options and 'lambda_h' in self.options else 1.1
-        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
+        self.lambda_w = self.options.get('lambda_w', 1.1)
+        self.lambda_h = self.options.get('lambda_h', 1.1)
+        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
     
     def update(self):
         """Update basis and mixture matrix."""

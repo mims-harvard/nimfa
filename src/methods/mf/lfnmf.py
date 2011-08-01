@@ -84,8 +84,8 @@ class Lfnmf(mstd.Nmf_std):
         return True
     
     def _set_params(self):
-        self.alpha = self.options['alpha'] if self.options and 'alpha' in self.options else 0.01
-        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
+        self.alpha = self.options.get('alpha', 0.01) 
+        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
     
     def update(self):
         """Update basis and mixture matrix."""

@@ -40,7 +40,7 @@ class Nndsvd(object):
         """
         self.V = V
         self.rank = rank
-        self.flag = options['flag'] if 'flag' in options else 0
+        self.flag = options.get('flag', 0)
         if negative(self.V):
             raise MFError("The input matrix contains negative elements.")
         U, S, V = svd(self.V, self.rank)

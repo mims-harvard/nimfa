@@ -76,7 +76,7 @@ class Lsnmf(mstd.Nmf_std):
     
     def _set_params(self):
         if not self.min_residuals: self.min_residuals = 0.001
-        self.tracker = [] if self.options and 'track' in self.options and self.options['track'] and self.n_run > 1 else None
+        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
             
     def update(self):
         """Update basis and mixture matrix."""
