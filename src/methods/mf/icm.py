@@ -77,7 +77,7 @@ class Icm(mstd.Nmf_std):
                 mffit = mfit.Mf_fit(self) 
                 self.callback(mffit)
             if self.tracker != None:
-                self.tracker.append(mtrack.Mf_track(W = self.W.copy(), H = self.H.copy()))
+                self.tracker.add(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter
         self.final_obj = cobj
@@ -101,7 +101,7 @@ class Icm(mstd.Nmf_std):
         self.theta = self.options.get('theta', .0)
         self.k = self.options.get('k', .0)
         self.sigma = self.options.get('sigma', 1.) 
-        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
+        self.tracker = mtrack.Mf_track() if self.options.get('track', 0) and self.n_run > 1 else None
         
     def update(self):
         """Update basis and mixture matrix."""

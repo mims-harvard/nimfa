@@ -8,12 +8,29 @@ class Mf_track():
     matrix factors, tracking is used only if explicitly specified by user through runtime option. 
     """
 
-
-    def __init__(self, **track_model):
+    def __init__(self):
         """
         Construct model for tracking results across multiple runs. 
+        """
+        self._runs = []
+        
+    def add(self, **track_model):
+        """
+        Add matrix factorization factors (and method specific model data) after one factorization run.
         
         :param track_model: Matrix factorization factors.
         :type track_model:  algorithm specific
         """
-        self.__dict__.update(track_model)
+        
+    def get(self, run):
+        """
+        Return matrix factorization factors from run :param:`run`.
+        
+        :param run: Saved factorization factors (and method specific model data) of :param:`run`'th run are returned. 
+        :type run: `int`
+        """
+        return self._runs[run - 1]
+    
+    """
+    TODO: add time tracking support here 
+    """

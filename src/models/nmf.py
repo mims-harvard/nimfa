@@ -128,7 +128,7 @@ class Nmf(object):
             warnings.warn("Tracking matrix factors across runs is not enabled. Connectivity matrix will be computed.")
         cons = np.matrix(np.zeros((self.V.shape[1], self.V.shape[1])))
         for i in xrange(self.n_run):
-            cons += self.connectivity(self.tracker[i].H)
+            cons += self.connectivity(self.tracker.get(i).H)
         return sop(cons, self.n_run, div)
         
     def dim(self):

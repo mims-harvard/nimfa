@@ -59,7 +59,7 @@ class Lsnmf(mstd.Nmf_std):
                 mffit = mfit.Mf_fit(self) 
                 self.callback(mffit)
             if self.tracker != None:
-                self.tracker.append(mtrack.Mf_track(W = self.W.copy(), H = self.H.copy()))
+                self.tracker.add(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter
         self.final_obj = cobj
@@ -76,7 +76,7 @@ class Lsnmf(mstd.Nmf_std):
     
     def _set_params(self):
         if not self.min_residuals: self.min_residuals = 0.001
-        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
+        self.tracker = mtrack.Mf_track() if self.options.get('track', 0) and self.n_run > 1 else None
             
     def update(self):
         """Update basis and mixture matrix."""
