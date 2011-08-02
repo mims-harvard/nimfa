@@ -6,7 +6,7 @@ from utils.linalg import *
 
 class Bd(mstd.Nmf_std):
     """
-    Bayesian Decomposition - Bayesian nonnegative matrix factorization Gibbs sampler [16].
+    Bayesian Decomposition (BD) - Bayesian nonnegative matrix factorization Gibbs sampler [16].
     
     In the Bayesian framework knowledge of the distribution of the residuals is stated in terms of likelihood function and
     the parameters in terms of prior densities. In this method normal likelihood and exponential priors are chosen as these 
@@ -39,10 +39,12 @@ class Bd(mstd.Nmf_std):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
+        If :param:`max_iter` of the underlying model is not specified, default value of :param:`max_iter` 30 is set. The
+        meaning of :param:`max_iter` for BD is the number of Gibbs samples to compute. Sequence of Gibbs samples converges
+        to a sample from the joint posterior. 
+        
         The following are algorithm specific model options which can be passed with values as keyword arguments.
         
-        :param m: Number of Gibbs samples to compute. Default is 30. 
-        :type m: `int`
         :param alpha: The prior for basis matrix (W) of proper dimensions. Default is zeros matrix prior.
         :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
         :param beta: The prior for mixture matrix (H) of proper dimensions. Default is zeros matrix prior.
@@ -53,8 +55,6 @@ class Bd(mstd.Nmf_std):
         :type k: `float`
         :param sigma: Initial value for noise variance (sigma**2). Default is 1. 
         :type sigma: `float`  
-        :param chains: Number of chains to run. Default is 1.
-        :type chains: `int`
         :param skip: Number of initial samples to skip. Default is 100.
         :type skip: `int`
         :param stride: Return every stride'th sample. Default is 1. 
@@ -102,7 +102,7 @@ class Bd(mstd.Nmf_std):
         
     def _is_satisfied(self, pobj, cobj, iter):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
-        if self.max_iters and self.max_iters < iter:
+        if self.max_iter and self.max_iter < iter:
             return False
         if self.min_residuals and iter > 0 and cobj - pobj <= self.min_residuals:
             return False
@@ -111,7 +111,7 @@ class Bd(mstd.Nmf_std):
         return True
     
     def _set_params(self):
-        self.m = self.options.get('m', 30)
+        if not self.max_iter: self.max_iter = 30
         self.alpha = self.options.get('alpha', sp.csr_matrix((self.V.shape[0], self.rank)))
         self.beta = self.options.get('beta', sp.csr_matrix((self.rank, self.V.shape[1])))
         self.theta = self.options.get('theta', .0)
@@ -119,7 +119,6 @@ class Bd(mstd.Nmf_std):
         self.sigma = self.options.get('sigma', 1.) 
         self.skip = self.options.get('skip', 100) 
         self.stride = self.options.get('stride', 1)  
-        self.chains = self.options.get('chains', 1)
         self.n_w = self.options.get('n_w', np.zeros((self.rank, 1)))
         self.n_h = self.options.get('n_h', np.zeros((self.rank, 1)))
         self.n_sigma = self.options.get('n_sigma', 0)
@@ -127,6 +126,7 @@ class Bd(mstd.Nmf_std):
         
     def update(self):
         """Update basis and mixture matrix."""
+        
     
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 

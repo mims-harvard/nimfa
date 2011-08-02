@@ -44,7 +44,7 @@ class Nmf(object):
     
         Runtime / algorithm specific options
         
-    .. attribute:: max_iters
+    .. attribute:: max_iter
     
         Maximum number of factorization iterations
         
