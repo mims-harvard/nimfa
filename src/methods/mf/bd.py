@@ -1,4 +1,5 @@
 from operator import div
+from scipy.special import erfc, erfcinv
 
 import models.nmf_std as mstd
 import models.mf_fit as mfit
@@ -138,7 +139,7 @@ class Bd(mstd.Nmf_std):
                     nn = list(xrange(n - 1)) + list(xrange(n, self.rank))
                     temp = self._randr(sop(D[:, n] - dot(self.W[:, nn], C[nn, n]), C[n, n], div), self.sigma / C[n, n], self.alpha[:, n])
                     for j in xrange(self.W.shape[0]):
-                        self.W[j, n] = temp[j, 0]
+                        self.W[j, n] = temp[j]
             # update sigma
             if not self.n_sigma:
                 self.sigma = 1. / np.random.gamma(shape = (self.V.shape[0] * self.V.shape[1]) / 2. + 1. + self.k, 
@@ -151,12 +152,27 @@ class Bd(mstd.Nmf_std):
                     nn = list(xrange(n - 1)) + list(xrange(n, self.rank))
                     temp = self._randr(sop(F[n, :] - dot(E[n, nn], self.H[nn, :]), E[n, n], div), self.sigma / E[n, n], self.beta[n, :].T)
                     for j in xrange(self.H.shape[1]):
-                        self.H[n, j] = temp[0, j]
+                        self.H[n, j] = temp[j]
                     
     def _randr(self, m, s, l):    
         """Return random number from p(x)=K*exp(-(x-m)^2/s-l'x), x>=0."""
-        pass    
+        # m and l are vectors and s is scalar
+        m = m.toarray() if sp.isspmatrix(m) else np.array(m)
+        l = l.toarray() if sp.isspmatrix(l) else np.array(l)
+        A = (l * s - m) / sqrt(2 * s)
+        a = A > 26.
+        x = np.zeros(m.shape)
+        y = np.random.rand(m.shape[0], m.shape[1])
+        x[a] = - np.log(y[a]) / ((l[a] * s - m[a]) / s)
+        a = np.array(1 - a, dtype = bool)
+        R = erfc(abs(A[a]))
+        x[a] = erfcinv(y[a] * R - (A[a] < 0) * (2 * y[a] + R - 2)) * sqrt( 2 * s) + m[a] - l[a] * s
+        x[np.isnan(x)] = 0
+        x[x < 0] = 0
+        x[np.isinf(x)] = 0
+        return x.real
     
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
         return (elop(self.V - dot(self.W, self.H), 2, pow)).sum()
+    
