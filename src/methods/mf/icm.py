@@ -114,6 +114,7 @@ class Icm(mstd.Nmf_std):
                 temp = max(sop(D[:, n] - dot(self.W[:, nn], C[nn, n]) - self.sigma * self.alpha[:, n], C[n, n], div), 0)
                 for i in xrange(self.W.shape[0]):
                     self.W[i, n] = temp[i, 0]
+        # update sigma
         self.sigma = (self.theta + self.v + multiply(self.W, dot(self.W, C) - 2 * D).sum() / 2.) / (self.V.shape[0] * self.V.shape[1] / 2. + self.k + 1.)
         # update mixture matrix
         E = dot(self.W.T, self.W)
