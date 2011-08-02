@@ -41,7 +41,7 @@ class Bmf(mstd.Nmf_std):
         """
         self._set_params()
         
-        self._lambda_w = 1. / self.max_iters if self.max_iters else 1. / 10
+        self._lambda_w = 1. / self.max_iter if self.max_iter else 1. / 10
         self._lambda_h = self._lambda_w         
         for _ in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
@@ -67,7 +67,7 @@ class Bmf(mstd.Nmf_std):
     
     def _is_satisfied(self, pobj, cobj, iter):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
-        if self.max_iters and self.max_iters < iter:
+        if self.max_iter and self.max_iter < iter:
             return False
         if self.min_residuals and iter > 0 and cobj - pobj <= self.min_residuals:
             return False

@@ -25,7 +25,7 @@ l_seed = methods.list_seeding_methods()
 
 def mf(target = None, seed = None, W = None, H = None,  
        rank = 30, method = methods.mf.nmf.Nmf,
-       max_iters = None, min_residuals = None, test_conv = None,
+       max_iter = None, min_residuals = None, test_conv = None,
        n_run = 1, callback = None, initialize_only = False, **options):
     """
     Run the specified MF algorithm.
@@ -69,9 +69,9 @@ def mf(target = None, seed = None, W = None, H = None,
      Stopping criteria:
      If multiple criteria are passed, the satisfiability of one terminates the factorization run. 
 
-    :param max_iters: Maximum number of factorization iterations. When not specified, the number of iterations depends
+    :param max_iter: Maximum number of factorization iterations. When not specified, the number of iterations depends
                 on the speed of method convergence. Default is None
-    :type max_iters: `int`
+    :type max_iter: `int`
     :param min_residuals: Minimal required improvement of the residuals from the previous iteration. They are computed 
                 between the target matrix and its MF estimate using the objective function associated to the MF algorithm. 
                 Default is None.
@@ -86,11 +86,11 @@ def mf(target = None, seed = None, W = None, H = None,
     try:
         if type(method) is str:
             mf_model = mf.methods[method](V = target, seed = seed, W = W, H = H, rank = rank,
-                     max_iters = max_iters, min_residuals = min_residuals, test_conv = test_conv,
+                     max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
                      n_run = n_run, callback = callback, options = options)
         else:
             mf_model = method(V = target, seed = seed, W = W, H = H, rank = rank,
-                     max_iters = max_iters, min_residuals = min_residuals, test_conv = test_conv,
+                     max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
                      n_run = n_run, callback = callback, options = options)
     except:
         print "Model initialization has been unsuccessful."

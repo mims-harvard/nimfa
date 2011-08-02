@@ -107,7 +107,7 @@ class Snmf(mstd.Nmf_std):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
         if iter == 0:
             self.init_erravg = cobj
-        if self.max_iters and self.max_iters < iter:
+        if self.max_iter and self.max_iter < iter:
             return False
         if self.inc >= self.i_conv and cobj <= self.min_residuals * self.init_erravg:
             return False
