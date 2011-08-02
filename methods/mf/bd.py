@@ -1,3 +1,4 @@
+from operator import div
 
 import models.nmf_std as mstd
 import models.mf_fit as mfit
@@ -57,14 +58,16 @@ class Bd(mstd.Nmf_std):
         :type sigma: `float`  
         :param skip: Number of initial samples to skip. Default is 100.
         :type skip: `int`
-        :param stride: Return every stride'th sample. Default is 1. 
+        :param stride: Return every :param:`stride`'th sample. Default is 1. 
         :type stride: `int`
-        :param n_w: Method does not sample from these columns of basis matrix. Default is sampling from all columns. 
-        :type n_w: :class:`numpy.ndarray` or list of shape (factorization rank, 1) with logical values
-        :param n_h: Method does not sample from these rows of mixture matrix. Default is sampling from all rows. 
-        :type n_h: :class:`numpy.ndarray` or list of shape (factorization rank, 1) with logical values
+        :param n_w: Method does not sample from these columns of basis matrix. Column i is not sampled if :param:`n_w`[i] is True. 
+                    Default is sampling from all columns. 
+        :type n_w: :class:`numpy.ndarray` or list with shape (factorization rank, 1) with logical values
+        :param n_h: Method does not sample from these rows of mixture matrix. Row i is not sampled if :param:`n_h`[i] is True. 
+                    Default is sampling from all rows. 
+        :type n_h: :class:`numpy.ndarray` or list with shape (factorization rank, 1) with logical values
         :param n_sigma: Method does not sample from :param:`sigma`. By default sampling is done. 
-        :type ns: logical    
+        :type n_sigma: logical    
         """
         mstd.Nmf_std.__init__(self, params)
         self.name = "bd"
@@ -85,7 +88,7 @@ class Bd(mstd.Nmf_std):
             iter = 0
             while self._is_satisfied(pobj, cobj, iter):
                 pobj = cobj
-                self.update()
+                self.update(iter)
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
             if self.callback:
@@ -93,7 +96,7 @@ class Bd(mstd.Nmf_std):
                 mffit = mfit.Mf_fit(self) 
                 self.callback(mffit)
             if self.tracker != None:
-                self.tracker.append(mtrack.Mf_track(W = self.W.copy(), H = self.H.copy()))
+                self.tracker.append(mtrack.Mf_track(W = self.W.copy(), H = self.H.copy(), sigma = self.sigma))
         
         self.n_iter = iter
         self.final_obj = cobj
@@ -124,9 +127,35 @@ class Bd(mstd.Nmf_std):
         self.n_sigma = self.options.get('n_sigma', 0)
         self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
         
-    def update(self):
+    def update(self, iter):
         """Update basis and mixture matrix."""
-        
+        for _ in xrange(self.skip * (iter == 0) + self.stride * (iter > 0)):
+            # update basis matrix
+            C = dot(self.H, self.H.T)
+            D = dot(self.V, self.H.T)
+            for n in xrange(self.rank):
+                if not self.n_w[n]:
+                    nn = list(xrange(n - 1)) + list(xrange(n, self.rank))
+                    temp = self._randr(sop(D[:, n] - dot(self.W[:, nn], C[nn, n]), C[n, n], div), self.sigma / C[n, n], self.alpha[:, n])
+                    for j in xrange(self.W.shape[0]):
+                        self.W[j, n] = temp[j, 0]
+            # update sigma
+            if not self.n_sigma:
+                self.sigma = 1. / np.random.gamma(shape = (self.V.shape[0] * self.V.shape[1]) / 2. + 1. + self.k, 
+                                                  scale = 1. / (self.theta + self.v + multiply(self.W, dot(self.W, C) - 2 * D).sum() / 2.))
+            # update mixture matrix
+            E = dot(self.W.T, self.W)
+            F = dot(self.W.T, self.V)
+            for n in xrange(self.rank):
+                if not self.n_h[n]:
+                    nn = list(xrange(n - 1)) + list(xrange(n, self.rank))
+                    temp = self._randr(sop(F[n, :] - dot(E[n, nn], self.H[nn, :]), E[n, n], div), self.sigma / E[n, n], self.beta[n, :].T)
+                    for j in xrange(self.H.shape[1]):
+                        self.H[n, j] = temp[0, j]
+                    
+    def _randr(self, m, s, l):    
+        """Return random number from p(x)=K*exp(-(x-m)^2/s-l'x), x>=0."""
+        pass    
     
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
