@@ -84,7 +84,7 @@ class Snmf(mstd.Nmf_std):
                 mffit = mfit.Mf_fit(self) 
                 self.callback(mffit)
             if self.tracker != None:
-                self.tracker.append(mtrack.Mf_track(W = self.W.copy(), H = self.H.copy()))
+                self.tracker.add(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter
         self.final_obj = cobj
@@ -101,7 +101,7 @@ class Snmf(mstd.Nmf_std):
         self.i_conv = self.options.egt('i_conv', 10)
         self.w_min_change = self.options.get('w_min_change', 0)
         self.min_residuals = self.min_residuals if self.min_residuals else 1e-4
-        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
+        self.tracker = mtrack.Mf_track() if self.options.get('track', 0) and self.n_run > 1 else None
     
     def _is_satisfied(self, cobj, iter):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""

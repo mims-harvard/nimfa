@@ -54,7 +54,7 @@ class Pmf(mstd.Nmf_std):
                 mffit = mfit.Mf_fit(self) 
                 self.callback(mffit)
             if self.tracker != None:
-                self.tracker.append(mtrack.Mf_track(W = self.W.copy(), H = self.H.copy()))
+                self.tracker.add(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter
         self.final_obj = cobj
@@ -77,7 +77,7 @@ class Pmf(mstd.Nmf_std):
         self.W = max(self.H, np.finfo(self.W.dtype).eps)
         
     def _set_params(self):
-        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
+        self.tracker = mtrack.Mf_track() if self.options.get('track', 0) and self.n_run > 1 else None
         
     def update(self):
         """Update basis and mixture matrix."""

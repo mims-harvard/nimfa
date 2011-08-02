@@ -97,7 +97,7 @@ class Bd(mstd.Nmf_std):
                 mffit = mfit.Mf_fit(self) 
                 self.callback(mffit)
             if self.tracker != None:
-                self.tracker.append(mtrack.Mf_track(W = self.W.copy(), H = self.H.copy(), sigma = self.sigma))
+                self.tracker.add(W = self.W.copy(), H = self.H.copy(), sigma = self.sigma)
         
         self.n_iter = iter
         self.final_obj = cobj
@@ -126,7 +126,7 @@ class Bd(mstd.Nmf_std):
         self.n_w = self.options.get('n_w', np.zeros((self.rank, 1)))
         self.n_h = self.options.get('n_h', np.zeros((self.rank, 1)))
         self.n_sigma = self.options.get('n_sigma', 0)
-        self.tracker = [] if self.options.get('track', 0) and self.n_run > 1 else None
+        self.tracker = mtrack.Mf_track() if self.options.get('track', 0) and self.n_run > 1 else None
         
     def update(self, iter):
         """Update basis and mixture matrix."""
