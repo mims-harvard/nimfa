@@ -83,15 +83,6 @@ def mf(target, seed = None, W = None, H = None,
     if method.__str__().lower() not in l_factorization: 
         raise utils.MFError("Unrecognized MF method. Choose from: %s" % ", ".join(l_factorization))
     mf_model = None
-
-    if type(method) is str:
-            mf_model = methods.factorization.methods[method.lower()](V = target, seed = seed, W = W, H = H, rank = rank,
-                     max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
-                     n_run = n_run, callback = callback, options = options)
-    else:
-            mf_model = method(V = target, seed = seed, W = W, H = H, rank = rank,
-                     max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
-                     n_run = n_run, callback = callback, options = options)
     try:
         if type(method) is str:
             mf_model = methods.factorization.methods[method.lower()](V = target, seed = seed, W = W, H = H, rank = rank,
