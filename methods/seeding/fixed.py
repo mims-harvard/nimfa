@@ -6,7 +6,6 @@ class Fixed(object):
     matrix factors.  
     """
 
-
     def __init__(self):
         self.name = "fixed"
         
