@@ -126,6 +126,7 @@ def std(X, axis = None, ddof = 0):
 def argmax(X, axis = None):
     """
     Return tuple of values and indices of the maximum entries along an axis. Row major order.
+    
     :param X: sparse or dense matrix
     :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix`
     :param axis: Specify axis along which to operate.
@@ -168,6 +169,7 @@ def argmax(X, axis = None):
 def argmin(X, axis = None):
     """
     Return tuple of values and indices of the minimum entries along an axis. Row major order.
+    
     :param X: sparse or dense matrix
     :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix`
     :param axis: Specify axis along which to operate.
@@ -407,7 +409,6 @@ def nz_data(X):
     else:
         return [x for r in X.tolist() for x in r if x != 0]
     
-
 def choose(n, k):
     """A fast way to calculate binomial coefficients. It is 10 times faster than scipy.mis.comb for exact answers."""
     if 0 <= k <= n:

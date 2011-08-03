@@ -13,7 +13,8 @@ class Nndsvd(object):
     resulting partial SVD factors utilizing an algebraic property of unit rank matrices. 
     
     NNDSVD is well suited to initialize NMF algorithms with sparse factors. Numerical examples suggest that NNDSVD leads 
-    to rapid reduction of the approximation error of many NMF algorithms. 
+    to rapid reduction of the approximation error of many NMF algorithms. With setting algorithm options dense factors can be
+    generated. 
     
     [1] C. Boutsidis and E. Gallopoulos, SVD-based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, 2007,
     doi:10.1016/j.patcog.2007.09.010 
