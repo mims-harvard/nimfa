@@ -125,7 +125,7 @@ class Nmf(object):
         of a single NMF run, the consensus matrix reduces to the connectivity matrix.
         """
         if not self.tracker:
-            warnings.warn("Tracking matrix factors across runs is not enabled. Connectivity matrix will be computed.")
+            warnings.warn("Tracking matrix factors across runs is not enabled. Connectivity matrix will be computed.", UserWarning, 2)
         cons = np.matrix(np.zeros((self.V.shape[1], self.V.shape[1])))
         for i in xrange(self.n_run):
             cons += self.connectivity(self.tracker.get(i).H)

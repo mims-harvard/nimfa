@@ -1,9 +1,6 @@
 from math import log
 
-import utils.utils as utils
-import methods.seeding.fixed as fixed
 import nmf
-from utils.linalg import *
 
 class Nmf_ns(nmf.Nmf):
     """
@@ -36,19 +33,19 @@ class Nmf_ns(nmf.Nmf):
 
     def __init__(self, params):
         """
-        Constructor
+        Construct factorization model that manages nonsmooth NMF models.
         """
         nmf.Nmf.__init__(self, params)
         if not self.seed and not self.W and not self.H: self.seed = "random"
         if self.W and self.H:
             if self.seed:
-                raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
+                raise nmf.utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
             else:
-                self.seed = fixed.Fixed() 
+                self.seed = nmf.seed.fixed.Fixed() 
                 self.seed._set_fixed(self.W, self.H)
         self._is_smdefined()
-        if any(self.V.data < 0):
-            raise utils.MFError("The input matrix contains negative elements.") 
+        if nmf.sp.isspmatrix(self.V) and any(self.V.data < 0) or any(self.V < 0):
+            raise nmf.utils.MFError("The input matrix contains negative elements.") 
         
     def basis(self):
         """Return the matrix of basis vectors."""
@@ -64,19 +61,19 @@ class Nmf_ns(nmf.Nmf):
     
     def fitted(self):
         """Compute the estimated target matrix according to the nonsmooth NMF algorithm model."""
-        return dot(dot(self.W, self.S), self.H)
+        return nmf.dot(nmf.dot(self.W, self.S), self.H)
     
     def distance(self, metric):
         """Return the loss function value."""
         if metric == 'euclidean':
-            return (elop(self.V - dot(dot(self.W, self.S), self.H), 2, pow)).sum()
+            return (nmf.elop(self.V - nmf.dot(nmf.dot(self.W, self.S), self.H), 2, pow)).sum()
         elif metric == 'kl': 
-            Va = dot(dot(self.W, self.S), self.H)
-            return (multiply(self.V, elop(self.V, Va, log)) - self.V + Va).sum()
+            Va = nmf.dot(nmf.dot(self.W, self.S), self.H)
+            return (nmf.multiply(self.V, nmf.elop(self.V, Va, log)) - self.V + Va).sum()
         else:
-            raise utils.MFError("Unknown distance metric.")
+            raise nmf.utils.MFError("Unknown distance metric.")
     
     def residuals(self):
         """Return residuals between the target matrix and its nonsmooth NMF estimate."""
-        return self.V - dot(dot(self.W, self.S), self.H)
+        return self.V - nmf.dot(nmf.dot(self.W, self.S), self.H)
         
