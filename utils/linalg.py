@@ -336,7 +336,7 @@ def inf_norm(X):
 
 def norm(X, p = "fro"):
     """Compute entry-wise norms (! not induced/operator norms)."""
-    assert 1 not in X.shape and p == 2, "Computing entrywise norms only."
+    assert 1 not in X.shape and p == 2, "Computing entry-wise norms only."
     if sp.isspmatrix(X):
         v = {
          "fro": sum(abs(x)**2 for x in X.data)**(1. / 2),

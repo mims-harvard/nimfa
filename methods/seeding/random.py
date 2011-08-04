@@ -34,13 +34,13 @@ class Random(object):
                                                types. 
                                :type density: `float`
         """
-        self.V = V
         self.rank = rank
         self.density = options.get('density', 0.01)
-        self.max = argmax(self.V, axis = None)[0]
-        gen = self._gen_sparse if sp.isspmatrix(self.V) else self._gen_dense
-        self.W = gen(self.V.shape[0], self.rank)
-        self.H = gen(self.rank, self.V.shape[1])
+        self.max = argmax(V, axis = None)[0]
+        self._format = V.getformat()
+        gen = self._gen_sparse if sp.isspmatrix(V) else self._gen_dense
+        self.W = gen(V.shape[0], self.rank)
+        self.H = gen(self.rank, V.shape[1])
         mfs = [self.W, self.H]
         for sn in options:
             if sn[0] is 'S' and sn[1:].isdigit():
@@ -56,7 +56,7 @@ class Random(object):
         :param dim2: Dimension along second axis.
         :type dim2: `int`
         """
-        return self.max * sp.rand(dim1, dim2, density = self.density, format = self.V.getformat(), dtype = 'd')
+        return self.max * sp.rand(dim1, dim2, density = self.density, format = self._format, dtype = 'd')
         
     def _gen_dense(self, dim1, dim2):
         """

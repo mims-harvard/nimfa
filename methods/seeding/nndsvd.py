@@ -13,7 +13,7 @@ class Nndsvd(object):
     resulting partial SVD factors utilizing an algebraic property of unit rank matrices. 
     
     NNDSVD is well suited to initialize NMF algorithms with sparse factors. Numerical examples suggest that NNDSVD leads 
-    to rapid reduction of the approximation error of many NMF algorithms. With setting algorithm options dense factors can be
+    to rapid reduction of the approximation error of many NMF algorithms. By setting algorithm options :param:`flag` dense factors can be
     generated. 
     
     [1] Boutsidis, C., Gallopoulos, E., (2007). SVD-based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, 2007,
@@ -42,14 +42,13 @@ class Nndsvd(object):
                                     Default is NNDSVD.
                         :type flag: `int`
         """
-        self.V = V
         self.rank = rank
         self.flag = options.get('flag', 0)
-        if negative(self.V):
+        if negative(V):
             raise MFError("The input matrix contains negative elements.")
-        U, S, V = svd(self.V, self.rank)
-        self.W = np.matrix(np.zeros((self.V.shape[0], self.rank)))
-        self.H = np.matrix(np.zeros((self.rank, self.V.shape[1])))
+        U, S, V = svd(V, self.rank)
+        self.W = np.matrix(np.zeros((V.shape[0], self.rank)))
+        self.H = np.matrix(np.zeros((self.rank, V.shape[1])))
         
         # choose the first singular triplet to be nonnegative
         self.W[:,0] = sqrt(S[0]) * abs(U[:,0])
@@ -78,13 +77,13 @@ class Nndsvd(object):
         
         # NNDSVDa
         if self.flag == 1:
-            avg = self.V.mean()
+            avg = V.mean()
             self.W[self.W == 0] = avg
             self.H[self.H == 0] = avg
         
         # NNDSVDar
         if self.flag == 2:
-            avg = self.V.mean()
+            avg = V.mean()
             n1 = len(self.W[self.W == 0])
             n2 = len(self.H[self.H == 0])
             self.W[self.W == 0] = avg * np.random.uniform(n1, 1) / 100
