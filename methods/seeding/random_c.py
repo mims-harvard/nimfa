@@ -7,7 +7,7 @@ class Random_c(object):
     except it chooses p columns at random from the longest (in 2-norm) columns in target matrix (V), which generally means the most
     dense columns of target matrix.  
     
-    [17] Albright, R. et al., 2006. Algorithms, initializations, and convergence for the nonnegative matrix factorization. Matrix, (919), p.1-18. 
+    [17] Albright, R. et al., (2006). Algorithms, initializations, and convergence for the nonnegative matrix factorization. Matrix, (919), p.1-18. 
         Available at: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.89.2161&rep=rep1&type=pdf.
     """
     

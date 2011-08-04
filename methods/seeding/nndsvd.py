@@ -16,8 +16,8 @@ class Nndsvd(object):
     to rapid reduction of the approximation error of many NMF algorithms. With setting algorithm options dense factors can be
     generated. 
     
-    [1] C. Boutsidis and E. Gallopoulos, SVD-based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, 2007,
-    doi:10.1016/j.patcog.2007.09.010 
+    [1] Boutsidis, C., Gallopoulos, E., (2007). SVD-based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, 2007,
+    doi:10.1016/j.patcog.2007.09.010.
     """
 
     def __init__(self):
@@ -27,17 +27,20 @@ class Nndsvd(object):
         """
         Return initialized basis and mixture matrix. 
         
+        Initialized matrices are sparse :class:`scipy.sparse.csr_matrix` if NNDSVD variant is specified by the :param:`flag` option,
+        else matrices are :class:`numpy.matrix`.
+        
         :param V: Target matrix, the matrix for MF method to estimate. Data instances to be clustered. 
-        :type V: One of the :class:`scipy.sparse` sparse matrices types or :class:`numpy.ndarray` or or :class:`numpy.matrix`
+        :type V: One of the :class:`scipy.sparse` sparse matrices types or :class:`numpy.matrix`
         :param rank: Factorization rank. 
         :type rank: `int`
         :param options: Specify algorithm or model specific options (e.g. initialization of extra matrix factor, seeding parameters).
-                        Option 'flag' Indicates the variant of the NNDSVD algorithm. Possible values are:
-                            #. 0 -- NNDSVD,
-                            #. 1 -- NNDSVDa (fill in the zero elements with the average),
-                            #. 2 -- NNDSVDar (fill in the zero elements with random values in the space [0:average/100]).
-                        Default is NNDSVD.
-        :type options: `dict`
+                        :param flag: Indicate the variant of the NNDSVD algorithm. Possible values are:
+                                     #. 0 -- NNDSVD,
+                                     #. 1 -- NNDSVDa (fill in the zero elements with the average),
+                                     #. 2 -- NNDSVDar (fill in the zero elements with random values in the space [0:average/100]).
+                                    Default is NNDSVD.
+                        :type flag: `int`
         """
         self.V = V
         self.rank = rank
