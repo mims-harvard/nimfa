@@ -1,4 +1,5 @@
-
+import scipy.sparse as sp
+import numpy as np
 
 class Fixed(object):
     """
@@ -9,15 +10,17 @@ class Fixed(object):
     def __init__(self):
         self.name = "fixed"
         
-    def _set_fixed(self, *ff):
+    def _set_fixed(self, *factors):
         """Set initial factorization."""
-        self.ff = ff
+        self.factors = factors
+        for f in factors:
+            f = np.matrix(f) if not sp.isspmatrix(f) else f.copy() 
         
     def initialize(self, *args, **kwargs):
         """
         Return fixed matrix factors.
         """
-        return self.ff
+        return self.factors
     
     def __repr__(self):
         return "fixed.Fixed()"
