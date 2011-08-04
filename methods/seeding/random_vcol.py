@@ -20,7 +20,7 @@ class Random_vcol(object):
        
     def initialize(self, V, rank, **options):
         """
-        Return initialized basis and mixture matrix. 
+        Return initialized basis and mixture matrix. Initialized matrices are of the same type as passed target matrix. 
         
         :param V: Target matrix, the matrix for MF method to estimate. 
         :type V: One of the :class:`scipy.sparse` sparse matrices types or or :class:`numpy.matrix`
@@ -38,9 +38,20 @@ class Random_vcol(object):
         self.rank = rank
         self.p_c = options.get('p_c', 1 / 20 * self.V.shape[1])
         self.p_r = options.get('p_r', 1 / 20 * self.V.shape[0])
+        if sp.isspmatrix(self.V):
+            self.W = sp.lil_matrix((self.V.shape[0], self.rank))
+            self.H = sp.lil_matrix((self.rank, self.V.shape[1]))
+        else:
+            self.W = np.matrix(np.zeros((self.V.shape[0], self.rank)))
+            self.H = np.matrix(np.zeros((self.rank, self.V.shape[1])))
+        for i in xrange(self.rank):
+            self.W[:, i] = self.V[:, np.random.randint(self.V.shape[1], size = self.p_c)].mean(axis = 1)
+            self.H[i, :] = self.V[np.random.randint(self.V.shape[0], size = self.p_r), :].mean(axis = 0)
+        return self.W.asformat(self.V.getformat()), self.H.asformat(self.V.getformat()) if sp.isspmatrix(self.V) else self.W, self.H
     
     def __repr__(self):
         return "random_vcol.Random_vcol()"
     
     def __str__(self):
         return self.name
+    
