@@ -284,7 +284,6 @@ def _op_spmatrix(X, Y, op):
     """Compute sparse element-wise operation for operations preserving zeros."""
     # distinction as op is not necessarily commutative
     return __op_spmatrixX(X, Y, op) if sp.isspmatrix(X) else __op_spmatrixY(X, Y, op)
-    
 
 def __op_spmatrixX(X, Y, op):
     """Compute sparse element-wise operation for operations preserving zeros."""

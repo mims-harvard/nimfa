@@ -30,7 +30,7 @@ class Bmf(mstd.Nmf_std):
         If parameters are not specified, default value of 1.1 is taken for both of them. 
         """
         self.name = "bnmf"
-        self.aseeds = ["random", "fixed", "nndsvd"]
+        self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         mstd.Nmf_std.__init__(self, params)
         
     def factorize(self):
@@ -93,12 +93,12 @@ class Bmf(mstd.Nmf_std):
         
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
-        return (elop(self.V - dot(self.W, self.H), 2, pow)).sum()
+        return (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
     
     def _adjustment(self):
         """Adjust small values to factors to avoid numerical underflow."""
-        self.H = max(self.W, np.finfo(self.H.dtype).eps)
-        self.W = max(self.H, np.finfo(self.W.dtype).eps)
+        self.H = max(self.H, np.finfo(self.H.dtype).eps)
+        self.W = max(self.W, np.finfo(self.W.dtype).eps)
 
     def __str__(self):
         return self.name    

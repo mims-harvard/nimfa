@@ -25,7 +25,6 @@ class Nmf(mstd.Nmf_std):
     [3] Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P., (2004). Metagenes and molecular pattern discovery using matrix factorization. Proceedings of the National Academy of Sciences of the United States of America, 101(12), 4164-9. doi: 10.1073/pnas.0308531101.
     """
 
-
     def __init__(self, **params):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
@@ -38,10 +37,10 @@ class Nmf(mstd.Nmf_std):
             #. 'fro' for standard Frobenius distance cost function,
             #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
             #. 'conn' for connectivity matrix changed elements cost function. 
-        Default are 'Euclidean' for :param:`update` equations and 'Euclidean' for :param:`objective` function. 
+        Default are 'Euclidean' for :param:`update` equations and 'fro' for :param:`objective` function. 
         """
         self.name = "nmf"
-        self.aseeds = ["random", "fixed", "nndsvd"]
+        self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         mstd.Nmf_std.__init__(self, params)
         
     def factorize(self):
@@ -86,8 +85,8 @@ class Nmf(mstd.Nmf_std):
     
     def _adjustment(self):
         """Adjust small values to factors to avoid numerical underflow."""
-        self.H = max(self.W, np.finfo(self.H.dtype).eps)
-        self.W = max(self.H, np.finfo(self.W.dtype).eps)
+        self.H = max(self.H, np.finfo(self.H.dtype).eps)
+        self.W = max(self.W, np.finfo(self.W.dtype).eps)
         
     def _set_params(self):
         self.update = getattr(self, self.options.get('update', 'euclidean') + '_update') 
@@ -97,7 +96,7 @@ class Nmf(mstd.Nmf_std):
     def euclidean_update(self):
         """Update basis and mixture matrix based on Euclidean distance multiplicative update rules."""
         self.H = multiply(self.H, elop(dot(self.W.T, self.V), dot(self.W.T, dot(self.W, self.H)), div))
-        self.W = multiply(self.W , elop(dot(self.V, self.H.T), dot(self.W, dot(self.H, self.H.T)), div)) 
+        self.W = multiply(self.W , elop(dot(self.V, self.H.T), dot(self.W, dot(self.H, self.H.T)), div))
         
     def divergence_update(self):
         """Update basis and mixture matrix based on divergence multiplicative update rules."""
@@ -108,12 +107,13 @@ class Nmf(mstd.Nmf_std):
         
     def fro_objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
-        return (elop(self.V - dot(self.W, self.H), 2, pow)).sum()
+        print "fro"
+        return (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
     
     def div_objective(self):
         """Compute divergence of target matrix from its NMF estimate."""
         Va = dot(self.W, self.H)
-        return (multiply(self.V, elop(self.V, Va, log)) - self.V + Va).sum()
+        return (multiply(self.V, sop(elop(self.V, Va, div), op = log)) - self.V + Va).sum()
     
     def conn_objective(self):
         """

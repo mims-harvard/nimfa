@@ -258,7 +258,7 @@ class Psmf(mstd.Nmf_std):
     
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
-        return (elop(self.V - dot(self.W, self.H), 2, pow)).sum()
+        return (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
        
     def __str__(self):
         return self.name 

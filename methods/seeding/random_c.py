@@ -19,7 +19,7 @@ class Random_c(object):
     def __init__(self):
         self.name = "random_c"
        
-    def initialize(self, V, rank, **options):
+    def initialize(self, V, rank, options):
         """
         Return initialized basis and mixture matrix. Initialized matrices are of the same type as passed target matrix. 
         

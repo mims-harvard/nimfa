@@ -86,7 +86,7 @@ class Nmf(object):
     
     def run(self):
         """Run the specified MF algorithm."""
-        return self.method.factorize()
+        return self.factorize()
         
     def basis(self):
         """Return the matrix of basis vectors."""

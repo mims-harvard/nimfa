@@ -30,7 +30,7 @@ class Lsnmf(mstd.Nmf_std):
         If :param:`min_residuals` of the underlying model is not specified, default value of :param:`min_residuals` 0.001 is set.  
         """
         self.name = "lsnmf"
-        self.aseeds = ["random", "fixed", "nndsvd"]
+        self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         mstd.Nmf_std.__init__(self, params)
         
     def factorize(self):

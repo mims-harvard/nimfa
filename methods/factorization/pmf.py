@@ -20,7 +20,7 @@ class Pmf(mstd.Nmf_std):
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         """
         self.name = "pmf"
-        self.aseeds = ["random", "fixed", "nndsvd"]
+        self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         mstd.Nmf_std.__init__(self, params)
         
     def factorize(self):
@@ -73,8 +73,8 @@ class Pmf(mstd.Nmf_std):
     
     def _adjustment(self):
         """Adjust small values to factors to avoid numerical underflow."""
-        self.H = max(self.W, np.finfo(self.H.dtype).eps)
-        self.W = max(self.H, np.finfo(self.W.dtype).eps)
+        self.H = max(self.H, np.finfo(self.H.dtype).eps)
+        self.W = max(self.W, np.finfo(self.W.dtype).eps)
         
     def _set_params(self):
         self.tracker = mtrack.Mf_track() if self.options.get('track', 0) and self.n_run > 1 else None

@@ -23,7 +23,7 @@ class Nndsvd(object):
     def __init__(self):
         self.name = "nndsvd"
         
-    def initialize(self, V, rank, **options):
+    def initialize(self, V, rank, options):
         """
         Return initialized basis and mixture matrix. 
         

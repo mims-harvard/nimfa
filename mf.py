@@ -92,8 +92,8 @@ def mf(target, seed = None, W = None, H = None,
             mf_model = method(V = target, seed = seed, W = W, H = H, rank = rank,
                      max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
                      n_run = n_run, callback = callback, options = options)
-    except:
-        raise utils.MFError("Model initialization has been unsuccessful.")
+    except Exception as str_error:
+        raise utils.MFError("Model initialization has been unsuccessful: " + str(str_error))
     if not initialize_only:
         return mf_model.run()
     else:

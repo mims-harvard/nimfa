@@ -71,7 +71,7 @@ class Bd(mstd.Nmf_std):
         :type n_sigma: logical    
         """
         self.name = "bd"
-        self.aseeds = ["random", "fixed", "nndsvd"]
+        self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         mstd.Nmf_std.__init__(self, params)
         
     def factorize(self):
@@ -174,7 +174,7 @@ class Bd(mstd.Nmf_std):
     
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
-        return (elop(self.V - dot(self.W, self.H), 2, pow)).sum()
+        return (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
     
     def __str__(self):
         return self.name

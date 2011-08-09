@@ -14,7 +14,7 @@ class Random(object):
     def __init__(self):
         self.name = "random"
        
-    def initialize(self, V, rank, **options):
+    def initialize(self, V, rank, options):
         """
         Return initialized basis and mixture matrix (and additional factors if specified in :param:`Sn`, n = 1, 2, ..., k). 
         Initialized matrices are of the same type as passed target matrix. 
@@ -37,8 +37,11 @@ class Random(object):
         self.rank = rank
         self.density = options.get('density', 0.01)
         self.max = argmax(V, axis = None)[0]
-        self._format = V.getformat()
-        gen = self._gen_sparse if sp.isspmatrix(V) else self._gen_dense
+        if sp.isspmatrix(V):
+            self._format = V.getformat()
+            gen = self._gen_sparse
+        else:
+            gen = self._gen_dense
         self.W = gen(V.shape[0], self.rank)
         self.H = gen(self.rank, V.shape[1])
         mfs = [self.W, self.H]

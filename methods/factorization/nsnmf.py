@@ -40,7 +40,7 @@ class Nsnmf(mns.Nmf_ns):
         theta = 0.5 is used.  
         """
         self.name = "nsnmf"
-        self.aseeds = ["random", "fixed", "nndsvd"]
+        self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         mns.Nmf_ns.__init__(self, params)
         
     def factorize(self):
