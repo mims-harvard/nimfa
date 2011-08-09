@@ -80,6 +80,8 @@ class Snmf(mstd.Nmf_std):
                 self.update()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
+                if self.track_error:
+                    self.tracker._track_error(self.residuals())
             # transpose and swap the roles back
             if self.version == 'l':
                 self.V = self.V.T
@@ -88,8 +90,8 @@ class Snmf(mstd.Nmf_std):
                 self.final_obj = cobj
                 mffit = mfit.Mf_fit(self) 
                 self.callback(mffit)
-            if self.tracker != None:
-                self.tracker.add(W = self.W.copy(), H = self.H.copy())
+            if self.track_factor:
+                self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter - 1
         self.final_obj = cobj
@@ -106,7 +108,9 @@ class Snmf(mstd.Nmf_std):
         self.i_conv = self.options.egt('i_conv', 10)
         self.w_min_change = self.options.get('w_min_change', 0)
         self.min_residuals = self.min_residuals if self.min_residuals else 1e-4
-        self.tracker = mtrack.Mf_track() if self.options.get('track', 0) and self.n_run > 1 else None
+        self.track_factor = self.options.get('track_factor', False)
+        self.track_error = self.options.get('track_error', False)
+        self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
     
     def _is_satisfied(self, cobj, iter):
         """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""

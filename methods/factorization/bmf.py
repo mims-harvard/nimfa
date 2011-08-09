@@ -62,12 +62,14 @@ class Bmf(mstd.Nmf_std):
                 self._adjustment()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
+                if self.track_error:
+                    self.tracker._track_error(self.residuals())
             if self.callback:
                 self.final_obj = cobj
                 mffit = mfit.Mf_fit(self) 
                 self.callback(mffit)
-            if self.tracker != None:
-                self.tracker.add(W = self.W.copy(), H = self.H.copy())
+            if self.track_factor:
+                self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter - 1
         self.final_obj = cobj
@@ -87,7 +89,9 @@ class Bmf(mstd.Nmf_std):
     def _set_params(self):
         self.lambda_w = self.options.get('lambda_w', 1.1)
         self.lambda_h = self.options.get('lambda_h', 1.1)
-        self.tracker = mtrack.Mf_track() if self.options.get('track', 0) and self.n_run > 1 else None
+        self.track_factor = self.options.get('track_factor', False)
+        self.track_error = self.options.get('track_error', False)
+        self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
     
     def update(self):
         """Update basis and mixture matrix."""
