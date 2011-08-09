@@ -23,7 +23,7 @@ def diff(X):
     return [X[0, j + 1] - X[0, j] for j in xrange(X.shape[1] - 1)]
 
 def sub2ind(shape, row_sub, col_sub):
-    """Return the linear index equivalents to the row and column subscripts for given matrix shape"""
+    """Return the linear index equivalents to the row and column subscripts for given matrix shape."""
     assert len(row_sub) == len(col_sub), "Row and column subscripts do not match."
     res = [j * shape[0] + i for i,j in zip(row_sub, col_sub)]
     return res
@@ -31,7 +31,7 @@ def sub2ind(shape, row_sub, col_sub):
 def any(X, axis = None):
     """Test whether any element along a given axis of sparse or dense matrix X are nonzero."""
     if sp.isspmatrix(X): 
-        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+        X = X.tocsr()
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
         if axis is None:
             return len(X.data) != X.shape[0] * X.shape[1]
@@ -55,7 +55,7 @@ def any(X, axis = None):
 def all(X, axis = None):
     """Test whether all elements along a given axis of sparse or dense matrix X are nonzero."""
     if sp.isspmatrix(X):
-        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+        X = X.tocsr()
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
         if axis is None:
             return len(X.data) == X.shape[0] * X.shape[1]
@@ -79,6 +79,7 @@ def all(X, axis = None):
 def find(X):
     """Return all nonzero elements indices (linear indices) of sparse or dense matrix X. It is Matlab notation."""
     if sp.isspmatrix(X):
+        X = X.tocsr()
         res = []
         now = 0
         for row in range(X.shape[0]):
@@ -128,12 +129,12 @@ def argmax(X, axis = None):
     Return tuple of values and indices of the maximum entries along an axis. Row major order.
     
     :param X: sparse or dense matrix
-    :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix`
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or class:`numpy.matrix`
     :param axis: Specify axis along which to operate.
     :type axis: `int`
     """
     if sp.isspmatrix(X):
-        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+        X = X.tocsr()
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
         res = [[float('-inf'), 0] for _ in xrange(X.shape[1 - axis])] if axis is not None else [float('-inf'), 0]
         def _caxis(row, col):
@@ -171,12 +172,12 @@ def argmin(X, axis = None):
     Return tuple of values and indices of the minimum entries along an axis. Row major order.
     
     :param X: sparse or dense matrix
-    :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix`
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or class:`numpy.matrix`
     :param axis: Specify axis along which to operate.
     :type axis: `int`
     """
     if sp.isspmatrix(X):
-        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
+        X = X.tocsr()
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
         res = [[float('inf'), 0] for _ in xrange(X.shape[1 - axis])] if axis is not None else [float('inf'), 0]
         def _caxis(row, col):
@@ -230,8 +231,7 @@ def dot(X, Y):
         return X * Y
     elif sp.isspmatrix(X) or sp.isspmatrix(Y):
         # avoid dense dot product with mixed factors
-        # avoid copying sparse matrix
-        return sp.csc_matrix(X) * sp.csr_matrix(Y)
+        return sp.csr_matrix(X).copy() * sp.csr_matrix(Y).copy()
     else:
         return np.asmatrix(X) * np.asmatrix(Y)
 
@@ -253,13 +253,12 @@ def sop(X, s = None, op = None):
     
 def _sop_spmatrix(X, s = None, op = None):
     """Compute sparse scalar element wise operation of matrix X and scalar."""
-    assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
-    R = X.copy()
+    R = X.copy().tocsr()
     now = 0
-    for row in range(X.shape[0]):
-        upto = X.indptr[row+1]
+    for row in range(R.shape[0]):
+        upto = R.indptr[row+1]
         while now < upto:
-            R.data[now] = op(X.data[now], s) if s != None else op(X.data[now])
+            R.data[now] = op(R.data[now], s) if s != None else op(R.data[now])
             now += 1
     return R
 
@@ -290,29 +289,27 @@ def _op_spmatrix(X, Y, op):
 
 def __op_spmatrixX(X, Y, op):
     """Compute sparse element-wise operation for operations preserving zeros."""
-    assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
     assert X.shape == Y.shape, "Matrices are not aligned."
-    R = X.copy()
+    R = X.copy().tocsr()
     now = 0
-    for row in range(X.shape[0]):
-        upto = X.indptr[row+1]
+    for row in xrange(R.shape[0]):
+        upto = R.indptr[row+1]
         while now < upto:
-            col = X.indices[now]
-            R.data[now] = op(X.data[now], Y[row, col])
+            col = R.indices[now]
+            R.data[now] = op(R.data[now], Y[row, col])
             now += 1
     return R
     
 def __op_spmatrixY(X, Y, op):
     """Compute sparse element-wise operation for operations preserving zeros."""
-    assert isinstance(Y, sp.csr_matrix) or isinstance(Y, sp.csc_matrix), "Incorrect sparse format."
     assert X.shape == Y.shape, "Matrices are not aligned."
-    R = Y.copy()
+    R = Y.copy().tocsr()
     now = 0
-    for row in range(Y.shape[0]):
-        upto = Y.indptr[row+1]
+    for row in range(R.shape[0]):
+        upto = R.indptr[row+1]
         while now < upto:
-            col = Y.indices[now]
-            R.data[now] = op(X[row, col], Y.data[now])
+            col = R.indices[now]
+            R.data[now] = op(X[row, col], R.data[now])
             now += 1
     return R
 
@@ -368,14 +365,13 @@ def hstack(X, format = None, dtype = None):
 def max(X, s):
     """Compute element-wise max(x,s) assignment for sparse or dense matrix."""
     if sp.isspmatrix(X):
-        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
-        R = X.copy()
+        R = X.copy().tocsr()
         now = 0
-        for row in range(X.shape[0]):
-            upto = X.indptr[row+1]
+        for row in range(R.shape[0]):
+            upto = R.indptr[row+1]
             while now < upto:
-                col = X.indices[now]
-                R.data[now] = max(X[row, col], s)
+                col = R.indices[now]
+                R.data[now] = max(R[row, col], s)
                 now += 1
         return R
     else:
@@ -384,14 +380,13 @@ def max(X, s):
 def min(X, s):
     """Compute element-wise min(x,s) assignment for sparse or dense matrix."""
     if sp.isspmatrix(X):
-        assert isinstance(X, sp.csr_matrix) or isinstance(X, sp.csc_matrix), "Incorrect sparse format."
-        R = X.copy()
+        R = X.copy().tocsr()
         now = 0
-        for row in range(X.shape[0]):
-            upto = X.indptr[row+1]
+        for row in range(R.shape[0]):
+            upto = R.indptr[row+1]
             while now < upto:
-                col = X.indices[now]
-                R.data[now] = min(X[row, col], s)
+                col = R.indices[now]
+                R.data[now] = min(R[row, col], s)
                 now += 1
         return R
     else:

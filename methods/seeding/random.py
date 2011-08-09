@@ -29,13 +29,13 @@ class Random(object):
                                           order as their descriptions in input.
                                :type Sn: k tuples
                             #. :param density: Density of the generated matrices. Density of 1 means a full matrix, density of 0 means a 
-                                               matrix with no nonzero items. Default value is 0.01. Density parameter is applied 
+                                               matrix with no nonzero items. Default value is 0.7. Density parameter is applied 
                                                only if passed target :param:`V` is an instance of one :class:`scipy.sparse` sparse
                                                types. 
                                :type density: `float`
         """
         self.rank = rank
-        self.density = options.get('density', 0.01)
+        self.density = options.get('density', 0.7)
         self.max = argmax(V, axis = None)[0]
         if sp.isspmatrix(V):
             self._format = V.getformat()
@@ -59,7 +59,7 @@ class Random(object):
         :param dim2: Dimension along second axis.
         :type dim2: `int`
         """
-        return self.max * sp.rand(dim1, dim2, density = self.density, format = self._format, dtype = 'd')
+        return self.max * sp.rand(dim1, dim2, density = self.density, format = self._format)
         
     def _gen_dense(self, dim1, dim2):
         """
