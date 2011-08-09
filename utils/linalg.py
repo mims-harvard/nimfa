@@ -16,20 +16,41 @@ from math import sqrt
 #######
 
 def diff(X):
-    """Compute differences between adjacent elements of X."""   
+    """
+    Compute differences between adjacent elements of X.
+    
+    :param X: Vector for which consecutive differences are computed.
+    :type X: :class:`numpy.matrix`
+    """   
     assert 1 in X.shape, "X should be a vector."
     assert not sp.isspmatrix(X), "X is sparse matrix."
     X = X.flatten()
     return [X[0, j + 1] - X[0, j] for j in xrange(X.shape[1] - 1)]
 
 def sub2ind(shape, row_sub, col_sub):
-    """Return the linear index equivalents to the row and column subscripts for given matrix shape."""
+    """
+    Return the linear index equivalents to the row and column subscripts for given matrix shape.
+    
+    :param shape: Preferred matrix shape for subscripts conversion.
+    :type shape: `tuple`
+    :param row_sub: Row subscripts.
+    :type row_sub: `list`
+    :param col_sub: Column subscripts.
+    :type col_sub: `list` 
+    """
     assert len(row_sub) == len(col_sub), "Row and column subscripts do not match."
     res = [j * shape[0] + i for i,j in zip(row_sub, col_sub)]
     return res
 
 def any(X, axis = None):
-    """Test whether any element along a given axis of sparse or dense matrix X are nonzero."""
+    """
+    Test whether any element along a given axis of sparse or dense matrix X is nonzero.
+    
+    :param X: Target matrix. 
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param axis: Specified axis along which nonzero test is performed. If :param:`axis` not specified, whole matrix is considered. 
+    :type axis: `int`
+    """
     if sp.isspmatrix(X): 
         X = X.tocsr()
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
@@ -53,7 +74,14 @@ def any(X, axis = None):
         return X.any(axis)
         
 def all(X, axis = None):
-    """Test whether all elements along a given axis of sparse or dense matrix X are nonzero."""
+    """
+    Test whether all elements along a given axis of sparse or dense matrix :param:`X` are nonzero.
+    
+    :param X: Target matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param axis: Specified axis along which nonzero test is performed. If :param:`axis` not specified, whole matrix is considered. 
+    :type axis: `int`
+    """
     if sp.isspmatrix(X):
         X = X.tocsr()
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
@@ -77,7 +105,12 @@ def all(X, axis = None):
         return X.all(axis)
 
 def find(X):
-    """Return all nonzero elements indices (linear indices) of sparse or dense matrix X. It is Matlab notation."""
+    """
+    Return all nonzero elements indices (linear indices) of sparse or dense matrix :param:`X`. It is Matlab notation.
+    
+    :param X: Target matrix.
+    type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    """
     if sp.isspmatrix(X):
         X = X.tocsr()
         res = []
@@ -94,7 +127,12 @@ def find(X):
         return [j * X.shape[0] + i for i in xrange(X.shape[0]) for j in xrange(X.shape[1]) if X[i,j]]
 
 def negative(X):
-    """Check if X contains negative elements."""
+    """
+    Check if :param:`X` contains negative elements.
+    
+    :param X: Target matrix. 
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    """
     if sp.isspmatrix(X):
         if any(X.data < 0):
                 return True
@@ -103,13 +141,28 @@ def negative(X):
             return True
         
 def sort(X):
-    """Return sorted elements of X and also array of indices."""
+    """
+    Return sorted elements of :param:`X` and array of corresponding sorted indices.
+    
+    :param X: Target vector. 
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    """
     assert 1 in X.shape, "X should be vector."
     X = X.flatten().tolist()[0]
     return sorted(X), sorted(range(len(X)), key = X.__getitem__)
     
 def std(X, axis = None, ddof = 0):
-    """Compute the standard deviation along the specified axis."""
+    """
+    Compute the standard deviation along the specified :param:`axis` of matrix :param:`X`.
+    
+    :param X: Target matrix. 
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param axis: Axis along which deviation is computed. If not specified, whole matrix :param:`X` is considered.
+    :type axis: `int`
+    :param ddof: Means delta degrees of freedom. The divisor used in computation is N - :param:`ddof`, where N represents the 
+                 number of elements. Default is 0. 
+    :type ddof: `float`
+    """
     assert len(X.shape) == 2, "Input matrix X should be 2-D."
     assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
     if sp.isspmatrix(X):
@@ -126,11 +179,11 @@ def std(X, axis = None, ddof = 0):
     
 def argmax(X, axis = None):
     """
-    Return tuple of values and indices of the maximum entries along an axis. Row major order.
+    Return tuple (values, indices) of the maximum entries of matrix :param:`X` along axis :param:`axis`. Row major order.
     
-    :param X: sparse or dense matrix
-    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or class:`numpy.matrix`
-    :param axis: Specify axis along which to operate.
+    :param X: Target matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param axis: Specify axis along which to operate. If not specified, whole matrix :param:`X` is considered. 
     :type axis: `int`
     """
     if sp.isspmatrix(X):
@@ -169,11 +222,11 @@ def argmax(X, axis = None):
     
 def argmin(X, axis = None):
     """
-    Return tuple of values and indices of the minimum entries along an axis. Row major order.
+    Return tuple (values, indices) of the minimum entries of matrix :param:`X` along axis :param:`axis`. Row major order.
     
-    :param X: sparse or dense matrix
-    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or class:`numpy.matrix`
-    :param axis: Specify axis along which to operate.
+    :param X: Target matrix. 
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param axis: Specify axis along which to operate. If not specified, whole matrix :param:`X` is considered. 
     :type axis: `int`
     """
     if sp.isspmatrix(X):
@@ -211,14 +264,28 @@ def argmin(X, axis = None):
         return eX, idxX 
 
 def repmat(X, m, n):
-    """Construct matrix consisting of an m-by-n tiling of copies of X."""
+    """
+    Construct matrix consisting of an m-by-n tiling of copies of X.
+    
+    :param X: The input matrix. 
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param m,n: The number of repetitions of :param:`X` along each axis. 
+    :type m,n: `int`
+    """
     if sp.isspmatrix(X):
         return sp.hstack([sp.vstack([X for _ in xrange(m)], format = X.format) for _ in xrange(n)], format = X.format)
     else:
         return np.tile(np.asmatrix(X), (m, n))
     
 def svd(X, k):
-    """Compute standard SVD on X."""
+    """
+    Compute standard SVD on matrix X.
+    
+    :param X: The input matrix. 
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param k: Number of singular values and vectors to compute. 
+    :type k: `int`
+    """
     if sp.isspmatrix(X): 
         U, S, V = sla.svd(X, k)
     else: 
@@ -226,7 +293,14 @@ def svd(X, k):
     return U, S, V
 
 def dot(X, Y):
-    """Compute dot product of X and Y."""
+    """
+    Compute dot product of matrices :param:`X` and :param:`Y`.
+    
+    :param X: First input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param Y: Second input matrix. 
+    :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix` 
+    """
     if sp.isspmatrix(X) and sp.isspmatrix(Y):
         return X * Y
     elif sp.isspmatrix(X) or sp.isspmatrix(Y):
@@ -236,7 +310,14 @@ def dot(X, Y):
         return np.asmatrix(X) * np.asmatrix(Y)
 
 def multiply(X, Y):
-    """Compute element-wise multiplication of X and Y."""
+    """
+    Compute element-wise multiplication of matrices :param:`X` and :param:`Y`.
+    
+    :param X: First input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param Y: Second input matrix. 
+    :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix` 
+    """
     if sp.isspmatrix(X) and sp.isspmatrix(Y):
         return X.multiply(Y)
     elif sp.isspmatrix(X) or sp.isspmatrix(Y):
@@ -245,14 +326,32 @@ def multiply(X, Y):
         return np.multiply(np.asmatrix(X), np.asmatrix(Y))
     
 def sop(X, s = None, op = None):
-    """Compute scalar element wise operation of matrix X and scalar."""
+    """
+    Compute scalar element wise operation of matrix :param:`X` and scalar :param:`s`.
+    
+    :param X: The input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param s: Input scalar. If not specified, element wise operation of input matrix is computed. 
+    :type s: `float`
+    :param op: Operation to be performed. 
+    :type op: `func` 
+    """
     if sp.isspmatrix(X):
         return _sop_spmatrix(X, s, op)
     else:
         return _sop_matrix(X, s, op)
     
 def _sop_spmatrix(X, s = None, op = None):
-    """Compute sparse scalar element wise operation of matrix X and scalar."""
+    """
+    Compute sparse scalar element wise operation of matrix X and scalar :param:`s`.
+    
+    :param X: The input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param s: Input scalar. If not specified, element wise operation of input matrix is computed. 
+    :type s: `float`
+    :param op: Operation to be performed. 
+    :type op: `func` 
+    """
     R = X.copy().tocsr()
     now = 0
     for row in range(R.shape[0]):
@@ -263,12 +362,30 @@ def _sop_spmatrix(X, s = None, op = None):
     return R
 
 def _sop_matrix(X, s = None, op = None):
-    """Compute scalar element wise operation of matrix X and scalar."""
+    """
+    Compute scalar element wise operation of matrix :param:`X` and scalar :param:`s`.
+    
+    :param X: The input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param s: Input scalar. If not specified, element wise operation of input matrix is computed. 
+    :type s: `float`
+    :param op: Operation to be performed. 
+    :type op: `func` 
+    """
     eps = np.finfo(X.dtype).eps
     return np.matrix([[op(X[i,j] + eps, s) if s != None else op(X[i,j] + eps) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
     
 def elop(X, Y, op):
-    """Compute element-wise operation of matrix X and matrix Y."""
+    """
+    Compute element-wise operation of matrix :param:`X` and matrix :param:`Y`.
+    
+    :param X: First input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param Y: Second input matrix.
+    :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param op: Operation to be performed. 
+    :type op: `func` 
+    """
     try:
         zp1 = op(0, 1) if sp.isspmatrix(X) else op(1, 0)
         zp2 = op(0, 0) 
@@ -283,12 +400,30 @@ def elop(X, Y, op):
         return op(np.asmatrix(X), np.asmatrix(Y))
 
 def _op_spmatrix(X, Y, op):
-    """Compute sparse element-wise operation for operations preserving zeros."""
+    """
+    Compute sparse element-wise operation for operations preserving zeros.
+    
+    :param X: First input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param Y: Second input matrix.
+    :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param op: Operation to be performed. 
+    :type op: `func` 
+    """
     # distinction as op is not necessarily commutative
     return __op_spmatrixX(X, Y, op) if sp.isspmatrix(X) else __op_spmatrixY(X, Y, op)
 
 def __op_spmatrixX(X, Y, op):
-    """Compute sparse element-wise operation for operations preserving zeros."""
+    """
+    Compute sparse element-wise operation for operations preserving zeros.
+    
+    :param X: First input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param Y: Second input matrix.
+    :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param op: Operation to be performed. 
+    :type op: `func` 
+    """
     assert X.shape == Y.shape, "Matrices are not aligned."
     R = X.copy().tocsr()
     now = 0
@@ -301,7 +436,16 @@ def __op_spmatrixX(X, Y, op):
     return R
     
 def __op_spmatrixY(X, Y, op):
-    """Compute sparse element-wise operation for operations preserving zeros."""
+    """
+    Compute sparse element-wise operation for operations preserving zeros.
+    
+    :param X: First input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param Y: Second input matrix.
+    :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param op: Operation to be performed. 
+    :type op: `func` 
+    """
     assert X.shape == Y.shape, "Matrices are not aligned."
     R = Y.copy().tocsr()
     now = 0
@@ -314,15 +458,26 @@ def __op_spmatrixY(X, Y, op):
     return R
 
 def _op_matrix(X, Y, op):
-    """Compute sparse element-wise operation for operations not preserving zeros."""
+    """
+    Compute sparse element-wise operation for operations not preserving zeros.
+    
+    :param X: First input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param Y: Second input matrix.
+    :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param op: Operation to be performed. 
+    :type op: `func` 
+    """
     # operation is not necessarily commutative 
     assert X.shape == Y.shape, "Matrices are not aligned."
     return np.matrix([[op(X[i,j], Y[i,j]) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
 
 def inf_norm(X):
-    """Infinity norm of a matrix (maximum absolute row sum).
-    :param X: sparse or dense matrix
-    :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or class:`numpy.matrix`
+    """
+    Infinity norm of a matrix (maximum absolute row sum).
+    
+    :param X: Input matrix. 
+    :type X: :class:`scipy.sparse.csr_matrix`, :class:`scipy.sparse.csc_matrix` or :class:`numpy.matrix`
     """
     if sp.isspmatrix_csr(X) or sp.isspmatrix_csc(X):
         # avoid copying index and ptr arrays
@@ -334,7 +489,14 @@ def inf_norm(X):
         return nla.norm(np.asmatrix(X), float('inf'))
 
 def norm(X, p = "fro"):
-    """Compute entry-wise norms (! not induced/operator norms)."""
+    """
+    Compute entry-wise norms (! not induced/operator norms).
+    
+    :param X: The input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param p: Order of the norm.
+    :type p: `str` or `float`
+    """
     assert 1 not in X.shape and p == 2, "Computing entry-wise norms only."
     if sp.isspmatrix(X):
         v = {
@@ -349,21 +511,38 @@ def norm(X, p = "fro"):
         return nla.norm(np.asmatrix(X), p)
     
 def vstack(X, format = None, dtype = None):
-    """Stack sparse or dense matrices vertically."""
+    """
+    Stack sparse or dense matrices vertically (row wise).
+    
+    :param X: Sequence of matrices with compatible shapes. 
+    :type X: sequence of :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    """
     if len([0 for x in X if not sp.isspmatrix(x)]) == 0:
         return sp.vstack(X, format, dtype)
     else:
         return np.vstack(X)
 
 def hstack(X, format = None, dtype = None):
-    """Stack sparse or dense matrices horizontally."""
+    """
+    Stack sparse or dense matrices horizontally (column wise).
+    
+    :param X: Sequence of matrices with compatible shapes. 
+    :type X: sequence of :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    """
     if len([0 for x in X if not sp.isspmatrix(x)]) == 0:
         return sp.hstack(X, format, dtype)
     else:
         return np.hstack(X)
     
 def max(X, s):
-    """Compute element-wise max(x,s) assignment for sparse or dense matrix."""
+    """
+    Compute element-wise max(x,s) assignment for sparse or dense matrix.
+    
+    :param X: The input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param s: the input scalar.
+    :type s: `float`
+    """
     if sp.isspmatrix(X):
         R = X.copy().tocsr()
         now = 0
@@ -378,7 +557,14 @@ def max(X, s):
         return np.maximum(X, s)
     
 def min(X, s):
-    """Compute element-wise min(x,s) assignment for sparse or dense matrix."""
+    """
+    Compute element-wise min(x,s) assignment for sparse or dense matrix.
+    
+    :param X: The input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param s: the input scalar.
+    :type s: `float`
+    """
     if sp.isspmatrix(X):
         R = X.copy().tocsr()
         now = 0
@@ -393,21 +579,40 @@ def min(X, s):
         return np.minimum(X, s)
     
 def count(X, s):
-    """Return the number of occurrences of element s in sparse or dense matrix X."""
+    """
+    Return the number of occurrences of element :param:`s` in sparse or dense matrix X.
+    
+    :param X: The input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param s: the input scalar.
+    :type s: `float`
+    """
     if sp.isspmatrix(X):
         return sum([1 for x in X.data if s == x])
     else:
         return sum([1 for r in X.tolist() for x in r if s == x])
     
 def nz_data(X):
-    """Return list of nonzero elements from X (! data, not indices)."""
+    """
+    Return list of nonzero elements from X (! data, not indices).
+    
+    :param X: The input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    """
     if sp.isspmatrix(X):
         return X.data.tolist()
     else:
         return [x for r in X.tolist() for x in r if x != 0]
     
 def choose(n, k):
-    """A fast way to calculate binomial coefficients. It is 10 times faster than scipy.mis.comb for exact answers."""
+    """
+    A fast way to calculate binomial coefficients C(n, k). It is 10 times faster than scipy.mis.comb for exact answers.
+    
+    :param n: Index of binomial coefficient.
+    :type n: `int`
+    :param k: Index of binomial coefficient. 
+    :type k: `int`
+    """
     if 0 <= k <= n:
         ntok = 1
         ktok = 1
