@@ -126,12 +126,14 @@ class Nmf(object):
         Tracking of matrix factors across multiple runs must be enabled for computing consensus matrix. For results
         of a single NMF run, the consensus matrix reduces to the connectivity matrix.
         """
-        if not self.tracker:
+        if self.track_factor:
+            cons = np.matrix(np.zeros((self.V.shape[1], self.V.shape[1])))
+            for i in xrange(self.n_run):
+                cons += self.connectivity(self.tracker.get_factor(i + 1).H)
+            return sop(cons, self.n_run, div)
+        else:
             warnings.warn("Tracking matrix factors across runs is not enabled. Connectivity matrix will be computed.", UserWarning, 2)
-        cons = np.matrix(np.zeros((self.V.shape[1], self.V.shape[1])))
-        for i in xrange(self.n_run):
-            cons += self.connectivity(self.tracker.get(i).H)
-        return sop(cons, self.n_run, div)
+            return self.connectivity(self.coef()) 
         
     def dim(self):
         """Return triple containing the dimension of the target matrix and matrix factorization rank."""

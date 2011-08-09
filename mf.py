@@ -67,7 +67,7 @@ def mf(target, seed = None, W = None, H = None,
                     :type track_factor: `bool`
                     :param track_error: Tracking the residuals error. Only the residuals from each iteration of the factorization are retained. 
                                         Error tracking is not space consuming. By default residuals are not tracked and only the final residuals
-                                        is saved. Can be used for plotting the trajectory of the residuals.
+                                        are saved. It can be used for plotting the trajectory of the residuals.
                     :type track_error: `bool`
     
      Stopping criteria:
