@@ -86,7 +86,7 @@ class Snmf(mstd.Nmf_std):
             if self.tracker != None:
                 self.tracker.add(W = self.W.copy(), H = self.H.copy())
         
-        self.n_iter = iter
+        self.n_iter = iter - 1
         self.final_obj = cobj
         mffit = mfit.Mf_fit(self)
         return mffit

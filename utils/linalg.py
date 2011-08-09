@@ -265,7 +265,8 @@ def _sop_spmatrix(X, s = None, op = None):
 
 def _sop_matrix(X, s = None, op = None):
     """Compute scalar element wise operation of matrix X and scalar."""
-    return np.matrix([[op(X[i,j], s) if s != None else op(X[i,j]) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    eps = np.finfo(X.dtype).eps
+    return np.matrix([[op(X[i,j] + eps, s) if s != None else op(X[i,j] + eps) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
     
 def elop(X, Y, op):
     """Compute element-wise operation of matrix X and matrix Y."""
@@ -278,6 +279,8 @@ def elop(X, Y, op):
     if sp.isspmatrix(X) or sp.isspmatrix(Y):
         return _op_spmatrix(X, Y, op) if not zp else _op_matrix(X, Y, op)
     else:
+        X[X == 0] = np.finfo(X.dtype).eps
+        Y[Y == 0] = np.finfo(Y.dtype).eps
         return op(np.asmatrix(X), np.asmatrix(Y))
 
 def _op_spmatrix(X, Y, op):

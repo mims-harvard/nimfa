@@ -24,7 +24,7 @@ l_seed = methods.list_seeding_methods()
 
 def mf(target, seed = None, W = None, H = None,  
        rank = 30, method = "nmf",
-       max_iter = None, min_residuals = None, test_conv = None,
+       max_iter = 30, min_residuals = None, test_conv = None,
        n_run = 1, callback = None, initialize_only = False, **options):
     """
     Run the specified MF algorithm.
@@ -68,8 +68,8 @@ def mf(target, seed = None, W = None, H = None,
      Stopping criteria:
      If multiple criteria are passed, the satisfiability of one terminates the factorization run. 
 
-    :param max_iter: Maximum number of factorization iterations. When not specified, the number of iterations depends
-                on the speed of method convergence. Default is None
+    :param max_iter: Maximum number of factorization iterations. Note that the number of iterations depends
+                on the speed of method convergence. Default is 30.
     :type max_iter: `int`
     :param min_residuals: Minimal required improvement of the residuals from the previous iteration. They are computed 
                 between the target matrix and its MF estimate using the objective function associated to the MF algorithm. 

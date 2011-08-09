@@ -68,7 +68,7 @@ class Nmf(mstd.Nmf_std):
             if self.tracker != None:
                 self.tracker.add(W = self.W.copy(), H = self.H.copy())
         
-        self.n_iter = iter
+        self.n_iter = iter - 1 
         self.final_obj = cobj
         mffit = mfit.Mf_fit(self)
         return mffit
@@ -107,7 +107,6 @@ class Nmf(mstd.Nmf_std):
         
     def fro_objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
-        print "fro"
         return (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
     
     def div_objective(self):
