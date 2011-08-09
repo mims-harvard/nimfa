@@ -35,9 +35,11 @@ class Nsnmf(mns.Nmf_ns):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
-        Algorithm specific model option is :param:`theta` which can be passed with value as keyword argument.
-        Parameter :param:`theta` is the smoothing parameter. Its value should be 0<=theta<=1. If not specified, default value  
-        theta = 0.5 is used.  
+        The following are algorithm specific model options which can be passed with values as keyword arguments.
+        
+        :param theta: The smoothing parameter. Its value should be 0<=:param:`theta`<=1. If not specified, default value  
+                      :param:`theta` of 0.5 is used.  
+        :type theta: `float`
         """
         self.name = "nsnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]

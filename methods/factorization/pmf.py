@@ -18,6 +18,8 @@ class Pmf(mstd.Nmf_std):
     def __init__(self, **params):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
+        
+        There are no algorithm specific model options for this method.
         """
         self.name = "pmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]

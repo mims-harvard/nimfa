@@ -21,13 +21,22 @@ class Bmf(mstd.Nmf_std):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
-        Algorithm specific model options are :param:`lambda_w` and :param:`lambda_h` parameters which controls how fast lambda 
-        should increase. This influences convergence of basis (W) and mixture (H) matrices to binary values during the 
-        update. 
-            #. A value lambda < 1 will result in a nonbinary decompositions as the update rule effectively
-              is a conventional NMF update rule. 
-            #. A value lambda > 1 give more weight to make the factorization binary with increasing iterations.
-        If parameters are not specified, default value of 1.1 is taken for both of them. 
+        The following are algorithm specific model options which can be passed with values as keyword arguments.
+        
+        :param lambda_w: It controls how fast lambda should increase and influences the convergence of the basis matrix (W)
+                         to binary values during the update. 
+                             #. :param:`lambda_w` < 1 will result in a nonbinary decompositions as the update rule effectively
+                                is a conventional NMF update rule. 
+                             #. :param:`lambda_w` > 1 give more weight to make the factorization binary with increasing iterations.
+                         Default value is 1.1.
+        :type lambda_w: `float`
+        :param lambda_h: It controls how fast lambda should increase and influences the convergence of the mixture matrix (H)
+                         to binary values during the update. 
+                             #. :param:`lambda_h` < 1 will result in a nonbinary decompositions as the update rule effectively
+                                is a conventional NMF update rule. 
+                             #. :param:`lambda_h` > 1 give more weight to make the factorization binary with increasing iterations.
+                         Default value is 1.1.
+        :type lambda_h: `float`
         """
         self.name = "bnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]

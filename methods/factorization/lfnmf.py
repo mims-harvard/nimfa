@@ -35,9 +35,13 @@ class Lfnmf(mstd.Nmf_std):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
-        Algorithm specific model option is :param:`alpha` which can be passed with value as keyword argument.
-        Parameter alpha is weight within class scatter and between class scatter of encoding mixture matrix. It should 
-        be nonnegative.
+        The following are algorithm specific model options which can be passed with values as keyword arguments.
+        
+        :param alpha: Parameter :param:`alpha` is weight used to minimize within class scatter and maximize between class scatter of the 
+                      encoding mixture matrix. The objective function is the constrained divergence, which is the standard Lee's divergence
+                      rule with added terms :param:`alpha` * S_w - :param:`alpha` * S_h, where S_w and S_h are within class and between class
+                      scatter, respectively. It should be nonnegative. Default value is 0.01.
+        :type alpha: `float`
         """
         self.name = "lnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]

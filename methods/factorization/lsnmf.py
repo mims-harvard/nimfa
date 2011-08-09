@@ -28,6 +28,8 @@ class Lsnmf(mstd.Nmf_std):
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
         If :param:`min_residuals` of the underlying model is not specified, default value of :param:`min_residuals` 0.001 is set.  
+        
+        There are no algorithm specific model options for this method.
         """
         self.name = "lsnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]

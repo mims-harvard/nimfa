@@ -56,14 +56,19 @@ def mf(target, seed = None, W = None, H = None,
                             run. Default is False.
     :type initialize_only: `bool`
     :param options: Specify some runtime or algorithm specific options. For details on algorithm specific options see specific algorithm
-                    documentation. Runtime specific options are:
-                    #. When option track=True is specified, the fitted factorization model is tracked during the multiple runs of the algorithm. 
-                       This option is taken into account only when multiple runs are executed (:param:`n_run` > 1). From each run of the 
-                       factorization all matrix factors are retained, which can be very space consuming. In that case setting the callback 
-                       function with :param:`callback` is advised which is executed after each run. Tracking is useful for performing some
-                       quality or performance measures (e.g. cophenetic correlation, consensus matrix, dispersion).
-                    Default is None. 
-    :type options: option specific
+                    documentation. The following are runtime specific options.
+                    :param track_factor: When :param:`track_factor` is specified, the fitted factorization model is tracked during multiple
+                                        runs of the algorithm. This option is taken into account only when multiple runs are executed 
+                                        (:param:`n_run` > 1). From each run of the factorization all matrix factors are retained, which 
+                                        can be very space consuming. If space is the problem setting the callback function with :param:`callback` 
+                                        is advised which is executed after each run. Tracking is useful for performing some quality or 
+                                        performance measures (e.g. cophenetic correlation, consensus matrix, dispersion). By default fitted model
+                                        is not tracked.
+                    :type track_factor: `bool`
+                    :param track_error: Tracking the residuals error. Only the residuals from each iteration of the factorization are retained. 
+                                        Error tracking is not space consuming. By default residuals are not tracked and only the final residuals
+                                        is saved. Can be used for plotting the trajectory of the residuals.
+                    :type track_error: `bool`
     
      Stopping criteria:
      If multiple criteria are passed, the satisfiability of one terminates the factorization run. 

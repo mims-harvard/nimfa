@@ -29,15 +29,21 @@ class Nmf(mstd.Nmf_std):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
-        Algorithm specific model options are type of update equations and type of objective function. 
-        When specifying model, user can pass :param:`update` parameter with one of possible values: 
-            #. 'Euclidean' for classic Euclidean distance update equations, 
-            #. 'divergence' for divergence update equations.
-        When specifying model, user can pass :param:`objective` parameter with one of possible values:
-            #. 'fro' for standard Frobenius distance cost function,
-            #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
-            #. 'conn' for connectivity matrix changed elements cost function. 
-        Default are 'Euclidean' for :param:`update` equations and 'fro' for :param:`objective` function. 
+        The following are algorithm specific model options which can be passed with values as keyword arguments.
+        
+        :param update: Type of update equations used in factorization. When specifying model parameter :param:`update` 
+                       can be assigned to:
+                           #. 'Euclidean' for classic Euclidean distance update equations, 
+                           #. 'divergence' for divergence update equations.
+                       By default Euclidean update equations are used. 
+        :type update: `str`
+        :param objective: Type of objective function used in factorization. When specifying model parameter :param:`objective`
+                          can be assigned to:
+                              #. 'fro' for standard Frobenius distance cost function,
+                              #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
+                              #. 'conn' for connectivity matrix changed elements cost function. 
+                          By default the standard Frobenius distance cost function is used.  
+        :type objective: `str` 
         """
         self.name = "nmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
