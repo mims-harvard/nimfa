@@ -37,8 +37,9 @@ class Nsnmf(mns.Nmf_ns):
         
         The following are algorithm specific model options which can be passed with values as keyword arguments.
         
-        :param theta: The smoothing parameter. Its value should be 0<=:param:`theta`<=1. If not specified, default value  
-                      :param:`theta` of 0.5 is used.  
+        :param theta: The smoothing parameter. Its value should be 0<=:param:`theta`<=1. With :param:`theta` 0 the model 
+                      corresponds to the basic divergence NMF. Strong smoothing forces strong sparseness in both the basis and
+                      the mixture matrices. If not specified, default value :param:`theta` of 0.5 is used.  
         :type theta: `float`
         """
         self.name = "nsnmf"
@@ -105,13 +106,13 @@ class Nsnmf(mns.Nmf_ns):
         W1 = repmat(H.sum(1).T, self.V.shape[0], 1)
         self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, H), div), H.T), W1, div))
         # normalize basis matrix W
-        W2 = repmat(self.W.sum(0).T, 1, self.V.shape[1])
+        W2 = repmat(self.W.sum(0), self.V.shape[0], 1)
         self.W = elop(self.W, W2, div)
     
     def objective(self):
         """Compute divergence of target matrix from its NMF estimate."""
         Va = dot(dot(self.W, self.S), self.H)
-        return (multiply(self.V, elop(self.V, Va, log)) - self.V + Va).sum()
+        return (multiply(self.V, sop(elop(self.V, Va, div), op = log)) - self.V + Va).sum()
     
     def __str__(self):
         return self.name

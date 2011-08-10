@@ -35,7 +35,7 @@ class Nmf_std(nmf.Nmf):
                 self.seed = nmf.seed.fixed.Fixed()
                 self.seed._set_fixed(self.W, self.H)
         self._is_smdefined()
-        if nmf.sp.isspmatrix(self.V) and (self.V.data < 0).any() or (self.V.data < 0).any():
+        if nmf.sp.isspmatrix(self.V) and (self.V.data < 0).any() or not nmf.sp.isspmatrix(self.V) and (self.V < 0).any():
             raise nmf.utils.MFError("The input matrix contains negative elements.")    
             
     def basis(self):
