@@ -38,7 +38,7 @@ class Bmf(mstd.Nmf_std):
                          Default value is 1.1.
         :type lambda_h: `float`
         """
-        self.name = "bnmf"
+        self.name = "bmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         mstd.Nmf_std.__init__(self, params)
         
