@@ -71,7 +71,7 @@ class Nmf_ns(nmf.Nmf):
     def distance(self, metric):
         """Return the loss function value."""
         if metric == 'euclidean':
-            return (nmf.elop(self.V - nmf.dot(nmf.dot(self.W, self.S), self.H), 2, pow)).sum()
+            return (nmf.sop(self.V - nmf.dot(nmf.dot(self.W, self.S), self.H), 2, pow)).sum()
         elif metric == 'kl': 
             Va = nmf.dot(nmf.dot(self.W, self.S), self.H)
             return (nmf.multiply(self.V, nmf.elop(self.V, Va, log)) - self.V + Va).sum()

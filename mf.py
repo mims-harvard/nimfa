@@ -43,7 +43,7 @@ def mf(target, seed = None, W = None, H = None,
     :param rank: The factorization rank to achieve. Default is 30.
     :type rank: `int`
     :param method: The algorithm to use to perform MF on target matrix. Default is :class:`methods.mf.nmf`
-    :type method: `str` naming the algorithm or :class:`methods.mf.bd.Bd`, :class:`methods.mf.icm.Icm`, :class:`methods.mf.lfnmf.Lfnmf`
+    :type method: `str` naming the algorithm or :class:`methods.mf.bd.Bd`, :class:`methods.mf.icm.Icm`, :class:`methods.mf.Lfnmf.Lfnmf`
                   :class:`methods.mf.lsnmf.Lsnmf`, :class:`methods.mf.nmf.Nmf`, :class:`methods.mf.nsnmf.Nsmf`, :class:`methods.mf.pmf.Pmf`, 
                   :class:`methods.mf.psmf.Psmf`, :class:`methods.mf.snmf.Snmf`, :class:`methods.mf.bmf.Bmf`
     :param n_run: It specifies the number of runs of the algorithm. Default is 1.

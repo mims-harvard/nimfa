@@ -64,7 +64,7 @@ class Mf_fit():
         if not metric:
             return self.fit.final_obj
         else:
-            self.fit.distance(metric)
+            return self.fit.distance(metric)
             
     def fitted(self):
         """Compute the estimated target matrix according to the MF algorithm model."""

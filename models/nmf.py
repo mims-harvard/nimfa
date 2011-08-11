@@ -67,6 +67,11 @@ class Nmf(object):
         :type params: `dict`
         """
         self.__dict__.update(params)
+        self.V = self.V.__class__(self.V, dtype = 'd')
+        if self.W:
+            self.W = self.W.__class__(self.W, dtype = 'd')
+        if self.H:
+            self.H = self.H.__class__(self.H, dtype = 'd')
         
     def _is_smdefined(self):
         """Check if MF and seeding methods are well defined."""
