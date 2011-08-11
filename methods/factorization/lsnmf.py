@@ -18,10 +18,7 @@ class Lsnmf(mstd.Nmf_std):
     The main task per iteration of the subproblem is to find a step size alpha such that a sufficient decrease condition
     of bound constrained problem is satisfied. In alternating least squares, each subproblem involves an optimization 
     procedure and requires a stopping condition. A common way to check whether current solution is close to a 
-    stationary point is the form of the projected gradient [4].
-    
-    This method can be (rarely) sensitive to parameter settings; multiple runs of the algorithm or thorough parameter initialization
-    is recommended. 
+    stationary point is the form of the projected gradient [4]. 
     
     [4] Lin, C.-J., (2007). Projected gradient methods for nonnegative matrix factorization. Neural computation, 19(10), 2756-79. doi: 10.1162/neco.2007.19.10.2756. 
     """
@@ -38,8 +35,12 @@ class Lsnmf(mstd.Nmf_std):
         
         :param sub_iter: Maximum number of subproblem iterations. Default value is 1000. 
         :type sub_iter: `int`
-        :param inner_sub_iter: Number of inner iterations in solving subproblem. Default value is 20. 
+        :param inner_sub_iter: Number of inner iterations when solving subproblems. Default value is 20. 
         :type inner_sub_iter: `int`
+        :param beta: The rate of reducing the step size to satisfy the sufficient decrease condition when solving subproblems.
+                     Smaller beta more aggressively reduces the step size, but may cause the step size being too small. Default
+                     value is 0.1.
+        :type beta: `float`
         """
         self.name = "lsnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
@@ -80,18 +81,27 @@ class Lsnmf(mstd.Nmf_std):
         mffit = mfit.Mf_fit(self)
         return mffit
     
-    def _is_satisfied(self, cobj, iter):
-        """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
+    def _is_satisfied(self, c_obj, iter):
+        """
+        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        
+        :param c_obj: Current objective function value.
+        :type c_obj: `float`
+        :param iter: Current iteration number. 
+        :type iter: `int`
+        """
         if self.max_iter and self.max_iter < iter:
             return False
-        if iter > 0 and cobj < self.min_residuals * self.init_grad:
+        if iter > 0 and c_obj < self.min_residuals * self.init_grad:
             return False
         return True
     
     def _set_params(self):
+        """Set algorithm specific model options."""
         if not self.min_residuals: self.min_residuals = 1e-5
         self.sub_iter = self.options.get('sub_iter', 1000)
         self.inner_sub_iter = self.options.get('inner_sub_iter', 20)
+        self.beta = self.options.get('beta', 0.1)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
         self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
@@ -123,11 +133,10 @@ class Lsnmf(mstd.Nmf_std):
         H = Hinit
         WtV = dot(W.T, V)
         WtW = dot(W.T, W)
-        # step size
+        # alpha is step size regulated by beta
+        # beta is the rate of reducing the step size to satisfy the sufficient decrease condition
+        # smaller beta more aggressively reduces the step size, but may cause the step size alpha being too small
         alpha = 1.
-        # the rate of reducing the step size to satisfy the sufficient decrease condition
-        # smaller beta more aggressively reduces the step size, but may cause the step size being too small
-        beta = 0.1
         for iter in xrange(self.sub_iter):
             grad = dot(WtW, H) - WtV
             projgrad = norm(self.__extract(grad, H))
@@ -148,13 +157,13 @@ class Lsnmf(mstd.Nmf_std):
                         H = Hn
                         break
                     else:
-                        alpha *= beta
+                        alpha *= self.beta
                 else:
                     if not suff_decr or self.__alleq(Hp, Hn):
                         H = Hp
                         break
                     else:
-                        alpha /= beta
+                        alpha /= self.beta
                         Hp = Hn
         return H, grad, iter
         

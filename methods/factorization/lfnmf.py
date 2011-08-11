@@ -79,17 +79,27 @@ class Lfnmf(mstd.Nmf_std):
         mffit = mfit.Mf_fit(self)
         return mffit
      
-    def _is_satisfied(self, pobj, cobj, iter):
-        """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
+    def _is_satisfied(self, p_obj, c_obj, iter):
+        """
+        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        
+        :param p_obj: Objective function value from previous iteration. 
+        :type p_obj: `float`
+        :param c_obj: Current objective function value.
+        :type c_obj: `float`
+        :param iter: Current iteration number. 
+        :type iter: `int`
+        """
         if self.max_iter and self.max_iter < iter:
             return False
-        if self.min_residuals and iter > 0 and cobj - pobj <= self.min_residuals:
+        if self.min_residuals and iter > 0 and c_obj - p_obj <= self.min_residuals:
             return False
-        if iter > 0 and cobj >= pobj:
+        if iter > 0 and c_obj >= p_obj:
             return False
         return True
     
     def _set_params(self):
+        """Set algorithm specific model options."""
         self.alpha = self.options.get('alpha', 0.01) 
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)

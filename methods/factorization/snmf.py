@@ -98,7 +98,8 @@ class Snmf(mstd.Nmf_std):
         mffit = mfit.Mf_fit(self)
         return mffit
     
-    def _set_params(self):    
+    def _set_params(self): 
+        """Set algorithm specific model options."""   
         # in version l, V is transposed while W and H are swapped and transposed.
         self.version = self.options.get('version', 'r')
         self.V = self.V.T if self.version == 'l' else self.V
@@ -112,13 +113,20 @@ class Snmf(mstd.Nmf_std):
         self.track_error = self.options.get('track_error', False)
         self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
     
-    def _is_satisfied(self, cobj, iter):
-        """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
+    def _is_satisfied(self, c_obj, iter):
+        """
+        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        
+        :param c_obj: Current objective function value.
+        :type c_obj: `float`
+        :param iter: Current iteration number. 
+        :type iter: `int`
+        """
         if iter == 0:
-            self.init_erravg = cobj
+            self.init_erravg = c_obj
         if self.max_iter and self.max_iter < iter:
             return False
-        if self.inc >= self.i_conv and cobj <= self.min_residuals * self.init_erravg:
+        if self.inc >= self.i_conv and c_obj <= self.min_residuals * self.init_erravg:
             return False
         return True
             

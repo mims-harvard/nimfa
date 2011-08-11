@@ -65,13 +65,22 @@ class Pmf(mstd.Nmf_std):
         mffit = mfit.Mf_fit(self)
         return mffit
     
-    def _is_satisfied(self, pobj, cobj, iter):
-        """Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value."""
+    def _is_satisfied(self, p_obj, c_obj, iter):
+        """
+        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        
+        :param p_obj: Objective function value from previous iteration. 
+        :type p_obj: `float`
+        :param c_obj: Current objective function value.
+        :type c_obj: `float`
+        :param iter: Current iteration number. 
+        :type iter: `int`
+        """
         if self.max_iter and self.max_iter < iter:
             return False
-        if self.min_residuals and iter > 0 and cobj - pobj <= self.min_residuals:
+        if self.min_residuals and iter > 0 and c_obj - p_obj <= self.min_residuals:
             return False
-        if iter > 0 and cobj >= pobj:
+        if iter > 0 and c_obj >= p_obj:
             return False
         return True
     
@@ -81,6 +90,7 @@ class Pmf(mstd.Nmf_std):
         self.W = max(self.W, np.finfo(self.W.dtype).eps)
         
     def _set_params(self):
+        """Set algorithm specific model options."""
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
         self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
