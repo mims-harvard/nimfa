@@ -9,7 +9,7 @@ from utils.linalg import *
 class Pmf(mstd.Nmf_std):
     """
     Probabilistic Nonnegative Matrix Factorization (PMF) interpreting target matrix (V) as samples from a multinomial [9], [10], (Hansen, 2005)
-    and using Euclidean distance for convergence test.
+    and using Euclidean distance for convergence test. It is expectation maximization algorithm. 
     
     [9] Laurberg, H.,et. al., (2008). Theorems on positive data: on the uniqueness of NMF. Computational intelligence and neuroscience.
     [10] Hansen, L. K., (2008). Generalization in high-dimensional factor models. Web: http://www.stanford.edu/group/mmds/slides2008/hansen.pdf.
@@ -19,7 +19,13 @@ class Pmf(mstd.Nmf_std):
         """
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
-        There are no algorithm specific model options for this method.
+        The following are algorithm specific model options which can be passed with values as keyword arguments.
+        
+        :param rel_error: In PMF only Euclidean distance cost function is used for convergence test by default. By specifying the value for 
+                          minimum relative error, the relative error measure can be used as stopping criteria as well. In this case of 
+                          multiple passed criteria, the satisfiability of one terminates the factorization run. Suggested value for
+                          :param:`rel_error` is 1e-5.
+        :type rel_error: `float`
         """
         self.name = "pmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
@@ -82,6 +88,8 @@ class Pmf(mstd.Nmf_std):
             return False
         if iter > 0 and c_obj >= p_obj:
             return False
+        if self.rel_error and self.error_v_n < self.rel_error:
+            return False
         return True
     
     def _adjustment(self):
@@ -91,18 +99,19 @@ class Pmf(mstd.Nmf_std):
         
     def _set_params(self):
         """Set algorithm specific model options."""
+        self.rel_error = self.options.get('rel_error', False)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
         self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
         
     def update(self):
-        """Update basis and mixture matrix."""
+        """Update basis and mixture matrix. It is expectation maximization algorithm. """
         # E step
         Qnorm = dot(dot(self.W, self.P), self.H)
         for k in xrange(self.rank):
             # E-step
             Q = elop(self.P[k,k] * dot(self.W[:, k], self.H[k, :]), sop(Qnorm, np.finfo(Qnorm.dtype).eps, add), div)
-            V_nQ = dot(self.V_n, Q)
+            V_nQ = multiply(self.V_n, Q)
             # M-step 
             dum = V_nQ.sum(axis = 1)
             s_dum = dum.sum()
@@ -116,9 +125,9 @@ class Pmf(mstd.Nmf_std):
     def objective(self):
         """Compute Euclidean distance cost function."""
         # relative error
-        error_v_n =  abs(self.V_n - dot(self.W, self.H)).mean() / self.V_n.mean()
+        self.error_v_n =  abs(self.V_n - dot(self.W, self.H)).mean() / self.V_n.mean()
         # Euclidean distance
-        return (elop(self.V - dot(dot(dot(self.W, self.sqrt_P) * self.v_factor, self.sqrt_P), self.H), 2, pow)).sum()
+        return (sop(self.V - dot(dot(dot(self.W, self.sqrt_P) * self.v_factor, self.sqrt_P), self.H), 2, pow)).sum()
         
     def __str__(self):
         return self.name
