@@ -30,7 +30,7 @@ class Snmf(mstd.Nmf_std):
         For detailed explanation of the general model parameters see :mod:`mf_methods`.
         
         The parameter :param:`min_residuals` of the underlying model is used as KKT convergence test and should have 
-        positive value. If not specified, value 0.0001 is used. 
+        positive value. If not specified, value 1e-4 is used. 
         
         The following are algorithm specific model options which can be passed with values as keyword arguments.
         

@@ -105,9 +105,9 @@ class Lfnmf(mstd.Nmf_std):
             for l in xrange(self.H.shape[1]):
                 cl = idxH[0, l]
                 ni = len(c2m[cl])
-                # b = 4. / (C * C * ni) * sum(avgs[k][j, 0] - avgs[k][cl, 0] + self.H[k,l] / ni for j in xrange(self.H.shape[0])) - 2 * avgs[k][cl, 0] / (ni * C) + 1.
-                b = 4. / (C * C * ni) * sum(avgs[j][k, 0] - avgs[cl][k, 0] + self.H[k,l] / ni for j in avgs) - 2 * avgs[cl][k, 0] / (ni * C) + 1.
-                self.H[k, l] = -b + sqrt(b**2 + 4. * self.H[k, l] * sum(self.V[i, l] * self.W[i, k] / dot(self.W[i, :], self.H[:, l]) 
+                #b = 4. / (C * C * ni) * sum(avgs[k][j, 0] - avgs[k][cl, 0] + self.H[k,l] / ni for j in xrange(self.H.shape[0])) - 2 * avgs[k][cl, 0] / (ni * C) + 1.
+                b = 4. / (C * C * ni) * sum(avgs[j][k, 0] - avgs[cl][k, 0] + self.H[k,l] / ni for j in c2m) - 2 * avgs[cl][k, 0] / (ni * C) + 1.
+                self.H[k, l] = -b + sqrt(b**2 + 4. * self.H[k, l] * sum(self.V[i, l] * self.W[i, k] / dot(self.W[i, :], self.H[:, l])[0, 0] 
                               for i in xrange(self.V.shape[0])) * (2. / ((ni + 2) * C) - 4. / ((ni + 2)**2 * C)))
         # update basis matrix W
         W1 = repmat(self.H.sum(1).T, self.V.shape[0], 1)
@@ -115,7 +115,7 @@ class Lfnmf(mstd.Nmf_std):
         W2 = repmat(self.W.sum(0), self.V.shape[0], 1)
         self.W = elop(self.W, W2, div)
         # update between class and within class scatter
-        self.Sw = 1. / C * sum(1/len(c2m[i]) * sum(dot((self.H[:, c2m[i][j]] - avgs[i]).T, self.H[:, c2m[i][j]] - avgs[i]) 
+        self.Sw = 1. / C * sum(1. / len(c2m[i]) * sum(dot((self.H[:, c2m[i][j]] - avgs[i]).T, self.H[:, c2m[i][j]] - avgs[i]) 
                   for j in xrange(len(c2m[i]))) for i in c2m)[0, 0]
         self.Sb = 1. / (C * C) * sum(dot((avgs[i] - avgs[j]).T, avgs[i] - avgs[j]) for i in c2m for j in c2m)[0, 0]
          

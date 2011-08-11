@@ -497,7 +497,7 @@ def norm(X, p = "fro"):
     :param p: Order of the norm.
     :type p: `str` or `float`
     """
-    assert 1 not in X.shape and p == 2, "Computing entry-wise norms only."
+    assert 1 in X.shape or p != 2, "Computing entry-wise norms only."
     if sp.isspmatrix(X):
         v = {
          "fro": sum(abs(x)**2 for x in X.data)**(1. / 2),
