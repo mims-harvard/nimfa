@@ -65,8 +65,6 @@ class Psmf(mstd.Nmf_std):
         Return fitted factorization model.
         """
         self._set_params()
-        if not sp.isspmatrix(self.V):
-            raise utils.MFError("Target matrix is not in sparse format.")
         self.N = len(self.prior)
         sm = sum(self.prior)
         self.prior = np.array([p / sm for p in self.prior])
@@ -74,8 +72,13 @@ class Psmf(mstd.Nmf_std):
         
         for _ in xrange(self.n_run):
             # initialize P and Q distributions
-            # internal computation is done with numpy arrays as n-(n > 2)dimensionality is needed 
-            self.W, self.H = sp.csr_matrix((self.V.shape[0], self.rank), dtype = 'd'), sp.csr_matrix((self.rank, self.V.shape[1]), dtype = 'd')
+            # internal computation is done with numpy arrays as n-(n > 2)dimensionality is needed
+            if sp.isspmatrix(self.V):
+                self.W = self.V.__class__((self.V.shape[0], self.rank), dtype = 'd') 
+                self.H = self.V.__class__((self.rank, self.V.shape[1]), dtype = 'd')
+            else:
+                self.W = np.mat(np.zeros((self.V.shape[0], self.rank)))
+                self.H = np.mat(np.zeros((self.rank, self.V.shape[1])))
             self.s = np.zeros((self.V.shape[0], self.N), int)
             self.r = np.zeros((self.V.shape[0], 1), int)
             self.psi = np.array(std(self.V, axis = 1, ddof = 0))  
@@ -111,12 +114,13 @@ class Psmf(mstd.Nmf_std):
         """Initialize the major cached parameter."""
         outer_zeta = np.dot(self.zeta, self.zeta.T)
         self.cross_terms = {}
-        for n1 in xrange(self.N):
-            for n2 in xrange(n1 + 1, self.N):
-                for c in xrange(self.rank):
-                    self.cross_terms[n1, n2] = np.zeros((self.V.shape[0], 1)) + sum(self.sigma[:, :, n1] * self.lamb * 
-                                            np.tile(self.sigma[:, c, n2] * self.lamb[:, c], (1, self.rank)) * 
-                                            np.tile(outer_zeta[c, :], (self.V.shape[0], 1)), axis = 1)
+        for n1 in xrange(self.rho.shape[1]):
+            for n2 in xrange(n1 + 1, self.rho.shape[1]):
+                self.cross_terms[n1, n2] = np.zeros((self.rho.shape[0], 1))
+                for c in xrange(self.zeta.shape[0]):
+                    self.cross_terms[n1, n2] += (self.sigma[:, :, n1] * self.lamb * 
+                                            np.tile(self.sigma[:, c, n2] * self.lamb[:, c], (1, self.zeta.shape[0])) * 
+                                            np.tile(outer_zeta[c, :], (self.rho.shape[0], 1))).sum(axis = 1)
     
     def _is_satisfied(self, p_obj, c_obj, iter):
         """

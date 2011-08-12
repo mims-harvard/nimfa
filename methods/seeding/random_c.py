@@ -52,12 +52,12 @@ class Random_c(object):
             top_c = sorted(enumerate([np.linalg.norm(V[:, i].todense()) for i in xrange(V.shape[1])]), key = itemgetter(1), reverse = True)[: self.l_c]
             top_r = sorted(enumerate([np.linalg.norm(V[i, :].todense()) for i in xrange(V.shape[0])]), key = itemgetter(1), reverse = True)[: self.l_r]
         else:
-            self.W = np.matrix(np.zeros((V.shape[0], self.rank)))
-            self.H = np.matrix(np.zeros((self.rank, V.shape[1])))
+            self.W = np.mat(np.zeros((V.shape[0], self.rank)))
+            self.H = np.mat(np.zeros((self.rank, V.shape[1])))
             top_c = sorted(enumerate([np.linalg.norm(V[:, i]) for i in xrange(V.shape[1])]), key = itemgetter(1), reverse = True)[: self.l_c]
             top_r = sorted(enumerate([np.linalg.norm(V[i, :]) for i in xrange(V.shape[0])]), key = itemgetter(1), reverse = True)[: self.l_r]
-        top_c = np.matrix(zip(*top_c)[1])
-        top_r = np.matrix(zip(*top_r)[1])
+        top_c = np.mat(zip(*top_c)[1])
+        top_r = np.mat(zip(*top_r)[1])
         for i in xrange(self.rank):
             self.W[:, i] = V[:, top_c[0, np.random.randint(self.l_c, size = self.p_c)]].mean(axis = 1)
             self.H[i, :] = V[top_r[0, np.random.randint(self.l_r, size = self.p_r)], :].mean(axis = 0)

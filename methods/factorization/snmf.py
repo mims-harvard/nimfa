@@ -66,8 +66,8 @@ class Snmf(mstd.Nmf_std):
         for _ in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             iter = 0
-            self.idxWold = np.matrix(np.zeros((self.V.shape[0], 1)))
-            self.idxHold = np.matrix(np.zeros((1, self.V.shape[1])))
+            self.idxWold = np.mat(np.zeros((self.V.shape[0], 1)))
+            self.idxHold = np.mat(np.zeros((1, self.V.shape[1])))
             cobj = self.objective() 
             # count the number of convergence checks that column clusters and row clusters have not changed.
             self.inc = 0
@@ -138,8 +138,8 @@ class Snmf(mstd.Nmf_std):
             self.nrestart += 1
             if self.nrestart >= 10:
                 raise utils.MFError("Too many restarts due to too large beta parameter.")
-            self.idxWold = np.matrix(np.zeros((self.V.shape[0], 1)))
-            self.idxHold = np.matrix(np.zeros((1, self.V.shape[1])))
+            self.idxWold = np.mat(np.zeros((self.V.shape[0], 1)))
+            self.idxHold = np.mat(np.zeros((1, self.V.shape[1])))
             self.inc = 0
             self.W, _ = self.seed.initialize(self.V, self.rank, self.options)
             # normalize W
@@ -192,7 +192,7 @@ class Snmf(mstd.Nmf_std):
         A = A.todense() if sp.isspmatrix(A) else A
         _, lVar = C.shape
         pRHS = A.shape[1]
-        W = np.matrix(np.zeros((lVar, pRHS)))
+        W = np.mat(np.zeros((lVar, pRHS)))
         iter = 0
         maxiter = 2 * lVar
         # precompute parts of pseudoinverse
@@ -216,7 +216,7 @@ class Snmf(mstd.Nmf_std):
             # make infeasible solutions feasible (standard NNLS inner loop)
             if Hset.size > 0:
                 nHset = len(Hset)
-                alpha = np.matrix(np.zeros((lVar, nHset)))
+                alpha = np.mat(np.zeros((lVar, nHset)))
                 while Hset and iter < maxiter:
                     iter += 1
                     alpha[:,:nHset] = np.Inf
@@ -226,7 +226,7 @@ class Snmf(mstd.Nmf_std):
                         break
                     hIdx = sub2ind((lVar, nHset), i, j)
                     if nHset == 1:
-                        negIdx = sub2ind(K.shape, i, Hset * np.matrix(np.ones((len(j),1))))
+                        negIdx = sub2ind(K.shape, i, Hset * np.mat(np.ones((len(j),1))))
                     else:
                         negIdx = sub2ind(K.shape, i, Hset[j].T)
                     alpha[hIdx] = D[negIdx] / (D[negIdx] - K[negIdx])
@@ -253,14 +253,14 @@ class Snmf(mstd.Nmf_std):
     def __cssls(self, CtC, CtA, Pset):
         """Solve the set of equations CtA = CtC * K for variables defined in set Pset
         using the fast combinatorial approach (van Benthem and Keenan, 2004)."""
-        K = np.matrix(np.zeros(CtA.shape))
+        K = np.mat(np.zeros(CtA.shape))
         if Pset.size == 0 or all(Pset):
             # equivalent if CtC is square matrix
             K = dot(np.linalg.inv(CtC), CtA)
             # K = pinv(CtC) * CtA
         else:
             lVar, pRHS = Pset.shape
-            codedPset = dot(sop(np.matrix(range(lVar - 1, 0, -1)).T, 2, pow), Pset)
+            codedPset = dot(sop(np.mat(range(lVar - 1, 0, -1)).T, 2, pow), Pset)
             sortedPset, sortedEset = sort(codedPset)
             breaks = diff(sortedPset)
             breakIdx = [0] + find(breaks) + [pRHS]

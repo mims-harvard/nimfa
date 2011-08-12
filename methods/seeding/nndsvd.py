@@ -47,8 +47,8 @@ class Nndsvd(object):
         if negative(V):
             raise MFError("The input matrix contains negative elements.")
         U, S, V = svd(V, self.rank)
-        self.W = np.matrix(np.zeros((V.shape[0], self.rank)))
-        self.H = np.matrix(np.zeros((self.rank, V.shape[1])))
+        self.W = np.mat(np.zeros((V.shape[0], self.rank)))
+        self.H = np.mat(np.zeros((self.rank, V.shape[1])))
         
         # choose the first singular triplet to be nonnegative
         self.W[:,0] = sqrt(S[0]) * abs(U[:,0])

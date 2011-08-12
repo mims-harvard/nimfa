@@ -214,7 +214,7 @@ class Lsnmf(mstd.Nmf_std):
                     if  X[row, col] < 0 or Y[row, col] > 0: 
                         R.append(X[row, col])
                     now += 1
-            return np.matrix(R).T
+            return np.mat(R).T
         else:
             return X[np.logical_or(X<0, Y>0)].flatten().T
         

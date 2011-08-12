@@ -171,11 +171,11 @@ def std(X, axis = None, ddof = 0):
             no = X.shape[0] * X.shape[1]
             return sqrt(1. / (no - ddof) * sum((x - mean)**2 for x in X.data) + (no - len(X.data) * mean**2))
         if axis == 0:
-            return np.matrix([np.std(X[:, i].toarray(), axis, ddof) for i in xrange(X.shape[1])])
+            return np.mat([np.std(X[:, i].toarray(), axis, ddof) for i in xrange(X.shape[1])])
         if axis == 1:
-            return np.matrix([np.std(X[i, :].toarray(), axis, ddof) for i in xrange(X.shape[0])]).T
+            return np.mat([np.std(X[i, :].toarray(), axis, ddof) for i in xrange(X.shape[0])]).T
     else:
-        return np.std(X, axis, ddof)
+        return np.std(X, axis = axis, ddof = ddof)
     
 def argmax(X, axis = None):
     """
@@ -206,10 +206,10 @@ def argmax(X, axis = None):
             return res
         elif axis == 0:
             t = zip(*res)
-            return list(t[0]), np.matrix(t[1])
+            return list(t[0]), np.mat(t[1])
         else:
             t = zip(*res)
-            return list(t[0]), np.matrix(t[1]).T
+            return list(t[0]), np.mat(t[1]).T
     else:
         idxX = np.asmatrix(X).argmax(axis)
         if axis == None:
@@ -249,10 +249,10 @@ def argmin(X, axis = None):
             return res
         elif axis == 0:
             t = zip(*res)
-            return list(t[0]), np.matrix(t[1])
+            return list(t[0]), np.mat(t[1])
         else:
             t = zip(*res)
-            return list(t[0]), np.matrix(t[1]).T
+            return list(t[0]), np.mat(t[1]).T
     else:
         idxX = np.asmatrix(X).argmin(axis)
         if axis == None:
@@ -373,7 +373,7 @@ def _sop_matrix(X, s = None, op = None):
     :type op: `func` 
     """
     eps = np.finfo(X.dtype).eps
-    return np.matrix([[op(X[i,j] + eps, s) if s != None else op(X[i,j] + eps) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    return np.mat([[op(X[i,j] + eps, s) if s != None else op(X[i,j] + eps) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
     
 def elop(X, Y, op):
     """
@@ -470,7 +470,7 @@ def _op_matrix(X, Y, op):
     """
     # operation is not necessarily commutative 
     assert X.shape == Y.shape, "Matrices are not aligned."
-    return np.matrix([[op(X[i,j], Y[i,j]) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    return np.mat([[op(X[i,j], Y[i,j]) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
 
 def inf_norm(X):
     """

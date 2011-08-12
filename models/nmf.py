@@ -132,7 +132,7 @@ class Nmf(object):
         of a single NMF run, the consensus matrix reduces to the connectivity matrix.
         """
         if self.track_factor:
-            cons = np.matrix(np.zeros((self.V.shape[1], self.V.shape[1])))
+            cons = np.mat(np.zeros((self.V.shape[1], self.V.shape[1])))
             for i in xrange(self.n_run):
                 cons += self.connectivity(self.tracker.get_factor(i + 1).H)
             return sop(cons, self.n_run, div)

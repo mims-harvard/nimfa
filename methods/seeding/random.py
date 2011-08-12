@@ -70,7 +70,7 @@ class Random(object):
         :param dim2: Dimension along second axis.
         :type dim2: `int`
         """
-        return self.max * np.matrix(np.random.rand(dim1, dim2))
+        return self.max * np.mat(np.random.rand(dim1, dim2))
     
     def __repr__(self):
         return "random.Random()"

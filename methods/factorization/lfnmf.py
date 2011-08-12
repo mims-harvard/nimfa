@@ -138,7 +138,7 @@ class Lfnmf(mstd.Nmf_std):
             c2m.setdefault(idxH[0, i], [])
             c2m[idxH[0, i]].append(i)
             # compute mean value of class idx in encoding matrix H
-            avgs.setdefault(idxH[0, i], np.matrix(np.zeros((self.rank, 1))))
+            avgs.setdefault(idxH[0, i], np.mat(np.zeros((self.rank, 1))))
             avgs[idxH[0, i]] += self.H[:, i]
         for k in avgs:
             avgs[k] /= len(c2m[k])
