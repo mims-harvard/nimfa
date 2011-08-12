@@ -39,9 +39,11 @@ class Icm(mstd.Nmf_std):
         
         :param iiter: Number of inner iterations. Default is 20. 
         :type iiter: `int`
-        :param alpha: The prior for basis matrix (W) of proper dimensions. Default is zeros matrix prior.
+        :param alpha: The prior for basis matrix (W) of proper dimensions. Default is uniformely distributed random sparse matrix prior with
+                      0.8 density parameter.
         :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
-        :param beta: The prior for mixture matrix (H) of proper dimensions. Default is zeros matrix prior.
+        :param beta: The prior for mixture matrix (H) of proper dimensions. Default is uniformely distributed random sparse matrix prior with
+                     0.8 density parameter.
         :type beta: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
         :param theta: The prior for :param:`sigma`. Default is 0.
         :type theta: `float`
@@ -108,8 +110,8 @@ class Icm(mstd.Nmf_std):
     def _set_params(self):
         """Set algorithm specific model options."""
         self.iiter = self.options.get('iiter', 20)
-        self.alpha = self.options.get('alpha', sp.csr_matrix((self.V.shape[0], self.rank)))
-        self.beta = self.options.get('beta', sp.csr_matrix((self.rank, self.V.shape[1])))
+        self.alpha = self.options.get('alpha', sp.rand(self.V.shape[0], self.rank, density = 0.8, format = 'csr'))
+        self.beta = self.options.get('beta', sp.rand(self.rank, self.V.shape[1], density = 0.8, format = 'csr'))
         self.theta = self.options.get('theta', .0)
         self.k = self.options.get('k', .0)
         self.sigma = self.options.get('sigma', 1.) 
@@ -121,13 +123,21 @@ class Icm(mstd.Nmf_std):
         """Update basis and mixture matrix."""
         # update basis matrix
         C = dot(self.H, self.H.T)
-        D = dot(self.V, self.B.T)
+        D = dot(self.V, self.H.T)
         for _ in xrange(self.iiter):
             for n in xrange(self.rank):
-                nn = list(xrange(n - 1)) + list(xrange(n, self.rank))
-                temp = max(sop(D[:, n] - dot(self.W[:, nn], C[nn, n]) - self.sigma * self.alpha[:, n], C[n, n], div), 0)
-                for i in xrange(self.W.shape[0]):
-                    self.W[i, n] = temp[i, 0]
+                nn = list(xrange(n)) + list(xrange(n + 1, self.rank))
+                temp = max(sop(D[:, n] - dot(self.W[:, nn], C[nn, n]) - self.sigma * self.alpha[:, n], C[n, n] + np.finfo(C.dtype).eps, div), 0.)
+                if not sp.isspmatrix(self.W):
+                    self.W[:, n] = temp
+                else:
+                    for i in xrange(self.W.shape[0]):
+                        self.W[i, n] = temp[i, 0]
+        # 0/1 values special handling
+        #l = np.logical_or((self.W == 0).all(0), (self.W == 1).all(0))
+        #lz = len(nz_data(l))
+        #l = [i for i in xrange(self.rank) if l[0, i] == True]
+        #self.W[:, l] = multiply(repmat(self.alpha.mean(1), 1, lz), -np.log(np.random.rand(self.V.shape[0], lz)))  
         # update sigma
         self.sigma = (self.theta + self.v + multiply(self.W, dot(self.W, C) - 2 * D).sum() / 2.) / (self.V.shape[0] * self.V.shape[1] / 2. + self.k + 1.)
         # update mixture matrix
@@ -135,10 +145,18 @@ class Icm(mstd.Nmf_std):
         F = dot(self.W.T, self.V)
         for _ in xrange(self.iiter):
             for n in xrange(self.rank):
-                nn = list(xrange(n - 1)) + list(xrange(n, self.rank))
-                temp = max(sop(F[n, :] - dot(E[n, nn], self.H[nn, :]) - self.sigma * self.beta[n, :], E[n, n], div), 0)
-                for i in xrange(self.H.shape[1]):
-                    self.H[n, i] = temp[0, i]
+                nn = list(xrange(n)) + list(xrange(n + 1, self.rank))
+                temp = max(sop(F[n, :] - dot(E[n, nn], self.H[nn, :]) - self.sigma * self.beta[n, :], E[n, n] + np.finfo(E.dtype).eps, div), 0.)
+                if not sp.isspmatrix(self.H):
+                    self.H[n, :] = temp
+                else:
+                    for i in xrange(self.H.shape[1]):
+                        self.H[n, i] = temp[0, i]
+        # 0/1 values special handling             
+        #l = np.logical_or((self.H == 0).all(1), (self.H == 1).all(1))
+        #lz = len(nz_data(l))
+        #l = [i for i in xrange(self.rank) if l[i, 0] == True]
+        #self.H[l, :] = multiply(repmat(self.beta.mean(0), lz, 1), -np.log(np.random.rand(lz, self.V.shape[1])))  
     
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
