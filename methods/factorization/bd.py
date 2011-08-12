@@ -150,26 +150,34 @@ class Bd(mstd.Nmf_std):
             D = dot(self.V, self.H.T)
             for n in xrange(self.rank):
                 if not self.n_w[n]:
-                    nn = list(xrange(n - 1)) + list(xrange(n, self.rank))
-                    temp = self._randr(sop(D[:, n] - dot(self.W[:, nn], C[nn, n]), C[n, n], div), self.sigma / C[n, n], self.alpha[:, n])
-                    for j in xrange(self.W.shape[0]):
-                        self.W[j, n] = temp[j]
+                    nn = list(xrange(n)) + list(xrange(n + 1, self.rank))
+                    temp = self._randr(sop(D[:, n] - dot(self.W[:, nn], C[nn, n]), C[n, n] + np.finfo(C.dtype).eps, div), 
+                           self.sigma / (C[n, n] + np.finfo(C.dtype).eps), self.alpha[:, n])
+                    if not sp.isspmatrix(self.W):
+                        self.W[:, n] = temp
+                    else:
+                        for j in xrange(self.W.shape[0]):
+                            self.W[j, n] = temp[j]
             # update sigma
             if not self.n_sigma:
                 self.sigma = 1. / np.random.gamma(shape = (self.V.shape[0] * self.V.shape[1]) / 2. + 1. + self.k, 
-                                                  scale = 1. / (self.theta + self.v + multiply(self.W, dot(self.W, C) - 2 * D).sum() / 2.))
+                             scale = 1. / (self.theta + self.v + multiply(self.W, dot(self.W, C) - 2 * D).sum() / 2.))
             # update mixture matrix
             E = dot(self.W.T, self.W)
             F = dot(self.W.T, self.V)
             for n in xrange(self.rank):
                 if not self.n_h[n]:
-                    nn = list(xrange(n - 1)) + list(xrange(n, self.rank))
-                    temp = self._randr(sop(F[n, :] - dot(E[n, nn], self.H[nn, :]), E[n, n], div), self.sigma / E[n, n], self.beta[n, :].T)
-                    for j in xrange(self.H.shape[1]):
-                        self.H[n, j] = temp[j]
+                    nn = list(xrange(n)) + list(xrange(n + 1, self.rank))
+                    temp = self._randr(sop((F[n, :] - dot(E[n, nn], self.H[nn, :])).T, E[n, n] + np.finfo(E.dtype).eps, div),
+                           self.sigma / (E[n, n] + np.finfo(E.dtype).eps), self.beta[n, :].T)
+                    if not sp.isspmatrix(self.H):
+                        self.H[n, :] = temp.T
+                    else:
+                        for j in xrange(self.H.shape[1]):
+                            self.H[n, j] = temp[j]
                     
     def _randr(self, m, s, l):    
-        """Return random number from p(x)=K*exp(-(x-m)^2/s-l'x), x>=0."""
+        """Return random number from distribution with density p(x)=K*exp(-(x-m)^2/s-l'x), x>=0."""
         # m and l are vectors and s is scalar
         m = m.toarray() if sp.isspmatrix(m) else np.array(m)
         l = l.toarray() if sp.isspmatrix(l) else np.array(l)
@@ -180,7 +188,7 @@ class Bd(mstd.Nmf_std):
         x[a] = - np.log(y[a]) / ((l[a] * s - m[a]) / s)
         a = np.array(1 - a, dtype = bool)
         R = erfc(abs(A[a]))
-        x[a] = erfcinv(y[a] * R - (A[a] < 0) * (2 * y[a] + R - 2)) * sqrt( 2 * s) + m[a] - l[a] * s
+        x[a] = erfcinv(y[a] * R - (A[a] < 0) * (2 * y[a] + R - 2)) * sqrt(2 * s) + m[a] - l[a] * s
         x[np.isnan(x)] = 0
         x[x < 0] = 0
         x[np.isinf(x)] = 0
