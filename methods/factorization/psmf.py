@@ -164,6 +164,7 @@ class Psmf(mstd.Nmf_std):
     def _update_psi(self):
         """Compute M-step and update psi."""
         self.psi = - np.tile(list(xrange(1, self.N)), (self.V.shape[0], 1)) * self.rho[:, 1:self.N].sum(axis = 1) * multiply(self.V, self.V).sum(axis = 1)
+        self.psi = np.array(self.psi)
         temp = np.zeros((self.V.shape[0], self.rank))
         for t in xrange(self.V.shape[1]):
             temp += (np.tile(self.__arr(self.V[:, t]), (1, self.rank)) -  self.lamb * np.tile(self.zeta[:,t].T, (self.V.shape[0], 1)))**2 + self.lamb**2 * np.tile(self.phi.T, (self.V.shape[0], 1))
