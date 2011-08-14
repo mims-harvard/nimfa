@@ -305,7 +305,7 @@ def dot(X, Y):
         return X * Y
     elif sp.isspmatrix(X) or sp.isspmatrix(Y):
         # avoid dense dot product with mixed factors
-        return sp.csr_matrix(X).copy() * sp.csr_matrix(Y).copy()
+        return sp.csr_matrix(X) * sp.csr_matrix(Y)
     else:
         return np.asmatrix(X) * np.asmatrix(Y)
 
