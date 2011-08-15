@@ -41,7 +41,7 @@ class Snmf(mstd.Nmf_std):
                     matrix (V). If :param:`eta` is negative, maximum value of target matrix is used for it. 
         :type eta: `float`
         :param beta: It controls sparseness. Larger :param:`beta` generates higher sparseness on H. Too large :param:`beta` 
-                     is not recommended. It should have positive value. Default value is 0.01.
+                     is not recommended. It should have positive value. Default value is 1e-4.
         :type beta: `float`
         :param i_conv: Part of the biclustering convergence test. It decides convergence if row clusters and column clusters have 
                        not changed for :param:`i_conv` convergence tests. It should have nonnegative value.
@@ -106,7 +106,7 @@ class Snmf(mstd.Nmf_std):
         self.version = self.options.get('version', 'r')
         self.eta = self.options.get('eta', np.max(self.V))
         if self.eta < 0: self.eta = np.max(self.V)
-        self.beta = self.options.get('beta', 0.01)
+        self.beta = self.options.get('beta', 1e-4)
         self.i_conv = self.options.get('i_conv', 10)
         self.w_min_change = self.options.get('w_min_change', 0)
         self.min_residuals = self.min_residuals if self.min_residuals else 1e-4
@@ -133,11 +133,11 @@ class Snmf(mstd.Nmf_std):
             
     def update(self):
         """Update basis and mixture matrix."""
-        # min_h ||[[W; 1 ... 1]*H  - [A; 0 ... 0]||, s.t. H>=0, for given A and W.
+        # min_h ||[[W; 1 ... 1]*H  - [A; 0 ... 0]||, s.t. H>=0, for given A and W
         self.H, _ = self._fcnnls(vstack((self.W, self.betavec)), vstack((self.V, np.zeros((1, self.V.shape[1])))))
         if any(self.H.sum(1) == 0):
             self.nrestart += 1
-            if self.nrestart >= 10:
+            if self.nrestart >= 100:
                 raise utils.MFError("Too many restarts due to too large beta parameter.")
             self.idxWold = np.mat(np.zeros((self.V.shape[0], 1)))
             self.idxHold = np.mat(np.zeros((1, self.V.shape[1])))
@@ -196,7 +196,7 @@ class Snmf(mstd.Nmf_std):
         pRHS = A.shape[1]
         W = np.mat(np.zeros((lVar, pRHS)))
         iter = 0
-        maxiter = 2 * lVar
+        maxiter = 3 * lVar
         # precompute parts of pseudoinverse
         CtC = dot(C.T, C)
         CtA = dot(C.T, A)
@@ -208,9 +208,7 @@ class Snmf(mstd.Nmf_std):
         D = K.copy() 
         Fset = np.array(find(np.logical_not(all(Pset, axis = 0))))
         # active set algorithm for NNLS main loop
-        oitr = 0
         while len(Fset) > 0:
-            oitr += 1    
             # solve for the passive variables
             K[:, Fset] = self.__cssls(CtC, CtA[:, Fset], Pset[:, Fset])
             # find any infeasible solutions
@@ -245,21 +243,21 @@ class Snmf(mstd.Nmf_std):
                     t_d = D[l_1n, l_2n] / (D[l_1n, l_2n] - K[l_1n, l_2n])
                     for i in xrange(len(l_1h)):
                         alpha[l_1h[i], l_2h[i]] = t_d[0, i]
-                    alphaMin, minIdx =  argmin(alpha[:, :nHset], axis = 0)
+                    alphaMin, minIdx = argmin(alpha[:, :nHset], axis = 0)
                     minIdx = minIdx.tolist()[0]
                     alpha[:, :nHset] = repmat(alphaMin, lVar, 1)
-                    D[:,Hset] = D[:,Hset] - multiply(alpha[:, :nHset], (D[:,Hset] - K[:,Hset]))
+                    D[:,Hset] = D[:,Hset] - multiply(alpha[:, :nHset], D[:, Hset] - K[:, Hset])
                     idx2zero = sub2ind(D.shape, minIdx, Hset)
                     l_1z = [l % D.shape[0] for l in idx2zero]
                     l_2z = [l / D.shape[0] for l in idx2zero]
                     D[l_1z, l_2z] = 0
                     Pset[l_1z, l_2z] = 0
-                    K[:, Hset] = self.__cssls(CtC, CtA[:,Hset], Pset[:,Hset])
+                    K[:, Hset] = self.__cssls(CtC, CtA[:, Hset], Pset[:, Hset])
                     Hset = find(any(K < 0, axis = 0))
                     nHset = len(Hset)
             # make sure the solution has converged and check solution for optimality
-            W[:,Fset] = CtA[:,Fset] - dot(CtC, K[:,Fset])
-            Jset = find(all(multiply(np.logical_not(Pset[:,Fset]), W[:,Fset]) <= 0, axis = 0))
+            W[:,Fset] = CtA[:, Fset] - dot(CtC, K[:, Fset])
+            Jset = find(all(multiply(np.logical_not(Pset[:, Fset]), W[:, Fset]) <= 0, axis = 0))
             if Jset != []:
                 f_j = Fset[Jset]
             else:
@@ -267,13 +265,13 @@ class Snmf(mstd.Nmf_std):
             Fset = np.setdiff1d(np.asarray(Fset), np.asarray(f_j))
             # for non-optimal solutions, add the appropriate variable to Pset
             if len(Fset) > 0:
-                _, mxidx = argmax(multiply(np.logical_not(Pset[:,Fset]), W[:,Fset]), axis = 0)
+                _, mxidx = argmax(multiply(np.logical_not(Pset[:, Fset]), W[:, Fset]), axis = 0)
                 mxidx = mxidx.tolist()[0]
                 idxs = sub2ind((lVar, pRHS), mxidx, Fset)
                 l_1 = [l % lVar for l in idxs]
                 l_2 = [l / lVar for l in idxs]
                 Pset[l_1, l_2] = 1
-                D[:,Fset] = K[:,Fset]
+                D[:, Fset] = K[:, Fset]
         return K, Pset
     
     def __cssls(self, CtC, CtA, Pset = None):
@@ -296,7 +294,14 @@ class Snmf(mstd.Nmf_std):
                 cols2solve = sortedEset[breakIdx[k] + 1 : breakIdx[k + 1] + 1]
                 vars = Pset[:, sortedEset[breakIdx[k] + 1]]
                 vars = [i for i in xrange(vars.shape[0]) if vars[i, 0]]
-                K[:,cols2solve][vars, :] = np.linalg.lstsq(CtC[:,vars][vars, :], CtA[:,cols2solve][vars, :])[0]
+                sol = np.linalg.lstsq(CtC[:, vars][vars, :], CtA[:, cols2solve][vars, :])[0]
+                i = 0
+                for c in cols2solve:
+                    j = 0
+                    for v in vars:
+                        K[v, c] = sol[j,i]
+                        j += 1
+                    i += 1
                 # K(vars,cols2solve) = pinv(CtC(vars,vars)) * CtA(vars,cols2solve);
         return K
     
