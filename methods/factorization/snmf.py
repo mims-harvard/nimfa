@@ -76,7 +76,7 @@ class Snmf(mstd.Nmf_std):
             self.inc = 0
             # normalize W
             self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div)
-            self.I_k = self.eta * sp.eye(self.rank, self.rank)
+            self.I_k = self.eta * np.mat(np.eye(self.rank))
             self.betavec = sqrt(self.beta) * np.ones((1, self.rank))
             self.nrestart = 0
             while self._is_satisfied(cobj, iter):
@@ -144,10 +144,11 @@ class Snmf(mstd.Nmf_std):
             self.inc = 0
             self.W, _ = self.seed.initialize(self.V, self.rank, self.options)
             # normalize W
-            self.W = elop(self.W, repmat(sop(sum(multiply(self.W, self.W), 0), sqrt), self.V[0], 1), div)
+            self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div)
             return 
         # min_w ||[H'; I_k]*W' - [A'; 0]||, s.t. W>=0, for given A and H.
-        self.W, _ = self._fcnnls(vstack((self.H.T, self.I_k)),vstack((self.V.T,  np.zeros((self.rank, self.V.shape[0]))))).T  
+        Wt, _ = self._fcnnls(vstack((self.H.T, self.I_k)), vstack((self.V.T,  np.zeros((self.rank, self.V.shape[0])))))
+        self.W = Wt.T   
     
     def fro_error(self):
         """Compute NMF objective value with additional sparsity constraints."""
@@ -205,7 +206,7 @@ class Snmf(mstd.Nmf_std):
         Pset = K > 0
         K[np.logical_not(Pset)] = 0
         D = K.copy() 
-        Fset = find(np.logical_not(all(Pset, axis = 0)))
+        Fset = np.array(find(np.logical_not(all(Pset, axis = 0))))
         # active set algorithm for NNLS main loop
         oitr = 0
         while len(Fset) > 0:
@@ -235,7 +236,8 @@ class Snmf(mstd.Nmf_std):
                     l_1h = [l % lVar for l in hIdx]
                     l_2h = [l / lVar for l in hIdx]
                     if nHset == 1:
-                        negIdx = sub2ind(K.shape, i, Hset * np.mat(np.ones((len(j),1))))
+                        h_n = Hset * np.ones((len(j), 1))
+                        negIdx = sub2ind(K.shape, i, h_n)
                     else:
                         negIdx = sub2ind(K.shape, i, Hset[j].T)
                     l_1n = [l % K.shape[0] for l in negIdx]
@@ -257,14 +259,14 @@ class Snmf(mstd.Nmf_std):
                     nHset = len(Hset)
             # make sure the solution has converged and check solution for optimality
             W[:,Fset] = CtA[:,Fset] - dot(CtC, K[:,Fset])
-            Jset = find(all(multiply(np.logical_not(Pset[:,Fset]), W[:,Fset] <= 0), axis = 0))
+            Jset = find(all(multiply(np.logical_not(Pset[:,Fset]), W[:,Fset]) <= 0, axis = 0))
             if Jset != []:
                 f_j = Fset[Jset]
             else:
                 f_j = []
             Fset = np.setdiff1d(np.asarray(Fset), np.asarray(f_j))
             # for non-optimal solutions, add the appropriate variable to Pset
-            if Fset.size > 0:
+            if len(Fset) > 0:
                 _, mxidx = argmax(multiply(np.logical_not(Pset[:,Fset]), W[:,Fset]), axis = 0)
                 mxidx = mxidx.tolist()[0]
                 idxs = sub2ind((lVar, pRHS), mxidx, Fset)
@@ -282,7 +284,7 @@ class Snmf(mstd.Nmf_std):
         K = np.mat(np.zeros(CtA.shape))
         if Pset == None or Pset.size == 0 or all(Pset):
             # equivalent if CtC is square matrix
-            K = dot(np.linalg.inv(CtC), CtA)
+            K = np.linalg.lstsq(CtC, CtA)[0]
             # K = pinv(CtC) * CtA
         else:
             lVar, pRHS = Pset.shape
@@ -294,8 +296,7 @@ class Snmf(mstd.Nmf_std):
                 cols2solve = sortedEset[breakIdx[k] + 1 : breakIdx[k + 1] + 1]
                 vars = Pset[:, sortedEset[breakIdx[k] + 1]]
                 vars = [i for i in xrange(vars.shape[0]) if vars[i, 0]]
-                sol = dot(np.linalg.inv(CtC[:,vars][vars, :]), CtA[:,cols2solve][vars, :])
-                K[:,cols2solve][vars, :] = dot(np.linalg.inv(CtC[:,vars][vars, :]), CtA[:,cols2solve][vars, :])
+                K[:,cols2solve][vars, :] = np.linalg.lstsq(CtC[:,vars][vars, :], CtA[:,cols2solve][vars, :])[0]
                 # K(vars,cols2solve) = pinv(CtC(vars,vars)) * CtA(vars,cols2solve);
         return K
     
