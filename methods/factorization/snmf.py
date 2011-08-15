@@ -62,6 +62,9 @@ class Snmf(mstd.Nmf_std):
         Return fitted factorization model.
         """
         self._set_params()
+        # in version SNMF/L, V is transposed while W and H are swapped and transposed.
+        if self.version == 'l':
+            self.V = self.V.T
         
         for _ in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
@@ -72,8 +75,8 @@ class Snmf(mstd.Nmf_std):
             # count the number of convergence checks that column clusters and row clusters have not changed.
             self.inc = 0
             # normalize W
-            self.W = elop(self.W, repmat(sop(sum(multiply(self.W, self.W), 0), sqrt), self.V[0], 1), div)
-            self.I_k = self.eta * sp.eye(self.rank)
+            self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div)
+            self.I_k = self.eta * sp.eye(self.rank, self.rank)
             self.betavec = sqrt(self.beta) * np.ones((1, self.rank))
             self.nrestart = 0
             while self._is_satisfied(cobj, iter):
@@ -82,7 +85,7 @@ class Snmf(mstd.Nmf_std):
                 iter += 1
                 if self.track_error:
                     self.tracker._track_error(self.residuals())
-            # transpose and swap the roles back
+            # transpose and swap the roles back if SNMF/L
             if self.version == 'l':
                 self.V = self.V.T
                 self.W, self.H = self.H.T, self.W.T
@@ -100,13 +103,11 @@ class Snmf(mstd.Nmf_std):
     
     def _set_params(self): 
         """Set algorithm specific model options."""   
-        # in version l, V is transposed while W and H are swapped and transposed.
         self.version = self.options.get('version', 'r')
-        self.V = self.V.T if self.version == 'l' else self.V
-        self.eta = self.options.get('eta', max(self.V))
-        if self.eta < 0: self.eta = max(self.V)
+        self.eta = self.options.get('eta', np.max(self.V))
+        if self.eta < 0: self.eta = np.max(self.V)
         self.beta = self.options.get('beta', 0.01)
-        self.i_conv = self.options.egt('i_conv', 10)
+        self.i_conv = self.options.get('i_conv', 10)
         self.w_min_change = self.options.get('w_min_change', 0)
         self.min_residuals = self.min_residuals if self.min_residuals else 1e-4
         self.track_factor = self.options.get('track_factor', False)
@@ -155,8 +156,8 @@ class Snmf(mstd.Nmf_std):
     def objective(self):
         """Compute convergence test."""
         _, idxW = argmax(self.W, axis = 1)
-        _, idxH = argmax(self.H, axis = 0)
-        changedW = count(elop(idxW, self.idxWold, ne), 1)
+        _, idxH = argmax(self.H, axis = 0) 
+        changedW = count(elop(idxW, self.idxWold, ne), 1) 
         changedH = count(elop(idxH, self.idxHold, ne), 1)
         if changedW <= self.w_min_change and changedH == 0:
             self.inc += 1
@@ -166,7 +167,7 @@ class Snmf(mstd.Nmf_std):
         resmat1 = elop(self.W, dot(self.W, dot(self.H, self.H.T)) - dot(self.V, self.H.T) + self.eta**2 * self.W, min)
         resvec = nz_data(resmat) + nz_data(resmat1)
         # L1 norm
-        self.conv = norm(resvec, 1)
+        self.conv = norm(np.mat(resvec), 1)
         erravg = self.conv / len(resvec)
         self.idxWold = idxW
         self.idxHold = idxH
@@ -174,7 +175,7 @@ class Snmf(mstd.Nmf_std):
         
     def _fcnnls(self, C, A):
         """
-        NNLS using normal equations and fast combinatorial strategy (van Benthem and Keenan, 2004). 
+        Nonnegative least squares solver (NNLS) using normal equations and fast combinatorial strategy (van Benthem and Keenan, 2004). 
         
         Given A and C this algorithm solves for the optimal K in a least squares sense, using that A = C*K in the problem
         ||A - C*K||, s.t. K>=0 for given A and C. 
@@ -201,10 +202,10 @@ class Snmf(mstd.Nmf_std):
         # obtain the initial feasible solution and corresponding passive set
         # K is not sparse
         K = self.__cssls(CtC, CtA)
-        Pset = sop(K, 0, ge)
-        K = sop(K, 0, le)
-        D = K 
-        Fset  = find(any(Pset, 0))
+        Pset = K > 0
+        K[np.asmatrix(1 - Pset, dtype = 'bool')] = 0
+        D = K.copy() 
+        Fset = np.mat(find(np.asmatrix(1 - all(Pset, axis = 0), dtype = 'bool')))
         # active set algorithm for NNLS main loop
         oitr = 0
         while Fset.size > 0:
@@ -250,11 +251,13 @@ class Snmf(mstd.Nmf_std):
                 D[:,Fset] = K[:,Fset]
         return K, Pset
     
-    def __cssls(self, CtC, CtA, Pset):
-        """Solve the set of equations CtA = CtC * K for variables defined in set Pset
-        using the fast combinatorial approach (van Benthem and Keenan, 2004)."""
+    def __cssls(self, CtC, CtA, Pset = None):
+        """
+        Solve the set of equations CtA = CtC * K for variables defined in set Pset
+        using the fast combinatorial approach (van Benthem and Keenan, 2004).
+        """
         K = np.mat(np.zeros(CtA.shape))
-        if Pset.size == 0 or all(Pset):
+        if not Pset or Pset.size == 0 or Pset.all(axis = 0):
             # equivalent if CtC is square matrix
             K = dot(np.linalg.inv(CtC), CtA)
             # K = pinv(CtC) * CtA
