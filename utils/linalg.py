@@ -372,7 +372,7 @@ def _sop_matrix(X, s = None, op = None):
     :param op: Operation to be performed. 
     :type op: `func` 
     """
-    eps = np.finfo(X.dtype).eps
+    eps = np.finfo(X.dtype).eps if not 'int' in str(X.dtype) else 0
     return np.mat([[op(X[i,j] + eps, s) if s != None else op(X[i,j] + eps) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
     
 def elop(X, Y, op):

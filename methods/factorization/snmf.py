@@ -203,51 +203,74 @@ class Snmf(mstd.Nmf_std):
         # K is not sparse
         K = self.__cssls(CtC, CtA)
         Pset = K > 0
-        K[np.asmatrix(1 - Pset, dtype = 'bool')] = 0
+        K[np.logical_not(Pset)] = 0
         D = K.copy() 
-        Fset = np.mat(find(np.asmatrix(1 - all(Pset, axis = 0), dtype = 'bool')))
+        Fset = find(np.logical_not(all(Pset, axis = 0)))
         # active set algorithm for NNLS main loop
         oitr = 0
-        while Fset.size > 0:
+        while len(Fset) > 0:
             oitr += 1    
             # solve for the passive variables
             K[:, Fset] = self.__cssls(CtC, CtA[:, Fset], Pset[:, Fset])
             # find any infeasible solutions
-            Hset = Fset[find(any(K[:, Fset] < 0))]
+            idx = find(any(K[:, Fset] < 0, axis = 0))
+            if idx != []:
+                Hset = Fset[idx]
+            else:
+                Hset = []
             # make infeasible solutions feasible (standard NNLS inner loop)
-            if Hset.size > 0:
+            if len(Hset) > 0:
                 nHset = len(Hset)
                 alpha = np.mat(np.zeros((lVar, nHset)))
-                while Hset and iter < maxiter:
+                while len(Hset) > 0 and iter < maxiter:
                     iter += 1
                     alpha[:,:nHset] = np.Inf
                     # find indices of negative variables in passive set
-                    i,j = find(elop(Pset[:, Hset], (K[:, Hset] < 0), np.logical_and))
-                    if i.size == 0:
+                    idx_f = find(np.logical_and(Pset[:, Hset], K[:, Hset] < 0))
+                    i = [l % Pset.shape[0] for l in idx_f]
+                    j = [l / Pset.shape[0] for l in idx_f]
+                    if len(i) == 0:
                         break
                     hIdx = sub2ind((lVar, nHset), i, j)
+                    l_1h = [l % lVar for l in hIdx]
+                    l_2h = [l / lVar for l in hIdx]
                     if nHset == 1:
                         negIdx = sub2ind(K.shape, i, Hset * np.mat(np.ones((len(j),1))))
                     else:
                         negIdx = sub2ind(K.shape, i, Hset[j].T)
-                    alpha[hIdx] = D[negIdx] / (D[negIdx] - K[negIdx])
-                    alphaMin, minIdx =  argmin(alpha[:, :nHset])
+                    l_1n = [l % K.shape[0] for l in negIdx]
+                    l_2n = [l / K.shape[0] for l in negIdx]
+                    t_d = D[l_1n, l_2n] / (D[l_1n, l_2n] - K[l_1n, l_2n])
+                    for i in xrange(len(l_1h)):
+                        alpha[l_1h[i], l_2h[i]] = t_d[0, i]
+                    alphaMin, minIdx =  argmin(alpha[:, :nHset], axis = 0)
+                    minIdx = minIdx.tolist()[0]
                     alpha[:, :nHset] = repmat(alphaMin, lVar, 1)
                     D[:,Hset] = D[:,Hset] - multiply(alpha[:, :nHset], (D[:,Hset] - K[:,Hset]))
                     idx2zero = sub2ind(D.shape, minIdx, Hset)
-                    D[idx2zero] = 0
-                    Pset[idx2zero] = 0
+                    l_1z = [l % D.shape[0] for l in idx2zero]
+                    l_2z = [l / D.shape[0] for l in idx2zero]
+                    D[l_1z, l_2z] = 0
+                    Pset[l_1z, l_2z] = 0
                     K[:, Hset] = self.__cssls(CtC, CtA[:,Hset], Pset[:,Hset])
-                    Hset = find(any(K < 0))
+                    Hset = find(any(K < 0, axis = 0))
                     nHset = len(Hset)
             # make sure the solution has converged and check solution for optimality
             W[:,Fset] = CtA[:,Fset] - dot(CtC, K[:,Fset])
-            Jset = find(all(multiply(np.logical_not(Pset[:,Fset]), W[:,Fset] <= 0)))
-            Fset = np.setdiff1d(np.asarray(Fset), np.asarray(Fset[Jset]))
+            Jset = find(all(multiply(np.logical_not(Pset[:,Fset]), W[:,Fset] <= 0), axis = 0))
+            if Jset != []:
+                f_j = Fset[Jset]
+            else:
+                f_j = []
+            Fset = np.setdiff1d(np.asarray(Fset), np.asarray(f_j))
             # for non-optimal solutions, add the appropriate variable to Pset
             if Fset.size > 0:
-                _, mxidx = argmax(multiply(np.logical_not(Pset[:,Fset]), W[:,Fset]))
-                Pset[sub2ind((lVar, pRHS), mxidx, Fset)] = 1
+                _, mxidx = argmax(multiply(np.logical_not(Pset[:,Fset]), W[:,Fset]), axis = 0)
+                mxidx = mxidx.tolist()[0]
+                idxs = sub2ind((lVar, pRHS), mxidx, Fset)
+                l_1 = [l % lVar for l in idxs]
+                l_2 = [l / lVar for l in idxs]
+                Pset[l_1, l_2] = 1
                 D[:,Fset] = K[:,Fset]
         return K, Pset
     
@@ -257,20 +280,22 @@ class Snmf(mstd.Nmf_std):
         using the fast combinatorial approach (van Benthem and Keenan, 2004).
         """
         K = np.mat(np.zeros(CtA.shape))
-        if not Pset or Pset.size == 0 or Pset.all(axis = 0):
+        if Pset == None or Pset.size == 0 or all(Pset):
             # equivalent if CtC is square matrix
             K = dot(np.linalg.inv(CtC), CtA)
             # K = pinv(CtC) * CtA
         else:
             lVar, pRHS = Pset.shape
-            codedPset = dot(sop(np.mat(range(lVar - 1, 0, -1)).T, 2, pow), Pset)
+            codedPset = dot(np.mat(2**np.array(range(lVar - 1, -1, -1))), Pset)
             sortedPset, sortedEset = sort(codedPset)
-            breaks = diff(sortedPset)
-            breakIdx = [0] + find(breaks) + [pRHS]
+            breaks = diff(np.mat(sortedPset))
+            breakIdx = [-1] + find(np.mat(breaks)) + [pRHS]
             for k in xrange(len(breakIdx) - 1):
-                cols2solve = sortedEset[breakIdx[k] + 1 : breakIdx[k + 1]]
+                cols2solve = sortedEset[breakIdx[k] + 1 : breakIdx[k + 1] + 1]
                 vars = Pset[:, sortedEset[breakIdx[k] + 1]]
-                K[vars,cols2solve] = dot(np.linalg.inv(CtC[vars,vars]), CtA[vars,cols2solve])
+                vars = [i for i in xrange(vars.shape[0]) if vars[i, 0]]
+                sol = dot(np.linalg.inv(CtC[:,vars][vars, :]), CtA[:,cols2solve][vars, :])
+                K[:,cols2solve][vars, :] = dot(np.linalg.inv(CtC[:,vars][vars, :]), CtA[:,cols2solve][vars, :])
                 # K(vars,cols2solve) = pinv(CtC(vars,vars)) * CtA(vars,cols2solve);
         return K
     
