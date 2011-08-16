@@ -109,7 +109,6 @@ class Lfnmf(mstd.Nmf_std):
     
     def update(self):
         """Update basis and mixture matrix."""
-        print self.distance(metric= 'euclidean')
         _, idxH = argmax(self.H, axis = 0)
         c2m, avgs = self._encoding(idxH)
         C = len(c2m)
