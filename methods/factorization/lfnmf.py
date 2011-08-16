@@ -57,7 +57,7 @@ class Lfnmf(mstd.Nmf_std):
         
         for _ in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
-            self.Sw, self.Sb = 0, 0
+            self.Sw, self.Sb = np.mat(np.zeros((1, 1))), np.mat(np.zeros((1, 1)))
             pobj = cobj = self.objective()
             iter = 0
             while self._is_satisfied(pobj, cobj, iter):
@@ -109,42 +109,49 @@ class Lfnmf(mstd.Nmf_std):
     
     def update(self):
         """Update basis and mixture matrix."""
+        print self.distance(metric= 'euclidean')
         _, idxH = argmax(self.H, axis = 0)
         c2m, avgs = self._encoding(idxH)
         C = len(c2m)
+        gamma = 0.01
+        delta = 0.01
         # update mixture matrix H
         for k in xrange(self.H.shape[0]):
             for l in xrange(self.H.shape[1]):
-                cl = idxH[0, l]
-                ni = len(c2m[cl])
-                b = 4. / ((C - 1) * C * ni) * sum(avgs[j][k, 0] - avgs[cl][k, 0] + self.H[k,l] / ni for j in c2m) - 2 * avgs[cl][k, 0] / (ni * C) + 1.
-                h_b1 = self.H[k, l] * sum(self.V[i, l] * self.W[i, k] / dot(self.W[i, :], self.H[:, l])[0, 0] for i in xrange(self.V.shape[0])) 
-                h_b2 = 2. / (ni * C) - 4. / (ni**2 * (C - 1))
-                self.H[k, l] = -b + sqrt(b**2 + 4 * h_b1 * h_b2)
+                n_r = len(c2m[idxH[0, l]])
+                t_1 = (2 * gamma + 2 * delta) * 1. / n_r * sum(self.H[k, i] for i in xrange(self.H.shape[1]) if i != l) - 2 * delta * avgs[idxH[0, l]][k, 0] - 1.
+                ksi = 2 * gamma - (1 * gamma + 1 * delta) / n_r
+                t_2 = sum(self.W[i, k] * self.V[i, l] / (dot(self.W[i, :], self.H[:, l])[0, 0] + 1e-5) for i in xrange(self.W.shape[0]))
+                self.H[k, l] = t_1 + sqrt((t_1**2 + 4 * ksi * self.H[k, l] * t_2))
         # update basis matrix W
-        W1 = repmat(self.H.sum(axis = 1).T, self.V.shape[0], 1)
-        self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, self.H), div), self.H.T), W1, div))
+        for i in xrange(self.W.shape[0]):
+            for k in xrange(self.W.shape[1]):
+                w_1 = sum(self.H[k, j] * self.V[i, j] / (dot(self.W[i, :], self.H[:, j])[0, 0] + 1e-5) for j in xrange(self.V.shape[0]))
+                self.W[i, k] = self.W[i, k] *  w_1 / self.H[k, :].sum() 
         W2 = repmat(self.W.sum(axis = 0), self.V.shape[0], 1)
         self.W = elop(self.W, W2, div)
-        # update between class and within class scatter
-        self.Sw = 1. / C * sum(1. / len(c2m[i]) * sum(dot((self.H[:, c2m[i][j]] - avgs[i]).T, self.H[:, c2m[i][j]] - avgs[i]) 
-                  for j in xrange(len(c2m[i]))) for i in c2m)[0, 0]
-        self.Sb = 1. / ((C - 1) * C) * sum(dot((avgs[i] - avgs[j]).T, avgs[i] - avgs[j]) for i in c2m for j in c2m)[0, 0]
+        # update within class scatter and between class
+        self.Sw = sum(sum(dot(self.H[:, c2m[i][j]] - avgs[i], (self.H[:, c2m[i][j]] - avgs[i]).T) 
+                  for j in xrange(len(c2m[i]))) for i in c2m)
+        avgs_t = np.mat(np.zeros((self.rank, 1)))
+        for k in avgs:
+            avgs_t += avgs[k]
+        avgs_t /= len(avgs)
+        self.Sb = sum(dot(avgs[i] - avgs_t, (avgs[i] - avgs_t).T) for i in c2m)
          
     def _encoding(self, idxH):
         """Compute class membership and mean class value of encoding (mixture) matrix H."""
         c2m = {}
         avgs = {}
-        for i in xrange(self.rank):
-            avgs.setdefault(i, np.mat(np.zeros((self.rank, 1))))
-            c2m.setdefault(i, [])
         for i in xrange(idxH.shape[1]):
             # group columns of encoding matrix H by class membership
+            c2m.setdefault(idxH[0, i], [])
             c2m[idxH[0, i]].append(i)
             # compute mean value of class idx in encoding matrix H
+            avgs.setdefault(idxH[0, i], np.mat(np.zeros((self.rank, 1))))
             avgs[idxH[0, i]] += self.H[:, i]
         for k in avgs:
-            avgs[k] /= len(c2m[k]) if len(c2m[k]) > 0 else 1
+            avgs[k] /= len(c2m[k]) 
         return c2m, avgs
     
     def objective(self):
@@ -153,7 +160,7 @@ class Lfnmf(mstd.Nmf_std):
         class scatter and within class scatter of the mixture matrix (H).
         """ 
         Va = dot(self.W, self.H)
-        return (multiply(self.V, elop(self.V, Va, np.log)) - self.V + Va).sum() + self.alpha * self.Sw - self.alpha * self.Sb
+        return (multiply(self.V, elop(self.V, Va, np.log)) - self.V + Va).sum() + self.alpha * np.trace(self.Sw) - self.alpha * np.trace(self.Sb)
 
     def __str__(self):
         return self.name
