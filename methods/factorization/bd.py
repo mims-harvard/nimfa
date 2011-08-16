@@ -101,7 +101,7 @@ class Bd(mstd.Nmf_std):
             if self.track_factor:
                 self.tracker._track_factor(W = self.W.copy(), H = self.H.copy(), sigma = self.sigma)
         
-        self.n_iter = iter - 1
+        self.n_iter = iter 
         self.final_obj = cobj
         mffit = mfit.Mf_fit(self)
         return mffit
@@ -117,11 +117,13 @@ class Bd(mstd.Nmf_std):
         :param iter: Current iteration number. 
         :type iter: `int`
         """
-        if self.max_iter and self.max_iter < iter:
+        if self.test_conv and iter % self.test_conv != 0:
+            return True
+        if self.max_iter and self.max_iter <= iter:
             return False
         if self.min_residuals and iter > 0 and c_obj - p_obj <= self.min_residuals:
             return False
-        if iter > 0 and c_obj >= p_obj:
+        if iter > 0 and c_obj > p_obj:
             return False
         return True
     

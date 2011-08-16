@@ -74,7 +74,7 @@ class Lfnmf(mstd.Nmf_std):
             if self.track_factor:
                 self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
         
-        self.n_iter = iter - 1
+        self.n_iter = iter
         self.final_obj = cobj
         mffit = mfit.Mf_fit(self)
         return mffit
@@ -90,11 +90,13 @@ class Lfnmf(mstd.Nmf_std):
         :param iter: Current iteration number. 
         :type iter: `int`
         """
-        if self.max_iter and self.max_iter < iter:
+        if self.test_conv and iter % self.test_conv != 0:
+            return True
+        if self.max_iter and self.max_iter <= iter:
             return False
         if self.min_residuals and iter > 0 and c_obj - p_obj <= self.min_residuals:
             return False
-        if iter > 0 and c_obj >= p_obj:
+        if iter > 0 and c_obj > p_obj:
             return False
         return True
     
@@ -115,33 +117,34 @@ class Lfnmf(mstd.Nmf_std):
             for l in xrange(self.H.shape[1]):
                 cl = idxH[0, l]
                 ni = len(c2m[cl])
-                #b = 4. / (C * C * ni) * sum(avgs[k][j, 0] - avgs[k][cl, 0] + self.H[k,l] / ni for j in xrange(self.H.shape[0])) - 2 * avgs[k][cl, 0] / (ni * C) + 1.
-                b = 4. / (C * C * ni) * sum(avgs[j][k, 0] - avgs[cl][k, 0] + self.H[k,l] / ni for j in c2m) - 2 * avgs[cl][k, 0] / (ni * C) + 1.
-                self.H[k, l] = -b + sqrt(b**2 + 4. * self.H[k, l] * sum(self.V[i, l] * self.W[i, k] / dot(self.W[i, :], self.H[:, l])[0, 0] 
-                              for i in xrange(self.V.shape[0])) * (2. / ((ni + 2) * C) - 4. / ((ni + 2)**2 * C)))
+                b = 4. / ((C - 1) * C * ni) * sum(avgs[j][k, 0] - avgs[cl][k, 0] + self.H[k,l] / ni for j in c2m) - 2 * avgs[cl][k, 0] / (ni * C) + 1.
+                h_b1 = self.H[k, l] * sum(self.V[i, l] * self.W[i, k] / dot(self.W[i, :], self.H[:, l])[0, 0] for i in xrange(self.V.shape[0])) 
+                h_b2 = 2. / (ni * C) - 4. / (ni**2 * (C - 1))
+                self.H[k, l] = -b + sqrt(b**2 + 4 * h_b1 * h_b2)
         # update basis matrix W
-        W1 = repmat(self.H.sum(1).T, self.V.shape[0], 1)
+        W1 = repmat(self.H.sum(axis = 1).T, self.V.shape[0], 1)
         self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, self.H), div), self.H.T), W1, div))
-        W2 = repmat(self.W.sum(0), self.V.shape[0], 1)
+        W2 = repmat(self.W.sum(axis = 0), self.V.shape[0], 1)
         self.W = elop(self.W, W2, div)
         # update between class and within class scatter
         self.Sw = 1. / C * sum(1. / len(c2m[i]) * sum(dot((self.H[:, c2m[i][j]] - avgs[i]).T, self.H[:, c2m[i][j]] - avgs[i]) 
                   for j in xrange(len(c2m[i]))) for i in c2m)[0, 0]
-        self.Sb = 1. / (C * C) * sum(dot((avgs[i] - avgs[j]).T, avgs[i] - avgs[j]) for i in c2m for j in c2m)[0, 0]
+        self.Sb = 1. / ((C - 1) * C) * sum(dot((avgs[i] - avgs[j]).T, avgs[i] - avgs[j]) for i in c2m for j in c2m)[0, 0]
          
     def _encoding(self, idxH):
         """Compute class membership and mean class value of encoding (mixture) matrix H."""
         c2m = {}
         avgs = {}
+        for i in xrange(self.rank):
+            avgs.setdefault(i, np.mat(np.zeros((self.rank, 1))))
+            c2m.setdefault(i, [])
         for i in xrange(idxH.shape[1]):
             # group columns of encoding matrix H by class membership
-            c2m.setdefault(idxH[0, i], [])
             c2m[idxH[0, i]].append(i)
             # compute mean value of class idx in encoding matrix H
-            avgs.setdefault(idxH[0, i], np.mat(np.zeros((self.rank, 1))))
             avgs[idxH[0, i]] += self.H[:, i]
         for k in avgs:
-            avgs[k] /= len(c2m[k])
+            avgs[k] /= len(c2m[k]) if len(c2m[k]) > 0 else 1
         return c2m, avgs
     
     def objective(self):

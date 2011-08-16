@@ -47,6 +47,9 @@ class Psmf(mstd.Nmf_std):
         
         The following are algorithm specific model options which can be passed with values as keyword arguments.
         
+        PSMF overrides default frequency of convergence tests. By default convergence is tested every 5th iteration. This 
+        behavior can be changed by setting :param:`test_conv`. See :mod:`mf_methods` Stopping criteria section.   
+        
         :param prior: The prior on the number of factors explaining each vector and should be a positive row vector. 
                       The :param:`prior` can be passed as a list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or 
                       as a scalar N, in which case uniform prior is taken, prior = 1. / (1:N), reflecting no knowledge about the 
@@ -105,7 +108,7 @@ class Psmf(mstd.Nmf_std):
             if self.track_factor:
                 self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
         
-        self.n_iter = iter - 1
+        self.n_iter = iter 
         self.final_obj = cobj 
         mffit = mfit.Mf_fit(self)
         return mffit
@@ -133,16 +136,20 @@ class Psmf(mstd.Nmf_std):
         :param iter: Current iteration number. 
         :type iter: `int`
         """
-        if self.max_iter and self.max_iter < iter:
+        if self.test_conv and iter % self.test_conv != 0:
+            return True
+        if self.max_iter and self.max_iter <= iter:
             return False
         if self.min_residuals and iter > 0 and c_obj - p_obj <= self.min_residuals:
             return False
-        if iter > 0 and c_obj >= p_obj:
+        if iter > 0 and c_obj > p_obj:
             return False
         return True
     
     def _set_params(self):
         """Set algorithm specific model options."""
+        if not self.test_conv:
+            self.test_conv = 5
         self.prior = self.options.get('prior', self.rank)
         try:
             self.prior = [1. / self.prior for _ in xrange(int(round(self.prior)))]

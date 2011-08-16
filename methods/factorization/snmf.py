@@ -96,7 +96,7 @@ class Snmf(mstd.Nmf_std):
             if self.track_factor:
                 self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
         
-        self.n_iter = iter - 1
+        self.n_iter = iter
         self.final_obj = cobj
         mffit = mfit.Mf_fit(self)
         return mffit
@@ -123,9 +123,11 @@ class Snmf(mstd.Nmf_std):
         :param iter: Current iteration number. 
         :type iter: `int`
         """
+        if self.test_conv and iter % self.test_conv != 0:
+            return True
         if iter == 0:
             self.init_erravg = c_obj
-        if self.max_iter and self.max_iter < iter:
+        if self.max_iter and self.max_iter <= iter:
             return False
         if self.inc >= self.i_conv and c_obj <= self.min_residuals * self.init_erravg:
             return False
@@ -237,12 +239,12 @@ class Snmf(mstd.Nmf_std):
                         h_n = Hset * np.ones((len(j), 1))
                         negIdx = sub2ind(K.shape, i, h_n)
                     else:
-                        negIdx = sub2ind(K.shape, i, Hset[j].T)
+                        negIdx = sub2ind(K.shape, i, [Hset[e] for e in j])
                     l_1n = [l % K.shape[0] for l in negIdx]
                     l_2n = [l / K.shape[0] for l in negIdx]
                     t_d = D[l_1n, l_2n] / (D[l_1n, l_2n] - K[l_1n, l_2n])
                     for i in xrange(len(l_1h)):
-                        alpha[l_1h[i], l_2h[i]] = t_d[0, i]
+                        alpha[l_1h[i], l_2h[i]] = t_d.flatten()[0, i]
                     alphaMin, minIdx = argmin(alpha[:, :nHset], axis = 0)
                     minIdx = minIdx.tolist()[0]
                     alpha[:, :nHset] = repmat(alphaMin, lVar, 1)
