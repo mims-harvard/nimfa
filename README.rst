@@ -131,8 +131,10 @@ Example::
     print V.todense()
 
     # Run Standard NMF rank 3 algorithm
-    # Update equations and cost function are Standard NMF specific parameters (among others). If not specified the Euclidean update and Forbenius cost function would be used.
-    # We don't specify initialization method. Algorithm specific or random intialization will be used. In Standard NMF case, by default random is used.
+    # Update equations and cost function are Standard NMF specific parameters (among others). 
+    # If not specified the Euclidean update and Forbenius cost function would be used.
+    # We don't specify initialization method. Algorithm specific or random intialization will be used. 
+    # In Standard NMF case, by default random is used.
     fit = mf.mf(V, method = "nmf", max_iter = 30, rank = 3, update = 'divergence', objective = 'fro')
 
     # Basis matrix. It is sparse, as input V was sparse as well. 
