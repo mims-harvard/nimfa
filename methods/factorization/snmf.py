@@ -76,8 +76,12 @@ class Snmf(mstd.Nmf_std):
             self.inc = 0
             # normalize W
             self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div)
-            self.I_k = self.eta * np.mat(np.eye(self.rank))
-            self.beta_vec = sqrt(self.beta) * np.ones((1, self.rank))
+            if sp.isspmatrix(self.V):
+                self.beta_vec = sqrt(self.beta) * self.V.__class__(np.ones((1, self.rank)) , dtype = self.V.dtype)
+                self.I_k = self.eta * sp.eye(self.rank, self.rank, format = self.V.getformat())  
+            else:
+                self.beta_vec = sqrt(self.beta) * np.ones((1, self.rank))
+                self.I_k = self.eta * np.mat(np.eye(self.rank))
             self.n_restart = 0
             while self._is_satisfied(cobj, iter):
                 self.update()
@@ -135,8 +139,17 @@ class Snmf(mstd.Nmf_std):
             
     def update(self):
         """Update basis and mixture matrix."""
+        if sp.isspmatrix(self.V):
+            v1 = self.V.__class__((1, self.V.shape[1]), dtype = self.V.dtype)
+            v1t = self.V.__class__((self.rank, self.V.shape[0]), dtype = self.V.dtype)
+        else:
+            v1 = np.zeros((1, self.V.shape[1]))
+            v1t = np.zeros((self.rank, self.V.shape[0]))
         # min_h ||[[W; 1 ... 1]*H  - [A; 0 ... 0]||, s.t. H>=0, for given A and W
-        self.H = self._fcnnls(vstack((self.W, self.beta_vec)), vstack((self.V, np.zeros((1, self.V.shape[1])))))
+        if sp.isspmatrix(self.V):
+            self.H = self._spfcnnls(vstack((self.W, self.beta_vec)), vstack((self.V, v1)))
+        else:
+            self.H = self._fcnnls(vstack((self.W, self.beta_vec)), vstack((self.V, v1)))
         if any(self.H.sum(1) == 0):
             self.n_restart += 1
             if self.n_restart >= 100:
@@ -149,7 +162,10 @@ class Snmf(mstd.Nmf_std):
             self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div)
             return 
         # min_w ||[H'; I_k]*W' - [A'; 0]||, s.t. W>=0, for given A and H.
-        Wt = self._fcnnls(vstack((self.H.T, self.I_k)), vstack((self.V.T,  np.zeros((self.rank, self.V.shape[0])))))
+        if sp.isspmatrix(self.V):
+            Wt = self._spfcnnls(vstack((self.H.T, self.I_k)), vstack((self.V.T, v1t)))
+        else:
+            Wt = self._fcnnls(vstack((self.H.T, self.I_k)), vstack((self.V.T, v1t)))
         self.W = Wt.T   
     
     def fro_error(self):
@@ -175,9 +191,145 @@ class Snmf(mstd.Nmf_std):
         self.idx_w_old = idx_w
         self.idx_h_old = idx_h
         return err_avg
+    
+    def _spfcnnls(self, C, A):
+        """
+        NNLS for sparse matrices.
+        
+        Nonnegative least squares solver (NNLS) using normal equations and fast combinatorial strategy (van Benthem and Keenan, 2004). 
+        
+        Given A and C this algorithm solves for the optimal K in a least squares sense, using that A = C*K in the problem
+        ||A - C*K||, s.t. K>=0 for given A and C. 
+        
+        C is the n_obs x l_var coefficient matrix
+        A is the n_obs x p_rhs matrix of observations
+        K is the l_var x p_rhs solution matrix
+        
+        p_set is set of passive sets, one for each column. 
+        f_set is set of column indices for solutions that have not yet converged. 
+        h_set is set of column indices for currently infeasible solutions. 
+        j_set is working set of column indices for currently optimal solutions. 
+        """
+        _, l_var = C.shape
+        p_rhs = A.shape[1]
+        W = sp.lil_matrix((l_var, p_rhs))
+        iter = 0
+        max_iter = 3 * l_var
+        # precompute parts of pseudoinverse
+        CtC = dot(C.T, C)
+        CtA = dot(C.T, A)
+        # obtain the initial feasible solution and corresponding passive set
+        K = self.__spcssls(CtC, CtA)
+        p_set = sop(K, 0, ge)
+        for i in xrange(K.shape[0]):
+            for j in xrange(K.shape[1]):
+                if not p_set[i, j]: K[i, j] = 0.
+        D = K.copy() 
+        f_set = np.array(find(np.logical_not(all(p_set, axis = 0))))
+        # active set algorithm for NNLS main loop
+        while len(f_set) > 0:
+            # solve for the passive variables
+            K[:, f_set] = self.__spcssls(CtC, CtA[:, f_set], p_set[:, f_set])
+            # find any infeasible solutions
+            idx = find(any(sop(K[:, f_set], 0, le), axis = 0))
+            h_set = f_set[idx] if idx != [] else []
+            # make infeasible solutions feasible (standard NNLS inner loop)
+            if len(h_set) > 0:
+                n_h_set = len(h_set)
+                alpha = np.mat(np.zeros((l_var, n_h_set)))
+                while len(h_set) > 0 and iter < max_iter:
+                    iter += 1
+                    alpha[:,:n_h_set] = np.Inf
+                    # find indices of negative variables in passive set
+                    tmp = sop(K[:, h_set], 0, le)
+                    tmp_f = sp.lil_matrix(K.shape, dtype = 'bool')
+                    for i in xrange(K.shape[0]):
+                        for j in xrange(len(h_set)):
+                            if p_set[i, h_set[j]] and tmp[i, h_set[j]]: tmp_f[i, h_set[j]] = True
+                    idx_f = find(tmp_f[:, h_set])
+                    i_f = [l % p_set.shape[0] for l in idx_f]
+                    j_f = [l / p_set.shape[0] for l in idx_f]
+                    if len(i_f) == 0:
+                        break
+                    if n_h_set == 1:
+                        h_n = h_set * np.ones((1, len(j_f)))
+                        l_1n = i_f
+                        l_2n = h_n.tolist()[0]
+                    else:
+                        l_1n = i_f
+                        l_2n = [h_set[e] for e in j_f]
+                    t_d = D[l_1n, l_2n] / (D[l_1n, l_2n] - K[l_1n, l_2n])
+                    for i in xrange(len(i_f)):
+                        alpha[i_f[i], j_f[i]] = t_d.todense().flatten()[0, i]
+                    alpha_min, min_idx = argmin(alpha[:, :n_h_set], axis = 0)
+                    min_idx = min_idx.tolist()[0]
+                    alpha[:, :n_h_set] = repmat(alpha_min, l_var, 1)
+                    D[:, h_set] = D[:, h_set] - multiply(alpha[:, :n_h_set], D[:, h_set] - K[:, h_set])
+                    D[min_idx, h_set] = 0
+                    p_set[min_idx, h_set] = 0
+                    K[:, h_set] = self.__spcssls(CtC, CtA[:, h_set], p_set[:, h_set])
+                    h_set = find(any(sop(K, 0, le), axis = 0))
+                    n_h_set = len(h_set)
+            # make sure the solution has converged and check solution for optimality
+            W[:, f_set] = CtA[:, f_set] - dot(CtC, K[:, f_set])
+            tmp = sp.lil_matrix(p_set.shape, dtype = 'bool')
+            for i in xrange(p_set.shape[0]):
+                for j in f_set:
+                    if not p_set[i, j]: tmp[i, j] = True
+            j_set = find(all(sop(multiply(tmp[:, f_set], W[:, f_set]), 0, le), axis = 0))
+            f_j = f_set[j_set] if j_set != [] else []
+            f_set = np.setdiff1d(np.asarray(f_set), np.asarray(f_j))
+            # for non-optimal solutions, add the appropriate variable to Pset
+            if len(f_set) > 0:
+                tmp = sp.lil_matrix(p_set.shape, dtype = 'bool')
+                for i in xrange(p_set.shape[0]):
+                    for j in f_set:
+                        if not p_set[i, j]: tmp[i, j] = True
+                _, mxidx = argmax(multiply(tmp[:, f_set], W[:, f_set]), axis = 0)
+                mxidx = mxidx.tolist()[0]
+                p_set[mxidx, f_set] = 1
+                D[:, f_set] = K[:, f_set]
+        return K
+    
+    def __spcssls(self, CtC, CtA, p_set = None):
+        """
+        Solver for sparse matrices.
+        
+        Solve the set of equations CtA = CtC * K for variables defined in set p_set
+        using the fast combinatorial approach (van Benthem and Keenan, 2004).
+        
+        It returns matrix in LIL sparse format.
+        """    
+        K = np.lil_matrix(CtA.shape)
+        if p_set == None or p_set.size == 0 or all(p_set):
+            # equivalent if CtC is square matrix
+            K = sp.linalg.lsqr(CtC, CtA)[0]
+            # K = dot(np.linalg.pinv(CtC), CtA)
+        else:
+            l_var, p_rhs = p_set.shape
+            coded_p_set = dot(sp.lil_matrix(np.mat(2**np.array(range(l_var - 1, -1, -1)))), p_set)
+            sorted_p_set, sorted_idx_set = sort(coded_p_set.todense())
+            breaks = diff(np.mat(sorted_p_set))
+            break_idx = [-1] + find(np.mat(breaks)) + [p_rhs]
+            for k in xrange(len(break_idx) - 1):
+                cols2solve = sorted_idx_set[break_idx[k] + 1 : break_idx[k + 1] + 1]
+                vars = p_set[:, sorted_idx_set[break_idx[k] + 1]]
+                vars = [i for i in xrange(vars.shape[0]) if vars[i, 0]]
+                sol = sp.linalg.lsqr(CtC[:, vars][vars, :], CtA[:, cols2solve][vars, :])[0]
+                i = 0
+                for c in cols2solve:
+                    j = 0
+                    for v in vars:
+                        K[v, c] = sol[j,i]
+                        j += 1
+                    i += 1
+                # K[vars, cols2solve] = dot(np.linalg.pinv(CtC[vars, vars]), CtA[vars, cols2solve])
+        return sp.lil_matrix(K)
         
     def _fcnnls(self, C, A):
         """
+        NNLS for dense matrices.
+        
         Nonnegative least squares solver (NNLS) using normal equations and fast combinatorial strategy (van Benthem and Keenan, 2004). 
         
         Given A and C this algorithm solves for the optimal K in a least squares sense, using that A = C*K in the problem
@@ -263,6 +415,8 @@ class Snmf(mstd.Nmf_std):
     
     def __cssls(self, CtC, CtA, p_set = None):
         """
+        Solver for dense matrices. 
+        
         Solve the set of equations CtA = CtC * K for variables defined in set p_set
         using the fast combinatorial approach (van Benthem and Keenan, 2004).
         """
