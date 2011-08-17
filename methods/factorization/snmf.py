@@ -68,6 +68,8 @@ class Snmf(mstd.Nmf_std):
         
         for _ in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
+            self.W = self.W.tolil()
+            self.H = self.H.tolil()
             iter = 0
             self.idx_w_old = np.mat(np.zeros((self.V.shape[0], 1)))
             self.idx_h_old = np.mat(np.zeros((1, self.V.shape[1])))
@@ -77,8 +79,8 @@ class Snmf(mstd.Nmf_std):
             # normalize W
             self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div)
             if sp.isspmatrix(self.V):
-                self.beta_vec = sqrt(self.beta) * self.V.__class__(np.ones((1, self.rank)) , dtype = self.V.dtype)
-                self.I_k = self.eta * sp.eye(self.rank, self.rank, format = self.V.getformat())  
+                self.beta_vec = sqrt(self.beta) * sp.lil_matrix(np.ones((1, self.rank)) , dtype = self.V.dtype)
+                self.I_k = self.eta * sp.eye(self.rank, self.rank, format = 'lil')  
             else:
                 self.beta_vec = sqrt(self.beta) * np.ones((1, self.rank))
                 self.I_k = self.eta * np.mat(np.eye(self.rank))
@@ -89,6 +91,9 @@ class Snmf(mstd.Nmf_std):
                 iter += 1
                 if self.track_error:
                     self.tracker._track_error(self.residuals())
+            # basis and mixture matrix are now constructed and are now converted to CSR for fast LA operations
+            self.W = self.W.tocsr()
+            self.H = self.H.tocsr()
             # transpose and swap the roles back if SNMF/L
             if self.version == 'l':
                 self.V = self.V.T
@@ -108,8 +113,8 @@ class Snmf(mstd.Nmf_std):
     def _set_params(self): 
         """Set algorithm specific model options."""   
         self.version = self.options.get('version', 'r')
-        self.eta = self.options.get('eta', np.max(self.V))
-        if self.eta < 0: self.eta = np.max(self.V)
+        self.eta = self.options.get('eta', np.max(self.V) if not sp.isspmatrix(self.V) else np.max(self.V.data))
+        if self.eta < 0: self.eta = np.max(self.V) if not sp.isspmatrix(self.V) else 0.
         self.beta = self.options.get('beta', 1e-4)
         self.i_conv = self.options.get('i_conv', 10)
         self.w_min_change = self.options.get('w_min_change', 0)
@@ -150,7 +155,7 @@ class Snmf(mstd.Nmf_std):
             self.H = self._spfcnnls(vstack((self.W, self.beta_vec)), vstack((self.V, v1)))
         else:
             self.H = self._fcnnls(vstack((self.W, self.beta_vec)), vstack((self.V, v1)))
-        if any(self.H.sum(1) == 0):
+        if any(self.H.sum(axis = 1) == 0):
             self.n_restart += 1
             if self.n_restart >= 100:
                 raise utils.MFError("Too many restarts due to too large beta parameter.")
@@ -158,8 +163,8 @@ class Snmf(mstd.Nmf_std):
             self.idx_h_old = np.mat(np.zeros((1, self.V.shape[1])))
             self.inc = 0
             self.W, _ = self.seed.initialize(self.V, self.rank, self.options)
-            # normalize W
-            self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div)
+            # normalize W and convert to lil
+            self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div).tolil()
             return 
         # min_w ||[H'; I_k]*W' - [A'; 0]||, s.t. W>=0, for given A and H.
         if sp.isspmatrix(self.V):
@@ -210,6 +215,8 @@ class Snmf(mstd.Nmf_std):
         h_set is set of column indices for currently infeasible solutions. 
         j_set is working set of column indices for currently optimal solutions. 
         """
+        C = C.tolil()
+        A = A.tolil()
         _, l_var = C.shape
         p_rhs = A.shape[1]
         W = sp.lil_matrix((l_var, p_rhs))
@@ -220,7 +227,7 @@ class Snmf(mstd.Nmf_std):
         CtA = dot(C.T, A)
         # obtain the initial feasible solution and corresponding passive set
         K = self.__spcssls(CtC, CtA)
-        p_set = sop(K, 0, ge)
+        p_set = sop(K, 0, ge).tolil()
         for i in xrange(K.shape[0]):
             for j in xrange(K.shape[1]):
                 if not p_set[i, j]: K[i, j] = 0.
@@ -228,6 +235,7 @@ class Snmf(mstd.Nmf_std):
         f_set = np.array(find(np.logical_not(all(p_set, axis = 0))))
         # active set algorithm for NNLS main loop
         while len(f_set) > 0:
+            print "bbbab"
             # solve for the passive variables
             K[:, f_set] = self.__spcssls(CtC, CtA[:, f_set], p_set[:, f_set])
             # find any infeasible solutions
@@ -241,7 +249,7 @@ class Snmf(mstd.Nmf_std):
                     iter += 1
                     alpha[:,:n_h_set] = np.Inf
                     # find indices of negative variables in passive set
-                    tmp = sop(K[:, h_set], 0, le)
+                    tmp = sop(K[:, h_set], 0, le).tolil()
                     tmp_f = sp.lil_matrix(K.shape, dtype = 'bool')
                     for i in xrange(K.shape[0]):
                         for j in xrange(len(h_set)):
@@ -289,7 +297,7 @@ class Snmf(mstd.Nmf_std):
                 mxidx = mxidx.tolist()[0]
                 p_set[mxidx, f_set] = 1
                 D[:, f_set] = K[:, f_set]
-        return K
+        return K.tolil()
     
     def __spcssls(self, CtC, CtA, p_set = None):
         """
@@ -300,10 +308,12 @@ class Snmf(mstd.Nmf_std):
         
         It returns matrix in LIL sparse format.
         """    
-        K = np.lil_matrix(CtA.shape)
+        K = sp.lil_matrix(CtA.shape)
         if p_set == None or p_set.size == 0 or all(p_set):
             # equivalent if CtC is square matrix
-            K = sp.linalg.lsqr(CtC, CtA)[0]
+            for k in xrange(CtA.shape[1]):
+                ls = sp.linalg.gmres(CtC, CtA[:, k].toarray())[0]
+                K[:, k] = sp.lil_matrix(np.mat(ls).T)
             # K = dot(np.linalg.pinv(CtC), CtA)
         else:
             l_var, p_rhs = p_set.shape
@@ -315,7 +325,11 @@ class Snmf(mstd.Nmf_std):
                 cols2solve = sorted_idx_set[break_idx[k] + 1 : break_idx[k + 1] + 1]
                 vars = p_set[:, sorted_idx_set[break_idx[k] + 1]]
                 vars = [i for i in xrange(vars.shape[0]) if vars[i, 0]]
-                sol = sp.linalg.lsqr(CtC[:, vars][vars, :], CtA[:, cols2solve][vars, :])[0]
+                tmp_ls = CtA[:, cols2solve][vars, :]
+                sol = sp.lil_matrix(K.shape)
+                for k in xrange(tmp_ls.shape[1]):
+                    ls = sp.linalg.gmres(CtC[:, vars][vars, :], tmp_ls[:, k].toarray())[0]
+                    sol[:, k] = sp.lil_matrix(np.mat(ls).T)
                 i = 0
                 for c in cols2solve:
                     j = 0
@@ -324,7 +338,7 @@ class Snmf(mstd.Nmf_std):
                         j += 1
                     i += 1
                 # K[vars, cols2solve] = dot(np.linalg.pinv(CtC[vars, vars]), CtA[vars, cols2solve])
-        return sp.lil_matrix(K)
+        return K.tolil()
         
     def _fcnnls(self, C, A):
         """

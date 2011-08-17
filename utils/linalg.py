@@ -69,7 +69,8 @@ def any(X, axis = None):
                 col = X.indices[now]
                 check(now, row, col)
                 now += 1
-        return [x != 0 for x in res]
+        sol = [x != 0 for x in res]
+        return np.mat(sol) if axis == 0 else np.mat(sol).T
     else:
         return X.any(axis)
         
@@ -100,7 +101,8 @@ def all(X, axis = None):
                 col = X.indices[now]
                 check(now, row, col)
                 now += 1
-        return [x == X.shape[0] if axis == 0 else x == X.shape[1] for x in res]
+        sol = [x == X.shape[0] if axis == 0 else x == X.shape[1] for x in res]
+        return np.mat(sol) if axis == 0 else np.mat(sol).T
     else:
         return X.all(axis)
 
