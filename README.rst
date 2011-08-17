@@ -14,7 +14,6 @@ Content
 **Matrix Factorization Methods**
 
     :BD - Bayesian nonnegative matrix factorization Gibbs sampler:
-
     Schmidt, M.N., Winther, O.,  and Hansen, L.K., (2009). Bayesian Non-negative Matrix Factorization. In Proceedings of ICA. 2009, 540-547.    
 
     :BMF:
