@@ -235,7 +235,6 @@ class Snmf(mstd.Nmf_std):
         f_set = np.array(find(np.logical_not(all(p_set, axis = 0))))
         # active set algorithm for NNLS main loop
         while len(f_set) > 0:
-            print "bbbab"
             # solve for the passive variables
             K[:, f_set] = self.__spcssls(CtC, CtA[:, f_set], p_set[:, f_set])
             # find any infeasible solutions
