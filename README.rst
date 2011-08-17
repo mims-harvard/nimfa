@@ -114,6 +114,9 @@ For details and descriptions on algorithm specific options see specific algorith
 Usage
 ====
 
+Following is one basic usage example that employs Standard NMF algorithm. For more see examples and methods' documentation.
+
+Example::
 
     # Import MF library entry point for factorization
     import mf
