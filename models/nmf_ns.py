@@ -1,4 +1,5 @@
 from math import log
+from operator import div
 
 import nmf
 
@@ -68,13 +69,13 @@ class Nmf_ns(nmf.Nmf):
         """Compute the estimated target matrix according to the nonsmooth NMF algorithm model."""
         return nmf.dot(nmf.dot(self.W, self.S), self.H)
     
-    def distance(self, metric):
+    def distance(self, metric = 'euclidean'):
         """Return the loss function value."""
         if metric == 'euclidean':
             return (nmf.sop(self.V - nmf.dot(nmf.dot(self.W, self.S), self.H), 2, pow)).sum()
         elif metric == 'kl': 
             Va = nmf.dot(nmf.dot(self.W, self.S), self.H)
-            return (nmf.multiply(self.V, nmf.elop(self.V, Va, log)) - self.V + Va).sum()
+            return (nmf.multiply(self.V, nmf.sop(nmf.elop(self.V, Va, div), op = log)) - self.V + Va).sum()
         else:
             raise nmf.utils.MFError("Unknown distance metric.")
     

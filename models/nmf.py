@@ -1,7 +1,6 @@
 from math import sqrt, log
 from operator import eq, div
 from scipy.cluster.hierarchy import linkage, cophenet
-import warnings
 
 import methods.seeding as seed
 import utils.utils as utils
@@ -102,7 +101,7 @@ class Nmf(object):
     def fitted(self):
         """Compute the estimated target matrix according to the NMF model."""
     
-    def distance(self, metric):
+    def distance(self, metric = 'euclidean'):
         """Return the loss function value."""
         
     def residuals(self):
@@ -117,27 +116,33 @@ class Nmf(object):
         
         Return connectivity matrix.
         """
-        H = self.coef() if not H else H
+        H = self.coef() if H == None else H
         _, idx = argmax(H, axis = 0)
         mat1 = repmat(idx, self.V.shape[1], 1)
         mat2 = repmat(idx.T, 1, self.V.shape[1])
-        return elop(mat1, mat2, eq)
+        conn = elop(mat1, mat2, eq)
+        if sp.isspmatrix(conn):
+            return conn.__class__(conn, dtype = 'd')
+        else:
+            return np.mat(conn, dtype = 'd')
     
     def consensus(self):
         """
         Compute consensus matrix as the mean connectivity matrix across multiple runs of the factorization. It has been
-        proposed by Brunet et. all (2004) to help visualize and measure the stability of the clusters obtained by NMF.
+        proposed by Brunet et. al. (2004) to help visualize and measure the stability of the clusters obtained by NMF.
         
         Tracking of matrix factors across multiple runs must be enabled for computing consensus matrix. For results
         of a single NMF run, the consensus matrix reduces to the connectivity matrix.
         """
         if self.track_factor:
-            cons = np.mat(np.zeros((self.V.shape[1], self.V.shape[1])))
+            if sp.isspmatrix(self.V):
+                cons = self.V.__class__((self.V.shape[1], self.V.shape[1]), dtype = self.V.dtype)
+            else:
+                cons = np.mat(np.zeros((self.V.shape[1], self.V.shape[1])))
             for i in xrange(self.n_run):
                 cons += self.connectivity(self.tracker.get_factor(i + 1).H)
             return sop(cons, self.n_run, div)
         else:
-            warnings.warn("Tracking matrix factors across runs is not enabled. Connectivity matrix will be computed.", UserWarning, 2)
             return self.connectivity(self.coef()) 
         
     def dim(self):
@@ -184,13 +189,13 @@ class Nmf(object):
         :type prob: `bool` equivalent
         """
         X = self.coef() if what == "samples" else self.basis().T if what == "features" else None
-        if not X:
+        if X == None:
             raise utils.MFError("Dominant basis components can be computed for samples or features.")
         eX, idxX = argmax(X, axis = 0)
         if not prob:
             return idxX
         sums = X.sum(axis = 0)
-        prob = [e / sums[0, s] for e, s in zip(eX, X.shape[1])]
+        prob = [e / sums[0, s] for e, s in zip(eX, list(xrange(X.shape[1])))]
         return idxX, prob
     
     def evar(self):
@@ -217,10 +222,10 @@ class Nmf(object):
         W = self.basis()
         def prob(i, q):
             """Return probability that the i-th feature contributes to the basis q."""
-            return W[i, q] / sum(W[i, :])
+            return W[i, q] / (W[i, :].sum() + np.finfo(W.dtype).eps)
         res = []
         for f in xrange(W.shape[0]):
-            res.append(1 + 1 / log(W.shape[1], 2) * sum( prob(f, q) * log(prob(f,q), 2) for q in W.shape[1]))
+            res.append(1. + 1. / log(W.shape[1], 2) * sum(prob(f, q) * log(prob(f,q) + np.finfo(W.dtype).eps, 2) for q in xrange(W.shape[1])))
         return res
     
     def select_features(self):
@@ -290,14 +295,14 @@ class Nmf(object):
         Return tuple that contains sparseness of the basis and mixture coefficients matrices. 
         """
         def sparseness(x):
-            x1 = sqrt(x.shape[0]) - abs(x).sum() / sqrt(multiply(x, x).sum())
+            x1 = sqrt(x.shape[0]) - abs(x).sum() / (sqrt(multiply(x, x).sum()) + np.finfo(x.dtype).eps)
             x2 = sqrt(x.shape[0]) - 1
             return x1 / x2 
         W = self.basis()
         H = self.coef()
         return np.mean([sparseness(W[:, i]) for i in xrange(W.shape[1])]), np.mean([sparseness(H[:, i]) for i in xrange(H.shape[1])])
         
-    def cophcor(self):
+    def coph_cor(self):
         """
         Compute cophenetic correlation coefficient of consensus matrix, generally obtained from multiple NMF runs. 
         

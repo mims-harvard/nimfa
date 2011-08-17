@@ -4,7 +4,7 @@ import scipy.sparse.linalg as sla
 import numpy.linalg as nla
 from operator import mul
 from itertools import izip
-from math import sqrt
+from math import sqrt, isnan
 
 """
     Linear algebra helper routines
@@ -433,7 +433,7 @@ def __op_spmatrixX(X, Y, op):
         upto = R.indptr[row+1]
         while now < upto:
             col = R.indices[now]
-            R.data[now] = op(R.data[now], Y[row, col])
+            R.data[now] = op(R.data[now], Y[row, col] + np.finfo(Y.dtype).eps)
             now += 1
     return R
     
@@ -455,7 +455,7 @@ def __op_spmatrixY(X, Y, op):
         upto = R.indptr[row+1]
         while now < upto:
             col = R.indices[now]
-            R.data[now] = op(X[row, col], R.data[now])
+            R.data[now] = op(X[row, col], R.data[now] + np.finfo(R.dtype).eps)
             now += 1
     return R
 
@@ -472,7 +472,7 @@ def _op_matrix(X, Y, op):
     """
     # operation is not necessarily commutative 
     assert X.shape == Y.shape, "Matrices are not aligned."
-    return np.mat([[op(X[i,j], Y[i,j]) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    return np.mat([[op(X[i,j], Y[i,j] + np.finfo(Y.dtype).eps) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
 
 def inf_norm(X):
     """
