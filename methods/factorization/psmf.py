@@ -72,6 +72,7 @@ class Psmf(mstd.Nmf_std):
         sm = sum(self.prior)
         self.prior = np.array([p / sm for p in self.prior])
         self.eps = 1e-5
+        if sp.isspmatrix(self.V): self.V = self.V.todense()
         
         for _ in xrange(self.n_run):
             # initialize P and Q distributions
