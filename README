@@ -1,5 +1,0 @@
-Unified and efficient interface to matrix factorization algorithms and methods. A scripting library which includs a number of published factorization algorithms and initialization methods and facilitates the combination of these to produce new strategies.
-
-Extensive documentation with working examples which demonstrate real applications, commonly used benchmark data and visualization methods are provided to help with the interpretation and comprehension of the results.
-
-Details available at: http://orange.biolab.si/trac/wiki/MatrixFactorization.
