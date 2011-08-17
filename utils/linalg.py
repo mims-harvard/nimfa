@@ -357,7 +357,7 @@ def _sop_spmatrix(X, s = None, op = None):
     for row in range(R.shape[0]):
         upto = R.indptr[row+1]
         while now < upto:
-            R.data[now] = op(R.data[now], s) if s != None else op(R.data[now])
+            R.data[now] = op(R.data[now], s) if s != None else op(R.data[now] + np.finfo(R.dtype).eps)
             now += 1
     return R
 

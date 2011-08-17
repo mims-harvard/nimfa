@@ -295,8 +295,9 @@ class Nmf(object):
         Return tuple that contains sparseness of the basis and mixture coefficients matrices. 
         """
         def sparseness(x):
-            x1 = sqrt(x.shape[0]) - abs(x).sum() / (sqrt(multiply(x, x).sum()) + np.finfo(x.dtype).eps)
+            x1 = sqrt(x.shape[0]) - (abs(x).sum() + np.finfo(x.dtype).eps) / (sqrt(multiply(x, x).sum()) + np.finfo(x.dtype).eps)
             x2 = sqrt(x.shape[0]) - 1
+            print x1, x2
             return x1 / x2 
         W = self.basis()
         H = self.coef()
