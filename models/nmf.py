@@ -246,7 +246,7 @@ class Nmf(object):
         res = [i for i in xrange(len(scores)) if scores[i] > u + 3. * s]
         W = self.basis()
         m = np.median(W.toarray() if sp.isspmatrix(W) else W.tolist())
-        return [i for i in res if np.max(W[:, i].toarray() if sp.isspmatrix(W) else W[:, i]) > m]
+        return [i for i in res if np.max(W[i, :].toarray() if sp.isspmatrix(W) else W[i, :]) > m]
     
     def purity(self, membership = None):
         """
