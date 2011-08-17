@@ -97,7 +97,11 @@ Content
 Install
 =======
 
+No special installation procedure is specified. However, the MF library makes extensive use of `SciPy`_ and `NumPy`_ libraries for fast and convenient deanse and sparse matrix manipulation and some linear
+algebra operations. There are not any additional prerequisites. 
 
+.. _SciPy: http://www.scipy.org/
+.. _NumPy: http://numpy.scipy.org/
 
 Configuration
 =============

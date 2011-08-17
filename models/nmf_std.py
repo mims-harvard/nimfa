@@ -22,7 +22,7 @@ class Nmf_std(nmf.Nmf):
         Construct factorization model that manages standard NMF models.
         
         :param params: MF runtime and algorithm parameters and options. For detailed explanation of the general model 
-                       parameters see :mod:`mf_methods`. For algorithm specific model options see documentation of chosen
+                       parameters see :mod:`mf`. For algorithm specific model options see documentation of chosen
                        factorization method. 
         :type params: `dict`
         """

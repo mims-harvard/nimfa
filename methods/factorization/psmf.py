@@ -43,12 +43,12 @@ class Psmf(mstd.Nmf_std):
 
     def __init__(self, **params):
         """
-        For detailed explanation of the general model parameters see :mod:`mf_methods`.
+        For detailed explanation of the general model parameters see :mod:`mf`.
         
         The following are algorithm specific model options which can be passed with values as keyword arguments.
         
         PSMF overrides default frequency of convergence tests. By default convergence is tested every 5th iteration. This 
-        behavior can be changed by setting :param:`test_conv`. See :mod:`mf_methods` Stopping criteria section.   
+        behavior can be changed by setting :param:`test_conv`. See :mod:`mf` Stopping criteria section.   
         
         :param prior: The prior on the number of factors explaining each vector and should be a positive row vector. 
                       The :param:`prior` can be passed as a list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or 

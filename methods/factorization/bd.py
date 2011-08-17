@@ -39,7 +39,7 @@ class Bd(mstd.Nmf_std):
 
     def __init__(self, **params):
         """
-        For detailed explanation of the general model parameters see :mod:`mf_methods`.
+        For detailed explanation of the general model parameters see :mod:`mf`.
         
         If :param:`max_iter` of the underlying model is not specified, default value of :param:`max_iter` 30 is set. The
         meaning of :param:`max_iter` for BD is the number of Gibbs samples to compute. Sequence of Gibbs samples converges

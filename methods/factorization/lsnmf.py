@@ -25,7 +25,7 @@ class Lsnmf(mstd.Nmf_std):
 
     def __init__(self, **params):
         """
-        For detailed explanation of the general model parameters see :mod:`mf_methods`.
+        For detailed explanation of the general model parameters see :mod:`mf`.
         
         If :param:`min_residuals` of the underlying model is not specified, default value of :param:`min_residuals` 1e-5 is set.
         In LSNMF :param:`min_residuals` is used as an upper bound of quotient of projected gradients norm and initial gradient
