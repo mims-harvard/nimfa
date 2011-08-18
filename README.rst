@@ -103,6 +103,10 @@ algebra operations. There are not any additional prerequisites.
 .. _SciPy: http://www.scipy.org/
 .. _NumPy: http://numpy.scipy.org/
 
+To build and install run::
+	
+	python setup.py install
+
 Configuration
 =============
 
