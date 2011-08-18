@@ -12,7 +12,7 @@ setup(
     description = "Python Matrix Factorization Techniques for Data Mining",
     url = "http://orange.biolab.si/trac/wiki/MatrixFactorization",
     packages = ["mf"],
-    packages_dir = { "mf": "./mf"},
+    package_dir = { "mf": "./mf"},
     license = "OSI Approved :: GNU General Public License (GPL)",
     long_description = read("README.rst"),
     classifiers = [
