@@ -118,7 +118,7 @@ For details and descriptions on algorithm specific options see specific algorith
 Usage
 ====
 
-Following are twp basic usage examples that employ Standard NMF algorithm and LSNMF algorithm. For more see examples and 
+Following are two basic usage examples that employ Standard NMF algorithm and LSNMF algorithm. For more see examples and 
 methods' documentation.
 
 Example No. 1::
