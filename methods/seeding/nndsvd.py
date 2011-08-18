@@ -1,6 +1,3 @@
-import numpy as np
-import scipy.sparse as sp
-from math import sqrt
 
 from utils.utils import *
 from utils.linalg import *

@@ -1,9 +1,7 @@
-from math import log
-from operator import div
 
-import nmf
+from nmf import *
 
-class Nmf_ns(nmf.Nmf):
+class Nmf_ns(Nmf):
     """
     Implementation of the alternative model to manage factorizations that follow NMF model. This modification is 
     required by the Nonsmooth NMF algorithm (NSNMF) [14]. The Nonsmooth NMF algorithm is a modification of the standard divergence
@@ -41,17 +39,17 @@ class Nmf_ns(nmf.Nmf):
                        factorization method. 
         :type params: `dict`
         """
-        nmf.Nmf.__init__(self, params)
+        Nmf.__init__(self, params)
         if not self.seed and not self.W and not self.H: self.seed = "random"
         if self.W and self.H:
             if self.seed:
-                raise nmf.utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
+                raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
             else:
-                self.seed = nmf.seed.fixed.Fixed() 
+                self.seed = seed.fixed.Fixed() 
                 self.seed._set_fixed(self.W, self.H)
         self._is_smdefined()
-        if nmf.sp.isspmatrix(self.V) and (self.V.data < 0).any() or not nmf.sp.isspmatrix(self.V) and (self.V < 0).any():
-            raise nmf.utils.MFError("The input matrix contains negative elements.") 
+        if sp.isspmatrix(self.V) and (self.V.data < 0).any() or not sp.isspmatrix(self.V) and (self.V < 0).any():
+            raise utils.MFError("The input matrix contains negative elements.") 
         
     def basis(self):
         """Return the matrix of basis vectors."""
@@ -67,19 +65,19 @@ class Nmf_ns(nmf.Nmf):
     
     def fitted(self):
         """Compute the estimated target matrix according to the nonsmooth NMF algorithm model."""
-        return nmf.dot(nmf.dot(self.W, self.S), self.H)
+        return dot(dot(self.W, self.S), self.H)
     
     def distance(self, metric = 'euclidean'):
         """Return the loss function value."""
         if metric == 'euclidean':
-            return (nmf.sop(self.V - nmf.dot(nmf.dot(self.W, self.S), self.H), 2, pow)).sum()
+            return (sop(self.V - dot(dot(self.W, self.S), self.H), 2, pow)).sum()
         elif metric == 'kl': 
-            Va = nmf.dot(nmf.dot(self.W, self.S), self.H)
-            return (nmf.multiply(self.V, nmf.sop(nmf.elop(self.V, Va, div), op = log)) - self.V + Va).sum()
+            Va = dot(dot(self.W, self.S), self.H)
+            return (multiply(self.V, sop(elop(self.V, Va, div), op = log)) - self.V + Va).sum()
         else:
-            raise nmf.utils.MFError("Unknown distance metric.")
+            raise utils.MFError("Unknown distance metric.")
     
     def residuals(self):
         """Return residuals between the target matrix and its nonsmooth NMF estimate."""
-        return self.V - nmf.dot(nmf.dot(self.W, self.S), self.H)
+        return self.V - dot(dot(self.W, self.S), self.H)
         

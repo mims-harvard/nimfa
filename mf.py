@@ -17,7 +17,7 @@
     #. [mandatory] Provide the target object to estimate. 
 """
 import methods
-import utils.utils as utils
+from utils import *
 
 l_factorization = methods.list_mf_methods()
 l_seed = methods.list_seeding_methods()

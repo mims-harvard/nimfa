@@ -1,11 +1,9 @@
 
-import models.nmf_std as mstd
-import models.mf_fit as mfit
-import models.mf_track as mtrack
-import utils.utils as utils
+from models import *
+from utils import *
 from utils.linalg import *
 
-class Psmf(mstd.Nmf_std):
+class Psmf(nmf_std.Nmf_std):
     """
     Probabilistic Sparse Matrix Factorization (PSMF) [11], [12]. PSMF allows for varying levels of sensor noise in the
     data, uncertainty in the hidden prototypes used to explain the data and uncertainty as to the prototypes selected
@@ -59,7 +57,7 @@ class Psmf(mstd.Nmf_std):
         """
         self.name = "psmf"
         self.aseeds = ["none"]
-        mstd.Nmf_std.__init__(self, params)
+        nmf_std.Nmf_std.__init__(self, params)
         
     def factorize(self):
         """
@@ -104,14 +102,14 @@ class Psmf(mstd.Nmf_std):
                     self.tracker._track_error(self.residuals())
             if self.callback:
                 self.final_obj = cobj
-                mffit = mfit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
                 self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter 
         self.final_obj = cobj 
-        mffit = mfit.Mf_fit(self)
+        mffit = mf_fit.Mf_fit(self)
         return mffit
     
     def _cross_terms(self):
@@ -158,7 +156,7 @@ class Psmf(mstd.Nmf_std):
             self.prior = self.optios['prior'] 
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
         
     def update(self):
         """Update basis and mixture matrix."""

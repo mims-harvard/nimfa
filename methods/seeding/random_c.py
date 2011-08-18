@@ -1,6 +1,5 @@
-import scipy.sparse as sp
-import numpy as np
-from operator import itemgetter
+
+from utils.linalg import *
 
 class Random_c(object):
     """

@@ -1,6 +1,3 @@
-from math import sqrt, log
-from operator import eq, div
-from scipy.cluster.hierarchy import linkage, cophenet
 
 import methods.seeding as seed
 import utils.utils as utils

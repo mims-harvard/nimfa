@@ -1,7 +1,5 @@
-import scipy.sparse as sp
-import numpy as np
 
-from utils.linalg import argmax
+from utils.linalg import *
 
 class Random(object):
     """

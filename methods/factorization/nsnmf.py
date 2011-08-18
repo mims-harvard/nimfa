@@ -1,12 +1,9 @@
-from math import log
-from operator import div, add
 
-import models.nmf_ns as mns
-import models.mf_fit as mfit
-import models.mf_track as mtrack
+from models import *
+from utils import *
 from utils.linalg import *
 
-class Nsnmf(mns.Nmf_ns):
+class Nsnmf(nmf_ns.Nmf_ns):
     """
     Nonsmooth Nonnegative Matrix Factorization (NSNMF) [14]. 
     
@@ -44,7 +41,7 @@ class Nsnmf(mns.Nmf_ns):
         """
         self.name = "nsnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        mns.Nmf_ns.__init__(self, params)
+        nmf_ns.Nmf_ns.__init__(self, params)
         
     def factorize(self):
         """
@@ -69,14 +66,14 @@ class Nsnmf(mns.Nmf_ns):
                     self.tracker._track_error(self.residuals())
             if self.callback:
                 self.final_obj = cobj
-                mffit = mfit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
                 self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter 
         self.final_obj = cobj
-        mffit = mfit.Mf_fit(self)
+        mffit = mf_fit.Mf_fit(self)
         return mffit
     
     def _is_satisfied(self, p_obj, c_obj, iter):
@@ -105,7 +102,7 @@ class Nsnmf(mns.Nmf_ns):
         self.theta = self.options.get('theta', .5)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
             
     def update(self):
         """Update basis and mixture matrix based on modified divergence multiplicative update rules."""

@@ -1,4 +1,19 @@
-import bd, icm, lfnmf, lsnmf, nmf, nsnmf, pmf, psmf, snmf, bmf
+
+"""
+    This package contains implementations of matrix factorization algorithms. 
+
+"""
+
+import bd
+import icm
+import lfnmf
+import lsnmf
+import nmf
+import nsnmf
+import pmf
+import psmf
+import snmf
+import bmf
 
 methods = {"bd": bd.Bd, 
            "icm": icm.Icm,

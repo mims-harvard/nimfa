@@ -1,12 +1,9 @@
-from operator import div
-from scipy.special import erfc, erfcinv
 
-import models.nmf_std as mstd
-import models.mf_fit as mfit
-import models.mf_track as mtrack
+from models import *
+from utils import *
 from utils.linalg import *
 
-class Bd(mstd.Nmf_std):
+class Bd(nmf_std.Nmf_std):
     """
     Bayesian Decomposition (BD) - Bayesian nonnegative matrix factorization Gibbs sampler [16].
     
@@ -72,7 +69,7 @@ class Bd(mstd.Nmf_std):
         """
         self.name = "bd"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        mstd.Nmf_std.__init__(self, params)
+        nmf_std.Nmf_std.__init__(self, params)
         
     def factorize(self):
         """
@@ -96,14 +93,14 @@ class Bd(mstd.Nmf_std):
                     self.tracker._track_error(self.residuals())
             if self.callback:
                 self.final_obj = cobj
-                mffit = mfit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
                 self.tracker._track_factor(W = self.W.copy(), H = self.H.copy(), sigma = self.sigma)
         
         self.n_iter = iter 
         self.final_obj = cobj
-        mffit = mfit.Mf_fit(self)
+        mffit = mf_fit.Mf_fit(self)
         return mffit
         
     def _is_satisfied(self, p_obj, c_obj, iter):
@@ -142,7 +139,7 @@ class Bd(mstd.Nmf_std):
         self.n_sigma = self.options.get('n_sigma', 0)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
         
     def update(self, iter):
         """Update basis and mixture matrix."""

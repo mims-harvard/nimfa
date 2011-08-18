@@ -1,13 +1,9 @@
-from operator import div, ne, ge, le
-from math import sqrt
 
-import models.nmf_std as mstd
-import utils.utils as utils
-import models.mf_fit as mfit
-import models.mf_track as mtrack
+from models import *
+from utils import *
 from utils.linalg import *
 
-class Snmf(mstd.Nmf_std):
+class Snmf(nmf_std.Nmf_std):
     """
     Sparse Nonnegative Matrix Factorization (SNMF) based on alternating nonnegativity constrained least squares [5].
     
@@ -53,7 +49,7 @@ class Snmf(mstd.Nmf_std):
         """
         self.name = "snmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        mstd.Nmf_std.__init__(self, params)
+        nmf_std.Nmf_std.__init__(self, params)
         
     def factorize(self):
         """
@@ -100,14 +96,14 @@ class Snmf(mstd.Nmf_std):
                 self.W, self.H = self.H.T, self.W.T
             if self.callback:
                 self.final_obj = cobj
-                mffit = mfit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
                 self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter
         self.final_obj = cobj
-        mffit = mfit.Mf_fit(self)
+        mffit = mf_fit.Mf_fit(self)
         return mffit
     
     def _set_params(self): 
@@ -121,7 +117,7 @@ class Snmf(mstd.Nmf_std):
         self.min_residuals = self.min_residuals if self.min_residuals else 1e-4
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
     
     def _is_satisfied(self, c_obj, iter):
         """

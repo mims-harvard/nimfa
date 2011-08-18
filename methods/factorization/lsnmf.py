@@ -1,11 +1,9 @@
-from operator import ne
 
-import models.nmf_std as mstd
-import models.mf_fit as mfit
-import models.mf_track as mtrack
+from models import *
+from utils import *
 from utils.linalg import *
 
-class Lsnmf(mstd.Nmf_std):
+class Lsnmf(nmf_std.Nmf_std):
     """
     Alternating Nonnegative Least Squares Matrix Factorization Using Projected Gradient (bound constrained optimization)
     method for each subproblem (LSNMF) [4]. It converges faster than the popular multiplicative update approach. 
@@ -44,7 +42,7 @@ class Lsnmf(mstd.Nmf_std):
         """
         self.name = "lsnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        mstd.Nmf_std.__init__(self, params)
+        nmf_std.Nmf_std.__init__(self, params)
         
     def factorize(self):
         """
@@ -71,14 +69,14 @@ class Lsnmf(mstd.Nmf_std):
                     self.tracker._track_error(self.residuals())
             if self.callback:
                 self.final_obj = cobj
-                mffit = mfit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
                 self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter 
         self.final_obj = cobj
-        mffit = mfit.Mf_fit(self)
+        mffit = mf_fit.Mf_fit(self)
         return mffit
     
     def _is_satisfied(self, c_obj, iter):
@@ -106,7 +104,7 @@ class Lsnmf(mstd.Nmf_std):
         self.beta = self.options.get('beta', 0.1)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
             
     def update(self):
         """Update basis and mixture matrix."""

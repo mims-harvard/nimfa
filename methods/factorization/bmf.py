@@ -1,12 +1,9 @@
-from math import pow
-from operator import div
 
-import models.nmf_std as mstd
-import models.mf_fit as mfit
-import models.mf_track as mtrack
+from models import *
+from utils import *
 from utils.linalg import *
 
-class Bmf(mstd.Nmf_std):
+class Bmf(nmf_std.Nmf_std):
     """
     Binary Matrix Factorization (BMF) [8].
     
@@ -40,7 +37,7 @@ class Bmf(mstd.Nmf_std):
         """
         self.name = "bmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        mstd.Nmf_std.__init__(self, params)
+        nmf_std.Nmf_std.__init__(self, params)
         
     def factorize(self):
         """
@@ -66,14 +63,14 @@ class Bmf(mstd.Nmf_std):
                     self.tracker._track_error(self.residuals())
             if self.callback:
                 self.final_obj = cobj
-                mffit = mfit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
                 self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter 
         self.final_obj = cobj
-        mffit = mfit.Mf_fit(self)
+        mffit = mf_fit.Mf_fit(self)
         return mffit
     
     def _is_satisfied(self, p_obj, c_obj, iter):
@@ -103,7 +100,7 @@ class Bmf(mstd.Nmf_std):
         self.lambda_h = self.options.get('lambda_h', 1.1)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
     
     def update(self):
         """Update basis and mixture matrix."""

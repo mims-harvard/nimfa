@@ -1,12 +1,9 @@
-from operator import div, pow, eq, ne
-from math import log
 
-import models.nmf_std as mstd
-import models.mf_fit as mfit
-import models.mf_track as mtrack
+from models import *
+from utils import *
 from utils.linalg import *
 
-class Nmf(mstd.Nmf_std):
+class Nmf(nmf_std.Nmf_std):
     """
     Standard Nonnegative Matrix Factorization (NMF). Based on Kullbach-Leibler divergence, it uses simple multiplicative
     updates [2], enhanced to avoid numerical underflow [3]. Based on Euclidean distance, it uses simple multiplicative
@@ -47,7 +44,7 @@ class Nmf(mstd.Nmf_std):
         """
         self.name = "nmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        mstd.Nmf_std.__init__(self, params)
+        nmf_std.Nmf_std.__init__(self, params)
         
     def factorize(self):
         """
@@ -71,14 +68,14 @@ class Nmf(mstd.Nmf_std):
                     self.tracker._track_error(self.residuals())
             if self.callback:
                 self.final_obj = cobj
-                mffit = mfit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
                 self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
         
         self.n_iter = iter 
         self.final_obj = cobj
-        mffit = mfit.Mf_fit(self)
+        mffit = mf_fit.Mf_fit(self)
         return mffit
     
     def _is_satisfied(self, p_obj, c_obj, iter):
@@ -113,7 +110,7 @@ class Nmf(mstd.Nmf_std):
         self.objective = getattr(self, self.options.get('objective', 'fro') + '_objective')
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mtrack.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
         
     def euclidean_update(self):
         """Update basis and mixture matrix based on Euclidean distance multiplicative update rules."""

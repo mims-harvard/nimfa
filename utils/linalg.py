@@ -2,9 +2,11 @@ import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as sla
 import numpy.linalg as nla
-from operator import mul
+from operator import mul, div, eq, ne, pow, add, ge, le, itemgetter
 from itertools import izip
-from math import sqrt, isnan
+from math import sqrt, log, pow, isnan
+from scipy.cluster.hierarchy import linkage, cophenet
+from scipy.special import erfc, erfcinv
 
 """
     Linear algebra helper routines
