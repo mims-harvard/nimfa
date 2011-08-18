@@ -40,14 +40,6 @@ class Nmf_ns(Nmf):
         :type params: `dict`
         """
         Nmf.__init__(self, params)
-        if not self.seed and not self.W and not self.H: self.seed = "random"
-        if self.W and self.H:
-            if self.seed:
-                raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
-            else:
-                self.seed = seed.fixed.Fixed() 
-                self.seed._set_fixed(self.W, self.H)
-        self._is_smdefined()
         if sp.isspmatrix(self.V) and (self.V.data < 0).any() or not sp.isspmatrix(self.V) and (self.V < 0).any():
             raise utils.MFError("The input matrix contains negative elements.") 
         

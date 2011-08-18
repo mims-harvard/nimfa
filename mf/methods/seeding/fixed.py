@@ -1,5 +1,5 @@
 
-from utils.linalg import *
+from mf.utils.linalg import *
 
 class Fixed(object):
     """

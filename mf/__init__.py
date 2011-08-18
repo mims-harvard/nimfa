@@ -5,5 +5,4 @@
     The library represents a unified and efficient interface to matrix factorization algorithms and methods.
     
 """
-
 from mf_run import *

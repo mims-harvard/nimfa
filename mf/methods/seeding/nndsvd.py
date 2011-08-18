@@ -1,6 +1,6 @@
 
-from utils.utils import *
-from utils.linalg import *
+from mf.utils.utils import *
+from mf.utils.linalg import *
 
 class Nndsvd(object):
     """

@@ -1,7 +1,6 @@
 
-import methods.seeding as seed
-import utils.utils as utils
-from utils.linalg import *
+import mf.utils.utils as utils
+from mf.utils.linalg import *
 
 class Nmf(object):
     """
@@ -68,22 +67,6 @@ class Nmf(object):
             self.W = self.W.__class__(self.W, dtype = 'd')
         if self.H:
             self.H = self.H.__class__(self.H, dtype = 'd')
-        
-    def _is_smdefined(self):
-        """Check if MF and seeding methods are well defined."""
-        if isinstance(self.seed, str):
-            if self.seed in seed.methods:
-                self.seed = seed.methods[self.seed]()
-            else: raise utils.MFError("Unrecognized seeding method.")
-        else:
-            if not str(self.seed).lower() in seed.methods:
-                raise utils.MFError("Unrecognized seeding method.")
-        self._compatibility()
-        
-    def _compatibility(self):
-        """Check if MF model is compatible with the seeding method."""
-        if not str(self.seed).lower() in self.aseeds:
-            raise utils.MFError("MF model is incompatible with chosen seeding method.")   
     
     def run(self):
         """Run the specified MF algorithm."""

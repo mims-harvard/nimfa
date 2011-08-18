@@ -1,7 +1,7 @@
 
-from models import *
-from utils import *
-from utils.linalg import *
+from mf.models import *
+from mf.utils import *
+from mf.utils.linalg import *
 
 class Pmf(nmf_std.Nmf_std):
     """
