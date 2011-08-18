@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -11,7 +11,7 @@ setup(
     author_email = "marinka@zitnik.si", 
     description = "Python Matrix Factorization Techniques for Data Mining",
     url = "http://orange.biolab.si/trac/wiki/MatrixFactorization",
-    packages = ["mf"],
+    packages = find_packages(),
     package_dir = { "mf": "./mf"},
     license = "OSI Approved :: GNU General Public License (GPL)",
     long_description = read("README.rst"),

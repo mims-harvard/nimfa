@@ -16,12 +16,11 @@
     #. [mandatory] Choose the seeding method to compute the starting point passed to te algorithm. 
     #. [mandatory] Provide the target object to estimate. 
 """
+from utils import *
+import methods
 
-from mf.utils import *
-import mf.methods
-
-l_factorization = mf.methods.list_mf_methods()
-l_seed = mf.methods.list_seeding_methods()
+l_factorization = methods.list_mf_methods()
+l_seed = methods.list_seeding_methods()
 
 def mf(target, seed = None, W = None, H = None,  
        rank = 30, method = "nmf",
@@ -92,7 +91,7 @@ def mf(target, seed = None, W = None, H = None,
     # Construct factorization model
     try:
         if type(method) is str:
-            mf_model = mf.methods.factorization.methods[method.lower()](V = target, seed = seed, W = W, H = H, rank = rank,
+            mf_model = methods.factorization.methods[method.lower()](V = target, seed = seed, W = W, H = H, rank = rank,
                      max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
                      n_run = n_run, callback = callback, options = options)
         else:
@@ -107,7 +106,7 @@ def mf(target, seed = None, W = None, H = None,
         if mf_model.seed != None:
             raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
         else:
-            mf_model.seed = mf.methods.seeding.fixed.Fixed()
+            mf_model.seed = methods.seeding.fixed.Fixed()
             mf_model.seed._set_fixed(mf_model.W, mf_model.H)
     __is_smdefined(mf_model)
     # return factorization model if only initialization was requested
@@ -137,11 +136,11 @@ def __compatibility(mf_model):
 def __is_smdefined(mf_model):
     """Check if MF and seeding methods are well defined."""
     if isinstance(mf_model.seed, str):
-        if mf_model.seed in mf.methods.seeding.methods:
-            mf_model.seed = mf.methods.seeding.methods[mf_model.seed]()
+        if mf_model.seed in methods.seeding.methods:
+            mf_model.seed = methods.seeding.methods[mf_model.seed]()
         else: raise utils.MFError("Unrecognized seeding method.")
     else:
-        if not str(mf_model.seed).lower() in mf.methods.seeding.methods:
+        if not str(mf_model.seed).lower() in methods.seeding.methods:
             raise utils.MFError("Unrecognized seeding method.")
     __compatibility(mf_model)
          

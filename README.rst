@@ -82,7 +82,7 @@ Content
     - Residuals
     - Connectivity matrix
     - Consensus matrix
-    - Entropy of the NMF model (Kim, Park, 2007)
+    - Entropy of the fitted NMF model (Kim, Park, 2007)
     - Dominant basis components computation
     - Explained variance
     - Feature score computation representing its specificity to basis vectors (Kim, Park, 2007)
@@ -118,9 +118,10 @@ For details and descriptions on algorithm specific options see specific algorith
 Usage
 ====
 
-Following is one basic usage example that employs Standard NMF algorithm. For more see examples and methods' documentation.
+Following are twp basic usage examples that employ Standard NMF algorithm and LSNMF algorithm. For more see examples and 
+methods' documentation.
 
-Example::
+Example No. 1::
 
     # Import MF library entry point for factorization
     import mf
@@ -165,5 +166,49 @@ Example::
     print "Estimate"
     print dot(W.todense(), H.todense())
 
+Example No. 2::
+
+	# Import MF library entry point for factorization
+	import mf
+	
+	# Here we will work with numpy matrix
+	import numpy as np
+	V = np.matrix([[1,2,3],[4,5,6],[6,7,8]])
+	
+	# Print this tiny matrix 
+	print V
+	
+	# Run LSNMF rank 3 algorithm
+	# We don't specify any algorithm specific parameters. Defaults will be used.
+	# We don't specify initialization method. Algorithm specific or random intialization will be used. 
+	# In LSNMF case, by default random is used.
+	fit = mf.mf(V, method = "lsnmf", max_iter = 10, rank = 3)
+	
+	# Basis matrix.
+	W = fit.basis()
+	print "Basis matrix"
+	print W
+	
+	# Mixture matrix. 
+	H = fit.coef()
+	print "Coef"
+	print H
+	
+	# Return the loss function according to Kullback-Leibler divergence. By default Euclidean metric is used.
+	print "Distance Kullback-Leibler", fit.distance(metric = "kl")
+	
+	# Compute generic set of measures to evaluate the quality of the factorization
+	sm = fit.summary()
+	# Print residual sum of squares (Hutchins, 2008). Can be used for estimating optimal factorization rank.
+	print "Rss: %8.3f" % sm['rss']
+	# Print explained variance.
+	print "Evar: %8.3f" % sm['evar']
+	# Print actual number of iterations performed
+	print "Iterations", sm['n_iter']
+	
+	# Print estimate of target matrix V 
+	print "Estimate"
+	print np.dot(W, H)
+	
 
 
