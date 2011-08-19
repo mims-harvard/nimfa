@@ -8,8 +8,11 @@ Project wiki is at http://orange.biolab.si/trac/wiki/MatrixFactorization. MF is 
 .. _Orange: http://orange.biolab.si
 
 .. image:: http://orange.biolab.si/small-logo.png
+	:target: http://orange.biolab.si
+	
 
 .. image:: http://code.google.com/p/google-summer-of-code/logo?cct=1280260724
+	:target: http://code.google.com/soc/
 
 Content
 =======
