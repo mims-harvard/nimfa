@@ -52,6 +52,6 @@ class Nmf_std(Nmf):
             raise utils.MFError("Unknown distance metric.")
     
     def residuals(self):
-        """Return residuals between the target matrix and its NMF estimate."""
+        """Return residuals matrix between the target matrix and its NMF estimate."""
         return self.V - dot(self.W, self.H)
         

@@ -51,7 +51,7 @@ class Nsnmf(nmf_ns.Nmf_ns):
         """
         self._set_params()
                 
-        for _ in xrange(self.n_run):
+        for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             self.S = sop((1 - self.theta) * sp.spdiags([1 for _ in xrange(self.rank)], 0, self.rank, self.rank, 'csr'), 
                          self.theta / self.rank, add)
@@ -63,7 +63,7 @@ class Nsnmf(nmf_ns.Nmf_ns):
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
                 if self.track_error:
-                    self.tracker._track_error(self.residuals())
+                    self.tracker._track_error(cobj, run)
             if self.callback:
                 self.final_obj = cobj
                 mffit = mf_fit.Mf_fit(self) 

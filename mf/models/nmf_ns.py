@@ -70,6 +70,6 @@ class Nmf_ns(Nmf):
             raise utils.MFError("Unknown distance metric.")
     
     def residuals(self):
-        """Return residuals between the target matrix and its nonsmooth NMF estimate."""
+        """Return residuals matrix between the target matrix and its nonsmooth NMF estimate."""
         return self.V - dot(dot(self.W, self.S), self.H)
         

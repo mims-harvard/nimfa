@@ -62,7 +62,7 @@ class Snmf(nmf_std.Nmf_std):
         if self.version == 'l':
             self.V = self.V.T
         
-        for _ in xrange(self.n_run):
+        for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             self.W = self.W.tolil()
             self.H = self.H.tolil()
@@ -86,7 +86,7 @@ class Snmf(nmf_std.Nmf_std):
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
                 if self.track_error:
-                    self.tracker._track_error(self.residuals())
+                    self.tracker._track_error(cobj, run)
             # basis and mixture matrix are now constructed and are now converted to CSR for fast LA operations
             self.W = self.W.tocsr()
             self.H = self.H.tocsr()

@@ -72,7 +72,7 @@ class Psmf(nmf_std.Nmf_std):
         self.eps = 1e-5
         if sp.isspmatrix(self.V): self.V = self.V.todense()
         
-        for _ in xrange(self.n_run):
+        for run in xrange(self.n_run):
             # initialize P and Q distributions
             # internal computation is done with numpy arrays as n-(n > 2)dimensionality is needed
             if sp.isspmatrix(self.V):
@@ -99,7 +99,7 @@ class Psmf(nmf_std.Nmf_std):
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
                 if self.track_error:
-                    self.tracker._track_error(self.residuals())
+                    self.tracker._track_error(cobj, run)
             if self.callback:
                 self.final_obj = cobj
                 mffit = mf_fit.Mf_fit(self) 

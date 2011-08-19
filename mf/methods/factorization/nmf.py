@@ -54,7 +54,7 @@ class Nmf(nmf_std.Nmf_std):
         """
         self._set_params()
                 
-        for _ in xrange(self.n_run):
+        for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             pobj = cobj = self.objective()
             iter = 0
@@ -65,7 +65,7 @@ class Nmf(nmf_std.Nmf_std):
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
                 if self.track_error:
-                    self.tracker._track_error(self.residuals())
+                    self.tracker._track_error(cobj, run)
             if self.callback:
                 self.final_obj = cobj
                 mffit = mf_fit.Mf_fit(self) 

@@ -39,6 +39,7 @@ class Random(object):
             self._format = V.getformat()
             gen = self._gen_sparse
         else:
+            self.prng = np.random.RandomState()
             gen = self._gen_dense
         self.W = gen(V.shape[0], self.rank)
         self.H = gen(self.rank, V.shape[1])
@@ -68,7 +69,7 @@ class Random(object):
         :param dim2: Dimension along second axis.
         :type dim2: `int`
         """
-        return self.max * np.mat(np.random.rand(dim1, dim2))
+        return np.mat(self.prng.uniform(0, self.max, (dim1, dim2)))
     
     def __repr__(self):
         return "random.Random()"

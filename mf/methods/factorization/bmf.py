@@ -49,7 +49,7 @@ class Bmf(nmf_std.Nmf_std):
         
         self._lambda_w = 1. / self.max_iter if self.max_iter else 1. / 10
         self._lambda_h = self._lambda_w         
-        for _ in xrange(self.n_run):
+        for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             pobj = cobj = self.objective()
             iter = 0
@@ -60,7 +60,7 @@ class Bmf(nmf_std.Nmf_std):
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
                 if self.track_error:
-                    self.tracker._track_error(self.residuals())
+                    self.tracker._track_error(cobj, run)
             if self.callback:
                 self.final_obj = cobj
                 mffit = mf_fit.Mf_fit(self) 

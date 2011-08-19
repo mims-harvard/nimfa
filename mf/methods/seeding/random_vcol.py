@@ -38,6 +38,7 @@ class Random_vcol(object):
         self.rank = rank
         self.p_c = options.get('p_c', 1 / 5 * V.shape[1])
         self.p_r = options.get('p_r', 1 / 5 * V.shape[0])
+        self.prng = np.random.RandomState()
         if sp.isspmatrix(V):
             self.W = sp.lil_matrix((V.shape[0], self.rank))
             self.H = sp.lil_matrix((self.rank, V.shape[1]))
@@ -45,8 +46,8 @@ class Random_vcol(object):
             self.W = np.mat(np.zeros((V.shape[0], self.rank)))
             self.H = np.mat(np.zeros((self.rank, V.shape[1])))
         for i in xrange(self.rank):
-            self.W[:, i] = V[:, np.random.randint(V.shape[1], size = self.p_c)].mean(axis = 1)
-            self.H[i, :] = V[np.random.randint(V.shape[0], size = self.p_r), :].mean(axis = 0)
+            self.W[:, i] = V[:, self.prng.randint(low = 0, high = V.shape[1], size = self.p_c)].mean(axis = 1)
+            self.H[i, :] = V[self.prng.randint(low = 0, high = V.shape[0], size = self.p_r), :].mean(axis = 0)
         return self.W.asformat(V.getformat()), self.H.asformat(V.getformat()) if sp.isspmatrix(V) else self.W, self.H
     
     def __repr__(self):

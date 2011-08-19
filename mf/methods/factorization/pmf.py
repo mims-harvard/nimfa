@@ -36,7 +36,7 @@ class Pmf(nmf_std.Nmf_std):
         """
         self._set_params()
                 
-        for _ in xrange(self.n_run):
+        for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             self.W = elop(self.W, repmat(self.W.sum(axis = 0), self.V.shape[0], 1), div)
             self.H = elop(self.H, repmat(self.H.sum(axis = 1), 1, self.V.shape[1]), div)
@@ -53,7 +53,7 @@ class Pmf(nmf_std.Nmf_std):
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
                 if self.track_error:
-                    self.tracker._track_error(self.residuals())
+                    self.tracker._track_error(cobj, run)
             self.W = self.v_factor * dot(self.W, self.sqrt_P) 
             self.H = dot(self.sqrt_P, self.H)
             if self.callback:

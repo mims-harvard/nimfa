@@ -45,6 +45,7 @@ class Random_c(object):
         self.p_r = options.get('p_r', 1 / 5 * V.shape[0])
         self.l_c = options.get('l_c', 1 / 2 * V.shape[1])
         self.l_r = options.get('l_r', 1 / 2 * V.shape[0])
+        self.prng = np.random.RandomState()
         if sp.isspmatrix(V):
             self.W = sp.lil_matrix((V.shape[0], self.rank))
             self.H = sp.lil_matrix((self.rank, V.shape[1]))
@@ -58,8 +59,8 @@ class Random_c(object):
         top_c = np.mat(zip(*top_c)[1])
         top_r = np.mat(zip(*top_r)[1])
         for i in xrange(self.rank):
-            self.W[:, i] = V[:, top_c[0, np.random.randint(self.l_c, size = self.p_c)]].mean(axis = 1)
-            self.H[i, :] = V[top_r[0, np.random.randint(self.l_r, size = self.p_r)], :].mean(axis = 0)
+            self.W[:, i] = V[:, top_c[0, self.prng.randint(low = 0, high = self.l_c, size = self.p_c)]].mean(axis = 1)
+            self.H[i, :] = V[top_r[0, self.prng.randint(low = 0, high = self.l_r, size = self.p_r)], :].mean(axis = 0)
         return self.W.asformat(V.getformat()), self.H.asformat(V.getformat()) if sp.isspmatrix(V) else self.W, self.H
     
     def __repr__(self):
