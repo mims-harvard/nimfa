@@ -23,7 +23,7 @@ class Snmf(nmf_std.Nmf_std):
 
     def __init__(self, **params):
         """
-        For detailed explanation of the general model parameters see :mod:`mf`.
+        For detailed explanation of the general model parameters see :mod:`mf_run`.
         
         The parameter :param:`min_residuals` of the underlying model is used as KKT convergence test and should have 
         positive value. If not specified, value 1e-4 is used. 

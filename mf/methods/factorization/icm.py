@@ -31,7 +31,7 @@ class Icm(nmf_std.Nmf_std):
 
     def __init__(self, **params):
         """
-        For detailed explanation of the general model parameters see :mod:`mf`.
+        For detailed explanation of the general model parameters see :mod:`mf_run`.
         
         The following are algorithm specific model options which can be passed with values as keyword arguments.
         

@@ -123,7 +123,7 @@ Configuration
 Methods configuration goes through runtime specific options (e. g. tracking fitted model across multiple runs, tracking residuals across iterations, etc.) or algorithm specific options (e. g. prior 
 information with PSMF, type of update equations with NMF, initial value for noise variance with ICM, etc.). 
 
-For details and descriptions on algorithm specific options see specific algorithm documentation. For deatils on runtime specific options and explanation of the general model parameters see :mod:`mf`.
+For details and descriptions on algorithm specific options see specific algorithm documentation. For deatils on runtime specific options and explanation of the general model parameters see :mod:`mf_run`.
 
 Usage
 ====
@@ -150,6 +150,8 @@ Example No. 1::
     # If not specified the Euclidean update and Forbenius cost function would be used.
     # We don't specify initialization method. Algorithm specific or random intialization will be used. 
     # In Standard NMF case, by default random is used.
+    # Returned object is fitted factorization model. Through it user can access quality and performance measures.
+    # The fit's attribute `fit` contains all the attributes of the factorization.
     fit = mf.mf(V, method = "nmf", max_iter = 30, rank = 3, update = 'divergence', objective = 'fro')
 
     # Basis matrix. It is sparse, as input V was sparse as well. 
@@ -192,6 +194,8 @@ Example No. 2::
 	# We don't specify any algorithm specific parameters. Defaults will be used.
 	# We don't specify initialization method. Algorithm specific or random intialization will be used. 
 	# In LSNMF case, by default random is used.
+	# Returned object is fitted factorization model. Through it user can access quality and performance measures.
+    # The fit's attribute `fit` contains all the attributes of the factorization.  
 	fit = mf.mf(V, method = "lsnmf", max_iter = 10, rank = 3)
 	
 	# Basis matrix.

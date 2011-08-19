@@ -76,7 +76,10 @@ class Mf_fit():
     
     def summary(self):
         """Compute generic set of measures to evaluate the quality of the factorization."""
-        return {
+        if hasattr(self, 'summary_data'):
+            return self.summary_data
+        else: 
+            self.summary_data = {
                 'rank': self.fit.rank,
                 'sparseness': self.fit.sparseness(),
                 'rss': self.fit.rss(),
@@ -95,6 +98,7 @@ class Mf_fit():
                 'n_iter': self.fit.n_iter,
                 'n_run': self.fit.n_run
                 }
+            return self.summary_data
     
     
         
