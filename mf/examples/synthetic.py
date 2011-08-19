@@ -8,7 +8,7 @@
     Only for the purpose of demonstration in all examples many optional (runtime or algorithm specific) parameters are set. The user could
     as well run the factorization by providing only the target matrix. In that case the defaults would be used. General model parameters
     are explained in :mod:`mf.mf_run`, algorithm specific parameters in Python module implementing the algorithm. Nevertheless for best results, 
-    careful choice of parameters is recommended. 
+    careful choice of parameters is recommended. No tracking is demonstrated here.
     
     .. seealso:: README.rst     
     
@@ -98,6 +98,17 @@ def run_bmf(V):
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
+    rank = 10
+    model = mf.mf(V, 
+                  seed = "random_vcol", 
+                  rank = rank, 
+                  method = "bmf", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  lambda_w = 1.1,
+                  lambda_h = 1.1)
+    fit = mf.mf_run(model)
+    _print_info(fit)
     
 def run_icm(V):
     """
@@ -106,6 +117,22 @@ def run_icm(V):
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
+    rank = 10
+    pnrg = np.random.RandomState()
+    model = mf.mf(V, 
+                  seed = "nndsvd", 
+                  rank = rank, 
+                  method = "icm", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  iiter = 20,
+                  alpha = pnrg.randn(V.shape[0], rank),
+                  beta = pnrg.randn(rank, V.shape[1]), 
+                  theta = 0.,
+                  k = 0.,
+                  sigma = 1.)
+    fit = mf.mf_run(model)
+    _print_info(fit)
     
 def run_lfnmf(V):
     """
@@ -114,6 +141,19 @@ def run_lfnmf(V):
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
+    rank = 10
+    pnrg = np.random.RandomState()
+    model = mf.mf(V, 
+                  seed = None,
+                  W = pnrg.randn(V.shape[0], rank),
+                  H = pnrg.randn(rank, V.shape[1]),
+                  rank = rank, 
+                  method = "lfnmf", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  alpha = 0.01)
+    fit = mf.mf_run(model)
+    _print_info(fit)
     
 def run_lsnmf(V):
     """
@@ -122,6 +162,18 @@ def run_lsnmf(V):
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
+    rank = 10
+    model = mf.mf(V, 
+                  seed = "random_vcol", 
+                  rank = rank, 
+                  method = "lsnmf", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  sub_iter = 10,
+                  inner_sub_iter = 10, 
+                  beta = 0.1)
+    fit = mf.mf_run(model)
+    _print_info(fit)
 
 def run_nmf(V):
     """
@@ -130,6 +182,29 @@ def run_nmf(V):
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
+    # Euclidean
+    rank = 10
+    model = mf.mf(V, 
+                  seed = "random_vcol", 
+                  rank = rank, 
+                  method = "nmf", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  update = 'euclidean',
+                  objective = 'fro')
+    fit = mf.mf_run(model)
+    _print_info(fit)
+    # divergence
+    model = mf.mf(V, 
+                  seed = "random_vcol", 
+                  rank = rank, 
+                  method = "nmf", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  update = 'divergence',
+                  objective = 'div')
+    fit = mf.mf_run(model)
+    _print_info(fit)
     
 def run_nsnmf(V):
     """
@@ -138,6 +213,16 @@ def run_nsnmf(V):
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
+    rank = 10
+    model = mf.mf(V, 
+                  seed = "random", 
+                  rank = rank, 
+                  method = "nsnmf", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  theta = 0.5)
+    fit = mf.mf_run(model)
+    _print_info(fit)
     
 def run_pmf(V):
     """
@@ -146,6 +231,16 @@ def run_pmf(V):
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
+    rank = 10
+    model = mf.mf(V, 
+                  seed = "random_vcol", 
+                  rank = rank, 
+                  method = "pmf", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  rel_error = 1e-5)
+    fit = mf.mf_run(model)
+    _print_info(fit)
     
 def run_psmf(V):
     """
@@ -154,14 +249,54 @@ def run_psmf(V):
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
+    rank = 10
+    prng = np.random.RandomState()
+    model = mf.mf(V, 
+                  seed = "none",
+                  rank = rank, 
+                  method = "psmf", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  prior = pnrg.uniform(low = 0., high = 1., size = 10))
+    fit = mf.mf_run(model)
+    _print_info(fit)
 
 def run_snmf(V):
     """
-    Run sparse nonnegative matrix factorizaiton.
+    Run sparse nonnegative matrix factorization.
     
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
+    # SNMF/R
+    rank = 10
+    model = mf.mf(V, 
+                  seed = "random_v", 
+                  rank = rank, 
+                  method = "snmf", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  version = 'r',
+                  eta = 1.,
+                  beta = 1e-4, 
+                  i_conv = 10,
+                  w_min_change = 0)
+    fit = mf.mf_run(model)
+    _print_info(fit)
+    # SNMF/L
+    model = mf.mf(V, 
+                  seed = "random_vcol", 
+                  rank = rank, 
+                  method = "snmf", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  version = 'l',
+                  eta = 1.,
+                  beta = 1e-4, 
+                  i_conv = 10,
+                  w_min_change = 0)
+    fit = mf.mf_run(model)
+    _print_info(fit)
 
 def run(V):
     """
