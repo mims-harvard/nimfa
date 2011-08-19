@@ -195,7 +195,7 @@ Example No. 2::
 	# We don't specify initialization method. Algorithm specific or random intialization will be used. 
 	# In LSNMF case, by default random is used.
 	# Returned object is fitted factorization model. Through it user can access quality and performance measures.
-    # The fit's attribute `fit` contains all the attributes of the factorization.  
+	# The fit's attribute `fit` contains all the attributes of the factorization.  
 	fit = mf.mf(V, method = "lsnmf", max_iter = 10, rank = 3)
 	
 	# Basis matrix.
