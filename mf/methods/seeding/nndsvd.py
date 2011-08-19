@@ -76,7 +76,7 @@ class Nndsvd(object):
         self.H[self.H < 1e-11] = 0
         # NNDSVD 
         if self.flag == 0:
-            return sp.csr_matrix(self.W), sp.csr_matrix(self.H)
+            return sp.lil_matrix(self.W), sp.lil_matrix(self.H)
         # NNDSVDa
         if self.flag == 1:
             avg = V.mean()
@@ -118,11 +118,11 @@ class Nndsvd(object):
         temp_E = sp.lil_matrix((V.shape[1], V.shape[1]))
         if temp_U.shape != U.shape:
             temp_U[:, :U.shape[1]] = U
-            temp_U[:, U.shape[1]:] = sp.rand(U.shape[0], temp_U.shape[1] - U.shape[1], density = 0.8, format = 'lil')
+            temp_U[:, U.shape[1]:] = abs(sp.rand(U.shape[0], temp_U.shape[1] - U.shape[1], density = 0.8, format = 'lil'))
         U = temp_U
         if temp_E.shape != E.shape:
             temp_E[:E.shape[0], :] = E
-            temp_E[E.shape[0]:, :] = sp.rand(temp_E.shape[0] - E.shape[0], E.shape[1], density = 0.8, format = 'lil')
+            temp_E[E.shape[0]:, :] = abs(sp.rand(temp_E.shape[0] - E.shape[0], E.shape[1], density = 0.8, format = 'lil'))
         E = temp_E
         # choose the first singular triplet to be nonnegative
         self.W[:, 0] = sqrt(S[0]) * abs(U[:, 0])
@@ -147,8 +147,6 @@ class Nndsvd(object):
                 self.W[:, i] = sqrt(S[i] * termn) / n_uun * uun
                 self.H[i, :] = sqrt(S[i] * termn) / n_vvn * vvn.T
         # CSR sparse format is convenient for fast arithmetic and matrix vector operations
-        self.W = self.W.tocsr()
-        self.H = self.H.tocsr()
         return self.W, self.H
             
     def _pos(self, X):

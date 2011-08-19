@@ -64,8 +64,10 @@ class Snmf(nmf_std.Nmf_std):
         
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
-            self.W = self.W.tolil()
-            self.H = self.H.tolil()
+            if sp.isspmatrix(self.W):
+                self.W = self.W.tolil()
+            if sp.isspmatrix(self.H):
+                self.H = self.H.tolil()
             iter = 0
             self.idx_w_old = np.mat(np.zeros((self.V.shape[0], 1)))
             self.idx_h_old = np.mat(np.zeros((1, self.V.shape[1])))
@@ -88,8 +90,10 @@ class Snmf(nmf_std.Nmf_std):
                 if self.track_error:
                     self.tracker._track_error(cobj, run)
             # basis and mixture matrix are now constructed and are now converted to CSR for fast LA operations
-            self.W = self.W.tocsr()
-            self.H = self.H.tocsr()
+            if sp.isspmatrix(self.W):
+                self.W = self.W.tocsr()
+            if sp.isspmatrix(self.H): 
+                self.H = self.H.tocsr()
             # transpose and swap the roles back if SNMF/L
             if self.version == 'l':
                 self.V = self.V.T
@@ -109,6 +113,7 @@ class Snmf(nmf_std.Nmf_std):
     def _set_params(self): 
         """Set algorithm specific model options."""   
         self.version = self.options.get('version', 'r')
+        self.name = self.name + " - " + self.version
         self.eta = self.options.get('eta', np.max(self.V) if not sp.isspmatrix(self.V) else np.max(self.V.data))
         if self.eta < 0: self.eta = np.max(self.V) if not sp.isspmatrix(self.V) else 0.
         self.beta = self.options.get('beta', 1e-4)

@@ -109,16 +109,16 @@ class Lfnmf(nmf_std.Nmf_std):
         _, idxH = argmax(self.H, axis = 0)
         c2m, avgs = self._encoding(idxH)
         C = len(c2m)
-        gamma = 0.01
-        delta = 0.01
+        ksi = 1.
         # update mixture matrix H
         for k in xrange(self.H.shape[0]):
             for l in xrange(self.H.shape[1]):
                 n_r = len(c2m[idxH[0, l]])
-                t_1 = (2 * gamma + 2 * delta) * 1. / n_r * sum(self.H[k, i] for i in xrange(self.H.shape[1]) if i != l) - 2 * delta * avgs[idxH[0, l]][k, 0] - 1.
-                ksi = 2 * gamma - (1 * gamma + 1 * delta) / n_r
-                t_2 = sum(self.W[i, k] * self.V[i, l] / (dot(self.W[i, :], self.H[:, l])[0, 0] + 1e-5) for i in xrange(self.W.shape[0]))
-                self.H[k, l] = t_1 + sqrt((t_1**2 + 4 * ksi * self.H[k, l] * t_2))
+                u_c = avgs[idxH[0, l]][k, 0]
+                t_1 = (2 * u_c - 1.) / (4 * ksi)
+                t_2 = (1. - 2 * u_c)**2 + 8 * ksi * self.H[k, l] * sum(self.W[i, k] * self.V[i, l] / 
+                      (dot(self.W[i, :], self.H[:, l])[0, 0] + 1e-5) for i in xrange(self.W.shape[0]))
+                self.H[k, l] = t_1 + sqrt(t_2) / (4 * ksi)
         # update basis matrix W
         for i in xrange(self.W.shape[0]):
             for k in xrange(self.W.shape[1]):

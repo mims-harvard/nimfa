@@ -62,11 +62,20 @@ class Nmf(object):
         :type params: `dict`
         """
         self.__dict__.update(params)
-        self.V = self.V.__class__(self.V, dtype = 'd')
-        if self.W:
-            self.W = self.W.__class__(self.W, dtype = 'd')
-        if self.H:
-            self.H = self.H.__class__(self.H, dtype = 'd')
+        if sp.isspmatrix(self.V):
+            self.V = self.V.copy().tocsr()
+        else:
+            self.V = np.matrix(self.V, dtype = 'd', copy = True)
+        if self.W != None:
+            if sp.isspmatrix(self.W):
+                self.W = self.W.copy().tocsr()
+            else:
+                self.W = np.matrix(self.W, dtype = 'd', copy = True)
+        if self.H != None:
+            if sp.isspmatrix(self.H):
+                self.H = self.H.copy().tocsr()
+            else:
+                self.H = np.matrix(self.H, dtype = 'd', copy = True)
     
     def run(self):
         """Run the specified MF algorithm."""

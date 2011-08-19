@@ -8,6 +8,7 @@ from itertools import izip
 from math import sqrt, log, pow, isnan, ceil
 from scipy.cluster.hierarchy import linkage, cophenet
 from scipy.special import erfc, erfcinv
+import warnings
 
 """
     Linear algebra helper routines
@@ -411,7 +412,9 @@ def multiply(X, Y):
     elif sp.isspmatrix(X) or sp.isspmatrix(Y):
         return _op_spmatrix(X, Y, mul) 
     else:
-        return np.multiply(np.asmatrix(X), np.asmatrix(Y))
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            return np.multiply(np.mat(X), np.mat(Y))
     
 def sop(X, s = None, op = None):
     """

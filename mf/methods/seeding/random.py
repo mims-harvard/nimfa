@@ -58,7 +58,7 @@ class Random(object):
         :param dim2: Dimension along second axis.
         :type dim2: `int`
         """
-        return self.max * sp.rand(dim1, dim2, density = self.density, format = self._format)
+        return abs(self.max * sp.rand(dim1, dim2, density = self.density, format = self._format))
         
     def _gen_dense(self, dim1, dim2):
         """

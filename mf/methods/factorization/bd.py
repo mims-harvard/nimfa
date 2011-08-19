@@ -65,7 +65,7 @@ class Bd(nmf_std.Nmf_std):
                     Default is sampling from all rows. 
         :type n_h: :class:`numpy.ndarray` or list with shape (factorization rank, 1) with logical values
         :param n_sigma: Method does not sample from :param:`sigma`. By default sampling is done. 
-        :type n_sigma: logical    
+        :type n_sigma: `bool`    
         """
         self.name = "bd"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
@@ -136,7 +136,7 @@ class Bd(nmf_std.Nmf_std):
         self.stride = self.options.get('stride', 1)  
         self.n_w = self.options.get('n_w', np.zeros((self.rank, 1)))
         self.n_h = self.options.get('n_h', np.zeros((self.rank, 1)))
-        self.n_sigma = self.options.get('n_sigma', 0)
+        self.n_sigma = self.options.get('n_sigma', False)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
@@ -158,9 +158,9 @@ class Bd(nmf_std.Nmf_std):
                         for j in xrange(self.W.shape[0]):
                             self.W[j, n] = temp[j]
             # update sigma
-            if not self.n_sigma:
-                self.sigma = 1. / np.random.gamma(shape = (self.V.shape[0] * self.V.shape[1]) / 2. + 1. + self.k, 
-                             scale = 1. / (self.theta + self.v + multiply(self.W, dot(self.W, C) - 2 * D).sum() / 2.))
+            if self.n_sigma == False:
+                scale = 1. / (self.theta + self.v + multiply(self.W, dot(self.W, C) - 2 * D).sum() / 2.)
+                self.sigma = 1. / np.random.gamma(shape = (self.V.shape[0] * self.V.shape[1]) / 2. + 1. + self.k, scale = scale)
             # update mixture matrix
             E = dot(self.W.T, self.W)
             F = dot(self.W.T, self.V)

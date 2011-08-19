@@ -5,7 +5,8 @@
     be used for demonstration of the library. 
     
     Examples are performed on 20 x 30 dense matrix, whose values are drawn from normal 
-    distribution with zero mean one one variance.
+    distribution with zero mean one one variance (an absolute of values is taken bacause of 
+    nonnegativity constraint).
     
     Only for the purpose of demonstration in all examples many optional (runtime or algorithm specific) 
     parameters are set. The user could as well run the factorization by providing only the target matrix.
@@ -21,8 +22,8 @@
         
     or call the module's function::
     
-        synthetic.run()
-
+        import mf.examples
+        mf.examples.synthetic.run()
 """
 
 import mf
@@ -45,8 +46,9 @@ def _print_info(fit):
     :param fit: Fitted factorization model.
     :type fit: :class:`mf.models.mf_fit.Mf_fit`
     """
-    print "Factorization method:", fit.fit.name
-    print "Initialization method:", fit.fit.seed.name
+    print "================================================================================================="
+    print "Factorization method:", fit.fit
+    print "Initialization method:", fit.fit.seed
     print "Basis matrix: "
     print __fact_factor(fit.basis())
     print "Mixture (Coefficient) matrix: "
@@ -66,6 +68,7 @@ def _print_info(fit):
     print "Residual sum of squares: ", fit.summary()['rss']
     # There are many more ... but just cannot print out everything =] and some measures need additional data or more runs
     # e.g. entropy, predict, purity, coph_cor, consensus, select_features, score_features, connectivity  
+    print "================================================================================================="
 
 def run_bd(V):
     """
@@ -90,7 +93,7 @@ def run_bd(V):
                   stride = 1,
                   n_w = np.mat(np.zeros((rank, 1))),
                   n_h = np.mat(np.zeros((rank, 1))),
-                  n_sigma = 0)
+                  n_sigma = False)
     fit = mf.mf_run(model)
     _print_info(fit)
 
@@ -148,8 +151,8 @@ def run_lfnmf(V):
     pnrg = np.random.RandomState()
     model = mf.mf(V, 
                   seed = None,
-                  W = pnrg.randn(V.shape[0], rank),
-                  H = pnrg.randn(rank, V.shape[1]),
+                  W = abs(pnrg.randn(V.shape[0], rank)), 
+                  H = abs(pnrg.randn(rank, V.shape[1])),
                   rank = rank, 
                   method = "lfnmf", 
                   max_iter = 12, 
@@ -255,12 +258,12 @@ def run_psmf(V):
     rank = 10
     prng = np.random.RandomState()
     model = mf.mf(V, 
-                  seed = "none",
+                  seed = None,
                   rank = rank, 
                   method = "psmf", 
                   max_iter = 12, 
                   initialize_only = True,
-                  prior = pnrg.uniform(low = 0., high = 1., size = 10))
+                  prior = prng.uniform(low = 0., high = 1., size = 10))
     fit = mf.mf_run(model)
     _print_info(fit)
 
@@ -274,7 +277,7 @@ def run_snmf(V):
     # SNMF/R
     rank = 10
     model = mf.mf(V, 
-                  seed = "random_v", 
+                  seed = "random_c", 
                   rank = rank, 
                   method = "snmf", 
                   max_iter = 12, 
@@ -301,13 +304,17 @@ def run_snmf(V):
     fit = mf.mf_run(model)
     _print_info(fit)
 
-def run(V):
+def run(V = None):
     """
     Run examples.
     
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
+    if V == None:
+        prng = np.random.RandomState(42)
+        # construct target matrix 
+        V = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 30))))
     run_bd(V)
     run_bmf(V)
     run_icm(V)
@@ -322,6 +329,6 @@ def run(V):
 if __name__ == "__main__":
     prng = np.random.RandomState(42)
     # construct target matrix 
-    V = np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 30)))
+    V = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 30))))
     # run examples
     run(V)

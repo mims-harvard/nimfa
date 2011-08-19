@@ -102,7 +102,7 @@ def mf(target, seed = None, W = None, H = None,
         raise utils.MFError("Model initialization has been unsuccessful: " + str(str_error))
     # Check if chosen seeding methods is compatible with chosed factorization method or fixed initialization is passed
     if mf_model.seed == None and mf_model.W == None and mf_model.H == None: mf_model.seed = None if "none" in mf_model.aseeds else "random"
-    if mf_model.W and mf_model.H:
+    if mf_model.W != None and mf_model.H != None:
         if mf_model.seed != None:
             raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
         else:

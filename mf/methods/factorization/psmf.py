@@ -153,7 +153,7 @@ class Psmf(nmf_std.Nmf_std):
         try:
             self.prior = [1. / self.prior for _ in xrange(int(round(self.prior)))]
         except TypeError:
-            self.prior = self.optios['prior'] 
+            self.prior = self.options['prior'] 
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None

@@ -59,8 +59,8 @@ class Random_c(object):
         top_c = np.mat(zip(*top_c)[0])
         top_r = np.mat(zip(*top_r)[0])
         for i in xrange(self.rank):
-            self.W[:, i] = V[:, top_c[0, self.prng.randint(low = 0, high = self.l_c, size = self.p_c)]].mean(axis = 1)
-            self.H[i, :] = V[top_r[0, self.prng.randint(low = 0, high = self.l_r, size = self.p_r)], :].mean(axis = 0)
+            self.W[:, i] = V[:, top_c[0, self.prng.randint(low = 0, high = self.l_c, size = self.p_c)].tolist()[0]].mean(axis = 1)
+            self.H[i, :] = V[top_r[0, self.prng.randint(low = 0, high = self.l_r, size = self.p_r)].tolist()[0], :].mean(axis = 0)
         # return sparse or dense initialization
         if sp.isspmatrix(V):
             return self.W.tocsr(), self.H.tocsr()
