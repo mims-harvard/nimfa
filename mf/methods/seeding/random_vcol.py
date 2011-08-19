@@ -36,8 +36,8 @@ class Random_vcol(object):
                         :type p_r: `int`
         """
         self.rank = rank
-        self.p_c = options.get('p_c', 1 / 5 * V.shape[1])
-        self.p_r = options.get('p_r', 1 / 5 * V.shape[0])
+        self.p_c = options.get('p_c', int(ceil(1. / 5 * V.shape[1])))
+        self.p_r = options.get('p_r', int(ceil(1. / 5 * V.shape[0])))
         self.prng = np.random.RandomState()
         if sp.isspmatrix(V):
             self.W = sp.lil_matrix((V.shape[0], self.rank))
@@ -48,7 +48,11 @@ class Random_vcol(object):
         for i in xrange(self.rank):
             self.W[:, i] = V[:, self.prng.randint(low = 0, high = V.shape[1], size = self.p_c)].mean(axis = 1)
             self.H[i, :] = V[self.prng.randint(low = 0, high = V.shape[0], size = self.p_r), :].mean(axis = 0)
-        return self.W.asformat(V.getformat()), self.H.asformat(V.getformat()) if sp.isspmatrix(V) else self.W, self.H
+        # return sparse or dense initialization
+        if sp.isspmatrix(V):
+            return self.W.tocsr(), self.H.tocsr()
+        else:
+            return self.W, self.H
     
     def __repr__(self):
         return "random_vcol.Random_vcol()"
