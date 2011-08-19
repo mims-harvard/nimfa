@@ -1,13 +1,16 @@
 
 """
-    This module contains examples of factorization runs. Since the data is artificially generated, this is not a valid test of
-    models applicability to real world situations. It can however be used for demonstration of the library. 
+    This module contains examples of factorization runs. Since the data is artificially generated, 
+    this is not a valid test of models applicability to real world situations. It can however
+    be used for demonstration of the library. 
     
-    Examples are performed on 20 x 30 dense matrix, whose values are drawn from normal distribution wit zero mean one one variance.
+    Examples are performed on 20 x 30 dense matrix, whose values are drawn from normal 
+    distribution with zero mean one one variance.
     
-    Only for the purpose of demonstration in all examples many optional (runtime or algorithm specific) parameters are set. The user could
-    as well run the factorization by providing only the target matrix. In that case the defaults would be used. General model parameters
-    are explained in :mod:`mf.mf_run`, algorithm specific parameters in Python module implementing the algorithm. Nevertheless for best results, 
+    Only for the purpose of demonstration in all examples many optional (runtime or algorithm specific) 
+    parameters are set. The user could as well run the factorization by providing only the target matrix.
+    In that case the defaults would be used. General model parameters are explained in :mod:`mf.mf_run`, 
+    algorithm specific parameters in Python module implementing the algorithm. Nevertheless for best results, 
     careful choice of parameters is recommended. No tracking is demonstrated here.
     
     .. seealso:: README.rst     
