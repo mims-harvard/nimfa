@@ -1,4 +1,5 @@
 import numpy as np
+import scipy
 import scipy.sparse as sp
 import scipy.sparse.linalg as sla
 import numpy.linalg as nla
@@ -281,19 +282,102 @@ def repmat(X, m, n):
     else:
         return np.tile(np.asmatrix(X), (m, n))
     
-def svd(X, k):
+def svd(X):
     """
     Compute standard SVD on matrix X.
     
     :param X: The input matrix. 
     :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
-    :param k: Number of singular values and vectors to compute. 
-    :type k: `int`
     """
     if sp.isspmatrix(X): 
-        U, S, V = sla.svd(X, k)
+       if X.shape[0] >= X.shape[1]:
+           U, S, V = _svd_left(X)
+       else:
+           U, S, V = _svd_right(X)
     else: 
-        U, S, V = nla.svd(np.asmatrix(X))
+        U, S, V = nla.svd(np.mat(X))
+    return U, S, V
+
+def _svd_right(X):
+    """
+    Compute standard SVD on matrix X. Scipy.sparse.linalg.svd ARPACK does not allow computation of rank(X) SVD.
+    
+    :param X: The input sparse matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia
+    """
+    XXt = dot(X, X.T)
+    if X.shape[0] > 1:
+        if scipy.version.version == '0.9.0':
+            # In scipy 0.9.0 ARPACK interface has changed. eigen_symmetric routine was renamed to eigsh
+            # see http://docs.scipy.org/doc/scipy/reference/release.0.9.0.html#scipy-sparse
+            try:
+                val, u_vec = sla.eigsh(XXt, k = X.shape[0] - 1)
+            except sla.ArpackNoConvergence, err:
+                # If eigenvalue iteration fails to converge, partially converged results can be accessed
+                val = err.eigenvalues
+                u_vec = err.eigenvectors
+        else:
+            val, u_vec = sla.eigen_symmetric(XXt, k = X.shape[0] - 1)
+    else:
+        val, u_vec = nla.eigh(XXt.todense())
+    # remove insignificant eigenvalues
+    keep = np.where(val > 1e-7)[0]
+    u_vec = u_vec[:, keep]
+    val = val[keep]    
+    # sort eigen vectors (descending)
+    idx = np.argsort(val)[::-1]
+    val = val[idx]
+    # construct U
+    U = sp.csr_matrix(u_vec[:, idx])
+    # compute S
+    tmp_val = np.sqrt(val)
+    tmp_l = len(idx)
+    S = sp.spdiags(tmp_val, 0, m = tmp_l, n = tmp_l, format = 'csr')
+    # compute V from inverse of S
+    inv_S = sp.spdiags(1. / tmp_val, 0, m = tmp_l, n = tmp_l, format = 'csr')
+    V = U.T * X
+    V = inv_S * V
+    return U, S, V
+    
+def _svd_left(X):
+    """
+    Compute standard SVD on matrix X. Scipy.sparse.linalg.svd ARPACK does not allow computation of rank(X) SVD.
+    
+    :param X: The input sparse matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia
+    """
+    XtX = dot(X.T, X)
+    if X.shape[1] > 1:
+        if scipy.version.version == '0.9.0':
+            # In scipy 0.9.0 ARPACK interface has changed. eigen_symmetric routine was renamed to eigsh
+            # see http://docs.scipy.org/doc/scipy/reference/release.0.9.0.html#scipy-sparse
+            try:
+                val, v_vec = sla.eigsh(XtX, k = X.shape[1] - 1)
+            except sla.ArpackNoConvergence, err:
+                # If eigenvalue iteration fails to converge, partially converged results can be accessed
+                val = err.eigenvalues
+                v_vec = err.eigenvectors
+        else:
+            val, v_vec = sla.eigen_symmetric(XtX, k = X.shape[1] - 1)
+    else:
+        val, v_vec = nla.eigh(XtX.todense())
+    # remove insignificant eigenvalues
+    keep = np.where(val > 1e-7)[0]
+    v_vec = v_vec[:, keep]
+    val = val[keep]    
+    # sort eigen vectors (descending)
+    idx = np.argsort(val)[::-1]
+    val = val[idx]
+    # construct V
+    V = sp.csr_matrix(v_vec[:, idx])
+    # compute S
+    tmp_val = np.sqrt(val)
+    tmp_l = len(idx)
+    S = sp.spdiags(tmp_val, 0, m = tmp_l, n = tmp_l, format = 'csr')
+    # compute U from inverse of S
+    inv_S = sp.spdiags(1. / tmp_val, 0, m = tmp_l, n = tmp_l, format = 'csr')
+    U = X * V * inv_S
+    V = V.T
     return U, S, V
 
 def dot(X, Y):
@@ -505,14 +589,19 @@ def norm(X, p = "fro"):
     """
     assert 1 in X.shape or p != 2, "Computing entry-wise norms only."
     if sp.isspmatrix(X):
+        fro = lambda X: sum(abs(x)**2 for x in X.data)**(1. / 2)
+        inf = lambda X: abs(X).sum(axis = 1).max() if 1 not in X.shape else abs(X).max()
+        m_inf = lambda X: abs(X).sum(axis = 1).min() if 1 not in X.shape else abs(X).min()
+        one = lambda X: abs(X).sum(axis = 0).max() if 1 not in X.shape else sum(abs(x)**p for x in X.data)**(1. / p)
+        m_one = lambda X: abs(X).sum(axis = 0).min() if 1 not in X.shape else sum(abs(x)**p for x in X.data)**(1. / p)
         v = {
-         "fro": sum(abs(x)**2 for x in X.data)**(1. / 2),
-         "inf": max(abs(X).sum(axis = 1)) if 1 not in X.shape else max(abs(X)),
-        "-inf": min(abs(X).sum(axis = 1)) if 1 not in X.shape else min(abs(X)),
-             1: max(abs(X).sum(axis = 0)) if 1 not in X.shape else sum(abs(x)**p for x in X.data)**(1. / p),
-            -1: min(abs(X).sum(axis = 0)) if 1 not in X.shape else sum(abs(x)**p for x in X.data)**(1. / p)
-            }
-        return v.get(p, sum(abs(x)**p for x in X.data)**(1. / p))
+         "fro": fro,
+         "inf": inf,
+        "-inf": m_inf,
+             1: one,
+            -1: m_one,
+            }.get(p)
+        return v(X) if v != None else sum(abs(x)**p for x in X.data)**(1. / p)
     else:
         return nla.norm(np.mat(X), p)
     
@@ -524,7 +613,9 @@ def vstack(X, format = None, dtype = None):
     :type X: sequence of :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
     """
     if len([0 for x in X if not sp.isspmatrix(x)]) == 0:
-        return sp.vstack(X, format, dtype)
+        # scipy.sparse bug
+        #return sp.vstack(X, format = X[0].getformat() if format == None else format, dtype = X[0].dtype if dtype == None else dtype)
+        return sp.vstack(X)
     else:
         return np.vstack(X)
 
@@ -536,7 +627,9 @@ def hstack(X, format = None, dtype = None):
     :type X: sequence of :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
     """
     if len([0 for x in X if not sp.isspmatrix(x)]) == 0:
-        return sp.hstack(X, format, dtype)
+        # scipy.sparse bug
+        # return sp.hstack(X, format = X[0].getformat() if format == None else format, dtype = X[0].dtyoe if dtype == None else dtype)
+        return sp.hstack(X)
     else:
         return np.hstack(X)
     

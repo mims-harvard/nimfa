@@ -31,9 +31,9 @@ class Lsnmf(nmf_std.Nmf_std):
         
         The following are algorithm specific model options which can be passed with values as keyword arguments.
         
-        :param sub_iter: Maximum number of subproblem iterations. Default value is 1000. 
+        :param sub_iter: Maximum number of subproblem iterations. Default value is 10. 
         :type sub_iter: `int`
-        :param inner_sub_iter: Number of inner iterations when solving subproblems. Default value is 20. 
+        :param inner_sub_iter: Number of inner iterations when solving subproblems. Default value is 10. 
         :type inner_sub_iter: `int`
         :param beta: The rate of reducing the step size to satisfy the sufficient decrease condition when solving subproblems.
                      Smaller beta more aggressively reduces the step size, but may cause the step size being too small. Default
@@ -99,8 +99,8 @@ class Lsnmf(nmf_std.Nmf_std):
     def _set_params(self):
         """Set algorithm specific model options."""
         if not self.min_residuals: self.min_residuals = 1e-5
-        self.sub_iter = self.options.get('sub_iter', 1000)
-        self.inner_sub_iter = self.options.get('inner_sub_iter', 20)
+        self.sub_iter = self.options.get('sub_iter', 10)
+        self.inner_sub_iter = self.options.get('inner_sub_iter', 10)
         self.beta = self.options.get('beta', 0.1)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
@@ -181,7 +181,9 @@ class Lsnmf(nmf_std.Nmf_std):
         :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
         """
         if sp.isspmatrix(X) or sp.isspmatrix(Y):
-            X, Y = Y, X if not sp.isspmatrix(X) and sp.isspmatrix(Y) else X, Y
+            X, Y = Y, X
+            if not sp.isspmatrix(X) and sp.isspmatrix(Y):
+                X, Y = Y, X
             now = 0
             for row in range(X.shape[0]):
                 upto = X.indptr[row+1]

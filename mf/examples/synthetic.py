@@ -27,6 +27,7 @@ def run_bd(V):
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
+    fit = mf.mf(V, )
     
 def run_bmf(V):
     """
