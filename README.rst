@@ -7,6 +7,10 @@ Project wiki is at http://orange.biolab.si/trac/wiki/MatrixFactorization. MF is 
 
 .. _Orange: http://orange.biolab.si
 
+.. image:: http://orange.biolab.si/small-logo.png
+
+.. image:: http://code.google.com/p/google-summer-of-code/logo?cct=1280260724
+
 Content
 =======
 
@@ -72,9 +76,12 @@ Content
 
     - Random
     - Fixed
-    - NNDSVD (Boutsidis, Gallopoulos, 2007)
-    - Random C (Albright, 2006)
-    - Random VCol (Albright 2006)
+    - NNDSVD 
+    	Boutsidis, C., Gallopoulos, E., (2007). SVD-based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, 2007, doi:10.1016/j.patcog.2007.09.010.
+    - Random C 
+    	Albright, R. et al., (2006). Algorithms, initializations, and convergence for the nonnegative matrix factorization. Matrix, (919), p.1-18.
+    - Random VCol 
+		Albright, R. et al., (2006). Algorithms, initializations, and convergence for the nonnegative matrix factorization. Matrix, (919), p.1-18.
 
 **Quality and Performance Measures**
 
