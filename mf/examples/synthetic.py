@@ -58,10 +58,10 @@ def _print_info(fit, idx = None):
     print "Factorization method:", fit.fit
     print "Initialization method:", fit.fit.seed
     print "Basis matrix: "
-    print __fact_factor(fit.basis(idx))
+    print __fact_factor(fit.basis())
     print "Mixture (Coefficient) matrix: "
     print __fact_factor(fit.coef(idx))
-    print "Distance (Euclidean): ", fit.distance(metric = 'euclidean', idx)
+    print "Distance (Euclidean): ", fit.distance(metric = 'euclidean', idx = idx)
     # We can access actual number of iteration directly through fitted model. 
     # fit.fit.n_iter
     print "Actual number of iterations: ", fit.summary(idx)['n_iter']
@@ -92,14 +92,16 @@ def run_snmnmf(V, V1):
                   method = "snmnmf", 
                   max_iter = 12, 
                   initialize_only = True,
-                  A = abs(sp.rand(self.V.shape[1], self.V1.shape[1], density = 0.7, format = 'csr', dtype = 'd')),
-                  B = abs(sp.rand(self.V.shape[1], self.V1.shape[1], density = 0.7, format = 'csr', dtype = 'd')), 
+                  A = abs(sp.rand(V1.shape[1], V1.shape[1], density = 0.7, format = 'csr')),
+                  B = abs(sp.rand(V.shape[1], V1.shape[1], density = 0.7, format = 'csr')), 
                   gamma = 0.01,
                   gamma_1 = 0.01,
                   lamb = 0.01,
                   lamb_1 = 0.01)
     fit = mf.mf_run(model)
+    # print all quality measures concerning first target and mixture matrix in multiple NMF
     _print_info(fit, idx = 0)
+    # print all quality measures concerning second target and mixture matrix in multiple NMF
     _print_info(fit, idx = 1)
 
 def run_bd(V):
