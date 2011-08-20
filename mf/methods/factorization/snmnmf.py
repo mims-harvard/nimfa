@@ -68,9 +68,12 @@ class Snmnmf(nmf_mm.Nmf_mm):
         Return fitted factorization model.
         """
         self._set_params()
+        if self.V.shape[0] != self.V1.shape[0]:
+            raise utils.MFError("Input matrices should have the same number of rows.")
                 
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
+            _, self.H1 = self.seed.initialize(self.V1, self.rank, self.options)
             pobj = cobj = self.objective()
             iter = 0
             while self._is_satisfied(pobj, cobj, iter):
@@ -85,7 +88,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker._track_factor(W = self.W.copy(), H = self.H.copy(), sigma = self.sigma)
+                self.tracker._track_factor(W = self.W.copy(), H = self.H.copy(), H1 = self.H1.copy())
         
         self.n_iter = iter 
         self.final_obj = cobj
@@ -105,6 +108,8 @@ class Snmnmf(nmf_mm.Nmf_mm):
         """
         if self.test_conv and iter % self.test_conv != 0:
             return True
+        if self.err_avg < 1e-5:
+            return False
         if self.max_iter and self.max_iter <= iter:
             return False
         if self.min_residuals and iter > 0 and c_obj - p_obj <= self.min_residuals:
@@ -137,7 +142,17 @@ class Snmnmf(nmf_mm.Nmf_mm):
         """Update basis and mixture matrix."""
                     
     def objective(self):
-        """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
+        """Compute three component objective function as defined in [18].""" 
+        err_avg1 = abs(self.V - dot(self.W, self.H)).mean() / self.V.mean()
+        err_avg2 = abs(self.V1 - dot(self.W, self.H1)).mean() / self.V1.mean()
+        self.err_avg = err_avg1 + err_avg2
+        eucl1 = (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
+        eucl2 = (sop(self.V1 - dot(self.W, self.H1), 2, pow)).sum()
+        tr1 = np.trace(dot(dot(self.H1, self.A), self.H1.T))
+        tr2 = np.trace(dot(dot(self.H, self.B), self.H1.T))
+        s1 = sop(self.W, 2, pow).sum()
+        s2 = sop(self.H, 2, pow).sum() + sop(self.H1, 2, pow).sum()
+        return eucl1 + eucl2 - self.lamb * tr1 - self.lamb_1 * tr2 + self.gamma * s1 + self.gamma_1 * s2
     
     def __str__(self):
         return self.name
