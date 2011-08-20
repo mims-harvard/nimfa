@@ -140,6 +140,22 @@ class Snmnmf(nmf_mm.Nmf_mm):
         
     def update(self, iter):
         """Update basis and mixture matrix."""
+        # update basis matrix
+        temp_w1 = dot(self.V, self.H.T) + dot(self.V1, self.H1.T)
+        temp_w2 = dot(self.W, dot(self.H, self.H.T) + dot(self.H1, self.H1.T)) + self.gamma / 2. * self.W
+        self.W = elop(temp_w1, temp_w2, div)
+        # update mixture matrices
+        # update H1
+        temp = sop(dot(self.W.T, self.W), s = self.gamma_1, op = add)
+        temp_h1 = dot(self.W, self.V) + self.lamb_1 / 2. * dot(self.H1, self.B.T)
+        temp_h2 = dot(temp, self.H)
+        HH1 = multiply(self.H, elop(temp_h1, temp_h2, div))
+        temp_h3 = dot(self.W.T, self.V1) + self.lamb * dot(self.H1, self.A) + self.lamb_1 / 2. * dot(self.H, self.B)
+        temp_h4 = dot(temp, self.H1)
+        self.H1 = multiply(self.H1, elop(temp_h3, temp_h4, div))
+        #update H
+        self.H = HH1
+        
                     
     def objective(self):
         """Compute three component objective function as defined in [18].""" 
