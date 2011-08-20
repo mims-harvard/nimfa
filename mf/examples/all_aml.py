@@ -40,11 +40,13 @@
     
         import mf.examples
         mf.examples.all_aml.run()
+        
+    .. note:: This example uses matplotlib library for producing a heatmap of a consensus matrix.
 """
 
 import mf
 import numpy as np
-import scipy.sparse as sp
+import matplotlib.pyplot as plt
 
 def run():
     """Run Standard NMF on Leukemia data set."""
@@ -53,8 +55,8 @@ def run():
          _run(V, rank)
          
 def read():
-    pass
-    
+    "Read ALL AML gene expression data."
+    return 0
 
 def reorder(consensus):
     """
@@ -63,6 +65,7 @@ def reorder(consensus):
     :param consensus: Consensus matrix.
     :type consensu: `numpy.matrix`
     """    
+    return 0
 
 def _run(V, rank):
     """
@@ -96,11 +99,14 @@ def _run(V, rank):
         consensus += fit.fit.connectivity()
     # averaging connectivity matrices
     consensus /= 50.
-    # reorder consesus matrix
+    # reorder consensus matrix
     perm = reorder(consensus)
     # display heatmap
-    plot(consensus, perm)
+    plt.set_cmap("RdBu")
+    plt.imshow(perm) 
+    plt.savefig("all_aml_consensus" + rank + ".png")
 
 if __name__ == "__main__":
+    """Run the ALL AML example."""
     run()
     
