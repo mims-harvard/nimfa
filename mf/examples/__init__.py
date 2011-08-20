@@ -11,3 +11,4 @@
 """
 
 import synthetic
+import all_aml
