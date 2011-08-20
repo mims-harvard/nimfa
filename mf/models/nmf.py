@@ -117,16 +117,43 @@ class Nmf(object):
         """Return the target matrix. See NMF specific model."""
         
     def coef(self, idx = None):
-        """Return the matrix of mixture coefficients. See NMF specific model."""
+        """
+        Return the matrix of mixture coefficients. See NMF specific model.
+        
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
+        """
     
     def fitted(self, idx = None):
-        """Compute the estimated target matrix according to the NMF model. See NMF specific model."""
+        """
+        Compute the estimated target matrix according to the NMF model. See NMF specific model.
+
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
+        """
     
     def distance(self, metric = 'euclidean', idx = None):
-        """Return the loss function value. See NMF specific model."""
+        """
+        Return the loss function value. See NMF specific model.
+        
+        :param distance: Specify distance metric to be used. Possible are Euclidean and Kullback-Leibler (KL) divergence. Strictly,
+                        KL is not a metric. 
+        :type distance: `str` with values 'euclidean' or 'kl'
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
+        """
         
     def residuals(self, idx = None):
-        """Compute residuals between the target matrix and its NMF estimate. See NMF specific model."""
+        """
+        Compute residuals between the target matrix and its NMF estimate. See NMF specific model.
+        
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
+        """
         
     def connectivity(self, H = None, idx = None):
         """
@@ -137,8 +164,9 @@ class Nmf(object):
         
         Return connectivity matrix.
         
-        :param idx: Used in the multiple NMF model. In standard or nonsmooth NMF :param:`idx` is always None.
-        :type idx: None, `int` or `str`
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
         H = self.coef(idx) if H == None else H
@@ -159,8 +187,9 @@ class Nmf(object):
         Tracking of matrix factors across multiple runs must be enabled for computing consensus matrix. For results
         of a single NMF run, the consensus matrix reduces to the connectivity matrix.
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
         if self.track_factor:
@@ -178,8 +207,9 @@ class Nmf(object):
         """
         Return triple containing the dimension of the target matrix and matrix factorization rank.
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
         return (V.shape[0], V.shape[1], self.rank)
@@ -195,8 +225,9 @@ class Nmf(object):
         
         :param membership: Specify known class membership for each sample. 
         :type membership: `list`
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
         if not membership:
@@ -225,8 +256,9 @@ class Nmf(object):
         :type what: `str`
         :param prob: Specify dominant basis components probability inclusion. 
         :type prob: `bool` equivalent
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         X = self.coef(idx) if what == "samples" else self.basis().T if what == "features" else None
         if X == None:
@@ -246,8 +278,9 @@ class Nmf(object):
         Some methods specifically aim at minimizing the RSS and maximizing the explained variance while others not, which 
         one should note when using this measure. 
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
         return 1. - self.rss(idx = idx) / multiply(V, V).sum()
@@ -263,8 +296,9 @@ class Nmf(object):
         Return the list containing score for each feature. The feature scores are real values in [0,1]. The higher the feature score the more 
         basis-specific the corresponding feature.  
 
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         W = self.basis()
         def prob(i, q):
@@ -287,8 +321,9 @@ class Nmf(object):
         
         Return list of retained features' indices.  
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         scores = self.score_features(idx = idx)
         u = np.median(scores)
@@ -309,8 +344,9 @@ class Nmf(object):
         
         :param membership: Specify known class membership for each sample. 
         :type membership: `list`
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
         if not membership:
@@ -332,8 +368,9 @@ class Nmf(object):
         
         Return real value.
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
         X = self.residuals(idx = idx)
@@ -351,8 +388,9 @@ class Nmf(object):
         
         Return tuple that contains sparseness of the basis and mixture coefficients matrices. 
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         def sparseness(x):
             eps = np.finfo(x.dtype).eps if 'int' not in str(x.dtype) else 1e-9
@@ -377,8 +415,9 @@ class Nmf(object):
         scattered between 0 and 1, the cophenetic correlation is < 1. We observe how this coefficient changes as factorization rank 
         increases. We select the first rank, where the magnitude of the cophenetic correlation coefficient begins to fall (Brunet, 2004).
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None  
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         A = self.consensus(idx = idx)
         # upper diagonal elements of consensus
@@ -401,8 +440,9 @@ class Nmf(object):
         A perfect consensus matrix is obtained only when all the connectivity matrices are the same, meaning that
         the algorithm gave the same clusters at each run.  
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
-        :type idx: None
+        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
+                    :param:`idx` is always None.
+        :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         C = self.consensus(idx = idx)
         return sum(sum(4 * (C[i,j] - 0.5)**2 for j in xrange(C.shape[1])) for i in xrange(C.shape[0]))

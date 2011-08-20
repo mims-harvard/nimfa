@@ -3,7 +3,7 @@ from nmf import *
 
 class Nmf_ns(Nmf):
     """
-    Implementation of the alternative model to manage factorizations that follow NMF model. This modification is 
+    Implementation of the alternative model to manage factorizations that follow nonstandard NMF model. This modification is 
     required by the Nonsmooth NMF algorithm (NSNMF) [14]. The Nonsmooth NMF algorithm is a modification of the standard divergence
     based NMF methods. By introducing a smoothing matrix it is aimed to achieve global sparseness. 
      

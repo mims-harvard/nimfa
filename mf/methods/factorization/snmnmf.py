@@ -14,7 +14,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
     methods can be applied to a target matrix containing just one type of variable) together with prior knowledge 
     (e. g. network representing relationship among variables). 
     
-    The objective function has three components:
+    The objective function in [18] has three components:
         #. first component models miRNA and gene expression profiles;
         #. second component models gene-gene network interactions;
         #. third component models predicted miRNA-gene interactions.
@@ -143,7 +143,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
         # update basis matrix
         temp_w1 = dot(self.V, self.H.T) + dot(self.V1, self.H1.T)
         temp_w2 = dot(self.W, dot(self.H, self.H.T) + dot(self.H1, self.H1.T)) + self.gamma / 2. * self.W
-        self.W = elop(temp_w1, temp_w2, div)
+        self.W = multiply(self.W, elop(temp_w1, temp_w2, div))
         # update mixture matrices
         # update H1
         temp = sop(dot(self.W.T, self.W), s = self.gamma_1, op = add)
@@ -154,7 +154,6 @@ class Snmnmf(nmf_mm.Nmf_mm):
         self.H1 = multiply(self.H1, elop(temp_h3, temp_h4, div))
         #update H
         self.H = HH1
-        
                     
     def objective(self):
         """Compute three component objective function as defined in [18].""" 
@@ -171,3 +170,4 @@ class Snmnmf(nmf_mm.Nmf_mm):
     
     def __str__(self):
         return self.name
+    

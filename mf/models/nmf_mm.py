@@ -3,8 +3,8 @@ from nmf import *
 
 class Nmf_mm(Nmf):
     """
-    Implementation of the alternative model to manage factorizations that follow NMF model. This modification is 
-    required by the Multiple NMF algorithm (SNMNMF) [18]. The Multiple NMF algorithms modify the standard divergence
+    Implementation of the alternative model to manage factorizations that follow NMF nonstandard model. This modification is 
+    required by the Multiple NMF algorithms (e. g. SNMNMF [18]). The Multiple NMF algorithms modify the standard divergence
     or Euclidean based NMF methods by introducing multiple mixture (coefficients) matrices and target matrices.  
      
     It is the underlying model of matrix factorization and provides structure of modified standard NMF model. 
@@ -25,17 +25,14 @@ class Nmf_mm(Nmf):
     
         Target matrix, the matrix for the MF method to estimate.
         
-    The interpretation of the basis and mixture matrix is such as in the standard NMF model. Multiple NMF specify more than 
-    one target matrix. In that case target matrices are passed as tuples. Internally, additional attributes with names 
-    following Vn pattern are created, where n is the consecutive index of target matrix. Zero index is omitted 
-    (there are V, V1, V2, V3, etc. matrices and then H, H1, H2, etc. and W, W1, W2, etc. respectively). In multiple NMF method
-    that is V, V1 and H, H1. There is only one basis matrix (W).
-        
-    [18] Zhang, S. et. al., (2011). A novel computational framework for simultaneous integration of multiple types of 
-         genomic data to identify microRNA-gene regulatory modules. Bioinformatics 2011, 27(13), i401-i409. 
-         doi:10.1093/bioinformatics/btr206.
+    The interpretation of the basis and mixture matrix is such as in the standard NMF model. 
+    
+    Multiple NMF specify more than one target matrix. In that case target matrices are passed as tuples. Internally, 
+    additional attributes with names following Vn pattern are created, where n is the consecutive index of target matrix. 
+    Zero index is omitted (there are V, V1, V2, V3, etc. matrices and then H, H1, H2, etc. and W, W1, W2, etc. respectively). 
+    
+    Currently, in implemented multiple NMF method V, V1 and H, H1 are needed. There is only one basis matrix (W).
     """
-
 
     def __init__(self, params):
         """

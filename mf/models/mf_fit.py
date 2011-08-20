@@ -53,8 +53,8 @@ class Mf_fit():
         """
         Return the matrix of mixture coefficients.
         
-        :param idx: Name of the matrix (coefficient) matrix. Used in the multiple NMF model.
-        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1 respectively) 
+        :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model.
+        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         return self.fit.coef(idx)  
     
@@ -65,8 +65,8 @@ class Mf_fit():
         :param metric: Measure of distance between a target matrix and a MF estimate. Metric 'kl' and 'euclidean' 
                        are defined.  
         :type metric: 'str'
-        :param idx: Name of the matrix (coefficient) matrix. Used in the multiple NMF model.
-        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1 respectively) 
+        :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model.
+        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         if not metric:
             return self.fit.final_obj
@@ -77,8 +77,8 @@ class Mf_fit():
         """
         Compute the estimated target matrix according to the MF algorithm model.
         
-        :param idx: Name of the matrix (coefficient) matrix. Used in the multiple NMF model.
-        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1 respectively) 
+        :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model.
+        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         return self.fit.fitted(idx)
     
@@ -90,8 +90,8 @@ class Mf_fit():
         """
         Return generic set of measures to evaluate the quality of the factorization.
         
-        :param idx: Name of the matrix (coefficient) matrix. Used in the multiple NMF model.
-        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1 respectively) 
+        :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model.
+        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         if idx == 'coef':
             idx = 0
@@ -110,8 +110,8 @@ class Mf_fit():
         """
         Compute generic set of measures to evaluate the quality of the factorization.
         
-        :param idx: Name of the matrix (coefficient) matrix. Used in the multiple NMF model.
-        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1 respectively) 
+        :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model.
+        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         return {
                 'rank': self.fit.rank,

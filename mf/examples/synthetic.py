@@ -43,33 +43,37 @@ def __fact_factor(X):
     """
     return X.todense() if sp.isspmatrix(X) else X
 
-def _print_info(fit):
+def _print_info(fit, idx = None):
     """
     Print to stdout info about the factorization.
     
     :param fit: Fitted factorization model.
     :type fit: :class:`mf.models.mf_fit.Mf_fit`
+    :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model. Therefore in factorizations 
+                that follow standard or nonsmooth model, this parameter can be omitted. Currently, SNMNMF implements 
+                multiple NMF model.
+    :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
     """
     print "================================================================================================="
     print "Factorization method:", fit.fit
     print "Initialization method:", fit.fit.seed
     print "Basis matrix: "
-    print __fact_factor(fit.basis())
+    print __fact_factor(fit.basis(idx))
     print "Mixture (Coefficient) matrix: "
-    print __fact_factor(fit.coef())
-    print "Distance (Euclidean): ", fit.distance(metric = 'euclidean')
+    print __fact_factor(fit.coef(idx))
+    print "Distance (Euclidean): ", fit.distance(metric = 'euclidean', idx)
     # We can access actual number of iteration directly through fitted model. 
     # fit.fit.n_iter
-    print "Actual number of iterations: ", fit.summary()['n_iter']
+    print "Actual number of iterations: ", fit.summary(idx)['n_iter']
     # We can access sparseness measure directly through fitted model.
     # fit.fit.sparseness()
-    print "Sparseness basis: %7.4f, Sparseness mixture: %7.4f" % (fit.summary()['sparseness'][0], fit.summary()['sparseness'][1])
+    print "Sparseness basis: %7.4f, Sparseness mixture: %7.4f" % (fit.summary(idx)['sparseness'][0], fit.summary(idx)['sparseness'][1])
     # We can access explained variance directly through fitted model.
     # fit.fit.evar()
-    print "Explained variance: ", fit.summary()['evar']
+    print "Explained variance: ", fit.summary(idx)['evar']
     # We can access residual sum of squares directly through fitted model.
     # fit.fit.rss()
-    print "Residual sum of squares: ", fit.summary()['rss']
+    print "Residual sum of squares: ", fit.summary(idx)['rss']
     # There are many more ... but just cannot print out everything =] and some measures need additional data or more runs
     # e.g. entropy, predict, purity, coph_cor, consensus, select_features, score_features, connectivity  
     print "================================================================================================="
@@ -95,7 +99,8 @@ def run_snmnmf(V, V1):
                   lamb = 0.01,
                   lamb_1 = 0.01)
     fit = mf.mf_run(model)
-    _print_info(fit)
+    _print_info(fit, idx = 0)
+    _print_info(fit, idx = 1)
 
 def run_bd(V):
     """
