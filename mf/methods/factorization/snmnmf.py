@@ -5,7 +5,9 @@ from mf.utils.linalg import *
 
 class Snmnmf(nmf_mm.Nmf_mm):
     """
+    Sparse Network-Regularized Multiple Nonnegative Matrix Factorization (SNMNMF) [18].
     
+     
     
     [18] Zhang, S. et. al., (2011). A novel computational framework for simultaneous integration of multiple types of 
          genomic data to identify microRNA-gene regulatory modules. Bioinformatics 2011, 27(13), i401-i409. 

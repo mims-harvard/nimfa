@@ -5,7 +5,7 @@
     be used for demonstration of the library. 
     
     Examples are performed on 20 x 30 dense matrix, whose values are drawn from normal 
-    distribution with zero mean one one variance (an absolute of values is taken bacause of 
+    distribution with zero mean one one variance (an absolute of values is taken because of 
     nonnegativity constraint).
     
     Only for the purpose of demonstration in all examples many optional (runtime or algorithm specific) 
@@ -69,6 +69,29 @@ def _print_info(fit):
     # There are many more ... but just cannot print out everything =] and some measures need additional data or more runs
     # e.g. entropy, predict, purity, coph_cor, consensus, select_features, score_features, connectivity  
     print "================================================================================================="
+
+def run_snmnmf(V):
+    """
+    Run sparse network-regularized multiple NMF. 
+    
+    :param V: Target matrix to estimate.
+    :type V: :class:`numpy.matrix`
+    """
+    rank = 10
+    model = mf.mf(V, 
+                  seed = "random_c", 
+                  rank = rank, 
+                  method = "snmnmf", 
+                  max_iter = 12, 
+                  initialize_only = True,
+                  A = abs(sp.rand(self.V.shape[1], self.V1.shape[1], density = 0.7, format = 'csr', dtype = 'd')),
+                  B = abs(sp.rand(self.V.shape[1], self.V1.shape[1], density = 0.7, format = 'csr', dtype = 'd')), 
+                  gamma = 0.01,
+                  gamma_1 = 0.01,
+                  lamb = 0.01,
+                  lamb_1 = 0.01)
+    fit = mf.mf_run(model)
+    _print_info(fit)
 
 def run_bd(V):
     """
@@ -315,6 +338,7 @@ def run(V = None):
         prng = np.random.RandomState(42)
         # construct target matrix 
         V = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 30))))
+    run_snmnmf(V)
     run_bd(V)
     run_bmf(V)
     run_icm(V)
