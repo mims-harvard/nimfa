@@ -49,56 +49,87 @@ class Mf_fit():
         """Return the matrix of basis vectors."""
         return self.fit.basis()
     
-    def coef(self):
-        """Return the matrix of mixture coefficients."""
-        return self.fit.coef()  
+    def coef(self, idx = None):
+        """
+        Return the matrix of mixture coefficients.
+        
+        :param idx: Name of the matrix (coefficient) matrix. Used in the multiple NMF model.
+        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1 respectively) 
+        """
+        return self.fit.coef(idx)  
     
-    def distance(self, metric = None):
+    def distance(self, metric = None, idx = None):
         """
         Return the loss function value. If metric is not supplied, final objective function value associated to the MF algorithm is returned.
         
         :param metric: Measure of distance between a target matrix and a MF estimate. Metric 'kl' and 'euclidean' 
                        are defined.  
         :type metric: 'str'
+        :param idx: Name of the matrix (coefficient) matrix. Used in the multiple NMF model.
+        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1 respectively) 
         """
         if not metric:
             return self.fit.final_obj
         else:
-            return self.fit.distance(metric)
+            return self.fit.distance(metric, idx)
             
-    def fitted(self):
-        """Compute the estimated target matrix according to the MF algorithm model."""
-        return self.fit.fitted()
+    def fitted(self, idx = None):
+        """
+        Compute the estimated target matrix according to the MF algorithm model.
+        
+        :param idx: Name of the matrix (coefficient) matrix. Used in the multiple NMF model.
+        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1 respectively) 
+        """
+        return self.fit.fitted(idx)
     
     def fit(self):
         """Return the MF algorithm model."""
         return self.fit 
     
-    def summary(self):
-        """Compute generic set of measures to evaluate the quality of the factorization."""
+    def summary(self, idx = None):
+        """
+        Return generic set of measures to evaluate the quality of the factorization.
+        
+        :param idx: Name of the matrix (coefficient) matrix. Used in the multiple NMF model.
+        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1 respectively) 
+        """
+        if idx == 'coef':
+            idx = 0
+        if idx == 'coef1':
+            idx = 1
         if hasattr(self, 'summary_data'):
-            return self.summary_data
+            if idx not in self.summary_data:
+                self.summary_data[idx] = self._compute_summary(idx)
+            return self.summary_data[idx]
         else: 
-            self.summary_data = {
+            self.summary_data = {}
+            self.summary_data[idx] = self._compute_summary(idx)
+            return self.summary_data[idx]
+    
+    def _compute_summary(self, idx = None):
+        """
+        Compute generic set of measures to evaluate the quality of the factorization.
+        
+        :param idx: Name of the matrix (coefficient) matrix. Used in the multiple NMF model.
+        :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1 respectively) 
+        """
+        return {
                 'rank': self.fit.rank,
-                'sparseness': self.fit.sparseness(),
-                'rss': self.fit.rss(),
-                'evar': self.fit.evar(),
-                'residuals': self.fit.residuals(),
-                'connectivity': self.fit.connectivity(),
-                'predict_samples': self.fit.predict(what = 'samples', prob = True),
-                'predict_features': self.fit.predict(what = 'features', prob = True),
-                'score_features': self.fit.score_features(),
-                'select_features': self.fit.select_features(),
-                'dispersion': self.fit.dispersion(),
-                'cophenetic': self.fit.coph_cor(),
-                'consensus': self.fit.consensus(),
-                'euclidean': self.fit.distance(metric = 'euclidean'),
-                'kl': self.fit.distance(metric = 'kl'), 
+                'sparseness': self.fit.sparseness(idx = idx),
+                'rss': self.fit.rss(idx = idx),
+                'evar': self.fit.evar(idx = idx),
+                'residuals': self.fit.residuals(idx = idx),
+                'connectivity': self.fit.connectivity(idx = idx),
+                'predict_samples': self.fit.predict(what = 'samples', prob = True, idx = idx),
+                'predict_features': self.fit.predict(what = 'features', prob = True, idx = idx),
+                'score_features': self.fit.score_features(idx = idx),
+                'select_features': self.fit.select_features(idx = idx),
+                'dispersion': self.fit.dispersion(idx = idx),
+                'cophenetic': self.fit.coph_cor(idx = idx),
+                'consensus': self.fit.consensus(idx = idx),
+                'euclidean': self.fit.distance(metric = 'euclidean', idx = idx),
+                'kl': self.fit.distance(metric = 'kl', idx = idx), 
                 'n_iter': self.fit.n_iter,
                 'n_run': self.fit.n_run
                 }
-            return self.summary_data
-    
-    
         

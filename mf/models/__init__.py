@@ -15,5 +15,6 @@
 import nmf
 import nmf_std
 import nmf_ns
+import nmf_mm
 import mf_track
 import mf_fit

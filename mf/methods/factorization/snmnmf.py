@@ -120,12 +120,12 @@ class Snmnmf(nmf_mm.Nmf_mm):
     
     def _set_params(self):
         """Set algorithm specific model options."""
-        self.A = self.options.get('A', abs(sp.rand(self.V1.shape[1], self.V1.shape[1], density = 0.7, format = 'csr', dtype = 'd')))
+        self.A = self.options.get('A', abs(sp.rand(self.V1.shape[1], self.V1.shape[1], density = 0.7, format = 'csr')))
         if sp.isspmatrix(self.A):
             self.A = self.A.tocsr()
         else:
             self.A = np.mat(self.A)
-        self.B = self.options.get('B', abs(sp.rand(self.V.shape[1], self.V1.shape[1], density = 0.7, format = 'csr', dtype = 'd')))
+        self.B = self.options.get('B', abs(sp.rand(self.V.shape[1], self.V1.shape[1], density = 0.7, format = 'csr')))
         if sp.isspmatrix(self.B):
             self.B = self.B.tocsr()
         else:
@@ -147,9 +147,8 @@ class Snmnmf(nmf_mm.Nmf_mm):
         # update mixture matrices
         # update H1
         temp = sop(dot(self.W.T, self.W), s = self.gamma_1, op = add)
-        temp_h1 = dot(self.W, self.V) + self.lamb_1 / 2. * dot(self.H1, self.B.T)
-        temp_h2 = dot(temp, self.H)
-        HH1 = multiply(self.H, elop(temp_h1, temp_h2, div))
+        temp_h1 = dot(self.W.T, self.V) + self.lamb_1 / 2. * dot(self.H1, self.B.T)
+        HH1 = multiply(self.H, elop(temp_h1, dot(temp, self.H), div))
         temp_h3 = dot(self.W.T, self.V1) + self.lamb * dot(self.H1, self.A) + self.lamb_1 / 2. * dot(self.H, self.B)
         temp_h4 = dot(temp, self.H1)
         self.H1 = multiply(self.H1, elop(temp_h3, temp_h4, div))
@@ -164,8 +163,8 @@ class Snmnmf(nmf_mm.Nmf_mm):
         self.err_avg = err_avg1 + err_avg2
         eucl1 = (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
         eucl2 = (sop(self.V1 - dot(self.W, self.H1), 2, pow)).sum()
-        tr1 = np.trace(dot(dot(self.H1, self.A), self.H1.T))
-        tr2 = np.trace(dot(dot(self.H, self.B), self.H1.T))
+        tr1 = trace(dot(dot(self.H1, self.A), self.H1.T))
+        tr2 = trace(dot(dot(self.H, self.B), self.H1.T))
         s1 = sop(self.W, 2, pow).sum()
         s2 = sop(self.H, 2, pow).sum() + sop(self.H1, 2, pow).sum()
         return eucl1 + eucl2 - self.lamb * tr1 - self.lamb_1 * tr2 + self.gamma * s1 + self.gamma_1 * s2

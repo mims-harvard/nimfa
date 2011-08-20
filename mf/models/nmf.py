@@ -113,19 +113,19 @@ class Nmf(object):
     def basis(self):
         """Return the matrix of basis vectors. See NMF specific model."""
         
-    def target(self, idx):
+    def target(self, idx = None):
         """Return the target matrix. See NMF specific model."""
         
-    def coef(self, idx):
+    def coef(self, idx = None):
         """Return the matrix of mixture coefficients. See NMF specific model."""
     
-    def fitted(self, idx):
+    def fitted(self, idx = None):
         """Compute the estimated target matrix according to the NMF model. See NMF specific model."""
     
-    def distance(self, metric = 'euclidean', idx):
+    def distance(self, metric = 'euclidean', idx = None):
         """Return the loss function value. See NMF specific model."""
         
-    def residuals(self, idx):
+    def residuals(self, idx = None):
         """Compute residuals between the target matrix and its NMF estimate. See NMF specific model."""
         
     def connectivity(self, H = None, idx = None):

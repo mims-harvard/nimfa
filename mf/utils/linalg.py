@@ -46,6 +46,19 @@ def sub2ind(shape, row_sub, col_sub):
     res = [j * shape[0] + i for i,j in zip(row_sub, col_sub)]
     return res
 
+def trace(X):
+    """
+    Return trace of sparse or dense square matrix X.
+    
+    :param X: Target matrix. 
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    """
+    assert X.shape[0] == X.shape[1], "X should be square matrix."
+    if sp.isspmatrix(X):
+        return sum(X[i, i] for i in xrange(X.shape[0]))
+    else:
+        return np.trace(np.mat(X))
+
 def any(X, axis = None):
     """
     Test whether any element along a given axis of sparse or dense matrix X is nonzero.

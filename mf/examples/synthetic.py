@@ -74,7 +74,7 @@ def _print_info(fit):
     # e.g. entropy, predict, purity, coph_cor, consensus, select_features, score_features, connectivity  
     print "================================================================================================="
 
-def run_snmnmf(V):
+def run_snmnmf(V, V1):
     """
     Run sparse network-regularized multiple NMF. 
     
@@ -82,7 +82,7 @@ def run_snmnmf(V):
     :type V: :class:`numpy.matrix`
     """
     rank = 10
-    model = mf.mf(V, 
+    model = mf.mf(target = (V, V1), 
                   seed = "random_c", 
                   rank = rank, 
                   method = "snmnmf", 
@@ -331,18 +331,19 @@ def run_snmf(V):
     fit = mf.mf_run(model)
     _print_info(fit)
 
-def run(V = None):
+def run(V = None, V1 = None):
     """
     Run examples.
     
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
     """
-    if V == None:
+    if V == None or V1 == None:
         prng = np.random.RandomState(42)
         # construct target matrix 
         V = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 30))))
-    run_snmnmf(V)
+        V1 = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 25))))
+    run_snmnmf(V, V1)
     run_bd(V)
     run_bmf(V)
     run_icm(V)
@@ -358,5 +359,6 @@ if __name__ == "__main__":
     prng = np.random.RandomState(42)
     # construct target matrix 
     V = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 30))))
+    V1 = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 25))))
     # run examples
-    run(V)
+    run(V, V1)

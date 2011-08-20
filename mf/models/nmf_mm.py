@@ -65,7 +65,7 @@ class Nmf_mm(Nmf):
         """
         if idx == 'coef' or idx == 0:
             return self.V
-        if idx == 'coef1' or idx == 1:
+        elif idx == 'coef1' or idx == 1:
             return self.V1
         raise utils.MFError("Unknown specifier for the target matrix.")
     
@@ -78,7 +78,7 @@ class Nmf_mm(Nmf):
         """
         if idx == 'coef' or idx == 0:
             return self.H
-        if idx == 'coef1' or idx == 1:
+        elif idx == 'coef1' or idx == 1:
             return self.H1
         raise utils.MFError("Unknown specifier for the mixture matrix.")
     
@@ -91,12 +91,12 @@ class Nmf_mm(Nmf):
         """
         if idx == 'coef' or idx == 0:
             return dot(self.W, self.H)
-        if idx == 'coef1' or idx == 1:
+        elif idx == 'coef1' or idx == 1:
             return dot(self.W, self.H1)
         raise utils.MFError("Unknown specifier for the mixture matrix.")
         
     
-    def distance(self, metric = 'euclidean', idx):
+    def distance(self, metric = 'euclidean', idx = None):
         """
         Return the loss function value.
 
@@ -109,7 +109,7 @@ class Nmf_mm(Nmf):
         if idx == 'coef' or idx == 0:
             H = self.H
             V = self.V
-        if idx == 'coef1' or idx == 1:
+        elif idx == 'coef1' or idx == 1:
             H = self.H1
             V = self.V1
         else:
@@ -118,7 +118,7 @@ class Nmf_mm(Nmf):
             return (sop(V - dot(self.W, H), 2, pow)).sum()
         elif metric == 'kl': 
             Va = dot(self.W, H)
-            return (multiply(V, sop(elop(V, Va, div), op = log)) - self.V + Va).sum()
+            return (multiply(V, sop(elop(V, Va, div), op = log)) - V + Va).sum()
         else:
             raise utils.MFError("Unknown distance metric.")
     
@@ -132,7 +132,7 @@ class Nmf_mm(Nmf):
         if idx == 'coef' or idx == 0:
             H = self.H
             V = self.V
-        if idx == 'coef1' or idx == 1:
+        elif idx == 'coef1' or idx == 1:
             H = self.H1
             V = self.V1
         else:
