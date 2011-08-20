@@ -7,7 +7,28 @@ class Snmnmf(nmf_mm.Nmf_mm):
     """
     Sparse Network-Regularized Multiple Nonnegative Matrix Factorization (SNMNMF) [18].
     
+    It is semi-supervised learning method with constraints (e. g. in comodule identification, any variables linked in 
+    A or B, are more likely placed in the same comodule) to improve relevance and narrow down the search space.
+    
+    The advantage of this method is the integration of multiple matrices for multiple types of variables (standard NMF
+    methods can be applied to a target matrix containing just one type of variable) together with prior knowledge 
+    (e. g. network representing relationship among variables). 
+    
+    The objective function has three components:
+        #. first component models miRNA and gene expression profiles;
+        #. second component models gene-gene network interactions;
+        #. third component models predicted miRNA-gene interactions.
      
+    The inputs for the SNMNMF are:
+        #. two sets of expression profiles (represented by the matrices V and V1 of shape s x m, s x n, respectively) for 
+           miRNA and genes measured on the same set of samples;
+        #. (PRIOR KNOWLEDGE) a gene-gene interaction network (represented by the matrix A of shape n x n), including protein-protein interactions
+           and DNA-protein interactions;
+        #. (PRIOR KNOWLEDGE) a list of predicted miRNA-gene regulatory interactions (represented by the matrix B of shape m x n) based on
+           sequence data. 
+    Gene and miRNA expression matrices are simultaneously factored into a common basis matrix (W) and two
+    coefficients matrices (H and H1). Additional knowledge is incorporated into this framework with network 
+    regularized constraints. Because of the imposed sparsity constraints easily interpretable solution is obtained. 
     
     [18] Zhang, S. et. al., (2011). A novel computational framework for simultaneous integration of multiple types of 
          genomic data to identify microRNA-gene regulatory modules. Bioinformatics 2011, 27(13), i401-i409. 
