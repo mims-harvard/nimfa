@@ -27,6 +27,8 @@ class Nmf(nmf_std.Nmf_std):
         """
         For detailed explanation of the general model parameters see :mod:`mf_run`.
         
+        If :param:`min_residuals` of the underlying model is not specified, default value of :param:`min_residuals` 1e-5 is set.
+        
         The following are algorithm specific model options which can be passed with values as keyword arguments.
         
         :param update: Type of update equations used in factorization. When specifying model parameter :param:`update` 
@@ -107,6 +109,7 @@ class Nmf(nmf_std.Nmf_std):
         
     def _set_params(self):
         """Set algorithm specific model options."""
+        if not self.min_residuals: self.min_residuals = 1e-5
         self.update = getattr(self, self.options.get('update', 'euclidean') + '_update')
         self.name = self.name + " - " + self.options.get('update', 'euclidean')
         self.objective = getattr(self, self.options.get('objective', 'fro') + '_objective')
@@ -145,8 +148,8 @@ class Nmf(nmf_std.Nmf_std):
         mat2 = repmat(idx.T, 1, self.V.shape[1])
         cons = elop(mat1, mat2, eq)
         if not hasattr(self, 'consold'):
-            self.consold = np.ones_like(self.cons) - cons
             self.cons = cons
+            self.consold = np.mat(np.logical_not(cons))
         else:
             self.consold = self.cons
             self.cons = cons

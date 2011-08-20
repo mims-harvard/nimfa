@@ -48,7 +48,59 @@ import scipy.sparse as sp
 
 def run():
     """Run Standard NMF on Leukemia data set."""
+    V = read()
+    for rank in xrange(2, 5):
+         _run(V, rank)
+         
+def read():
+    pass
+    
 
+def reorder(consensus):
+    """
+    Reorder consensus matrix.
+    
+    :param consensus: Consensus matrix.
+    :type consensu: `numpy.matrix`
+    """    
+
+def _run(V, rank):
+    """
+    Run standard NMF on Leukemia data set.
+    
+    :param V: Target matrix with gene expression data.
+    :type V: `numpy.matrix` (of course it could be any format of scipy.sparse, but we will use numpy here) 
+    :param rank: Factorization rank.
+    :type rank: `int`
+    """
+    consensus = np.mat(np.zeros((V.shape[1], V.shape[1])))
+    for _ in xrange(50):
+        # Standard NMF with euclidean update equations is used. For initialization random Vcol method is used. 
+        # Objective function is connectivity matrix changes - if the number of instances changing the cluster is lower
+        # or equal to min_residuals parameter, factorization is terminated. 
+        model = mf.mf(V, 
+                    method = "nmf", 
+                    rank = rank, 
+                    seed = "random_vcol", 
+                    max_iter = 12, 
+                    update = 'euclidean', 
+                    objective = 'conn',
+                    min_residuals = 1,
+                    initialize_only = True)
+        print "Factorization %s running with rank %d ..." % (model.name, model.rank)
+        fit = mf.mf_run(model)
+        print "... %d iterations performed" % fit.fit.n_iter
+        # Compute connectivity matrix of factorization.
+        # Again, we could use multiple runs support of the MF library, track factorization model across 50 runs and then
+        # just call fit.consensus()
+        consensus += fit.fit.connectivity()
+    # averaging connectivity matrices
+    consensus /= 50.
+    # reorder consesus matrix
+    perm = reorder(consensus)
+    # display heatmap
+    plot(consensus, perm)
 
 if __name__ == "__main__":
     run()
+    
