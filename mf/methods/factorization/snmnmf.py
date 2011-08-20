@@ -18,7 +18,21 @@ class Snmnmf(nmf_mm.Nmf_mm):
         
         The following are algorithm specific model options which can be passed with values as keyword arguments.
         
-          
+        :param A: Adjacency matrix of gene-gene interaction network (dimension: V1.shape[1] x V1.shape[1]). It should be 
+                  nonnegative. Default is scipy.sparse CSR matrix of density 0.7.
+        :type A: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix` 
+        :param B: Adjacency matrix of a bipartite miRNA-gene network, predicted miRNA-target interactions 
+                  (dimension: V.shape[1] x V1.shape[1]). It should be nonnegative. Default is scipy.sparse 
+                  CSR matrix of density 0.7.
+        :type B: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix` 
+        :param gamma: Limit the growth of the basis matrix (W). Default is 0.01.
+        :type gamma: `float`
+        :param gamma_1: Limit the growth of the mixture matrices (H and H1). Default is 0.01.
+        :type gamma_1: `float`
+        :param lamb: Weight for the must-link constraints defined in :param:`A`. Default is 0.01.
+        :type lamb: `float`
+        :param lamb_1: Weight for the must-link constraints define in :param:`B`. Default is 0.01.
+        :type lamb_1: `float`
         """
         self.name = "snmnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
@@ -78,6 +92,20 @@ class Snmnmf(nmf_mm.Nmf_mm):
     
     def _set_params(self):
         """Set algorithm specific model options."""
+        self.A = self.options.get('A', abs(sp.rand(self.V1.shape[1], self.V1.shape[1], density = 0.7, format = 'csr', dtype = 'd')))
+        if sp.isspmatrix(self.A):
+            self.A = self.A.tocsr()
+        else:
+            self.A = np.mat(self.A)
+        self.B = self.options.get('B', abs(sp.rand(self.V.shape[1], self.V1.shape[1], density = 0.7, format = 'csr', dtype = 'd')))
+        if sp.isspmatrix(self.B):
+            self.B = self.B.tocsr()
+        else:
+            self.B = np.mat(self.B)
+        self.gamma = self.options.get('gamma', 0.01)
+        self.gamma_1 = self.options.get('gamma_1', 0.01)
+        self.lamb = self.options.get('lamb', 0.01)
+        self.lamb_1 = self.options.get('lamb_1', 0.01)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None

@@ -128,7 +128,15 @@ class Bd(nmf_std.Nmf_std):
         """Set algorithm specific model options."""
         if not self.max_iter: self.max_iter = 30
         self.alpha = self.options.get('alpha', sp.csr_matrix((self.V.shape[0], self.rank)))
+        if sp.isspmatrix(self.alpha):
+            self.alpha = self.alpha.tocsr()
+        else:
+            self.alpha = np.mat(self.alpha)
         self.beta = self.options.get('beta', sp.csr_matrix((self.rank, self.V.shape[1])))
+        if sp.isspmatrix(self.beta):
+            self.beta = self.beta.tocsr()
+        else:
+            self.beta = np.mat(self.beta)
         self.theta = self.options.get('theta', .0)
         self.k = self.options.get('k', .0)
         self.sigma = self.options.get('sigma', 1.) 
