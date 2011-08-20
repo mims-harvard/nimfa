@@ -13,7 +13,7 @@
        Useful for saving summary measures or processing the result of each NMF fit before it gets discarded. The
        callback function is called after each run.  
     #. [mandatory] Choose the factorization rank to achieve.
-    #. [mandatory] Choose the seeding method to compute the starting point passed to te algorithm. 
+    #. [mandatory] Choose the seeding method to compute the starting point passed to the algorithm. 
     #. [mandatory] Provide the target object to estimate. 
 """
 from utils import *
@@ -22,7 +22,7 @@ import methods
 l_factorization = methods.list_mf_methods()
 l_seed = methods.list_seeding_methods()
 
-def mf(target, seed = None, W = None, H = None,  
+def mf(target, seed = None, W = None, H = None, H1 = None,  
        rank = 30, method = "nmf",
        max_iter = 30, min_residuals = None, test_conv = None,
        n_run = 1, callback = None, initialize_only = False, **options):
@@ -31,26 +31,35 @@ def mf(target, seed = None, W = None, H = None,
     
     Return fitted factorization model storing MF results. If :param:`initialize_only` is set, only initialized model is returned.
     
-    :param target: The target matrix to estimate.
-    :type target: One of the :class:`scipy.sparse` sparse matrices types or :class:`numpy.ndarray` or :class:`numpy.matrix` 
+    :param target: The target matrix to estimate. Some algorithms (e. g. multiple NMF) specify more than one target matrix. 
+                   In that case target matrices are passed as tuples. Internally, additional attributes with names following 
+                   Vn pattern are created, where n is the consecutive index of target matrix. Zero index is omitted 
+                   (there are V, V1, V2, V3, etc. matrices and then H, H1, H2, etc. and W, W1, W2, etc. respectively - depends
+                   on the algorithm).
+    :type target: Instance of the :class:`scipy.sparse` sparse matrices types, :class:`numpy.ndarray`, :class:`numpy.matrix` or
+                  tuple of instances of the latter classes.
     :param seed: Specify method to seed the computation of a factorization. If specified :param:`W` and :param:`H` seeding 
                  must be None. If neither seeding method or initial fixed factorization is specified, random initialization is used
     :type seed: `str` naming the method or :class:`methods.seeding.nndsvd.Nndsvd` or None
     :param W: Specify initial factorization of basis matrix W. Default is None. When specified, :param:`seed` must be None.
     :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or :class:`numpy.matrix` or None
     :param H: Specify initial factorization of mixture matrix H. Default is None. When specified, :param:`seed` must be None.
-    :type H: :class:`scipy.sparse` or :class:`numpy.ndarray` or :class:`numpy.matrix` or None
+    :type H: Instance of the :class:`scipy.sparse` sparse matrices types, :class:`numpy.ndarray`, :class:`numpy.matrix` or
+             tuple of instances of the latter classes or None
     :param rank: The factorization rank to achieve. Default is 30.
     :type rank: `int`
     :param method: The algorithm to use to perform MF on target matrix. Default is :class:`methods.mf.nmf`
-    :type method: `str` naming the algorithm or :class:`methods.mf.bd.Bd`, :class:`methods.mf.icm.Icm`, :class:`methods.mf.Lfnmf.Lfnmf`
-                  :class:`methods.mf.lsnmf.Lsnmf`, :class:`methods.mf.nmf.Nmf`, :class:`methods.mf.nsnmf.Nsmf`, :class:`methods.mf.pmf.Pmf`, 
-                  :class:`methods.mf.psmf.Psmf`, :class:`methods.mf.snmf.Snmf`, :class:`methods.mf.bmf.Bmf`
+    :type method: `str` naming the algorithm or :class:`methods.factorization.bd.Bd`, 
+                  :class:`methods.factorization.icm.Icm`, :class:`methods.factorization.Lfnmf.Lfnmf`
+                  :class:`methods.factorization.lsnmf.Lsnmf`, :class:`methods.factorization.nmf.Nmf`, 
+                  :class:`methods.factorization.nsnmf.Nsmf`, :class:`methods.factorization.pmf.Pmf`, 
+                  :class:`methods.factorization.psmf.Psmf`, :class:`methods.factorization.snmf.Snmf`, 
+                  :class:`methods.factorization.bmf.Bmf`, :class:`methods.factorization.snmnmf`
     :param n_run: It specifies the number of runs of the algorithm. Default is 1.
     :type n_run: `int`
     :param callback: Pass a callback function that is called after each run when performing multiple runs. This is useful
                      if one wants to save summary measures or process the result before it gets discarded. The callback
-                     function is called with only one argument :class:`model.nmf_fit` that contains the fitted model. Default is None.
+                     function is called with only one argument :class:`models.mf_fit.Mf_fit` that contains the fitted model. Default is None.
     :type callback: `function`
     :param initialize_only: The specified MF model and its parameters will only be initialized. Factorization will not
                             run. Default is False.

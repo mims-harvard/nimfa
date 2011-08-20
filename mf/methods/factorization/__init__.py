@@ -14,6 +14,7 @@ import pmf
 import psmf
 import snmf
 import bmf
+import snmnmf
 
 methods = {"bd": bd.Bd, 
            "icm": icm.Icm,
@@ -25,4 +26,5 @@ methods = {"bd": bd.Bd,
            "psmf": psmf.Psmf,
            "snmf": snmf.Snmf,
            "bmf": bmf.Bmf,
+           "snmnmf": snmnmf.Snmnmf,
            "none": None}

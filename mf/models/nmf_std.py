@@ -33,16 +33,43 @@ class Nmf_std(Nmf):
         """Return the matrix of basis vectors."""
         return self.W
     
-    def coef(self):
-        """Return the matrix of mixture coefficients."""
+    def target(self, idx = None):
+        """
+        Return the target matrix to estimate.
+        
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
+        """
+        return self.V
+    
+    def coef(self, idx = None):
+        """
+        Return the matrix of mixture coefficients.
+        
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
+        """
         return self.H
     
-    def fitted(self):
-        """Compute the estimated target matrix according to the NMF algorithm model."""
+    def fitted(self, idx = None):
+        """
+        Compute the estimated target matrix according to the NMF algorithm model.
+        
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
+        """
         return dot(self.W, self.H)
     
-    def distance(self, metric = 'euclidean'):
-        """Return the loss function value."""
+    def distance(self, metric = 'euclidean', idx = None):
+        """
+        Return the loss function value.
+        
+        :param distance: Specify distance metric to be used. Possible are Euclidean and Kullback-Leibler (KL) divergence. Strictly,
+                        KL is not a metric. 
+        :type distance: `str` with values 'euclidean' or 'kl'
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
+        """
         if metric == 'euclidean':
             return (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
         elif metric == 'kl':
@@ -51,7 +78,12 @@ class Nmf_std(Nmf):
         else:
             raise utils.MFError("Unknown distance metric.")
     
-    def residuals(self):
-        """Return residuals matrix between the target matrix and its NMF estimate."""
+    def residuals(self, idx = None):
+        """
+        Return residuals matrix between the target matrix and its NMF estimate.
+        
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
+        """
         return self.V - dot(self.W, self.H)
         

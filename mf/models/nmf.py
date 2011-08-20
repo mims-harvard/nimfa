@@ -16,8 +16,11 @@ class Nmf(object):
         
     .. attribute:: V
         
-        Target matrix, the matrix for MF method to estimate. The columns of target matrix V are called samples, the rows of target
-        matrix V are called features. 
+        Target matrix, the matrix for the MF method to estimate. The columns of target matrix V are called samples, the rows of target
+        matrix V are called features. Some algorithms (e. g. multiple NMF) specify more than one target matrix. In that case
+        target matrices are passed as tuples. Internally, additional attributes with names following Vn pattern are created, 
+        where n is the consecutive index of target matrix. Zero index is omitted (there are V, V1, V2, V3, etc. matrices and
+        then H, H1, H2, etc. and W, W1, W2, etc. respectively - depends on the algorithm). 
         
     .. attribute:: seed
     
@@ -62,10 +65,31 @@ class Nmf(object):
         :type params: `dict`
         """
         self.__dict__.update(params)
+        # check if tuples of target and factor matrices are passed
+        if isinstance(self.V, tuple):
+            if len(self.V) > 2:
+                raise utils.MFError("Multiple NMF uses two target matrices.")
+            else:
+                self.V1 = self.V[1]
+                self.V = self.V[0]
+        if isinstance(self.H, tuple):
+            if len(self.H) > 2:
+                raise utils.MFError("Multiple NMF uses two mixture matrices.")
+            else:
+                self.H1 = self.H[1]
+                self.H = self.H[0]
+        if isinstance(self.W, tuple):
+            raise utils.MFError("Multiple NMF uses one basis matrix.")
+        # copy target and factor matrices into the program
         if sp.isspmatrix(self.V):
             self.V = self.V.copy().tocsr()
         else:
             self.V = np.matrix(self.V, dtype = 'd', copy = True)
+        if hasattr(self, "V1"):
+            if sp.isspmatrix(self.V1):
+                self.V1 = self.V1.copy().tocsr()
+            else:
+                self.V1 = np.matrix(self.V1, dtype = 'd', copy = True)
         if self.W != None:
             if sp.isspmatrix(self.W):
                 self.W = self.W.copy().tocsr()
@@ -76,27 +100,35 @@ class Nmf(object):
                 self.H = self.H.copy().tocsr()
             else:
                 self.H = np.matrix(self.H, dtype = 'd', copy = True)
+        if hasattr(self, "H1"):
+            if sp.isspmatrix(self.H1):
+                self.H1 = self.H1.copy().tocsr()
+            else:
+                self.H1 = np.matrix(self.H1, dtype = 'd', copy = True)
     
     def run(self):
         """Run the specified MF algorithm."""
         return self.factorize()
-        
+            
     def basis(self):
-        """Return the matrix of basis vectors."""
+        """Return the matrix of basis vectors. See NMF specific model."""
         
-    def coef(self):
-        """Return the matrix of mixture coefficients."""
+    def target(self, idx):
+        """Return the target matrix. See NMF specific model."""
+        
+    def coef(self, idx):
+        """Return the matrix of mixture coefficients. See NMF specific model."""
     
-    def fitted(self):
-        """Compute the estimated target matrix according to the NMF model."""
+    def fitted(self, idx):
+        """Compute the estimated target matrix according to the NMF model. See NMF specific model."""
     
-    def distance(self, metric = 'euclidean'):
-        """Return the loss function value."""
+    def distance(self, metric = 'euclidean', idx):
+        """Return the loss function value. See NMF specific model."""
         
-    def residuals(self):
-        """Compute residuals between the target matrix and its NMF estimate."""
+    def residuals(self, idx):
+        """Compute residuals between the target matrix and its NMF estimate. See NMF specific model."""
         
-    def connectivity(self, H = None):
+    def connectivity(self, H = None, idx = None):
         """
         Compute the connectivity matrix for the samples based on their mixture coefficients. 
         
@@ -104,41 +136,55 @@ class Nmf(object):
         sample j belong to the same cluster, 0 otherwise. Sample assignment is determined by its largest metagene expression value. 
         
         Return connectivity matrix.
+        
+        :param idx: Used in the multiple NMF model. In standard or nonsmooth NMF :param:`idx` is always None.
+        :type idx: None, `int` or `str`
         """
-        H = self.coef() if H == None else H
+        V = self.target(idx)
+        H = self.coef(idx) if H == None else H
         _, idx = argmax(H, axis = 0)
-        mat1 = repmat(idx, self.V.shape[1], 1)
-        mat2 = repmat(idx.T, 1, self.V.shape[1])
+        mat1 = repmat(idx, V.shape[1], 1)
+        mat2 = repmat(idx.T, 1, V.shape[1])
         conn = elop(mat1, mat2, eq)
         if sp.isspmatrix(conn):
             return conn.__class__(conn, dtype = 'd')
         else:
             return np.mat(conn, dtype = 'd')
     
-    def consensus(self):
+    def consensus(self, idx = None):
         """
         Compute consensus matrix as the mean connectivity matrix across multiple runs of the factorization. It has been
         proposed by Brunet et. al. (2004) to help visualize and measure the stability of the clusters obtained by NMF.
         
         Tracking of matrix factors across multiple runs must be enabled for computing consensus matrix. For results
         of a single NMF run, the consensus matrix reduces to the connectivity matrix.
+        
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
         """
+        V = self.target(idx)
         if self.track_factor:
-            if sp.isspmatrix(self.V):
-                cons = self.V.__class__((self.V.shape[1], self.V.shape[1]), dtype = self.V.dtype)
+            if sp.isspmatrix(V):
+                cons = V.__class__((V.shape[1], V.shape[1]), dtype = V.dtype)
             else:
-                cons = np.mat(np.zeros((self.V.shape[1], self.V.shape[1])))
+                cons = np.mat(np.zeros((V.shape[1], V.shape[1])))
             for i in xrange(self.n_run):
-                cons += self.connectivity(self.tracker.get_factor(i + 1).H)
+                cons += self.connectivity(H = self.tracker.get_factor(i + 1).H, idx = idx)
             return sop(cons, self.n_run, div)
         else:
-            return self.connectivity(self.coef()) 
+            return self.connectivity(H = self.coef(idx), idx = idx) 
         
-    def dim(self):
-        """Return triple containing the dimension of the target matrix and matrix factorization rank."""
-        return (self.V.shape[0], self.V.shape[1], self.rank)
+    def dim(self, idx = None):
+        """
+        Return triple containing the dimension of the target matrix and matrix factorization rank.
+        
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
+        """
+        V = self.target(idx)
+        return (V.shape[0], V.shape[1], self.rank)
     
-    def entropy(self, membership = None):
+    def entropy(self, membership = None, idx = None):
         """
         Compute the entropy of the NMF model given a priori known groups of samples (Kim, Park, 2007).
         
@@ -149,18 +195,21 @@ class Nmf(object):
         
         :param membership: Specify known class membership for each sample. 
         :type membership: `list`
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
         """
+        V = self.target(idx)
         if not membership:
             raise utils.MFError("Known class membership for each sample is not specified.")
-        n = self.V.shape[1]
-        mbs = self.predict(what = "samples", prob = False)
+        n = V.shape[1]
+        mbs = self.predict(what = "samples", prob = False, idx = idx)
         dmbs, dmembership = {}, {}
         [dmbs.setdefault(mbs[i], set()).add(i) for i in xrange(len(mbs))]
         [dmembership.setdefault(membership[i], set()).add(i) for i in xrange(len(membership))]
         return -1. / (n * log(len(dmembership), 2)) * sum(sum( len(dmbs[k].intersection(dmembership[j])) * 
                log(len(dmbs[k].intersection(dmembership[j])) / float(len(dmbs[k])), 2) for j in dmembership) for k in dmbs)
         
-    def predict(self, what = 'samples', prob = False):
+    def predict(self, what = 'samples', prob = False, idx = None):
         """
         Compute the dominant basis components. The dominant basis component is computed as the row index for which
         the entry is the maximum within the column. 
@@ -176,8 +225,10 @@ class Nmf(object):
         :type what: `str`
         :param prob: Specify dominant basis components probability inclusion. 
         :type prob: `bool` equivalent
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
         """
-        X = self.coef() if what == "samples" else self.basis().T if what == "features" else None
+        X = self.coef(idx) if what == "samples" else self.basis().T if what == "features" else None
         if X == None:
             raise utils.MFError("Dominant basis components can be computed for samples or features.")
         eX, idxX = argmax(X, axis = 0)
@@ -187,17 +238,21 @@ class Nmf(object):
         prob = [e / sums[0, s] for e, s in zip(eX, list(xrange(X.shape[1])))]
         return idxX, prob
     
-    def evar(self):
+    def evar(self, idx = None):
         """
         Compute the explained variance of the NMF estimate of the target matrix.
         
         This measure can be used for comparing the ability of models for accurately reproducing the original target matrix. 
         Some methods specifically aim at minimizing the RSS and maximizing the explained variance while others not, which 
         one should note when using this measure. 
-        """
-        return 1. - self.rss() / multiply(self.V, self.V).sum()
         
-    def score_features(self):
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
+        """
+        V = self.target(idx)
+        return 1. - self.rss(idx = idx) / multiply(V, V).sum()
+        
+    def score_features(self, idx = None):
         """
         Compute the score for each feature that represents its specificity to one of the basis vector (Kim, Park, 2007).
         
@@ -207,6 +262,9 @@ class Nmf(object):
         
         Return the list containing score for each feature. The feature scores are real values in [0,1]. The higher the feature score the more 
         basis-specific the corresponding feature.  
+
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
         """
         W = self.basis()
         def prob(i, q):
@@ -217,7 +275,7 @@ class Nmf(object):
             res.append(1. + 1. / log(W.shape[1], 2) * sum(prob(f, q) * log(prob(f,q) + np.finfo(W.dtype).eps, 2) for q in xrange(W.shape[1])))
         return res
     
-    def select_features(self):
+    def select_features(self, idx = None):
         """
         Compute the most basis-specific features for each basis vector (Kim, Park, 2007).
         
@@ -228,8 +286,11 @@ class Nmf(object):
            than the median of all contributions (i.e. of all elements of basis matrix (W)).
         
         Return list of retained features' indices.  
+        
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
         """
-        scores = self.score_features()
+        scores = self.score_features(idx = idx)
         u = np.median(scores)
         s = np.median(abs(scores - u))
         res = [i for i in xrange(len(scores)) if scores[i] > u + 3. * s]
@@ -237,7 +298,7 @@ class Nmf(object):
         m = np.median(W.toarray() if sp.isspmatrix(W) else W.tolist())
         return [i for i in res if np.max(W[i, :].toarray() if sp.isspmatrix(W) else W[i, :]) > m]
     
-    def purity(self, membership = None):
+    def purity(self, membership = None, idx = None):
         """
         Compute the purity given a priori known groups of samples (Kim, Park, 2007).
         
@@ -248,17 +309,20 @@ class Nmf(object):
         
         :param membership: Specify known class membership for each sample. 
         :type membership: `list`
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
         """
+        V = self.target(idx)
         if not membership:
             raise utils.MFError("Known class membership for each sample is not specified.")
-        n = self.V.shape[1]
-        mbs = self.predict(what = "samples", prob = False)
+        n = V.shape[1]
+        mbs = self.predict(what = "samples", prob = False, idx = idx)
         dmbs, dmembership = {}, {}
         [dmbs.setdefault(mbs[i], set()).add(i) for i in xrange(len(mbs))]
         [dmembership.setdefault(membership[i], set()).add(i) for i in xrange(len(membership))]
         return 1. / n * sum(max( len(dmbs[k].intersection(dmembership[j])) for j in dmembership) for k in dmbs)
     
-    def rss(self):
+    def rss(self, idx = None):
         """
         Compute Residual Sum of Squares (RSS) between NMF estimate and target matrix (Hutchins, 2008).
         
@@ -266,13 +330,17 @@ class Nmf(object):
         the first value where the RSS curve presents an inflection point. (Frigyesi and Hoglund, 2008) suggested to use the 
         smallest value at which the decrease in the RSS is lower than the decrease of the RSS obtained from random data. 
         
-        Return real value
+        Return real value.
+        
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
         """
-        X = self.residuals()
-        xX = self.V - X 
+        V = self.target(idx)
+        X = self.residuals(idx = idx)
+        xX = V - X 
         return multiply(xX, xX).sum()
     
-    def sparseness(self):
+    def sparseness(self, idx = None):
         """
         Compute sparseness of matrix (basis vectors matrix, mixture coefficients) (Hoyer, 2004). This sparseness 
         measure quantifies how much energy of a vector is packed into only few components. The sparseness of a vector
@@ -282,6 +350,9 @@ class Nmf(object):
         Sparseness of a matrix is the mean sparseness of its column vectors. 
         
         Return tuple that contains sparseness of the basis and mixture coefficients matrices. 
+        
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
         """
         def sparseness(x):
             eps = np.finfo(x.dtype).eps if 'int' not in str(x.dtype) else 1e-9
@@ -289,10 +360,10 @@ class Nmf(object):
             x2 = sqrt(x.shape[0]) - 1
             return x1 / x2 
         W = self.basis()
-        H = self.coef()
+        H = self.coef(idx)
         return np.mean([sparseness(W[:, i]) for i in xrange(W.shape[1])]), np.mean([sparseness(H[:, i]) for i in xrange(H.shape[1])])
         
-    def coph_cor(self):
+    def coph_cor(self, idx = None):
         """
         Compute cophenetic correlation coefficient of consensus matrix, generally obtained from multiple NMF runs. 
         
@@ -304,9 +375,12 @@ class Nmf(object):
         
         Return real number. In a perfect consensus matrix, cophenetic correlation equals 1. When the entries in consensus matrix are
         scattered between 0 and 1, the cophenetic correlation is < 1. We observe how this coefficient changes as factorization rank 
-        increases. We select the first rank, where the magnitude of the cophenetic correlation coefficient begins to fall (Brunet, 2004).  
+        increases. We select the first rank, where the magnitude of the cophenetic correlation coefficient begins to fall (Brunet, 2004).
+        
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None  
         """
-        A = self.consensus()
+        A = self.consensus(idx = idx)
         # upper diagonal elements of consensus
         avec = np.array([A[i,j] for i in xrange(A.shape[0] - 1) for j in xrange(i + 1, A.shape[1])])
         # consensus entries are similarities, conversion to distances
@@ -315,7 +389,7 @@ class Nmf(object):
         # cophenetic correlation coefficient of a hierarchical clustering defined by the linkage matrix Z and matrix Y from which Z was generated
         return cophenet(Z, Y)[0]
     
-    def dispersion(self):
+    def dispersion(self, idx = None):
         """
         Compute the dispersion coefficient of consensus matrix, generally obtained from multiple
         NMF runs.
@@ -326,7 +400,10 @@ class Nmf(object):
         Return the real value in [0,1]. Dispersion is 1 iff for a perfect consensus matrix, where all entries are 0 or 1.
         A perfect consensus matrix is obtained only when all the connectivity matrices are the same, meaning that
         the algorithm gave the same clusters at each run.  
+        
+        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :type idx: None
         """
-        C = self.consensus()
+        C = self.consensus(idx = idx)
         return sum(sum(4 * (C[i,j] - 0.5)**2 for j in xrange(C.shape[1])) for i in xrange(C.shape[0]))
     
