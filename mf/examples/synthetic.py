@@ -14,6 +14,10 @@
     algorithm specific parameters in Python module implementing the algorithm. Nevertheless for best results, 
     careful choice of parameters is recommended. No tracking is demonstrated here.
     
+    .. note:: For most factorizations using artificially generated data is not the intended usage (e. g. SNMNMF is in [18]
+              used for identification of the microRNA-gene regulatory networks). Consider this when discussing convergence
+              and measurements output. 
+    
     .. seealso:: README.rst     
     
     To run the examples simply type::
