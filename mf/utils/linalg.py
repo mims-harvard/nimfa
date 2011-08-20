@@ -457,11 +457,12 @@ def _sop_spmatrix(X, s = None, op = None):
     :type op: `func` 
     """
     R = X.copy().tocsr()
+    eps = np.finfo(R.dtype).eps if not 'int' in str(R.dtype) else 0
     now = 0
     for row in range(R.shape[0]):
         upto = R.indptr[row+1]
         while now < upto:
-            R.data[now] = op(R.data[now], s) if s != None else op(R.data[now] + np.finfo(R.dtype).eps)
+            R.data[now] = op(R.data[now] + eps, s) if s != None else op(R.data[now] + eps)
             now += 1
     return R
 
@@ -532,12 +533,13 @@ def __op_spmatrixX(X, Y, op):
     """
     assert X.shape == Y.shape, "Matrices are not aligned."
     R = X.copy().tocsr()
+    eps = np.finfo(Y.dtype).eps if not 'int' in str(Y.dtype) else 0
     now = 0
     for row in xrange(R.shape[0]):
         upto = R.indptr[row+1]
         while now < upto:
             col = R.indices[now]
-            R.data[now] = op(R.data[now], Y[row, col] + np.finfo(Y.dtype).eps)
+            R.data[now] = op(R.data[now], Y[row, col] + eps)
             now += 1
     return R
     
@@ -554,12 +556,13 @@ def __op_spmatrixY(X, Y, op):
     """
     assert X.shape == Y.shape, "Matrices are not aligned."
     R = Y.copy().tocsr()
+    eps = np.finfo(R.dtype).eps if not 'int' in str(R.dtype) else 0
     now = 0
     for row in range(R.shape[0]):
         upto = R.indptr[row+1]
         while now < upto:
             col = R.indices[now]
-            R.data[now] = op(X[row, col], R.data[now] + np.finfo(R.dtype).eps)
+            R.data[now] = op(X[row, col], R.data[now] + eps)
             now += 1
     return R
 
@@ -576,7 +579,8 @@ def _op_matrix(X, Y, op):
     """
     # operation is not necessarily commutative 
     assert X.shape == Y.shape, "Matrices are not aligned."
-    return np.mat([[op(X[i,j], Y[i,j] + np.finfo(Y.dtype).eps) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    eps = np.finfo(Y.dtype).eps if not 'int' in str(Y.dtype) else 0
+    return np.mat([[op(X[i,j], Y[i,j] + eps) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
 
 def inf_norm(X):
     """

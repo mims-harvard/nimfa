@@ -82,27 +82,27 @@ class Nmf(object):
             raise utils.MFError("Multiple NMF uses one basis matrix.")
         # copy target and factor matrices into the program
         if sp.isspmatrix(self.V):
-            self.V = self.V.copy().tocsr()
+            self.V = self.V.copy().tocsr().astype('d')
         else:
             self.V = np.matrix(self.V, dtype = 'd', copy = True)
         if hasattr(self, "V1"):
             if sp.isspmatrix(self.V1):
-                self.V1 = self.V1.copy().tocsr()
+                self.V1 = self.V1.copy().tocsr().astype('d')
             else:
                 self.V1 = np.matrix(self.V1, dtype = 'd', copy = True)
         if self.W != None:
             if sp.isspmatrix(self.W):
-                self.W = self.W.copy().tocsr()
+                self.W = self.W.copy().tocsr().astype('d')
             else:
                 self.W = np.matrix(self.W, dtype = 'd', copy = True)
         if self.H != None:
             if sp.isspmatrix(self.H):
-                self.H = self.H.copy().tocsr()
+                self.H = self.H.copy().tocsr().astype('d')
             else:
                 self.H = np.matrix(self.H, dtype = 'd', copy = True)
         if hasattr(self, "H1"):
             if sp.isspmatrix(self.H1):
-                self.H1 = self.H1.copy().tocsr()
+                self.H1 = self.H1.copy().tocsr().astype('d')
             else:
                 self.H1 = np.matrix(self.H1, dtype = 'd', copy = True)
     
