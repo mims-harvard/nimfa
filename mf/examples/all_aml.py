@@ -3,16 +3,24 @@
     This module demonstrates the ability of NMF to recover meaningful biological information from 
     cancer related microarray data. NMF appers to have advantages over other methods such as HC or SOM. 
     
-    Leukemia data set is used in this example. This data set is a benchmark in the cancer classification
-    community. This example is inspired by [3]. In [3] authors applied NMF to the data set. With rank, rank = 2, 
+    `Leukemia`_ data set is used in this example. This data set is a benchmark in the cancer classification
+    community. It contains two ALL samples that are consistently misclassified or classified with low 
+    confidence by most methods. There are a number of possible explanations for this, 
+    including incorrect diagnosis of the samples. They are included them in example.The distinction between AML 
+    and ALL, as well as the division of ALL into T and B cell subtypes is well known. 
+    
+    .. _Leukemia: http://orange.biolab.si/datasets/leukemia.htm 
+    
+    This example is inspired by [3]. In [3] authors applied NMF to the data set. With rank, rank = 2, 
     NMF recovered the AML-ALL biological distinction with high accuracy and robustness. Higher ranks revealed further
-    partitioning of the samples. 
+    partitioning of the samples. Clear block diagonal patterns in reordered consensus matrices attest to the 
+    robustness of models with 2, 3 and 4 classes. 
     
     .. figure:: all_aml_consensus2.png
        :scale: 80 %
        :alt: Consensus matrix generated for rank, rank = 2. 
 
-       Consensus matrix generated for rank, rank = 2. Reordered consensus matrices averaging 50 connectivity 
+       Reordered consensus matrix generated for rank, rank = 2. Reordered consensus matrices averaging 50 connectivity 
        matrices computed at rank = 2, 3 for the leukemia data set with the 5000 most highly varying genes 
        according to their coefficient of variation. Samples are hierarchically clustered by using 
        distances derived from consensus clustering matrix entries, coloured from 0 (deep blue, samples
@@ -23,7 +31,7 @@
        :scale: 80 %
        :alt: Consensus matrix generated for rank, rank = 3. 
 
-       Consensus matrix generated for rank, rank = 3.
+       Reordered consensus matrix generated for rank, rank = 3.
     
      
     [3] Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P., (2004). Metagenes and molecular pattern discovery using 
