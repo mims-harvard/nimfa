@@ -46,6 +46,7 @@
 
 import mf
 import numpy as np
+import os.path
 import matplotlib.pyplot as plt
 
 def run():
@@ -55,15 +56,23 @@ def run():
          _run(V, rank)
          
 def read():
-    "Read ALL AML gene expression data."
-    return 0
+    """
+    Read ALL AML gene expression data. The matrix's shape is 5000 (genes) x 38 (samples). 
+    It contains only positive data.
+    """
+    V = np.matrix(np.zeros((5000, 38)))
+    i = 0
+    for line in open(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+ '/datasets/ALL_AML_data.txt'):
+        V[i, :] =  map(float, line.split('\t'))
+        i += 1
+    return V
 
 def reorder(consensus):
     """
     Reorder consensus matrix.
     
     :param consensus: Consensus matrix.
-    :type consensu: `numpy.matrix`
+    :type consensus: `numpy.matrix`
     """    
     return 0
 
@@ -76,6 +85,8 @@ def _run(V, rank):
     :param rank: Factorization rank.
     :type rank: `int`
     """
+    # read gene expression data
+    V = read()
     consensus = np.mat(np.zeros((V.shape[1], V.shape[1])))
     for _ in xrange(50):
         # Standard NMF with euclidean update equations is used. For initialization random Vcol method is used. 
