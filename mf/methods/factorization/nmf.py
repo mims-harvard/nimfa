@@ -136,8 +136,8 @@ class Nmf(nmf_std.Nmf_std):
     def _set_params(self):
         """Set algorithm specific model options."""
         self.update = getattr(self, self.options.get('update', 'euclidean') + '_update')
-        self.name = self.name + " - " + self.options.get('update', 'euclidean')
         self.objective = getattr(self, self.options.get('objective', 'fro') + '_objective')
+        self.name = self.name + " - update: " + self.options.get('update', 'euclidean') + " - obj: " + self.options.get('objective', 'fro')
         self.conn_change = self.options.get('conn_change', 30) if 'conn' in self.objective.__name__ else None
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
