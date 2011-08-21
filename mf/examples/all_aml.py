@@ -107,7 +107,7 @@ from scipy.cluster.hierarchy import linkage, leaves_list
 from os.path import dirname, abspath
 
 def run():
-    """Run Standard NMF on Leukemia data set."""    
+    """Run Standard NMF on Leukemia data set. For each rank 50 Standard NMF runs are performed. """    
     # read gene expression data
     V = __read()
     for rank in xrange(2, 4):
@@ -115,7 +115,8 @@ def run():
 
 def _run(V, rank):
     """
-    Run standard NMF on Leukemia data set.
+    Run standard NMF on Leukemia data set. 50 runs of Standard NMF are performed and obtained consensus matrix
+    averages all 50 connectivity matrices.  
     
     :param V: Target matrix with gene expression data.
     :type V: `numpy.matrix` (of course it could be any format of scipy.sparse, but we will use numpy here) 
