@@ -92,7 +92,7 @@ def _run(V, rank):
     # averaging connectivity matrices
     consensus /= 50.
     # reorder consensus matrix
-    p_consensus, ivl = __reorder(consensus)
+    p_consensus = __reorder(consensus)
     # display heatmap
     plt.set_cmap("RdBu_r")
     plt.imshow(np.array(p_consensus)) 
@@ -111,7 +111,8 @@ def __reorder(C):
     Z = linkage(Y, method = 'average')
     # get node ids as they appear in the tree from left to right(corresponding to observation vector idx)
     ivl = leaves_list(Z)
-    return C[ivl], ivl
+    ivl = ivl[::-1]
+    return C[:, ivl][ivl, :]
     
 def __read():
     """
