@@ -140,7 +140,7 @@ def _run(V, rank):
                     conn_change = 40,
                     initialize_only = True)
         fit = mf.mf_run(model)
-        print "%2d / 50 :: %s ran with  ... %3d / 200 iters ..." % (i + 1, fit.fit, fit.fit.n_iter)
+        print "%2d / 50 :: %s - init: %s ran with  ... %3d / 200 iters ..." % (i + 1, fit.fit, fit.fit.seed, fit.fit.n_iter)
         # Compute connectivity matrix of factorization.
         # Again, we could use multiple runs support of the MF library, track factorization model across 50 runs and then
         # just call fit.consensus()
