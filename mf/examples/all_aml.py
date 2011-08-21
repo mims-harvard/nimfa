@@ -1,7 +1,9 @@
 
 """
     This module demonstrates the ability of NMF to recover meaningful biological information from 
-    cancer related microarray data. NMF appers to have advantages over other methods such as HC or SOM. 
+    cancer related microarray data. NMF appears to have advantages over other methods such as HC or SOM. 
+    Instead of separating gene clusters based on distance computation, NMF detects context-dependent patterns 
+    of gene expression in complex biological systems.
     
     `Leukemia`_ data set is used in this example. This data set is a benchmark in the cancer classification
     community. It contains two ALL samples that are consistently misclassified or classified with low 
@@ -33,6 +35,52 @@
 
        Reordered consensus matrix generated for rank, rank = 3.
     
+    
+    .. table:: Standard NMF Class assignments obtained with this example for rank = 2 and rank = 3. 
+
+       ====================  ========== ==========
+              Sample          rank = 2   rank = 3
+       ====================  ========== ==========
+        ALL_19769_B-cell        0            2
+        ALL_23953_B-cell        0            2
+        ALL_28373_B-cell        0            2
+        ALL_9335_B-cell         0            2
+        ALL_9692_B-cell         0            2
+        ALL_14749_B-cell        0            2
+        ALL_17281_B-cell        0            2
+        ALL_19183_B-cell        0            2
+        ALL_20414_B-cell        0            2
+        ALL_21302_B-cell        0            1
+        ALL_549_B-cell          0            2
+        ALL_17929_B-cell        0            2
+        ALL_20185_B-cell        0            2
+        ALL_11103_B-cell        0            2
+        ALL_18239_B-cell        0            2
+        ALL_5982_B-cell         0            2
+        ALL_7092_B-cell         0            2
+        ALL_R11_B-cell          0            2
+        ALL_R23_B-cell          0            2
+        ALL_16415_T-cell        0            1
+        ALL_19881_T-cell        0            1
+        ALL_9186_T-cell         0            1
+        ALL_9723_T-cell         0            1
+        ALL_17269_T-cell        0            1
+        ALL_14402_T-cell        0            1
+        ALL_17638_T-cell        0            1
+        ALL_22474_T-cell        0            1       
+        AML_12                  1            0
+        AML_13                  0            0
+        AML_14                  1            1
+        AML_16                  1            0
+        AML_20                  1            0
+        AML_1                   1            0
+        AML_2                   1            0
+        AML_3                   1            0
+        AML_5                   1            0 
+        AML_6                   1            0
+        AML_7                   1            0
+       ====================  ========== ========== 
+       
      
     [3] Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P., (2004). Metagenes and molecular pattern discovery using 
         matrix factorization. Proceedings of the National Academy of Sciences of the United States of America, 
@@ -54,7 +102,7 @@
 
 import mf
 import numpy as np
-import matplotlib.pyplot as plt
+from matplotlib.pyplot import savefig, imshow, set_cmap
 from scipy.cluster.hierarchy import linkage, leaves_list
 from os.path import dirname, abspath
 
@@ -77,7 +125,7 @@ def _run(V, rank):
     print "================= Rank = %d =================" % rank
     consensus = np.mat(np.zeros((V.shape[1], V.shape[1])))
     for i in xrange(50):
-        # Standard NMF with euclidean update equations is used. For initialization random Vcol method is used. 
+        # Standard NMF with Euclidean update equations is used. For initialization random Vcol method is used. 
         # Objective function is the number of consecutive iterations in which the connectivity matrix has not changed. 
         # We demand that factorization does not terminate before 30 consecutive iterations in which connectivity matrix
         # does not change. For a backup we also specify the maximum number of iterations. Note that the satisfiability
@@ -92,7 +140,7 @@ def _run(V, rank):
                     conn_change = 40,
                     initialize_only = True)
         fit = mf.mf_run(model)
-        print "%d / 50 :: %s running with  ... %d iterations ..." % (i + 1, fit.fit, fit.fit.n_iter)
+        print "%2d / 50 :: %s ran with  ... %3d / 200 iters ..." % (i + 1, fit.fit, fit.fit.n_iter)
         # Compute connectivity matrix of factorization.
         # Again, we could use multiple runs support of the MF library, track factorization model across 50 runs and then
         # just call fit.consensus()
@@ -101,10 +149,21 @@ def _run(V, rank):
     consensus /= 50.
     # reorder consensus matrix
     p_consensus = __reorder(consensus)
-    # display heatmap
-    plt.set_cmap("RdBu_r")
-    plt.imshow(np.array(p_consensus)) 
-    plt.savefig("all_aml_consensus" + str(rank) + ".png")
+    # plot reordered consensus matrix 
+    __plot(p_consensus, rank)
+    
+def __plot(C, rank):
+    """
+    Plot reordered consensus matrix.
+    
+    :param C: Reordered consensus matrix.
+    :type C: `numpy.matrix`
+    :param rank: Factorization rank.
+    :type rank: `int`
+    """
+    set_cmap("RdBu_r")
+    imshow(np.array(C)) 
+    savefig("all_aml_consensus" + str(rank) + ".png")
     
 def __reorder(C):
     """
