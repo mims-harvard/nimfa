@@ -128,6 +128,8 @@ class Snmf(nmf_std.Nmf_std):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
+        Return logical value denoting factorization continuation. 
+        
         :param c_obj: Current objective function value.
         :type c_obj: `float`
         :param iter: Current iteration number. 
@@ -139,7 +141,7 @@ class Snmf(nmf_std.Nmf_std):
             self.init_erravg = c_obj
         if self.max_iter and self.max_iter <= iter:
             return False
-        if self.inc >= self.i_conv and c_obj <= self.min_residuals * self.init_erravg:
+        if self.inc >= self.i_conv and c_obj < self.min_residuals * self.init_erravg:
             return False
         return True
             

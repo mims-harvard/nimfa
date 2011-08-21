@@ -77,6 +77,8 @@ class Bmf(nmf_std.Nmf_std):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
+        Return logical value denoting factorization continuation. 
+        
         :param p_obj: Objective function value from previous iteration. 
         :type p_obj: `float`
         :param c_obj: Current objective function value.
@@ -88,7 +90,7 @@ class Bmf(nmf_std.Nmf_std):
             return True
         if self.max_iter and self.max_iter <= iter:
             return False
-        if self.min_residuals and iter > 0 and c_obj - p_obj <= self.min_residuals:
+        if self.min_residuals and iter > 0 and p_obj - c_obj < self.min_residuals:
             return False
         if iter > 0 and c_obj > p_obj:
             return False

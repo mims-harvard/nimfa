@@ -27,8 +27,6 @@ class Nmf(nmf_std.Nmf_std):
         """
         For detailed explanation of the general model parameters see :mod:`mf_run`.
         
-        If :param:`min_residuals` of the underlying model is not specified, default value of :param:`min_residuals` 1e-5 is set.
-        
         The following are algorithm specific model options which can be passed with values as keyword arguments.
         
         :param update: Type of update equations used in factorization. When specifying model parameter :param:`update` 
@@ -41,9 +39,14 @@ class Nmf(nmf_std.Nmf_std):
                           can be assigned to:
                               #. 'fro' for standard Frobenius distance cost function,
                               #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
-                              #. 'conn' for connectivity matrix changed elements cost function. 
+                              #. 'conn' for measuring the number of consecutive iterations in which the 
+                                  connectivity matrix has not changed. 
                           By default the standard Frobenius distance cost function is used.  
         :type objective: `str` 
+        :param conn_change: Stopping criteria used only if for :param:`objective` function connectivity matrix
+                            measure is selected. It specifies the minimum required of consecutive iterations in which the
+                            connectivity matrix has not changed. Default value is 30. 
+        :type conn_change: `int`
         """
         self.name = "nmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
@@ -85,6 +88,8 @@ class Nmf(nmf_std.Nmf_std):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
+        Return logical value denoting factorization continuation. 
+        
         :param p_obj: Objective function value from previous iteration. 
         :type p_obj: `float`
         :param c_obj: Current objective function value.
@@ -96,9 +101,30 @@ class Nmf(nmf_std.Nmf_std):
             return True
         if self.max_iter and self.max_iter <= iter:
             return False
-        if self.min_residuals and iter > 0 and c_obj - p_obj <= self.min_residuals:
+        if self.conn_change != None:
+            return self.__is_satisfied(p_obj, c_obj, iter)
+        if self.min_residuals and iter > 0 and p_obj - c_obj < self.min_residuals:
             return False
         if iter > 0 and c_obj > p_obj:
+            return False
+        return True
+    
+    def __is_satisfied(self, p_obj, c_obj, iter):
+        """
+        Compute the satisfiability of the stopping criteria if change of connectivity matrices is used for
+        objective function. 
+        
+        Return logical value denoting factorization continuation.   
+        
+        :param p_obj: Objective function value from previous iteration. 
+        :type p_obj: `float`
+        :param c_obj: Current objective function value.
+        :type c_obj: `float`
+        :param iter: Current iteration number. 
+        :type iter: `int`
+        """
+        self._conn_change = 0 if c_obj == 1 else self._conn_change + 1
+        if self._conn_change >= self.conn_change:
             return False
         return True
     
@@ -109,10 +135,10 @@ class Nmf(nmf_std.Nmf_std):
         
     def _set_params(self):
         """Set algorithm specific model options."""
-        if not self.min_residuals: self.min_residuals = 1e-5
         self.update = getattr(self, self.options.get('update', 'euclidean') + '_update')
         self.name = self.name + " - " + self.options.get('update', 'euclidean')
         self.objective = getattr(self, self.options.get('objective', 'fro') + '_objective')
+        self.conn_change = self.options.get('conn_change', 30) if 'conn' in self.objective.__name__ else None
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
@@ -140,8 +166,9 @@ class Nmf(nmf_std.Nmf_std):
     
     def conn_objective(self):
         """
-        Compute connectivity matrix changes -- number of changing elements.
-        if the number of instances changing the cluster is lower or equal to min_residuals, terminate factorization run.
+        Compute connectivity matrix and compare it to connectivity matrix from previous iteration. 
+
+        Return logical value denoting whether connectivity matrix has changed from previous iteration.   
         """
         _, idx = argmax(self.H, axis = 0)
         mat1 = repmat(idx, self.V.shape[1], 1)
@@ -153,7 +180,8 @@ class Nmf(nmf_std.Nmf_std):
         else:
             self.consold = self.cons
             self.cons = cons
-        return elop(self.cons, self.consold, ne).sum()
+        conn_change =  elop(self.cons, self.consold, ne).sum()
+        return conn_change > 0
         
     def __str__(self):
         return self.name

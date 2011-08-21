@@ -27,7 +27,7 @@ class Lsnmf(nmf_std.Nmf_std):
         
         If :param:`min_residuals` of the underlying model is not specified, default value of :param:`min_residuals` 1e-5 is set.
         In LSNMF :param:`min_residuals` is used as an upper bound of quotient of projected gradients norm and initial gradient
-        (initial gradient of basis and mixture matrix).    
+        (initial gradient of basis and mixture matrix). It is a tolerance for a stopping condition. 
         
         The following are algorithm specific model options which can be passed with values as keyword arguments.
         
@@ -59,6 +59,9 @@ class Lsnmf(nmf_std.Nmf_std):
             self.init_grad = norm(vstack(self.gW, self.gH.T), p = 'fro')
             self.epsW = max(1e-3, self.min_residuals) * self.init_grad
             self.epsH = self.epsW
+            # iterW and iterH are not parameters, as these values are used only in first objective computation 
+            self.iterW = 10
+            self.iterH = 10
             cobj = self.objective() 
             iter = 0
             while self._is_satisfied(cobj, iter):
@@ -83,7 +86,9 @@ class Lsnmf(nmf_std.Nmf_std):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
-        :param c_obj: Current objective function value.
+        Return logical value denoting factorization continuation. 
+        
+        :param c_obj: Current objective function value. 
         :type c_obj: `float`
         :param iter: Current iteration number. 
         :type iter: `int`
@@ -93,6 +98,9 @@ class Lsnmf(nmf_std.Nmf_std):
         if self.max_iter and self.max_iter <= iter:
             return False
         if iter > 0 and c_obj < self.min_residuals * self.init_grad:
+            return False
+        if self.iterW == 0 and self.iterH == 0 and self.epsW + self.epsH < self.min_residuals * self.init_grad:
+            # There was no move in this iteration
             return False
         return True
     
@@ -108,12 +116,12 @@ class Lsnmf(nmf_std.Nmf_std):
             
     def update(self):
         """Update basis and mixture matrix."""
-        self.W, self.gW, iter = self._subproblem(self.V.T, self.H.T, self.W.T, self.epsW)
+        self.W, self.gW, self.iterW = self._subproblem(self.V.T, self.H.T, self.W.T, self.epsW)
         self.W = self.W.T
         self.gW = self.gW.T
-        self.epsW = 0.1 * self.epsW if iter == 0 else self.epsW
-        self.H, self.gH, iter = self._subproblem(self.V, self.W, self.H, self.epsH)
-        self.epsH = 0.1 * self.epsH if iter == 0 else self.epsH
+        self.epsW = 0.1 * self.epsW if self.iterW == 0 else self.epsW
+        self.H, self.gH, self.iterH = self._subproblem(self.V, self.W, self.H, self.epsH)
+        self.epsH = 0.1 * self.epsH if self.iterH == 0 else self.epsH
     
     def _subproblem(self, V, W, Hinit, epsH):
         """

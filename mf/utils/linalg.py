@@ -500,10 +500,11 @@ def elop(X, Y, op):
     if sp.isspmatrix(X) or sp.isspmatrix(Y):
         return _op_spmatrix(X, Y, op) if not zp else _op_matrix(X, Y, op)
     else:
-        if 'int' not in str(X.dtype):
+        try:
             X[X == 0] = np.finfo(X.dtype).eps
-        if 'int' not in str(Y.dtype):
             Y[Y == 0] = np.finfo(Y.dtype).eps
+        except ValueError:
+            return op(np.asmatrix(X), np.asmatrix(Y))
         return op(np.asmatrix(X), np.asmatrix(Y))
 
 def _op_spmatrix(X, Y, op):

@@ -50,7 +50,8 @@ import os.path
 import matplotlib.pyplot as plt
 
 def run():
-    """Run Standard NMF on Leukemia data set."""
+    """Run Standard NMF on Leukemia data set."""    
+    # read gene expression data
     V = read()
     for rank in xrange(2, 5):
          _run(V, rank)
@@ -74,6 +75,9 @@ def reorder(consensus):
     :param consensus: Consensus matrix.
     :type consensus: `numpy.matrix`
     """    
+    for i in xrange(consensus.shape[0]):
+        print consensus[i, :]
+    exit()
     return 0
 
 def _run(V, rank):
@@ -85,23 +89,24 @@ def _run(V, rank):
     :param rank: Factorization rank.
     :type rank: `int`
     """
-    # read gene expression data
-    V = read()
+    print "================= Rank % d =================", rank
     consensus = np.mat(np.zeros((V.shape[1], V.shape[1])))
     for _ in xrange(50):
         # Standard NMF with euclidean update equations is used. For initialization random Vcol method is used. 
-        # Objective function is connectivity matrix changes - if the number of instances changing the cluster is lower
-        # or equal to min_residuals parameter, factorization is terminated. 
+        # Objective function is the number of consecutive iterations in which the connectivity matrix has not changed. 
+        # We demand that factorization does not terminate before 30 consecutive iterations in which connectivity matrix
+        # does not change. For a backup we also specify the maximum number of iterations. Note that the satisfiability
+        # of one stopping criteria terminates the run (there is no chance for divergence). 
         model = mf.mf(V, 
                     method = "nmf", 
                     rank = rank, 
                     seed = "random_vcol", 
-                    max_iter = 12, 
+                    max_iter = 200, 
                     update = 'euclidean', 
                     objective = 'conn',
-                    min_residuals = 1,
+                    conn_change = 30,
                     initialize_only = True)
-        print "Factorization %s running with rank %d ..." % (model.name, model.rank)
+        print "Factorization %s running with rank %d ..." % (model.name, model.rank),
         fit = mf.mf_run(model)
         print "... %d iterations performed" % fit.fit.n_iter
         # Compute connectivity matrix of factorization.
