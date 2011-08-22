@@ -93,7 +93,7 @@
 import mf
 import numpy as np
 from matplotlib.pyplot import savefig, imshow, set_cmap
-from scipy.cluster.hierarchy import linkage, leaves_list, fcluster
+from scipy.cluster.hierarchy import linkage, leaves_list
 from os.path import dirname, abspath
 
 def run():
@@ -170,9 +170,6 @@ def __reorder(C):
     # get node ids as they appear in the tree from left to right(corresponding to observation vector idx)
     ivl = leaves_list(Z)
     ivl = ivl[::-1]
-    print "0.7: ", fcluster(Z, t = 0.7)
-    print "0.5: ", fcluster(Z, t = 0.5)
-    print "0.3: ", fcluster(Z, t = 0.3)
     return C[:, ivl][ivl, :]
     
 def __read():
