@@ -30,46 +30,46 @@
        Reordered consensus matrix generated for rank, rank = 3.
        
        
-    .. table:: Standard NMF Class assignments results obtained with this example for rank = 2 and rank = 3. 
+    .. table:: Standard NMF Class assignments results obtained with this example for rank = 2, rank = 3 and rank = 5.  
 
-       ====================  ========== ========== ==========
-              Sample           Class     rank = 2   rank = 3
-       ====================  ========== ========== ==========
-        Brain_MD_7                C
-        Brain_MD_59               C
-        Brain_MD_20               C
-        Brain_MD_21               C
-        Brain_MD_50               C
-        Brain_MD_49               C
-        Brain_MD_45               C
-        Brain_MD_43               C
-        Brain_MD_8                C
-        Brain_MD_42               C
-        Brain_MD_1                C
-        Brain_MD_4                C
-        Brain_MD_55               C
-        Brain_MD_41               C
-        Brain_MD_37               C
-        Brain_MD_3                C
-        Brain_MD_34               C
-        Brain_MD_29               C
-        Brain_MD_13               C
-        Brain_MD_24               C
-        Brain_MD_65               C
-        Brain_MD_5                C
-        Brain_MD_66               C
-        Brain_MD_67               C
-        Brain_MD_58               C
-        Brain_MD_53               D
-        Brain_MD_56               D
-        Brain_MD_16               D
-        Brain_MD_40               D
-        Brain_MD_35               D
-        Brain_MD_30               D
-        Brain_MD_23               D
-        Brain_MD_28               D
-        Brain_MD_60               D
-       ====================  ========== ========== ========== 
+       ====================  ========== ========== ========== ==========
+              Sample           Class     rank = 2   rank = 3   rank = 5 
+       ====================  ========== ========== ========== ==========
+        Brain_MD_7                C        0            1        3
+        Brain_MD_59               C        1            0        2
+        Brain_MD_20               C        1            1        3
+        Brain_MD_21               C        1            1        3
+        Brain_MD_50               C        1            1        4
+        Brain_MD_49               C        0            2        3
+        Brain_MD_45               C        1            1        3
+        Brain_MD_43               C        1            1        3
+        Brain_MD_8                C        1            1        3
+        Brain_MD_42               C        0            2        4
+        Brain_MD_1                C        0            2        3
+        Brain_MD_4                C        0            2        3 
+        Brain_MD_55               C        0            2        3
+        Brain_MD_41               C        1            1        2
+        Brain_MD_37               C        1            0        3
+        Brain_MD_3                C        1            2        3
+        Brain_MD_34               C        1            2        4
+        Brain_MD_29               C        1            1        2
+        Brain_MD_13               C        0            1        2
+        Brain_MD_24               C        0            1        3
+        Brain_MD_65               C        1            0        2
+        Brain_MD_5                C        1            0        1
+        Brain_MD_66               C        1            0        1
+        Brain_MD_67               C        1            0        3
+        Brain_MD_58               C        0            2        3
+        Brain_MD_53               D        0            2        4
+        Brain_MD_56               D        0            2        4
+        Brain_MD_16               D        0            2        4
+        Brain_MD_40               D        0            1        0
+        Brain_MD_35               D        0            2        4
+        Brain_MD_30               D        0            2        4
+        Brain_MD_23               D        0            2        4
+        Brain_MD_28               D        1            2        1
+        Brain_MD_60               D        1            0        0
+       ====================  ========== ========== ========== ========== 
        
      
     [3] Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P., (2004). Metagenes and molecular pattern discovery using 
@@ -93,7 +93,7 @@
 import mf
 import numpy as np
 from matplotlib.pyplot import savefig, imshow, set_cmap
-from scipy.cluster.hierarchy import linkage, leaves_list
+from scipy.cluster.hierarchy import linkage, leaves_list, fcluster
 from os.path import dirname, abspath
 
 def run():
@@ -128,7 +128,7 @@ def _run(V, rank):
                     max_iter = 200, 
                     update = 'euclidean', 
                     objective = 'conn',
-                    conn_change = 50,
+                    conn_change = 40,
                     initialize_only = True)
         fit = mf.mf_run(model)
         print "%2d / 50 :: %s - init: %s ran with  ... %3d / 200 iters ..." % (i + 1, fit.fit, fit.fit.seed, fit.fit.n_iter)
@@ -170,6 +170,9 @@ def __reorder(C):
     # get node ids as they appear in the tree from left to right(corresponding to observation vector idx)
     ivl = leaves_list(Z)
     ivl = ivl[::-1]
+    print "0.7: ", fcluster(Z, t = 0.7)
+    print "0.5: ", fcluster(Z, t = 0.5)
+    print "0.3: ", fcluster(Z, t = 0.3)
     return C[:, ivl][ivl, :]
     
 def __read():
