@@ -13,7 +13,7 @@
     
     .. _Leukemia: http://orange.biolab.si/datasets/leukemia.htm 
     
-    This example is inspired by [3]. In [3] authors applied NMF to the data set. With rank, rank = 2, 
+    This example is inspired by [3]. In [3] authors applied NMF to the leukemia data set. With rank, rank = 2, 
     NMF recovered the AML-ALL biological distinction with high accuracy and robustness. Higher ranks revealed further
     partitioning of the samples. Clear block diagonal patterns in reordered consensus matrices attest to the 
     robustness of models with 2, 3 and 4 classes. 
@@ -22,7 +22,7 @@
        :scale: 80 %
        :alt: Consensus matrix generated for rank, rank = 2. 
 
-       Reordered consensus matrix generated for rank, rank = 2. Reordered consensus matrices averaging 50 connectivity 
+       Reordered consensus matrix generated for rank, rank = 2. Reordered consensus matrix averages 50 connectivity 
        matrices computed at rank = 2, 3 for the leukemia data set with the 5000 most highly varying genes 
        according to their coefficient of variation. Samples are hierarchically clustered by using 
        distances derived from consensus clustering matrix entries, coloured from 0 (deep blue, samples
@@ -107,7 +107,7 @@ from scipy.cluster.hierarchy import linkage, leaves_list
 from os.path import dirname, abspath
 
 def run():
-    """Run Standard NMF on Leukemia data set. For each rank 50 Standard NMF runs are performed. """    
+    """Run Standard NMF on leukemia data set. For each rank 50 Standard NMF runs are performed. """    
     # read gene expression data
     V = __read()
     for rank in xrange(2, 4):
@@ -115,7 +115,7 @@ def run():
 
 def _run(V, rank):
     """
-    Run standard NMF on Leukemia data set. 50 runs of Standard NMF are performed and obtained consensus matrix
+    Run standard NMF on leukemia data set. 50 runs of Standard NMF are performed and obtained consensus matrix
     averages all 50 connectivity matrices.  
     
     :param V: Target matrix with gene expression data.
