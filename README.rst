@@ -1,18 +1,22 @@
 
+.. note:: Project MF - Matrix Factorization Techniques for Data Mining documentation and further details are available
+		  at `helikoid site`_. Please refer to that site.
+		  
+.. helikod site: http:://helikoid.si/mf
+
+About
+=====
+
 MF is a Python scripting library which includes a number of published matrix factorization algorithms, initialization methods, quality and performance measures and facilitates the combination of these to produce new strategies. The library represents a unified and efficient interface to matrix factorization algorithms and methods.
 
 The MF works with numpy dense matrices and scipy sparse matrices (where this is possible to save on space). The library has support for multiple runs of the algorithms which can be used for some quality measures. By setting runtime specific options tracking the residuals error within one (or more) run or tracking fitted factorization model is possible. Extensive documentation with working examples which demonstrate real applications, commonly used benchmark data and visualization methods are provided to help with the interpretation and comprehension of the results.
 
-Project wiki is at http://orange.biolab.si/trac/wiki/MatrixFactorization. MF is a result of the Google Summer of Code 2011 program by the `Orange`_ organization. 
+`Project wiki`_ is available at Orange site. MF is a result of the Google Summer of Code 2011 program by the `Orange`_ organization. 
 
 .. _Orange: http://orange.biolab.si
 
-.. image:: http://orange.biolab.si/small-logo.png
-	:target: http://orange.biolab.si
-	
+.. _Project wiki: http://orange.biolab.si/trac/wiki/MatrixFactorization
 
-.. image:: http://code.google.com/p/google-summer-of-code/logo?cct=1280260724
-	:target: http://code.google.com/soc/
 
 Content
 =======
@@ -113,17 +117,25 @@ algebra operations. There are not any additional prerequisites.
 .. _SciPy: http://www.scipy.org/
 .. _NumPy: http://numpy.scipy.org/
 
+Download source code from `Github repository`_.
+
+.. _Github repository: http://github.com/marinkaz/mf
+
 To build and install run::
 	
 	python setup.py install
 
+
 Configuration
 =============
 
-Methods configuration goes through runtime specific options (e. g. tracking fitted model across multiple runs, tracking residuals across iterations, etc.) or algorithm specific options (e. g. prior 
-information with PSMF, type of update equations with NMF, initial value for noise variance with ICM, etc.). 
+Methods configuration goes through:
 
-For details and descriptions on algorithm specific options see specific algorithm documentation. For deatils on runtime specific options and explanation of the general model parameters see :mod:`mf_run`.
+	#. runtime specific options (e. g. tracking fitted model across multiple runs, tracking residuals across iterations, etc.);
+	#. algorithm specific options (e. g. prior information with PSMF, type of update equations with NMF, initial value for noise variance with ICM, etc.). 
+
+For details and descriptions on algorithm specific options see specific algorithm documentation. For details on runtime specific options and explanation of the general model parameters see :mod:`mf_run`.
+
 
 Usage
 =====
