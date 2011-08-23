@@ -126,7 +126,7 @@ information with PSMF, type of update equations with NMF, initial value for nois
 For details and descriptions on algorithm specific options see specific algorithm documentation. For deatils on runtime specific options and explanation of the general model parameters see :mod:`mf_run`.
 
 Usage
-====
+=====
 
 Following are two basic usage examples that employ Standard NMF algorithm and LSNMF algorithm. For more see examples and 
 methods' documentation.
