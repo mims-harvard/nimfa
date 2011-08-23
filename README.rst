@@ -3,9 +3,11 @@ Notification
 ============
 
 Project MF - Matrix Factorization Techniques for Data Mining documentation and further details are available 
-at `helikoid site`_. Please refer to that site.
+at `helikoid site`_. 
+
+Please refer to that site.
 		  
-.. helikoid site: http:://helikoid.si/mf
+.. _helikoid site: http://helikoid.si/mf
 
 About
 =====
