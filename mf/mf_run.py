@@ -90,11 +90,15 @@ def mf(target, seed = None, W = None, H = None, H1 = None,
                                         Error tracking is not space consuming. By default residuals are not tracked and only the final residuals
                                         are saved. It can be used for plotting the trajectory of the residuals.
                      :type track_error: `bool`
+    :type options: `dict`
     
     
-     Stopping criteria
+    Stopping criteria
      
-     If multiple criteria are passed, the satisfiability of one terminates the factorization run. 
+    If multiple criteria are passed, the satisfiability of one terminates the factorization run. 
+    
+    .. note:: Some factorization and initialization methods have beside the following also algorithm specific
+              stopping criteria. For these details see specific algorithm's documentation.
 
     :param max_iter: Maximum number of factorization iterations. Note that the number of iterations depends
                 on the speed of method convergence. Default is 30.

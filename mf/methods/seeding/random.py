@@ -1,19 +1,18 @@
 
 """
-    ###################################
-    Random (``methods.seeding.random``)
-    ###################################
+###################################
+Random (``methods.seeding.random``)
+###################################
+
+Random is the simplest MF initialization method.
+
+The entries of factors are drawn from a uniform distribution over [0, max(target matrix)). Generated matrix factors are sparse
+matrices with the default density parameter of 0.01. 
 """
 
 from mf.utils.linalg import *
 
 class Random(object):
-    """
-    Random is the simplest MF initialization method.
-    
-    The entries of factors are drawn from a uniform distribution over [0, max(target matrix)). Generated matrix factors are sparse
-    matrices with the default density parameter of 0.01. 
-    """
     
     def __init__(self):
         self.name = "random"
@@ -31,27 +30,28 @@ class Random(object):
                             #. algorithm;
                             #. model specific options (e.g. initialization of extra matrix factor, seeding parameters).
                     
-                        The following are the options.
-                    
+                        The following are Random options.
+                
                          :param Sn: n = 1, 2, 3, ..., k specify additional k matrix factors which need to be initialized.
-                                    The value of each option Sn is a tuple, denoting matrix shape. Matrix factors are returned in the same
-                                    order as their descriptions in input.
-                         :type Sn:  k tuples
+                                                     The value of each option Sn is a tuple, denoting matrix shape. Matrix factors are returned in the same
+                                                     order as their descriptions in input.
+                         :type Sn: k tuples
                          :param density: Density of the generated matrices. Density of 1 means a full matrix, density of 0 means a 
                                          matrix with no nonzero items. Default value is 0.7. Density parameter is applied 
                                          only if passed target :param:`V` is an instance of one :class:`scipy.sparse` sparse
                                          types. 
                          :type density: `float`
+        :type options: `dict`        
         """
         self.rank = rank
         self.density = options.get('density', 0.7)
         self.max = argmax(V, axis = None)[0]
         if sp.isspmatrix(V):
             self._format = V.getformat()
-            gen = self._gen_sparse
+            gen = self.gen_sparse
         else:
             self.prng = np.random.RandomState()
-            gen = self._gen_dense
+            gen = self.gen_dense
         self.W = gen(V.shape[0], self.rank)
         self.H = gen(self.rank, V.shape[1])
         mfs = [self.W, self.H]
@@ -60,7 +60,7 @@ class Random(object):
                 mfs.append(gen(options[sn][0], options[sn][1]))
         return mfs
     
-    def _gen_sparse(self, dim1, dim2):
+    def gen_sparse(self, dim1, dim2):
         """
         Return randomly initialized sparse matrix of specified dimensions.
         
@@ -71,7 +71,7 @@ class Random(object):
         """
         return abs(self.max * sp.rand(dim1, dim2, density = self.density, format = self._format))
         
-    def _gen_dense(self, dim1, dim2):
+    def gen_dense(self, dim1, dim2):
         """
         Return randomly initialized :class:`numpy.matrix` matrix of specified dimensions.
         

@@ -40,6 +40,14 @@ class Nmf(object):
     
         The number of runs of the algorithm
         
+    .. attribute:: n_iter
+    
+        The number of iterations performed
+        
+    .. attribute:: final_obj
+    
+        Final value (of the last performed iteration) of the objective function
+        
     .. attribute:: callback
     
         A callback function that is called after each run if performing multiple runs 

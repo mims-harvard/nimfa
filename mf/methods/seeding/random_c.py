@@ -1,22 +1,21 @@
 
 """
-    #######################################
-    Random_c (``methods.seeding.random_c``)
-    #######################################
+#######################################
+Random_c (``methods.seeding.random_c``)
+#######################################
+
+Random C [Albright2006]_ is inexpensive initialization method for nonnegative matrix factorization. It is inspired by the C matrix in
+of the CUR decomposition. The Random C initialization is similar to the Random Vcol method (see mod:`methods.seeding.random_vcol`)
+except it chooses p columns at random from the longest (in 2-norm) columns in target matrix (V), which generally means the most
+dense columns of target matrix. 
+
+Initialization of each column of basis matrix is done by averaging p random columns of l longest columns of target matrix. Initialization 
+of mixture matrix is similar except for row operations.    
 """
 
 from mf.utils.linalg import *
 
 class Random_c(object):
-    """
-    Random C [Albright2006]_ is inexpensive initialization method for nonnegative matrix factorization. It is inspired by the C matrix in
-    of the CUR decomposition. The Random C initialization is similar to the Random Vcol method (see mod:`methods.seeding.random_vcol`)
-    except it chooses p columns at random from the longest (in 2-norm) columns in target matrix (V), which generally means the most
-    dense columns of target matrix. 
-    
-    Initialization of each column of basis matrix is done by averaging p random columns of l longest columns of target matrix. Initialization 
-    of mixture matrix is similar except for row operations.    
-    """
     
     def __init__(self):
         self.name = "random_c"
@@ -29,7 +28,11 @@ class Random_c(object):
         :type V: One of the :class:`scipy.sparse` sparse matrices types or or :class:`numpy.matrix`
         :param rank: Factorization rank. 
         :type rank: `int`
-        :param options: Specify algorithm or model specific options (e.g. initialization of extra matrix factor, seeding parameters).
+        :param options: Specify:
+                            #. algorithm;
+                            #. model specific options (e.g. initialization of extra matrix factor, seeding parameters).
+                    
+                        The following are Random C options.
                         
                          :param p_c: The number of columns of target matrix used to average the column of basis matrix.
                                     Default value for :param:`p_c` is 1/5 * (target.shape[1]).
@@ -43,6 +46,7 @@ class Random_c(object):
                          :param l_r: First l_r rows of target matrix sorted descending by length (2-norm). Default value for :param:`l_r` is 
                                     1/2 * (target.shape[0]).
                          :type l_r: `int`
+        :type options: `dict`
         """
         self.rank = rank
         self.p_c = options.get('p_c', int(ceil(1. / 5 * V.shape[1])))

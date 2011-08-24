@@ -1,5 +1,8 @@
 
-### EXAMPLE 1: 
+####
+# EXAMPLE 1: 
+####
+
 
 # Import MF library entry point for factorization
 import mf
@@ -47,7 +50,10 @@ print "Estimate"
 print dot(W.todense(), H.todense())
 
 
-## EXAMPLE 2: 
+####
+# EXAMPLE 2: 
+####
+
 
 # Import MF library entry point for factorization
 import mf

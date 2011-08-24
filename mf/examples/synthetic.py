@@ -45,7 +45,7 @@ def __fact_factor(X):
     """
     return X.todense() if sp.isspmatrix(X) else X
 
-def _print_info(fit, idx = None):
+def print_info(fit, idx = None):
     """
     Print to stdout info about the factorization.
     
@@ -102,9 +102,9 @@ def run_snmnmf(V, V1):
                   lamb_1 = 0.01)
     fit = mf.mf_run(model)
     # print all quality measures concerning first target and mixture matrix in multiple NMF
-    _print_info(fit, idx = 0)
+    print_info(fit, idx = 0)
     # print all quality measures concerning second target and mixture matrix in multiple NMF
-    _print_info(fit, idx = 1)
+    print_info(fit, idx = 1)
 
 def run_bd(V):
     """
@@ -131,7 +131,7 @@ def run_bd(V):
                   n_h = np.mat(np.zeros((rank, 1))),
                   n_sigma = False)
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
 
 def run_bmf(V):
     """
@@ -150,7 +150,7 @@ def run_bmf(V):
                   lambda_w = 1.1,
                   lambda_h = 1.1)
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
     
 def run_icm(V):
     """
@@ -174,7 +174,7 @@ def run_icm(V):
                   k = 0.,
                   sigma = 1.)
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
     
 def run_lfnmf(V):
     """
@@ -195,7 +195,7 @@ def run_lfnmf(V):
                   initialize_only = True,
                   alpha = 0.01)
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
     
 def run_lsnmf(V):
     """
@@ -215,7 +215,7 @@ def run_lsnmf(V):
                   inner_sub_iter = 10, 
                   beta = 0.1)
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
 
 def run_nmf(V):
     """
@@ -235,7 +235,7 @@ def run_nmf(V):
                   update = 'euclidean',
                   objective = 'fro')
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
     # divergence
     model = mf.mf(V, 
                   seed = "random_vcol", 
@@ -246,7 +246,7 @@ def run_nmf(V):
                   update = 'divergence',
                   objective = 'div')
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
     
 def run_nsnmf(V):
     """
@@ -264,7 +264,7 @@ def run_nsnmf(V):
                   initialize_only = True,
                   theta = 0.5)
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
     
 def run_pmf(V):
     """
@@ -282,7 +282,7 @@ def run_pmf(V):
                   initialize_only = True,
                   rel_error = 1e-5)
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
     
 def run_psmf(V):
     """
@@ -301,7 +301,7 @@ def run_psmf(V):
                   initialize_only = True,
                   prior = prng.uniform(low = 0., high = 1., size = 10))
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
 
 def run_snmf(V):
     """
@@ -324,7 +324,7 @@ def run_snmf(V):
                   i_conv = 10,
                   w_min_change = 0)
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
     # SNMF/L
     model = mf.mf(V, 
                   seed = "random_vcol", 
@@ -338,7 +338,7 @@ def run_snmf(V):
                   i_conv = 10,
                   w_min_change = 0)
     fit = mf.mf_run(model)
-    _print_info(fit)
+    print_info(fit)
 
 def run(V = None, V1 = None):
     """
@@ -346,6 +346,8 @@ def run(V = None, V1 = None):
     
     :param V: Target matrix to estimate.
     :type V: :class:`numpy.matrix`
+    :param V1: (Second) Target matrix to estimate used in multiple NMF (e. g. SNMNMF).
+    :type V1: :class:`numpy.matrix`
     """
     if V == None or V1 == None:
         prng = np.random.RandomState(42)

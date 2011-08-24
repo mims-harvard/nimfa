@@ -59,25 +59,25 @@ Content
 Matrix Factorization Methods
 ****************************
 
-.. include:: content-factorization.rst
+.. include:: /content-factorization.rst
 
 **********************
 Initialization Methods
 **********************
 
-.. include:: content-initialization.rst
+.. include:: /content-initialization.rst
 
 ********************************
 Quality and Performance Measures
 ********************************
 
-.. include:: content-quality-performance.rst
+.. include:: /content-quality-performance.rst
 
 *****
 Utils
 *****
 
-.. include:: content-utils.rst
+.. include:: /content-utils.rst
 
 
 	
@@ -125,7 +125,7 @@ utility, execute::
     
 from the MF library root directory. 
 
-.. note:: The MF library documentation is contained in MF/docs/source directory and in scripts in MF/mf.  
+.. note:: The MF library documentation is contained in docs/source directory and in scripts in mf directory.  
 
 .. _Sphinx home page: http://sphinx.pocoo.org
 
@@ -156,14 +156,14 @@ methods' documentation.
 
 Example No. 1
 
-	.. literalinclude:: usage.py
-   		:lines: 4-47
+	.. literalinclude:: /code/usage.py
+   		:lines: 7-50
 
 
 Example No. 2
 
-	.. literalinclude:: usage.py
-   		:lines: 52-94
+	.. literalinclude:: /code/usage.py
+   		:lines: 58-100
 
 
 
@@ -171,7 +171,7 @@ Example No. 2
 References
 ##########
 
-.. include:: content-references.rst
+.. include:: /content-references.rst
 
 
 

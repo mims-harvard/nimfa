@@ -1,23 +1,22 @@
 
 """
-    #############################################
-    Random_vcol (``methods.seeding.random_vcol``)
-    #############################################
+#############################################
+Random_vcol (``methods.seeding.random_vcol``)
+#############################################
+
+Random Vcol [Albright2006]_ is inexpensive initialization method for nonnegative matrix factorization. Random Vcol forms an initialization
+of each column of the basis matrix (W) by averaging p random columns of target matrix (V). Similarly, Random Vcol forms an initialization
+of each row of the mixture matrix (H) by averaging p random rows of target matrix (V). It makes more sense to build the 
+basis vectors from the given data than to form completely random basis vectors, as random initialization does. Sparse
+matrices are built from the original sparse data. 
+
+Method's performance lies between random initialization and centroid initialization, which is built from the centroid
+decomposition.      
 """
 
 from mf.utils.linalg import *
 
 class Random_vcol(object):
-    """
-    Random Vcol [Albright2006]_ is inexpensive initialization method for nonnegative matrix factorization. Random Vcol forms an initialization
-    of each column of the basis matrix (W) by averaging p random columns of target matrix (V). Similarly, Random Vcol forms an initialization
-    of each row of the mixture matrix (H) by averaging p random rows of target matrix (V). It makes more sense to build the 
-    basis vectors from the given data than to form completely random basis vectors, as random initialization does. Sparse
-    matrices are built from the original sparse data. 
-    
-    Method's performance lies between random initialization and centroid initialization, which is built from the centroid
-    decomposition.      
-    """
     
     def __init__(self):
         self.name = "random_vcol"
@@ -30,7 +29,11 @@ class Random_vcol(object):
         :type V: One of the :class:`scipy.sparse` sparse matrices types or or :class:`numpy.matrix`
         :param rank: Factorization rank. 
         :type rank: `int`
-        :param options: Specify algorithm or model specific options (e.g. initialization of extra matrix factor, seeding parameters).
+        :param options: Specify:
+                            #. algorithm;
+                            #. model specific options (e.g. initialization of extra matrix factor, seeding parameters).
+                    
+                        The following are Random Vcol options.
                          
                          :param p_c: The number of columns of target matrix used to average the column of basis matrix.
                                     Default value for :param:`p_c` is 1/5 * (target.shape[1]).
@@ -38,6 +41,7 @@ class Random_vcol(object):
                          :param p_r: The number of rows of target matrix used to average the row of basis matrix.
                                     Default value for :param:`p_r` is 1/5 * (target.shape[0]).
                          :type p_r: `int`
+        :type options: `dict`
         """
         self.rank = rank
         self.p_c = options.get('p_c', int(ceil(1. / 5 * V.shape[1])))

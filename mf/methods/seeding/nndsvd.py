@@ -1,24 +1,23 @@
 
 """
-    ###################################
-    Nndsvd (``methods.seeding.nndsvd``)
-    ###################################
+###################################
+Nndsvd (``methods.seeding.nndsvd``)
+###################################
+
+Nonnegative Double Singular Value Decomposition (NNDSVD) [Boutsidis2007]_ is a new method designed to enhance the initialization
+stage of the nonnegative matrix factorization. The basic algorithm contains no randomization and is based on 
+two SVD processes, one approximating the data matrix, the other approximating positive sections of the 
+resulting partial SVD factors utilizing an algebraic property of unit rank matrices. 
+
+NNDSVD is well suited to initialize NMF algorithms with sparse factors. Numerical examples suggest that NNDSVD leads 
+to rapid reduction of the approximation error of many NMF algorithms. By setting algorithm options :param:`flag` dense factors can be
+generated. 
 """
 
 from mf.utils.utils import *
 from mf.utils.linalg import *
 
 class Nndsvd(object):
-    """
-    Nonnegative Double Singular Value Decomposition (NNDSVD) [Boutsidis2007]_ is a new method designed to enhance the initialization
-    stage of the nonnegative matrix factorization. The basic algorithm contains no randomization and is based on 
-    two SVD processes, one approximating the data matrix, the other approximating positive sections of the 
-    resulting partial SVD factors utilizing an algebraic property of unit rank matrices. 
-    
-    NNDSVD is well suited to initialize NMF algorithms with sparse factors. Numerical examples suggest that NNDSVD leads 
-    to rapid reduction of the approximation error of many NMF algorithms. By setting algorithm options :param:`flag` dense factors can be
-    generated. 
-    """
 
     def __init__(self):
         self.name = "nndsvd"
@@ -34,16 +33,25 @@ class Nndsvd(object):
         :type V: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
         :param rank: Factorization rank. 
         :type rank: `int`
-        :param options: Specify algorithm or model specific options (e.g. initialization of extra matrix factor, seeding parameters).
+        :param options: Specify: 
+                            #. algorithm; 
+                            #. model specific options (e.g. initialization of extra matrix factor, seeding parameters).
                         
-                         :param flag: Indicate the variant of the NNDSVD algorithm. Possible values are:
-                                     * 0 -- NNDSVD,
-                                     * 1 -- NNDSVDa (fill in the zero elements with the average),
-                                     * 2 -- NNDSVDar (fill in the zero elements with random values in the space [0:average/100]).
-                                    Default is NNDSVD.
-                                    Because of the nature of NNDSVDa and NNDSVDar, when the target matrix is sparse, only NNDSVD is possible
-                                    and :param:`flag` is ignored (NNDSVDa and NNDSVDar eliminate zero elements). 
+                        The following are NNDSVD options.
+                        
+                         :param flag: Indicate the variant of the NNDSVD algorithm. 
+                                      
+                                      Possible values are:
+                                          * 0 -- NNDSVD,
+                                          * 1 -- NNDSVDa (fill in the zero elements with the average),
+                                          * 2 -- NNDSVDar (fill in the zero elements with random values in the space [0:average/100]).
+                                      Default is NNDSVD.
+                                      
+                                      Because of the nature of NNDSVDa and NNDSVDar, when the target matrix is sparse, only NNDSVD is possible
+                                      and :param:`flag` is ignored (NNDSVDa and NNDSVDar eliminate zero elements, therefore the matrix is 
+                                      not sparse anymore). 
                          :type flag: `int`
+        :type options: `dict`
         """
         self.rank = rank
         self.flag = options.get('flag', 0)
@@ -51,7 +59,7 @@ class Nndsvd(object):
             raise MFError("The input matrix contains negative elements.")
         U, S, E = svd(V)
         if sp.isspmatrix(U):
-            return self._init_sparse(V, U, S, E)
+            return self.init_sparse(V, U, S, E)
         self.W = np.mat(np.zeros((V.shape[0], self.rank)))
         self.H = np.mat(np.zeros((self.rank, V.shape[1])))
         # choose the first singular triplet to be nonnegative
@@ -95,7 +103,7 @@ class Nndsvd(object):
             self.H[self.H == 0] = avg * np.random.uniform(n2, 1) / 100
         return self.W, self.H
     
-    def _init_sparse(self, V, U, S, E):
+    def init_sparse(self, V, U, S, E):
         """
         Continue the NNDSVD initialization of sparse target matrix.
         

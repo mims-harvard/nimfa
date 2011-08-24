@@ -1,17 +1,16 @@
 
 """
-    #################################
-    Fixed (``methods.seeding.fixed``)
-    #################################
+#################################
+Fixed (``methods.seeding.fixed``)
+#################################
+
+Fixed factorization. This is the option to completely specify the initial factorization by passing values for 
+matrix factors.  
 """
 
 from mf.utils.linalg import *
 
 class Fixed(object):
-    """
-    Fixed factorization. This is the option to completely specify the initial factorization by passing values for 
-    matrix factors.  
-    """
 
     def __init__(self):
         self.name = "fixed"
@@ -23,9 +22,7 @@ class Fixed(object):
             f = np.matrix(f) if not sp.isspmatrix(f) else f.copy() 
         
     def initialize(self, *args, **kwargs):
-        """
-        Return fixed matrix factors.
-        """
+        """Return fixed matrix factors."""
         return self.factors
     
     def __repr__(self):

@@ -17,9 +17,10 @@
     where they could split the branches to expose a clear desmoplastic cluster. They applied SOM by using two to eight 
     centroids but did not recover distinct desmoplastic class as well. 
     
-    .. figure:: medulloblastoma_consensus2.png
-       :scale: 80 %
-       :alt: Consensus matrix generated for rank, rank = 2. 
+    .. figure:: /images/medulloblastoma_consensus2.png
+       :scale: 60 %
+       :alt: Consensus matrix generated for rank, rank = 2.
+       :align: center 
        
        Reordered consensus matrix generated for rank, rank = 2. Reordered consensus matrix averages 50 connectivity 
        matrices computed at rank = 2, 3 for the medulloblastoma data set consisting of 25 classic and 9 desmoplastic
@@ -27,9 +28,10 @@
        matrix entries, coloured from 0 (deep blue, samples are never in the same cluster) to 1 (dark red, samples are 
        always in the same cluster).   
        
-    .. figure:: medulloblastoma_consensus3.png
-       :scale: 80 %
+    .. figure:: /images/medulloblastoma_consensus3.png
+       :scale: 60 %
        :alt: Consensus matrix generated for rank, rank = 3. 
+       :align: center
        
        Reordered consensus matrix generated for rank, rank = 3.
        
@@ -96,11 +98,11 @@ from os.path import dirname, abspath
 def run():
     """Run Standard NMF on medulloblastoma data set. For each rank 50 Standard NMF runs are performed. """    
     # read gene expression data
-    V = __read()
+    V = read()
     for rank in xrange(2, 4):
-        _run(V, rank)
+        run_one(V, rank)
 
-def _run(V, rank):
+def run_one(V, rank):
     """
     Run standard NMF on medulloblastoma data set. 50 runs of Standard NMF are performed and obtained consensus matrix
     averages all 50 connectivity matrices.  
@@ -136,7 +138,7 @@ def _run(V, rank):
     # averaging connectivity matrices
     consensus /= 50.
     # reorder consensus matrix
-    p_consensus = __reorder(consensus)
+    p_consensus = reorder(consensus)
     # plot reordered consensus matrix 
     __plot(p_consensus, rank)
     
@@ -153,7 +155,7 @@ def __plot(C, rank):
     imshow(np.array(C)) 
     savefig("medulloblastoma_consensus" + str(rank) + ".png")
     
-def __reorder(C):
+def reorder(C):
     """
     Reorder consensus matrix.
     
@@ -169,7 +171,7 @@ def __reorder(C):
     ivl = ivl[::-1]
     return C[:, ivl][ivl, :]
     
-def __read():
+def read():
     """
     Read the medulloblastoma gene expression data. The matrix's shape is 5893 (genes) x 34 (samples). 
     It contains only positive data.
