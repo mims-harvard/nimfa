@@ -1,40 +1,43 @@
 
+"""
+###################################
+Bmf (``methods.factorization.bmf``)
+###################################
+
+**Binary Matrix Factorization (BMF)** [Zhang2007]_.
+
+BMF extends standard NMF to binary matrices. Given a binary target matrix (V), we want to factorize it into binary 
+basis and mixture matrices, thus conserving the most important integer property of the target matrix. Common methodologies 
+include penalty function algorithm and thresholding algorithm. This class implements penalty function algorithm.     
+"""
+
 from mf.models import *
 from mf.utils import *
 from mf.utils.linalg import *
 
 class Bmf(nmf_std.Nmf_std):
     """
-    Binary Matrix Factorization (BMF) [8].
+    For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    BMF extends standard NMF to binary matrices. Given a binary target matrix (V), we want to factorize it into binary 
-    basis and mixture matrices, thus conserving the most important integer property of the target matrix. Common methodologies 
-    include penalty function algorithm and thresholding algorithm. This class implements penalty function algorithm. 
+    The following are algorithm specific model options which can be passed with values as keyword arguments.
     
-    [8] Zhang Z., Li T., Ding C. H. Q., Zhang X., (2007). Binary Matrix Factorization with Applications. ICDM 2007.
+    :param lambda_w: It controls how fast lambda should increase and influences the convergence of the basis matrix (W)
+                     to binary values during the update. 
+                         #. :param:`lambda_w` < 1 will result in a nonbinary decompositions as the update rule effectively
+                            is a conventional NMF update rule. 
+                         #. :param:`lambda_w` > 1 give more weight to make the factorization binary with increasing iterations.
+                     Default value is 1.1.
+    :type lambda_w: `float`
+    :param lambda_h: It controls how fast lambda should increase and influences the convergence of the mixture matrix (H)
+                     to binary values during the update. 
+                         #. :param:`lambda_h` < 1 will result in a nonbinary decompositions as the update rule effectively
+                            is a conventional NMF update rule. 
+                         #. :param:`lambda_h` > 1 give more weight to make the factorization binary with increasing iterations.
+                     Default value is 1.1.
+    :type lambda_h: `float`
     """
 
     def __init__(self, **params):
-        """
-        For detailed explanation of the general model parameters see :mod:`mf_run`.
-        
-        The following are algorithm specific model options which can be passed with values as keyword arguments.
-        
-        :param lambda_w: It controls how fast lambda should increase and influences the convergence of the basis matrix (W)
-                         to binary values during the update. 
-                             #. :param:`lambda_w` < 1 will result in a nonbinary decompositions as the update rule effectively
-                                is a conventional NMF update rule. 
-                             #. :param:`lambda_w` > 1 give more weight to make the factorization binary with increasing iterations.
-                         Default value is 1.1.
-        :type lambda_w: `float`
-        :param lambda_h: It controls how fast lambda should increase and influences the convergence of the mixture matrix (H)
-                         to binary values during the update. 
-                             #. :param:`lambda_h` < 1 will result in a nonbinary decompositions as the update rule effectively
-                                is a conventional NMF update rule. 
-                             #. :param:`lambda_h` > 1 give more weight to make the factorization binary with increasing iterations.
-                         Default value is 1.1.
-        :type lambda_h: `float`
-        """
         self.name = "bmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
@@ -45,7 +48,7 @@ class Bmf(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        self._set_params()
+        self.set_params()
         
         self._lambda_w = 1. / self.max_iter if self.max_iter else 1. / 10
         self._lambda_h = self._lambda_w         
@@ -53,7 +56,7 @@ class Bmf(nmf_std.Nmf_std):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             pobj = cobj = self.objective()
             iter = 0
-            while self._is_satisfied(pobj, cobj, iter):
+            while self.is_satisfied(pobj, cobj, iter):
                 pobj = cobj
                 self.update()
                 self._adjustment()
@@ -73,7 +76,7 @@ class Bmf(nmf_std.Nmf_std):
         mffit = mf_fit.Mf_fit(self)
         return mffit
     
-    def _is_satisfied(self, p_obj, c_obj, iter):
+    def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
@@ -96,7 +99,7 @@ class Bmf(nmf_std.Nmf_std):
             return False
         return True
     
-    def _set_params(self):
+    def set_params(self):
         """Set algorithm specific model options."""
         self.lambda_w = self.options.get('lambda_w', 1.1)
         self.lambda_h = self.options.get('lambda_h', 1.1)

@@ -1,5 +1,9 @@
 
 """
+    ##############################################
+    Medulloblastoma (``examples.medulloblastoma``)
+    ##############################################
+
     This module demonstrates the ability of NMF to recover meaningful biological information from childhood 
     brain tumors microarray data. 
     
@@ -7,8 +11,8 @@
     understood but is accepted that there are two known histological subclasses; classic (C) and desmoplastic (D). 
     These subclasses can be clearly seen under microscope.   
     
-    This example is inspired by [3]. In [3] authors applied NMF to the medulloblastoma data set and managed to expose a
-    separate desmoplastic (D) class. In [3] authors also applied SOM and HC to these data but were unable to find a distinct
+    This example is inspired by [Brunet2004]_. In [Brunet2004]_ authors applied NMF to the medulloblastoma data set and managed to expose a
+    separate desmoplastic (D) class. In [Brunet2004]_ authors also applied SOM and HC to these data but were unable to find a distinct
     desmoplastic class. Using HC desmoplastic samples were scattered among leaves and there was no level of the tree
     where they could split the branches to expose a clear desmoplastic cluster. They applied SOM by using two to eight 
     centroids but did not recover distinct desmoplastic class as well. 
@@ -69,14 +73,7 @@
         Brain_MD_23               D        0            2        4
         Brain_MD_28               D        1            2        1
         Brain_MD_60               D        1            0        0
-       ====================  ========== ========== ========== ========== 
-       
-     
-    [3] Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P., (2004). Metagenes and molecular pattern discovery using 
-        matrix factorization. Proceedings of the National Academy of Sciences of the United States of America, 
-        101(12), 4164-9. doi: 10.1073/pnas.0308531101.
-    
-    .. seealso:: README.rst     
+       ====================  ========== ========== ========== ==========   
     
     To run the examples simply type::
         

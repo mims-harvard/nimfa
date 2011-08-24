@@ -1,4 +1,10 @@
 
+"""
+    ##############################
+    Mf_track (``models.mf_track``)
+    ##############################
+"""
+
 class Mf_track():
     """
     Base class for tracking MF fitted model across multiple runs of the factorizations or tracking

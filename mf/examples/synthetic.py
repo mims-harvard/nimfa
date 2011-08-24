@@ -1,5 +1,9 @@
 
 """
+    ##################################
+    Synthetic (``examples.synthetic``)
+    ##################################
+    
     This module contains examples of factorization runs. Since the data is artificially generated, 
     this is not a valid test of models applicability to real world situations. It can however
     be used for demonstration of the library. 
@@ -17,9 +21,7 @@
     .. note:: For most factorizations using artificially generated data is not the intended usage (e. g. SNMNMF is in [18]
               used for identification of the microRNA-gene regulatory networks). Consider this when discussing convergence
               and measurements output. 
-    
-    .. seealso:: README.rst     
-    
+        
     To run the examples simply type::
         
         python synthetic.py

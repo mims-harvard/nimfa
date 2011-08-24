@@ -1,5 +1,9 @@
 
 """
+    ##############################
+    All_aml (``examples.aml_all``)
+    ##############################
+    
     This module demonstrates the ability of NMF to recover meaningful biological information from 
     cancer related microarray data. NMF appears to have advantages over other methods such as HC or SOM. 
     Instead of separating gene clusters based on distance computation, NMF detects context-dependent patterns 
@@ -13,7 +17,7 @@
     
     .. _Leukemia: http://orange.biolab.si/datasets/leukemia.htm 
     
-    This example is inspired by [3]. In [3] authors applied NMF to the leukemia data set. With rank, rank = 2, 
+    This example is inspired by [Brunet2004]_. In [Brunet2004]_ authors applied NMF to the leukemia data set. With rank, rank = 2, 
     NMF recovered the AML-ALL biological distinction with high accuracy and robustness. Higher ranks revealed further
     partitioning of the samples. Clear block diagonal patterns in reordered consensus matrices attest to the 
     robustness of models with 2, 3 and 4 classes. 
@@ -80,13 +84,6 @@
         AML_6                   1            0
         AML_7                   1            0
        ====================  ========== ========== 
-       
-     
-    [3] Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P., (2004). Metagenes and molecular pattern discovery using 
-        matrix factorization. Proceedings of the National Academy of Sciences of the United States of America, 
-        101(12), 4164-9. doi: 10.1073/pnas.0308531101.
-    
-    .. seealso:: README.rst     
     
     To run the examples simply type::
         

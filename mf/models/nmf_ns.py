@@ -1,10 +1,16 @@
 
+"""
+    ##########################
+    Nmf_ns (``models.nmf_ns``)
+    ##########################
+"""
+
 from nmf import *
 
 class Nmf_ns(Nmf):
     """
     Implementation of the alternative model to manage factorizations that follow nonstandard NMF model. This modification is 
-    required by the Nonsmooth NMF algorithm (NSNMF) [14]. The Nonsmooth NMF algorithm is a modification of the standard divergence
+    required by the Nonsmooth NMF algorithm (NSNMF) [Montano2006]_. The Nonsmooth NMF algorithm is a modification of the standard divergence
     based NMF methods. By introducing a smoothing matrix it is aimed to achieve global sparseness. 
      
     It is the underlying model of matrix factorization and provides structure of modified standard NMF model. 
@@ -23,12 +29,8 @@ class Nmf_ns(Nmf):
         
     The interpretation of the basis and mixture matrix is such as in the standard NMF model. The smoothing matrix is an
     extra square matrix whose entries depends on smoothing parameter theta which can be specified as algorithm specific model 
-    option. For detailed explanation of the NSNMF algorithm see :mod:`methods.mf.nsnmf`.
-        
-    [14] Pascual-Montano, A., Carazo, J. M., Kochi, K., Lehmann, D., and Pascual-Marqui, R. D., (2006). Nonsmooth nonnegative matrix 
-         factorization (nsnmf). IEEE transactions on pattern analysis and machine intelligence, 28(3), 403-415.
+    option. For detailed explanation of the NSNMF algorithm see :mod:`methods.mf.nsnmf`.        
     """
-
 
     def __init__(self, params):
         """

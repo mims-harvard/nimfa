@@ -1,45 +1,48 @@
 
+"""
+#######################################
+Lsnmf (``methods.factorization.lsnmf``)
+#######################################
+
+**Alternating Nonnegative Least Squares Matrix Factorization Using Projected Gradient (bound constrained optimization)
+method for each subproblem (LSNMF)** [Lin2007]_. It converges faster than the popular multiplicative update approach. 
+
+Algorithm relies on efficiently solving bound constrained subproblems. They are solved using the projected gradient 
+method. Each subproblem contains some (m) independent nonnegative least squares problems. Not solving these separately
+but treating them together is better because of: problems are closely related, sharing the same constant matrices;
+all operations are matrix based, which saves computational time. 
+
+The main task per iteration of the subproblem is to find a step size alpha such that a sufficient decrease condition
+of bound constrained problem is satisfied. In alternating least squares, each subproblem involves an optimization 
+procedure and requires a stopping condition. A common way to check whether current solution is close to a 
+stationary point is the form of the projected gradient [Lin2007]_.     
+"""
+
 from mf.models import *
 from mf.utils import *
 from mf.utils.linalg import *
 
 class Lsnmf(nmf_std.Nmf_std):
     """
-    Alternating Nonnegative Least Squares Matrix Factorization Using Projected Gradient (bound constrained optimization)
-    method for each subproblem (LSNMF) [4]. It converges faster than the popular multiplicative update approach. 
+    For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    Algorithm relies on efficiently solving bound constrained subproblems. They are solved using the projected gradient 
-    method. Each subproblem contains some (m) independent nonnegative least squares problems. Not solving these separately
-    but treating them together is better because of: problems are closely related, sharing the same constant matrices;
-    all operations are matrix based, which saves computational time. 
+    If :param:`min_residuals` of the underlying model is not specified, default value of :param:`min_residuals` 1e-5 is set.
+    In LSNMF :param:`min_residuals` is used as an upper bound of quotient of projected gradients norm and initial gradient
+    (initial gradient of basis and mixture matrix). It is a tolerance for a stopping condition. 
     
-    The main task per iteration of the subproblem is to find a step size alpha such that a sufficient decrease condition
-    of bound constrained problem is satisfied. In alternating least squares, each subproblem involves an optimization 
-    procedure and requires a stopping condition. A common way to check whether current solution is close to a 
-    stationary point is the form of the projected gradient [4]. 
+    The following are algorithm specific model options which can be passed with values as keyword arguments.
     
-    [4] Lin, C.-J., (2007). Projected gradient methods for nonnegative matrix factorization. Neural computation, 19(10), 2756-79. doi: 10.1162/neco.2007.19.10.2756. 
+    :param sub_iter: Maximum number of subproblem iterations. Default value is 10. 
+    :type sub_iter: `int`
+    :param inner_sub_iter: Number of inner iterations when solving subproblems. Default value is 10. 
+    :type inner_sub_iter: `int`
+    :param beta: The rate of reducing the step size to satisfy the sufficient decrease condition when solving subproblems.
+                 Smaller beta more aggressively reduces the step size, but may cause the step size being too small. Default
+                 value is 0.1.
+    :type beta: `float`
     """
 
     def __init__(self, **params):
-        """
-        For detailed explanation of the general model parameters see :mod:`mf_run`.
-        
-        If :param:`min_residuals` of the underlying model is not specified, default value of :param:`min_residuals` 1e-5 is set.
-        In LSNMF :param:`min_residuals` is used as an upper bound of quotient of projected gradients norm and initial gradient
-        (initial gradient of basis and mixture matrix). It is a tolerance for a stopping condition. 
-        
-        The following are algorithm specific model options which can be passed with values as keyword arguments.
-        
-        :param sub_iter: Maximum number of subproblem iterations. Default value is 10. 
-        :type sub_iter: `int`
-        :param inner_sub_iter: Number of inner iterations when solving subproblems. Default value is 10. 
-        :type inner_sub_iter: `int`
-        :param beta: The rate of reducing the step size to satisfy the sufficient decrease condition when solving subproblems.
-                     Smaller beta more aggressively reduces the step size, but may cause the step size being too small. Default
-                     value is 0.1.
-        :type beta: `float`
-        """
         self.name = "lsnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
@@ -50,7 +53,7 @@ class Lsnmf(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        self._set_params()
+        self.set_params()
         
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
@@ -64,7 +67,7 @@ class Lsnmf(nmf_std.Nmf_std):
             self.iterH = 10
             cobj = self.objective() 
             iter = 0
-            while self._is_satisfied(cobj, iter):
+            while self.is_satisfied(cobj, iter):
                 self.update()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
@@ -82,7 +85,7 @@ class Lsnmf(nmf_std.Nmf_std):
         mffit = mf_fit.Mf_fit(self)
         return mffit
     
-    def _is_satisfied(self, c_obj, iter):
+    def is_satisfied(self, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
@@ -104,7 +107,7 @@ class Lsnmf(nmf_std.Nmf_std):
             return False
         return True
     
-    def _set_params(self):
+    def set_params(self):
         """Set algorithm specific model options."""
         if not self.min_residuals: self.min_residuals = 1e-5
         self.sub_iter = self.options.get('sub_iter', 10)

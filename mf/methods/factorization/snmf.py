@@ -1,52 +1,54 @@
 
+"""
+#####################################
+Snmf (``methods.factorization.snmf``)
+#####################################
+
+**Sparse Nonnegative Matrix Factorization (SNMF)** based on alternating nonnegativity constrained least squares [Park2007]_.
+
+In order to enforce sparseness on basis or mixture matrix, SNMF can be used, namely two formulations: SNMF/L for 
+sparse W (sparseness is imposed on the left factor) and SNMF/R for sparse H (sparseness imposed on the right factor).
+These formulations utilize L1-norm minimization. Each subproblem is solved by a fast nonnegativity constrained
+least squares (FCNNLS) algorithm (van Benthem and Keenan, 2004) that is improved upon the active set based NLS method. 
+
+SNMF/R contains two subproblems for two-block minimization scheme. The objective function is coercive on the 
+feasible set. It can be shown (Grippo and Sciandrome, 2000) that two-block minimization process is convergent, 
+every accumulation point is a critical point of the corresponding problem. Similarly, the algorithm SNMF/L converges
+to a stationary point. 
+"""
+
 from mf.models import *
 from mf.utils import *
 from mf.utils.linalg import *
 
 class Snmf(nmf_std.Nmf_std):
     """
-    Sparse Nonnegative Matrix Factorization (SNMF) based on alternating nonnegativity constrained least squares [5].
+    For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    In order to enforce sparseness on basis or mixture matrix, SNMF can be used, namely two formulations: SNMF/L for 
-    sparse W (sparseness is imposed on the left factor) and SNMF/R for sparse H (sparseness imposed on the right factor).
-    These formulations utilize L1-norm minimization. Each subproblem is solved by a fast nonnegativity constrained
-    least squares (FCNNLS) algorithm (van Benthem and Keenan, 2004) that is improved upon the active set based NLS method. 
+    The parameter :param:`min_residuals` of the underlying model is used as KKT convergence test and should have 
+    positive value. If not specified, value 1e-4 is used. 
     
-    SNMF/R contains two subproblems for two-block minimization scheme. The objective function is coercive on the 
-    feasible set. It can be shown (Grippo and Sciandrome, 2000) that two-block minimization process is convergent, 
-    every accumulation point is a critical point of the corresponding problem. Similarly, the algorithm SNMF/L converges
-    to a stationary point. 
-   
-    [5] Kim H., Park H., (2007). Sparse Non-negative Matrix Factorizations via Alternating Non-negativity-constrained Least Squares 
-        for Microarray Data Analysis, Bioinformatics.
+    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    
+    :param version: Specifiy version of the SNMF algorithm. it has two accepting values, 'r' and 'l' for SNMF/R and 
+                    SNMF/L, respectively. Default choice is SNMF/R.
+    :type version: `str`
+    :param eta: Used for suppressing Frobenius norm on the basis matrix (W). Default value is maximum value of the target 
+                matrix (V). If :param:`eta` is negative, maximum value of target matrix is used for it. 
+    :type eta: `float`
+    :param beta: It controls sparseness. Larger :param:`beta` generates higher sparseness on H. Too large :param:`beta` 
+                 is not recommended. It should have positive value. Default value is 1e-4.
+    :type beta: `float`
+    :param i_conv: Part of the biclustering convergence test. It decides convergence if row clusters and column clusters have 
+                   not changed for :param:`i_conv` convergence tests. It should have nonnegative value.
+                   Default value is 10.
+    :type i_conv: `int`
+    :param w_min_change: Part of the biclustering convergence test. It specifies the minimal allowance of the change of 
+                         row clusters. It should have nonnegative value. Default value is 0.
+    :type w_min_change: `int`
     """
 
     def __init__(self, **params):
-        """
-        For detailed explanation of the general model parameters see :mod:`mf_run`.
-        
-        The parameter :param:`min_residuals` of the underlying model is used as KKT convergence test and should have 
-        positive value. If not specified, value 1e-4 is used. 
-        
-        The following are algorithm specific model options which can be passed with values as keyword arguments.
-        
-        :param version: Specifiy version of the SNMF algorithm. it has two accepting values, 'r' and 'l' for SNMF/R and 
-                        SNMF/L, respectively. Default choice is SNMF/R.
-        :type version: `str`
-        :param eta: Used for suppressing Frobenius norm on the basis matrix (W). Default value is maximum value of the target 
-                    matrix (V). If :param:`eta` is negative, maximum value of target matrix is used for it. 
-        :type eta: `float`
-        :param beta: It controls sparseness. Larger :param:`beta` generates higher sparseness on H. Too large :param:`beta` 
-                     is not recommended. It should have positive value. Default value is 1e-4.
-        :type beta: `float`
-        :param i_conv: Part of the biclustering convergence test. It decides convergence if row clusters and column clusters have 
-                       not changed for :param:`i_conv` convergence tests. It should have nonnegative value.
-                       Default value is 10.
-        :type i_conv: `int`
-        :param w_min_change: Part of the biclustering convergence test. It specifies the minimal allowance of the change of 
-                             row clusters. It should have nonnegative value. Default value is 0.
-        :type w_min_change: `int`
-        """
         self.name = "snmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
@@ -57,7 +59,7 @@ class Snmf(nmf_std.Nmf_std):
                 
         Return fitted factorization model.
         """
-        self._set_params()
+        self.set_params()
         # in version SNMF/L, V is transposed while W and H are swapped and transposed.
         if self.version == 'l':
             self.V = self.V.T
@@ -83,7 +85,7 @@ class Snmf(nmf_std.Nmf_std):
                 self.beta_vec = sqrt(self.beta) * np.ones((1, self.rank))
                 self.I_k = self.eta * np.mat(np.eye(self.rank))
             self.n_restart = 0
-            while self._is_satisfied(cobj, iter):
+            while self.is_satisfied(cobj, iter):
                 self.update()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
@@ -110,7 +112,7 @@ class Snmf(nmf_std.Nmf_std):
         mffit = mf_fit.Mf_fit(self)
         return mffit
     
-    def _set_params(self): 
+    def set_params(self): 
         """Set algorithm specific model options."""   
         self.version = self.options.get('version', 'r')
         self.name = self.name + " - " + self.version
@@ -124,7 +126,7 @@ class Snmf(nmf_std.Nmf_std):
         self.track_error = self.options.get('track_error', False)
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
     
-    def _is_satisfied(self, c_obj, iter):
+    def is_satisfied(self, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         

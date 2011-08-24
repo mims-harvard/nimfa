@@ -1,5 +1,9 @@
 
 """
+    ###################
+    Mf_run (``mf_run``)
+    ###################
+
     This module implements the main interface to launch matrix factorization algorithms. 
     MF algorithms can be combined with implemented seeding methods.
     
@@ -15,7 +19,10 @@
     #. [mandatory] Choose the factorization rank to achieve.
     #. [mandatory] Choose the seeding method to compute the starting point passed to the algorithm. 
     #. [mandatory] Provide the target object to estimate. 
+    #. Provide additional runtime or algorithm specific parameters.
+    
 """
+
 from utils import *
 import methods
 
@@ -64,22 +71,29 @@ def mf(target, seed = None, W = None, H = None, H1 = None,
     :param initialize_only: The specified MF model and its parameters will only be initialized. Factorization will not
                             run. Default is False.
     :type initialize_only: `bool`
-    :param options: Specify some runtime or algorithm specific options. For details on algorithm specific options see specific algorithm
-                    documentation. The following are runtime specific options.
-                    :param track_factor: When :param:`track_factor` is specified, the fitted factorization model is tracked during multiple
+    :param options: Specify:
+                            #. runtime specific options;
+                            #. algorithm specific options. For details on algorithm specific options see specific algorithm
+                               documentation. 
+                               
+                    The following are runtime specific options.
+                    
+                     :param track_factor: When :param:`track_factor` is specified, the fitted factorization model is tracked during multiple
                                         runs of the algorithm. This option is taken into account only when multiple runs are executed 
                                         (:param:`n_run` > 1). From each run of the factorization all matrix factors are retained, which 
                                         can be very space consuming. If space is the problem setting the callback function with :param:`callback` 
                                         is advised which is executed after each run. Tracking is useful for performing some quality or 
                                         performance measures (e.g. cophenetic correlation, consensus matrix, dispersion). By default fitted model
                                         is not tracked.
-                    :type track_factor: `bool`
-                    :param track_error: Tracking the residuals error. Only the residuals from each iteration of the factorization are retained. 
+                     :type track_factor: `bool`
+                     :param track_error: Tracking the residuals error. Only the residuals from each iteration of the factorization are retained. 
                                         Error tracking is not space consuming. By default residuals are not tracked and only the final residuals
                                         are saved. It can be used for plotting the trajectory of the residuals.
-                    :type track_error: `bool`
+                     :type track_error: `bool`
     
-     Stopping criteria:
+    
+     Stopping criteria
+     
      If multiple criteria are passed, the satisfiability of one terminates the factorization run. 
 
     :param max_iter: Maximum number of factorization iterations. Note that the number of iterations depends
@@ -90,7 +104,7 @@ def mf(target, seed = None, W = None, H = None, H1 = None,
                 Default is None.
     :type min_residuals: `float` 
     :param test_conv: It indicates how often convergence test is done. By default convergence is tested each iteration. 
-    :type: `int`
+    :type test_conv: `int`
     """
     if seed.__str__().lower() not in l_seed:
         raise utils.MFError("Unrecognized seeding method. Choose from: %s" % ", ".join(l_seed))

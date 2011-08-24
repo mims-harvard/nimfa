@@ -1,4 +1,10 @@
 
+"""
+    ##########################
+    Mf_fit (``models.mf_fit``)
+    ##########################
+"""
+
 class Mf_fit():
     """
     Base class for storing MF results.

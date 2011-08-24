@@ -1,55 +1,57 @@
 
+"""
+###################################
+Icm (``methods.factorization.icm``)
+###################################
+
+**Iterated Conditional Modes nonnegative matrix factorization (ICM)** [Schmidt2009]_. 
+
+Iterated conditional modes algorithm is a deterministic algorithm for obtaining the configuration that maximizes the 
+joint probability of a Markov random field. This is done iteratively by maximizing the probability of each variable 
+conditioned on the rest.
+
+Most NMF algorithms can be seen as computing a maximum likelihood or maximum a posteriori (MAP) estimate of the 
+nonnegative factor matrices under some assumptions on the distribution of the data and factors. ICM algorithm computes
+the MAP estimate. In this approach, iterations over the parameters of the model set each parameter equal to the conditional
+mode and after a number of iterations the algorithm converges to a local maximum of the joint posterior density. This is a
+block coordinate ascent algorithm with the benefit that the optimum is computed for each block of parameters in each 
+iteration. 
+
+ICM has low computational cost per iteration as the modes of conditional densities have closed form expressions.   
+
+In [Schmidt2009]_ ICM is compared to the popular Lee and Seung's multiplicative update algorithm and fast Newton algorithm on image
+feature extraction test. ICM converges much faster than multiplicative update algorithm and with approximately the same
+rate per iteration as fast Newton algorithm. All three algorithms have approximately the same computational cost per
+iteration.  
+"""
+
 from mf.models import *
 from mf.utils import *
 from mf.utils.linalg import *
 
 class Icm(nmf_std.Nmf_std):
     """
-    Iterated Conditional Modes nonnegative matrix factorization (ICM) [16]. 
+    For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    Iterated conditional modes algorithm is a deterministic algorithm for obtaining the configuration that maximizes the 
-    joint probability of a Markov random field. This is done iteratively by maximizing the probability of each variable 
-    conditioned on the rest.
+    The following are algorithm specific model options which can be passed with values as keyword arguments.
     
-    Most NMF algorithms can be seen as computing a maximum likelihood or maximum a posteriori (MAP) estimate of the 
-    nonnegative factor matrices under some assumptions on the distribution of the data and factors. ICM algorithm computes
-    the MAP estimate. In this approach, iterations over the parameters of the model set each parameter equal to the conditional
-    mode and after a number of iterations the algorithm converges to a local maximum of the joint posterior density. This is a
-    block coordinate ascent algorithm with the benefit that the optimum is computed for each block of parameters in each 
-    iteration. 
-    
-    ICM has low computational cost per iteration as the modes of conditional densities have closed form expressions.   
-    
-    In [16] ICM is compared to the popular Lee and Seung's multiplicative update algorithm and fast Newton algorithm on image
-    feature extraction test. ICM converges much faster than multiplicative update algorithm and with approximately the same
-    rate per iteration as fast Newton algorithm. All three algorithms have approximately the same computational cost per
-    iteration. 
-    
-    [16] Schmidt, M.N., Winther, O.,  and Hansen, L.K., (2009). Bayesian Non-negative Matrix Factorization. 
-        In Proceedings of ICA. 2009, 540-547. 
-    """
+    :param iiter: Number of inner iterations. Default is 20. 
+    :type iiter: `int`
+    :param alpha: The prior for basis matrix (W) of proper dimensions. Default is uniformely distributed random sparse matrix prior with
+                  0.8 density parameter.
+    :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
+    :param beta: The prior for mixture matrix (H) of proper dimensions. Default is uniformely distributed random sparse matrix prior with
+                 0.8 density parameter.
+    :type beta: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
+    :param theta: The prior for :param:`sigma`. Default is 0.
+    :type theta: `float`
+    :param k: The prior for :param:`sigma`. Default is 0. 
+    :type k: `float`
+    :param sigma: Initial value for noise variance (sigma**2). Default is 1. 
+    :type sigma: `float`       
+    """   
 
     def __init__(self, **params):
-        """
-        For detailed explanation of the general model parameters see :mod:`mf_run`.
-        
-        The following are algorithm specific model options which can be passed with values as keyword arguments.
-        
-        :param iiter: Number of inner iterations. Default is 20. 
-        :type iiter: `int`
-        :param alpha: The prior for basis matrix (W) of proper dimensions. Default is uniformely distributed random sparse matrix prior with
-                      0.8 density parameter.
-        :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
-        :param beta: The prior for mixture matrix (H) of proper dimensions. Default is uniformely distributed random sparse matrix prior with
-                     0.8 density parameter.
-        :type beta: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
-        :param theta: The prior for :param:`sigma`. Default is 0.
-        :type theta: `float`
-        :param k: The prior for :param:`sigma`. Default is 0. 
-        :type k: `float`
-        :param sigma: Initial value for noise variance (sigma**2). Default is 1. 
-        :type sigma: `float`       
-        """
         self.name = "icm"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
@@ -60,14 +62,14 @@ class Icm(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        self._set_params()
+        self.set_params()
         self.v = multiply(self.V, self.V).sum() / 2.
                 
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             pobj = cobj = self.objective()
             iter = 0
-            while self._is_satisfied(pobj, cobj, iter):
+            while self.is_satisfied(pobj, cobj, iter):
                 pobj = cobj
                 self.update()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
@@ -86,7 +88,7 @@ class Icm(nmf_std.Nmf_std):
         mffit = mf_fit.Mf_fit(self)
         return mffit
         
-    def _is_satisfied(self, p_obj, c_obj, iter):
+    def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
@@ -109,7 +111,7 @@ class Icm(nmf_std.Nmf_std):
             return False
         return True
     
-    def _set_params(self):
+    def set_params(self):
         """Set algorithm specific model options."""
         self.iiter = self.options.get('iiter', 20)
         self.alpha = self.options.get('alpha', sp.rand(self.V.shape[0], self.rank, density = 0.8, format = 'csr'))

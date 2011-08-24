@@ -1,4 +1,10 @@
 
+"""
+    ###################################
+    Random (``methods.seeding.random``)
+    ###################################
+"""
+
 from mf.utils.linalg import *
 
 class Random(object):
@@ -21,16 +27,21 @@ class Random(object):
         :type V: One of the :class:`scipy.sparse` sparse matrices types or :class:`numpy.matrix`
         :param rank: Factorization rank. 
         :type rank: `int`
-        :param options: Specify algorithm or model specific options (e.g. initialization of extra matrix factor, seeding parameters).
-                            #. :param Sn: n = 1, 2, 3, ..., k specify additional k matrix factors which need to be initialized.
-                                          The value of each option Sn is a tuple, denoting matrix shape. Matrix factors are returned in the same
-                                          order as their descriptions in input.
-                               :type Sn: k tuples
-                            #. :param density: Density of the generated matrices. Density of 1 means a full matrix, density of 0 means a 
-                                               matrix with no nonzero items. Default value is 0.7. Density parameter is applied 
-                                               only if passed target :param:`V` is an instance of one :class:`scipy.sparse` sparse
-                                               types. 
-                               :type density: `float`
+        :param options: Specify:
+                            #. algorithm;
+                            #. model specific options (e.g. initialization of extra matrix factor, seeding parameters).
+                    
+                        The following are the options.
+                    
+                         :param Sn: n = 1, 2, 3, ..., k specify additional k matrix factors which need to be initialized.
+                                    The value of each option Sn is a tuple, denoting matrix shape. Matrix factors are returned in the same
+                                    order as their descriptions in input.
+                         :type Sn:  k tuples
+                         :param density: Density of the generated matrices. Density of 1 means a full matrix, density of 0 means a 
+                                         matrix with no nonzero items. Default value is 0.7. Density parameter is applied 
+                                         only if passed target :param:`V` is an instance of one :class:`scipy.sparse` sparse
+                                         types. 
+                         :type density: `float`
         """
         self.rank = rank
         self.density = options.get('density', 0.7)

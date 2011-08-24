@@ -1,10 +1,16 @@
 
+"""
+    ###################################
+    Nndsvd (``methods.seeding.nndsvd``)
+    ###################################
+"""
+
 from mf.utils.utils import *
 from mf.utils.linalg import *
 
 class Nndsvd(object):
     """
-    Nonnegative Double Singular Value Decomposition (NNDSVD) [1] is a new method designed to enhance the initialization
+    Nonnegative Double Singular Value Decomposition (NNDSVD) [Boutsidis2007]_ is a new method designed to enhance the initialization
     stage of the nonnegative matrix factorization. The basic algorithm contains no randomization and is based on 
     two SVD processes, one approximating the data matrix, the other approximating positive sections of the 
     resulting partial SVD factors utilizing an algebraic property of unit rank matrices. 
@@ -12,9 +18,6 @@ class Nndsvd(object):
     NNDSVD is well suited to initialize NMF algorithms with sparse factors. Numerical examples suggest that NNDSVD leads 
     to rapid reduction of the approximation error of many NMF algorithms. By setting algorithm options :param:`flag` dense factors can be
     generated. 
-    
-    [1] Boutsidis, C., Gallopoulos, E., (2007). SVD-based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, 2007,
-    doi:10.1016/j.patcog.2007.09.010.
     """
 
     def __init__(self):
@@ -32,14 +35,15 @@ class Nndsvd(object):
         :param rank: Factorization rank. 
         :type rank: `int`
         :param options: Specify algorithm or model specific options (e.g. initialization of extra matrix factor, seeding parameters).
-                        :param flag: Indicate the variant of the NNDSVD algorithm. Possible values are:
-                                     #. 0 -- NNDSVD,
-                                     #. 1 -- NNDSVDa (fill in the zero elements with the average),
-                                     #. 2 -- NNDSVDar (fill in the zero elements with random values in the space [0:average/100]).
+                        
+                         :param flag: Indicate the variant of the NNDSVD algorithm. Possible values are:
+                                     * 0 -- NNDSVD,
+                                     * 1 -- NNDSVDa (fill in the zero elements with the average),
+                                     * 2 -- NNDSVDar (fill in the zero elements with random values in the space [0:average/100]).
                                     Default is NNDSVD.
                                     Because of the nature of NNDSVDa and NNDSVDar, when the target matrix is sparse, only NNDSVD is possible
                                     and :param:`flag` is ignored (NNDSVDa and NNDSVDar eliminate zero elements). 
-                        :type flag: `int`
+                         :type flag: `int`
         """
         self.rank = rank
         self.flag = options.get('flag', 0)

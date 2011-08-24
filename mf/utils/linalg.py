@@ -1,3 +1,12 @@
+
+"""
+    #########################
+    Linalg (``utils.linalg``)
+    #########################
+    
+    Linear algebra helper routines and wrapper functions for handling sparse matrices and dense matrices representation.
+"""
+
 import numpy as np
 import scipy
 import scipy.sparse as sp
@@ -9,10 +18,6 @@ from math import sqrt, log, pow, isnan, ceil
 from scipy.cluster.hierarchy import linkage, cophenet
 from scipy.special import erfc, erfcinv
 import warnings
-
-"""
-    Linear algebra helper routines
-"""
 
 #######
 ###    Wrapper functions for handling sparse matrices and dense matrices representation.

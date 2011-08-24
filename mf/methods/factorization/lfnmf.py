@@ -1,45 +1,46 @@
 
+"""
+#######################################
+Lfnmf (``methods.factorization.lfnmf``)
+#######################################
+
+**Fisher Nonnegative Matrix Factorization for learning Local features (LFNMF)** [Wang2004]_.
+
+LFNMF is based on nonnegative matrix factorization (NMF), which allows only additive combinations of nonnegative 
+basis components. The NMF bases are spatially global, whereas local bases would be preferred. Li [Li2001]_ proposed 
+local nonnegative matrix factorization (LNFM) to achieve a localized NMF representation by adding three constraints
+to enforce spatial locality: minimize the number of basis components required to represent target matrix; minimize
+redundancy between different bases by making different bases as orthogonal as possible; maximize the total activity
+on each component, i. e. the total squared projection coefficients summed over all training images. 
+However, LNMF does not encode discrimination information for a classification problem. 
+
+LFNMF can produce both additive and spatially localized basis components as LNMF and it also encodes characteristics of
+Fisher linear discriminant analysis (FLDA). The main idea of LFNMF is to add Fisher constraint to the original NMF. 
+Because the columns of the mixture matrix (H) have a one-to-one correspondence with the columns of the target matrix
+(V), between class scatter of H is maximized and within class scatter of H is minimized. 
+
+Example usages are pattern recognition problems in classification, feature generation and extraction for diagnostic 
+classification purposes, face recognition etc.      
+"""
+
 from mf.models import *
 from mf.utils import *
 from mf.utils.linalg import *
 
 class Lfnmf(nmf_std.Nmf_std):
     """
-    Fisher Nonnegative Matrix Factorization for learning Local features (LFNMF) [6].
+    For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    LFNMF is based on nonnegative matrix factorization (NMF), which allows only additive combinations of nonnegative 
-    basis components. The NMF bases are spatially global, whereas local bases would be preferred. Li [7] proposed 
-    local nonnegative matrix factorization (LNFM) to achieve a localized NMF representation by adding three constraints
-    to enforce spatial locality: minimize the number of basis components required to represent target matrix; minimize
-    redundancy between different bases by making different bases as orthogonal as possible; maximize the total activity
-    on each component, i. e. the total squared projection coefficients summed over all training images. 
-    However, LNMF does not encode discrimination information for a classification problem. 
+    The following are algorithm specific model options which can be passed with values as keyword arguments.
     
-    LFNMF can produce both additive and spatially localized basis components as LNMF and it also encodes characteristics of
-    Fisher linear discriminant analysis (FLDA). The main idea of LFNMF is to add Fisher constraint to the original NMF. 
-    Because the columns of the mixture matrix (H) have a one-to-one correspondence with the columns of the target matrix
-    (V), between class scatter of H is maximized and within class scatter of H is minimized. 
-    
-    Example usages are pattern recognition problems in classification, feature generation and extraction for diagnostic 
-    classification purposes, face recognition etc.  
-    
-    [6] Wang, Y., et. al., (2004). Fisher non-negative matrix factorization for learning local features. Proc. Asian Conf. on Comp. Vision. 2004.    
-    [7] Li, S. Z., et. al., (2001). Learning spatially localized, parts-based representation. Proc. of the 2001 IEEE Comp. Soc.
-        Conf. on Comp. Vision and Pattern Recognition. CVPR 2001, I-207-I-212. IEEE Comp. Soc. doi: 10.1109/CVPR.2001.990477.
+    :param alpha: Parameter :param:`alpha` is weight used to minimize within class scatter and maximize between class scatter of the 
+                  encoding mixture matrix. The objective function is the constrained divergence, which is the standard Lee's divergence
+                  rule with added terms :param:`alpha` * S_w - :param:`alpha` * S_h, where S_w and S_h are within class and between class
+                  scatter, respectively. It should be nonnegative. Default value is 0.01.
+    :type alpha: `float`
     """
 
     def __init__(self, **params):
-        """
-        For detailed explanation of the general model parameters see :mod:`mf_run`.
-        
-        The following are algorithm specific model options which can be passed with values as keyword arguments.
-        
-        :param alpha: Parameter :param:`alpha` is weight used to minimize within class scatter and maximize between class scatter of the 
-                      encoding mixture matrix. The objective function is the constrained divergence, which is the standard Lee's divergence
-                      rule with added terms :param:`alpha` * S_w - :param:`alpha` * S_h, where S_w and S_h are within class and between class
-                      scatter, respectively. It should be nonnegative. Default value is 0.01.
-        :type alpha: `float`
-        """
         self.name = "lfnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
@@ -50,14 +51,14 @@ class Lfnmf(nmf_std.Nmf_std):
         
         Return fitted factorization model.
         """
-        self._set_params()
+        self.set_params()
         
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             self.Sw, self.Sb = np.mat(np.zeros((1, 1))), np.mat(np.zeros((1, 1)))
             pobj = cobj = self.objective()
             iter = 0
-            while self._is_satisfied(pobj, cobj, iter):
+            while self.is_satisfied(pobj, cobj, iter):
                 pobj = cobj
                 self.update()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
@@ -76,7 +77,7 @@ class Lfnmf(nmf_std.Nmf_std):
         mffit = mf_fit.Mf_fit(self)
         return mffit
      
-    def _is_satisfied(self, p_obj, c_obj, iter):
+    def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
@@ -99,7 +100,7 @@ class Lfnmf(nmf_std.Nmf_std):
             return False
         return True
     
-    def _set_params(self):
+    def set_params(self):
         """Set algorithm specific model options."""
         self.alpha = self.options.get('alpha', 0.01) 
         self.track_factor = self.options.get('track_factor', False)

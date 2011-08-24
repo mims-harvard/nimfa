@@ -1,29 +1,32 @@
 
+"""
+###################################
+Pmf (``methods.factorization.pmf``)
+###################################
+
+**Probabilistic Nonnegative Matrix Factorization (PMF)** interpreting target matrix (V) as samples 
+from a multinomial [Laurberg2008]_, [Hansen2008]_ and using Euclidean distance for 
+convergence test. It is expectation maximization algorithm. 
+"""
+
 from mf.models import *
 from mf.utils import *
 from mf.utils.linalg import *
 
 class Pmf(nmf_std.Nmf_std):
     """
-    Probabilistic Nonnegative Matrix Factorization (PMF) interpreting target matrix (V) as samples from a multinomial [9], [10], (Hansen, 2005)
-    and using Euclidean distance for convergence test. It is expectation maximization algorithm. 
+    For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    [9] Laurberg, H.,et. al., (2008). Theorems on positive data: on the uniqueness of NMF. Computational intelligence and neuroscience.
-    [10] Hansen, L. K., (2008). Generalization in high-dimensional factor models. Web: http://www.stanford.edu/group/mmds/slides2008/hansen.pdf.
+    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    
+    :param rel_error: In PMF only Euclidean distance cost function is used for convergence test by default. By specifying the value for 
+                      minimum relative error, the relative error measure can be used as stopping criteria as well. In this case of 
+                      multiple passed criteria, the satisfiability of one terminates the factorization run. Suggested value for
+                      :param:`rel_error` is 1e-5.
+    :type rel_error: `float`
     """
 
     def __init__(self, **params):
-        """
-        For detailed explanation of the general model parameters see :mod:`mf_run`.
-        
-        The following are algorithm specific model options which can be passed with values as keyword arguments.
-        
-        :param rel_error: In PMF only Euclidean distance cost function is used for convergence test by default. By specifying the value for 
-                          minimum relative error, the relative error measure can be used as stopping criteria as well. In this case of 
-                          multiple passed criteria, the satisfiability of one terminates the factorization run. Suggested value for
-                          :param:`rel_error` is 1e-5.
-        :type rel_error: `float`
-        """
         self.name = "pmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
@@ -34,7 +37,7 @@ class Pmf(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        self._set_params()
+        self.set_params()
                 
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
@@ -46,7 +49,7 @@ class Pmf(nmf_std.Nmf_std):
             self.sqrt_P = sop(self.P, s = None, op = sqrt) 
             pobj = cobj = self.objective() 
             iter = 0
-            while self._is_satisfied(pobj, cobj, iter):
+            while self.is_satisfied(pobj, cobj, iter):
                 pobj = cobj
                 self.update()
                 self._adjustment()
@@ -68,7 +71,7 @@ class Pmf(nmf_std.Nmf_std):
         mffit = mf_fit.Mf_fit(self)
         return mffit
     
-    def _is_satisfied(self, p_obj, c_obj, iter):
+    def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
@@ -98,7 +101,7 @@ class Pmf(nmf_std.Nmf_std):
         self.H = max(self.H, np.finfo(self.H.dtype).eps)
         self.W = max(self.W, np.finfo(self.W.dtype).eps)
         
-    def _set_params(self):
+    def set_params(self):
         """Set algorithm specific model options."""
         self.rel_error = self.options.get('rel_error', False)
         self.track_factor = self.options.get('track_factor', False)

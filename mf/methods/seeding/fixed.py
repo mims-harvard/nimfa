@@ -1,4 +1,10 @@
 
+"""
+    #################################
+    Fixed (``methods.seeding.fixed``)
+    #################################
+"""
+
 from mf.utils.linalg import *
 
 class Fixed(object):

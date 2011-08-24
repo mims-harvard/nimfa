@@ -1,19 +1,22 @@
 
+"""
+    #############################################
+    Random_vcol (``methods.seeding.random_vcol``)
+    #############################################
+"""
+
 from mf.utils.linalg import *
 
 class Random_vcol(object):
     """
-    Random Vcol [17] is inexpensive initialization method for nonnegative matrix factorization. Random Vcol forms an initialization
+    Random Vcol [Albright2006]_ is inexpensive initialization method for nonnegative matrix factorization. Random Vcol forms an initialization
     of each column of the basis matrix (W) by averaging p random columns of target matrix (V). Similarly, Random Vcol forms an initialization
     of each row of the mixture matrix (H) by averaging p random rows of target matrix (V). It makes more sense to build the 
     basis vectors from the given data than to form completely random basis vectors, as random initialization does. Sparse
     matrices are built from the original sparse data. 
     
     Method's performance lies between random initialization and centroid initialization, which is built from the centroid
-    decomposition.  
-    
-    [17] Albright, R. et al., (2006). Algorithms, initializations, and convergence for the nonnegative matrix factorization. Matrix, 
-        (919), p.1-18. Available at: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.89.2161&rep=rep1&type=pdf.
+    decomposition.      
     """
     
     def __init__(self):
@@ -28,12 +31,13 @@ class Random_vcol(object):
         :param rank: Factorization rank. 
         :type rank: `int`
         :param options: Specify algorithm or model specific options (e.g. initialization of extra matrix factor, seeding parameters).
-                        :param p_c: The number of columns of target matrix used to average the column of basis matrix.
+                         
+                         :param p_c: The number of columns of target matrix used to average the column of basis matrix.
                                     Default value for :param:`p_c` is 1/5 * (target.shape[1]).
-                        :type p_c: `int`
-                        :param p_r: The number of rows of target matrix used to average the row of basis matrix.
+                         :type p_c: `int`
+                         :param p_r: The number of rows of target matrix used to average the row of basis matrix.
                                     Default value for :param:`p_r` is 1/5 * (target.shape[0]).
-                        :type p_r: `int`
+                         :type p_r: `int`
         """
         self.rank = rank
         self.p_c = options.get('p_c', int(ceil(1. / 5 * V.shape[1])))

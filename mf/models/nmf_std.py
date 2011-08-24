@@ -1,4 +1,10 @@
 
+"""
+    ############################
+    Nmf_std (``models.nmf_std``)
+    ############################
+"""
+
 from nmf import *
 
 class Nmf_std(Nmf):

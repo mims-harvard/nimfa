@@ -1,72 +1,74 @@
 
+"""
+#################################
+Bd (``methods.factorization.bd``)
+#################################
+
+**Bayesian Decomposition (BD) - Bayesian nonnegative matrix factorization Gibbs sampler** [Schmidt2009]_.
+
+In the Bayesian framework knowledge of the distribution of the residuals is stated in terms of likelihood function and
+the parameters in terms of prior densities. In this method normal likelihood and exponential priors are chosen as these 
+are suitable for a wide range of problems and permit an efficient Gibbs sampling procedure. Using Bayes rule, the posterior
+can be maximized to yield an estimate of basis (W) and mixture (H) matrix. However, we are interested in estimating the 
+marginal density of the factors and because the marginals cannot be directly computed by integrating the posterior, an
+MCMC sampling method is used.    
+
+In Gibbs sampling a sequence of samples is drawn from the conditional posterior densities of the model parameters and this
+converges to a sample from the joint posterior. The conditional densities of basis and mixture matrices are proportional 
+to a normal multiplied by an exponential, i. e. rectified normal density. The conditional density of sigma**2 is an inverse 
+Gamma density. The posterior can be approximated by sequentially sampling from these conditional densities. 
+
+Bayesian NMF is concerned with the sampling from the posterior distribution of basis and mixture factors. Algorithm outline
+is: 
+    #. Initialize basis and mixture matrix. 
+    #. Sample from rectified Gaussian for each column in basis matrix.
+    #. Sample from rectified Gaussian for each row in mixture matrix. 
+    #. Sample from inverse Gamma for noise variance
+    #. Repeat the previous three steps until some convergence criterion is met. 
+    
+The sampling procedure could be used for estimating the marginal likelihood, which is useful for model selection, i. e. 
+choosing factorization rank.   
+"""
+
 from mf.models import *
 from mf.utils import *
 from mf.utils.linalg import *
 
 class Bd(nmf_std.Nmf_std):
     """
-    Bayesian Decomposition (BD) - Bayesian nonnegative matrix factorization Gibbs sampler [16].
+    For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    In the Bayesian framework knowledge of the distribution of the residuals is stated in terms of likelihood function and
-    the parameters in terms of prior densities. In this method normal likelihood and exponential priors are chosen as these 
-    are suitable for a wide range of problems and permit an efficient Gibbs sampling procedure. Using Bayes rule, the posterior
-    can be maximized to yield an estimate of basis (W) and mixture (H) matrix. However, we are interested in estimating the 
-    marginal density of the factors and because the marginals cannot be directly computed by integrating the posterior, an
-    MCMC sampling method is used.    
+    If :param:`max_iter` of the underlying model is not specified, default value of :param:`max_iter` 30 is set. The
+    meaning of :param:`max_iter` for BD is the number of Gibbs samples to compute. Sequence of Gibbs samples converges
+    to a sample from the joint posterior. 
     
-    In Gibbs sampling a sequence of samples is drawn from the conditional posterior densities of the model parameters and this
-    converges to a sample from the joint posterior. The conditional densities of basis and mixture matrices are proportional 
-    to a normal multiplied by an exponential, i. e. rectified normal density. The conditional density of sigma**2 is an inverse 
-    Gamma density. The posterior can be approximated by sequentially sampling from these conditional densities. 
+    The following are algorithm specific model options which can be passed with values as keyword arguments.
     
-    Bayesian NMF is concerned with the sampling from the posterior distribution of basis and mixture factors. Algorithm outline
-    is: 
-        #. Initialize basis and mixture matrix. 
-        #. Sample from rectified Gaussian for each column in basis matrix.
-        #. Sample from rectified Gaussian for each row in mixture matrix. 
-        #. Sample from inverse Gamma for noise variance
-        #. Repeat the previous three steps until some convergence criterion is met. 
-        
-    The sampling procedure could be used for estimating the marginal likelihood, which is useful for model selection, i. e. 
-    choosing factorization rank. 
-    
-    [16] Schmidt, M.N., Winther, O.,  and Hansen, L.K., (2009). Bayesian Non-negative Matrix Factorization. 
-        In Proceedings of ICA. 2009, 540-547.
+    :param alpha: The prior for basis matrix (W) of proper dimensions. Default is zeros matrix prior.
+    :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
+    :param beta: The prior for mixture matrix (H) of proper dimensions. Default is zeros matrix prior.
+    :type beta: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
+    :param theta: The prior for :param:`sigma`. Default is 0.
+    :type theta: `float`
+    :param k: The prior for :param:`sigma`. Default is 0. 
+    :type k: `float`
+    :param sigma: Initial value for noise variance (sigma**2). Default is 1. 
+    :type sigma: `float`  
+    :param skip: Number of initial samples to skip. Default is 100.
+    :type skip: `int`
+    :param stride: Return every :param:`stride`'th sample. Default is 1. 
+    :type stride: `int`
+    :param n_w: Method does not sample from these columns of basis matrix. Column i is not sampled if :param:`n_w`[i] is True. 
+                Default is sampling from all columns. 
+    :type n_w: :class:`numpy.ndarray` or list with shape (factorization rank, 1) with logical values
+    :param n_h: Method does not sample from these rows of mixture matrix. Row i is not sampled if :param:`n_h`[i] is True. 
+                Default is sampling from all rows. 
+    :type n_h: :class:`numpy.ndarray` or list with shape (factorization rank, 1) with logical values
+    :param n_sigma: Method does not sample from :param:`sigma`. By default sampling is done. 
+    :type n_sigma: `bool`    
     """
 
     def __init__(self, **params):
-        """
-        For detailed explanation of the general model parameters see :mod:`mf_run`.
-        
-        If :param:`max_iter` of the underlying model is not specified, default value of :param:`max_iter` 30 is set. The
-        meaning of :param:`max_iter` for BD is the number of Gibbs samples to compute. Sequence of Gibbs samples converges
-        to a sample from the joint posterior. 
-        
-        The following are algorithm specific model options which can be passed with values as keyword arguments.
-        
-        :param alpha: The prior for basis matrix (W) of proper dimensions. Default is zeros matrix prior.
-        :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
-        :param beta: The prior for mixture matrix (H) of proper dimensions. Default is zeros matrix prior.
-        :type beta: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
-        :param theta: The prior for :param:`sigma`. Default is 0.
-        :type theta: `float`
-        :param k: The prior for :param:`sigma`. Default is 0. 
-        :type k: `float`
-        :param sigma: Initial value for noise variance (sigma**2). Default is 1. 
-        :type sigma: `float`  
-        :param skip: Number of initial samples to skip. Default is 100.
-        :type skip: `int`
-        :param stride: Return every :param:`stride`'th sample. Default is 1. 
-        :type stride: `int`
-        :param n_w: Method does not sample from these columns of basis matrix. Column i is not sampled if :param:`n_w`[i] is True. 
-                    Default is sampling from all columns. 
-        :type n_w: :class:`numpy.ndarray` or list with shape (factorization rank, 1) with logical values
-        :param n_h: Method does not sample from these rows of mixture matrix. Row i is not sampled if :param:`n_h`[i] is True. 
-                    Default is sampling from all rows. 
-        :type n_h: :class:`numpy.ndarray` or list with shape (factorization rank, 1) with logical values
-        :param n_sigma: Method does not sample from :param:`sigma`. By default sampling is done. 
-        :type n_sigma: `bool`    
-        """
         self.name = "bd"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
@@ -77,14 +79,14 @@ class Bd(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        self._set_params()
+        self.set_params()
         self.v = multiply(self.V, self.V).sum() / 2.
                 
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             pobj = cobj = self.objective()
             iter = 0
-            while self._is_satisfied(pobj, cobj, iter):
+            while self.is_satisfied(pobj, cobj, iter):
                 pobj = cobj
                 self.update(iter)
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
@@ -103,7 +105,7 @@ class Bd(nmf_std.Nmf_std):
         mffit = mf_fit.Mf_fit(self)
         return mffit
         
-    def _is_satisfied(self, p_obj, c_obj, iter):
+    def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
@@ -126,7 +128,7 @@ class Bd(nmf_std.Nmf_std):
             return False
         return True
     
-    def _set_params(self):
+    def set_params(self):
         """Set algorithm specific model options."""
         if not self.max_iter: self.max_iter = 30
         self.alpha = self.options.get('alpha', sp.csr_matrix((self.V.shape[0], self.rank)))

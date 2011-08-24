@@ -1,5 +1,5 @@
 
-"""
+"""    
     This package contains factorization models used in the library MF. Specifically, it contains the following:
     
         #. Generic factorization model for handling common computations and assessing quality and performance 

@@ -1,4 +1,10 @@
 
+"""
+    ###################
+    Nmf (``models.nmf``)
+    ###################
+"""
+
 import mf.utils.utils as utils
 from mf.utils.linalg import *
 

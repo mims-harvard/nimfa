@@ -1,53 +1,54 @@
 
+"""
+###################################
+Nmf (``methods.factorization.nmf``)
+###################################
+
+**Standard Nonnegative Matrix Factorization (NMF)**. Based on Kullbach-Leibler divergence, it uses simple multiplicative
+updates [Lee2001]_, enhanced to avoid numerical underflow [Brunet2004]_. Based on Euclidean distance, it uses simple multiplicative
+updates [Lee2001]_. Different objective functions can be used, namely Euclidean distance, divergence or connectivity 
+matrix convergence. 
+
+Together with a novel model selection mechanism, NMF is an efficient method for identification of distinct molecular
+patterns and provides a powerful method for class discovery. It appears to have higher resolution such as HC or 
+SOM and to be less sensitive to a priori selection of genes. Rather than separating gene clusters based on distance
+computation, NMF detects context-dependent patterns of gene expression in complex biological systems. 
+
+Besides usages in bioinformatics NMF can be applied to text analysis, image processing, multiway clustering,
+environmetrics etc.     
+"""
+
 from mf.models import *
 from mf.utils import *
 from mf.utils.linalg import *
 
 class Nmf(nmf_std.Nmf_std):
     """
-    Standard Nonnegative Matrix Factorization (NMF). Based on Kullbach-Leibler divergence, it uses simple multiplicative
-    updates [2], enhanced to avoid numerical underflow [3]. Based on Euclidean distance, it uses simple multiplicative
-    updates [2]. Different objective functions can be used, namely Euclidean distance, divergence or connectivity 
-    matrix convergence. 
+    For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    Together with a novel model selection mechanism, NMF is an efficient method for identification of distinct molecular
-    patterns and provides a powerful method for class discovery. It appears to have higher resolution such as HC or 
-    SOM and to be less sensitive to a priori selection of genes. Rather than separating gene clusters based on distance
-    computation, NMF detects context-dependent patterns of gene expression in complex biological systems. 
+    The following are algorithm specific model options which can be passed with values as keyword arguments.
     
-    Besides usages in bioinformatics NMF can be applied to text analysis, image processing, multiway clustering,
-    environmetrics etc. 
-    
-    [2] Lee, D..D., and Seung, H.S., (2001). Algorithms for Non-negative Matrix Factorization, Adv. Neural Info. Proc. Syst. 13, 556-562.
-    [3] Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P., (2004). Metagenes and molecular pattern discovery using matrix factorization. 
-        Proceedings of the National Academy of Sciences of the United States of America, 101(12), 4164-9. doi: 10.1073/pnas.0308531101.
+    :param update: Type of update equations used in factorization. When specifying model parameter :param:`update` 
+                   can be assigned to:
+                       #. 'Euclidean' for classic Euclidean distance update equations, 
+                       #. 'divergence' for divergence update equations.
+                   By default Euclidean update equations are used. 
+    :type update: `str`
+    :param objective: Type of objective function used in factorization. When specifying model parameter :param:`objective`
+                      can be assigned to:
+                          #. 'fro' for standard Frobenius distance cost function,
+                          #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
+                          #. 'conn' for measuring the number of consecutive iterations in which the 
+                              connectivity matrix has not changed. 
+                      By default the standard Frobenius distance cost function is used.  
+    :type objective: `str` 
+    :param conn_change: Stopping criteria used only if for :param:`objective` function connectivity matrix
+                        measure is selected. It specifies the minimum required of consecutive iterations in which the
+                        connectivity matrix has not changed. Default value is 30. 
+    :type conn_change: `int`
     """
 
     def __init__(self, **params):
-        """
-        For detailed explanation of the general model parameters see :mod:`mf_run`.
-        
-        The following are algorithm specific model options which can be passed with values as keyword arguments.
-        
-        :param update: Type of update equations used in factorization. When specifying model parameter :param:`update` 
-                       can be assigned to:
-                           #. 'Euclidean' for classic Euclidean distance update equations, 
-                           #. 'divergence' for divergence update equations.
-                       By default Euclidean update equations are used. 
-        :type update: `str`
-        :param objective: Type of objective function used in factorization. When specifying model parameter :param:`objective`
-                          can be assigned to:
-                              #. 'fro' for standard Frobenius distance cost function,
-                              #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
-                              #. 'conn' for measuring the number of consecutive iterations in which the 
-                                  connectivity matrix has not changed. 
-                          By default the standard Frobenius distance cost function is used.  
-        :type objective: `str` 
-        :param conn_change: Stopping criteria used only if for :param:`objective` function connectivity matrix
-                            measure is selected. It specifies the minimum required of consecutive iterations in which the
-                            connectivity matrix has not changed. Default value is 30. 
-        :type conn_change: `int`
-        """
         self.name = "nmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
@@ -58,13 +59,13 @@ class Nmf(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        self._set_params()
+        self.set_params()
                 
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             pobj = cobj = self.objective()
             iter = 0
-            while self._is_satisfied(pobj, cobj, iter):
+            while self.is_satisfied(pobj, cobj, iter):
                 pobj = cobj
                 self.update()
                 self._adjustment()
@@ -84,7 +85,7 @@ class Nmf(nmf_std.Nmf_std):
         mffit = mf_fit.Mf_fit(self)
         return mffit
     
-    def _is_satisfied(self, p_obj, c_obj, iter):
+    def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
@@ -133,7 +134,7 @@ class Nmf(nmf_std.Nmf_std):
         self.H = max(self.H, np.finfo(self.H.dtype).eps)
         self.W = max(self.W, np.finfo(self.W.dtype).eps)
         
-    def _set_params(self):
+    def set_params(self):
         """Set algorithm specific model options."""
         self.update = getattr(self, self.options.get('update', 'euclidean') + '_update')
         self.objective = getattr(self, self.options.get('objective', 'fro') + '_objective')

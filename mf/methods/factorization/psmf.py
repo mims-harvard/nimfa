@@ -1,60 +1,57 @@
 
+"""
+#####################################
+Psmf (``methods.factorization.psmf``)
+#####################################
+
+**Probabilistic Sparse Matrix Factorization (PSMF)** [Dueck2005]_, [Dueck2004]_. PSMF allows for varying levels of sensor noise in the
+data, uncertainty in the hidden prototypes used to explain the data and uncertainty as to the prototypes selected
+to explain each data vector stacked in target matrix (V). 
+
+This technique explicitly maximizes a lower bound on the log-likelihood of the data under a probability model. Found
+sparse encoding can be used for a variety of tasks, such as functional prediction, capturing functionally relevant
+hidden factors that explain gene expression data and visualization. As this algorithm computes probabilities 
+rather than making hard decisions, it can be shown that a higher data log-likelihood is obtained than from the 
+versions (iterated conditional modes) that make hard decisions [Srebro2001]_.
+
+Given a target matrix (V [n, m]), containing n m-dimensional data points, basis matrix (factor loading matrix) (W) 
+and mixture matrix (matrix of hidden factors) (H) are found under a structural sparseness constraint that each row 
+of W contains at most N (of possible factorization rank number) non-zero entries. Intuitively, this corresponds to 
+explaining each row vector of V as a linear combination (weighted by the corresponding row in W) of a small subset 
+of factors given by rows of H. This framework includes simple clustering by setting N = 1 and ordinary low-rank 
+approximation N = factorization rank as special cases. 
+
+A probability model presuming Gaussian sensor noise in V (V = WH + noise) and uniformly distributed factor 
+assignments is constructed. Factorized variational inference method is used to perform tractable inference on the 
+latent variables and account for noise and uncertainty. The number of factors, r_g, contributing to each data point is
+multinomially distributed such that P(r_g = n) = v_n, where v is a user specified N-vector. PSMF model estimation using  
+factorized variational inference has greater computational complexity than basic NMF methods [Dueck2004]_. 
+
+Example of usage of PSMF for identifying gene transcriptional modules from gene expression data is described in [Li2007]_.     
+"""
+
 from mf.models import *
 from mf.utils import *
 from mf.utils.linalg import *
 
 class Psmf(nmf_std.Nmf_std):
     """
-    Probabilistic Sparse Matrix Factorization (PSMF) [11], [12]. PSMF allows for varying levels of sensor noise in the
-    data, uncertainty in the hidden prototypes used to explain the data and uncertainty as to the prototypes selected
-    to explain each data vector stacked in target matrix (V). 
+    For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    This technique explicitly maximizes a lower bound on the log-likelihood of the data under a probability model. Found
-    sparse encoding can be used for a variety of tasks, such as functional prediction, capturing functionally relevant
-    hidden factors that explain gene expression data and visualization. As this algorithm computes probabilities 
-    rather than making hard decisions, it can be shown that a higher data log-likelihood is obtained than from the 
-    versions (iterated conditional modes) that make hard decisions [13].
+    The following are algorithm specific model options which can be passed with values as keyword arguments.
     
-    Given a target matrix (V [n, m]), containing n m-dimensional data points, basis matrix (factor loading matrix) (W) 
-    and mixture matrix (matrix of hidden factors) (H) are found under a structural sparseness constraint that each row 
-    of W contains at most N (of possible factorization rank number) non-zero entries. Intuitively, this corresponds to 
-    explaining each row vector of V as a linear combination (weighted by the corresponding row in W) of a small subset 
-    of factors given by rows of H. This framework includes simple clustering by setting N = 1 and ordinary low-rank 
-    approximation N = factorization rank as special cases. 
+    PSMF overrides default frequency of convergence tests. By default convergence is tested every 5th iteration. This 
+    behavior can be changed by setting :param:`test_conv`. See :mod:`mf_run` Stopping criteria section.   
     
-    A probability model presuming Gaussian sensor noise in V (V = WH + noise) and uniformly distributed factor 
-    assignments is constructed. Factorized variational inference method is used to perform tractable inference on the 
-    latent variables and account for noise and uncertainty. The number of factors, r_g, contributing to each data point is
-    multinomially distributed such that P(r_g = n) = v_n, where v is a user specified N-vector. PSMF model estimation using  
-    factorized variational inference has greater computational complexity than basic NMF methods [12]. 
-    
-    Example of usage of PSMF for identifying gene transcriptional modules from gene expression data is described in [15]. 
-    
-    [11] Dueck, D., Morris, Q. D., Frey, B. J, (2005). Multi-way clustering of microarray data using probabilistic sparse matrix factorization.
-         Bioinformatics 21. Suppl 1, i144-51.
-    [12] Dueck, D., Frey, B. J., (2004). Probabilistic Sparse Matrix Factorization Probabilistic Sparse Matrix Factorization. University of
-         Toronto Technical Report PSI-2004-23.
-    [13] Srebro, N. and Jaakkola, T., (2001). Sparse Matrix Factorization of Gene Expression Data. Unpublished note, MIT Artificial 
-         Intelligence Laboratory.
-    [15] Li, H., Sun, Y., Zhan, M., (2007). The discovery of transcriptional modules by a two-stage matrix decomposition approach. Bioinformatics, 23(4), 473-479.
+    :param prior: The prior on the number of factors explaining each vector and should be a positive row vector. 
+                  The :param:`prior` can be passed as a list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or 
+                  as a scalar N, in which case uniform prior is taken, prior = 1. / (1:N), reflecting no knowledge about the 
+                  distribution and giving equal preference to all values of a particular r_g. Default value for :param:`prior` is  
+                  factorization rank, e. g. ordinary low-rank approximations is performed. 
+    :type prior: `list` or `float`
     """
 
     def __init__(self, **params):
-        """
-        For detailed explanation of the general model parameters see :mod:`mf_run`.
-        
-        The following are algorithm specific model options which can be passed with values as keyword arguments.
-        
-        PSMF overrides default frequency of convergence tests. By default convergence is tested every 5th iteration. This 
-        behavior can be changed by setting :param:`test_conv`. See :mod:`mf_run` Stopping criteria section.   
-        
-        :param prior: The prior on the number of factors explaining each vector and should be a positive row vector. 
-                      The :param:`prior` can be passed as a list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or 
-                      as a scalar N, in which case uniform prior is taken, prior = 1. / (1:N), reflecting no knowledge about the 
-                      distribution and giving equal preference to all values of a particular r_g. Default value for :param:`prior` is  
-                      factorization rank, e. g. ordinary low-rank approximations is performed. 
-        :type prior: `list` or `float`
-        """
         self.name = "psmf"
         self.aseeds = ["none"]
         nmf_std.Nmf_std.__init__(self, params)
@@ -65,7 +62,7 @@ class Psmf(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        self._set_params()
+        self.set_params()
         self.N = len(self.prior)
         sm = sum(self.prior)
         self.prior = np.array([p / sm for p in self.prior])
@@ -93,7 +90,7 @@ class Psmf(nmf_std.Nmf_std):
             self._cross_terms()
             pobj = cobj = self.objective()
             iter = 0
-            while self._is_satisfied(pobj, cobj, iter):
+            while self.is_satisfied(pobj, cobj, iter):
                 pobj = cobj
                 self.update()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
@@ -124,7 +121,7 @@ class Psmf(nmf_std.Nmf_std):
                                             np.tile((self.sigma[:, c, n2] * self.lamb[:, c]).reshape((self.lamb.shape[0],1)), (1, self.zeta.shape[0])) * 
                                             np.tile(outer_zeta[c, :], (self.rho.shape[0], 1))).sum(axis = 1).reshape(self.rho.shape[0], 1)
     
-    def _is_satisfied(self, p_obj, c_obj, iter):
+    def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
         
@@ -147,7 +144,7 @@ class Psmf(nmf_std.Nmf_std):
             return False
         return True
     
-    def _set_params(self):
+    def set_params(self):
         """Set algorithm specific model options."""
         if not self.test_conv:
             self.test_conv = 5
