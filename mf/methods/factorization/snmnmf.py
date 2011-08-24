@@ -28,6 +28,10 @@ The inputs for the SNMNMF are:
 Gene and miRNA expression matrices are simultaneously factored into a common basis matrix (W) and two
 coefficients matrices (H and H1). Additional knowledge is incorporated into this framework with network 
 regularized constraints. Because of the imposed sparsity constraints easily interpretable solution is obtained. 
+
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 2-15
+    
 """
 
 from mf.models import *

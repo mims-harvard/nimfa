@@ -20,7 +20,11 @@ Because the columns of the mixture matrix (H) have a one-to-one correspondence w
 (V), between class scatter of H is maximized and within class scatter of H is minimized. 
 
 Example usages are pattern recognition problems in classification, feature generation and extraction for diagnostic 
-classification purposes, face recognition etc.      
+classification purposes, face recognition etc. 
+
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 66-76
+         
 """
 
 from mf.models import *

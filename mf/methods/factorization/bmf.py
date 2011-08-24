@@ -8,7 +8,11 @@ Bmf (``methods.factorization.bmf``)
 
 BMF extends standard NMF to binary matrices. Given a binary target matrix (V), we want to factorize it into binary 
 basis and mixture matrices, thus conserving the most important integer property of the target matrix. Common methodologies 
-include penalty function algorithm and thresholding algorithm. This class implements penalty function algorithm.     
+include penalty function algorithm and thresholding algorithm. This class implements penalty function algorithm.
+
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 38-47
+         
 """
 
 from mf.models import *

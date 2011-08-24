@@ -15,7 +15,11 @@ all operations are matrix based, which saves computational time.
 The main task per iteration of the subproblem is to find a step size alpha such that a sufficient decrease condition
 of bound constrained problem is satisfied. In alternating least squares, each subproblem involves an optimization 
 procedure and requires a stopping condition. A common way to check whether current solution is close to a 
-stationary point is the form of the projected gradient [Lin2007]_.     
+stationary point is the form of the projected gradient [Lin2007]_.   
+
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 79-90
+      
 """
 
 from mf.models import *

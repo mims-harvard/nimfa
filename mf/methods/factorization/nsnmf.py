@@ -21,7 +21,11 @@ Consider the transformed vector Y = SX. As theta --> 1, the vector Y tends to th
 equal to the average of the elements of X. This is the smoothest possible vector in the sense of nonsparseness because 
 all entries are equal to the same nonzero value. The parameter theta controls the extent of smoothness of the matrix 
 operator S. Due to the multiplicative nature of the model, strong smoothing in S forces strong sparseness in
-both the basis and the encoding vectors. Therefore, the parameter theta controls the sparseness of the model.     
+both the basis and the encoding vectors. Therefore, the parameter theta controls the sparseness of the model.  
+
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 130-138
+       
 """
 
 from mf.models import *

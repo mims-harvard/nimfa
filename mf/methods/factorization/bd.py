@@ -28,6 +28,10 @@ is:
     
 The sampling procedure could be used for estimating the marginal likelihood, which is useful for model selection, i. e. 
 choosing factorization rank.   
+
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 18-35
+    
 """
 
 from mf.models import *

@@ -15,6 +15,13 @@ SNMF/R contains two subproblems for two-block minimization scheme. The objective
 feasible set. It can be shown (Grippo and Sciandrome, 2000) that two-block minimization process is convergent, 
 every accumulation point is a critical point of the corresponding problem. Similarly, the algorithm SNMF/L converges
 to a stationary point. 
+
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 163-175
+    
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 178-190
+    
 """
 
 from mf.models import *

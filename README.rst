@@ -7,7 +7,7 @@ at `MF site`_.
 
 Please refer to that site.
 		  
-.. _MF site: http://helikoid.si/mf
+.. _MF site: http://helikoid.si/mf/index.html
 
 About
 =====

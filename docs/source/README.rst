@@ -21,3 +21,4 @@ from the MF library root directory.
 .. note:: The MF library documentation is contained in MF/docs/source directory and in scripts in MF/mf.  
 
 .. _Sphinx home page: http://sphinx.pocoo.org
+.. _Github repository: http://github.com/marinkaz/mf

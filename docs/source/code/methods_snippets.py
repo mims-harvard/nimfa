@@ -37,7 +37,7 @@ fit = mf.mf_run(model)
 
 # Example call of BMF with algorithm specific parameters set
 model = mf.mf(V, 
-              seed = "random_vcol", 
+              seed = "nndsvd", 
               rank = 10, 
               method = "bmf", 
               max_iter = 12, 
@@ -92,7 +92,7 @@ print_info(fit)
 
 # Example call of NMF - Euclidean with algorithm specific parameters set
 model = mf.mf(V, 
-              seed = "random_vcol", 
+              seed = "nndsvd", 
               rank = 10, 
               method = "nmf", 
               max_iter = 12, 
@@ -104,13 +104,26 @@ fit = mf.mf_run(model)
 
 # Example call of NMF - Divergence with algorithm specific parameters set
 model = mf.mf(V, 
-              seed = "random_vcol", 
+              seed = "random_c", 
               rank = 10, 
               method = "nmf", 
               max_iter = 12, 
               initialize_only = True,
               update = 'divergence',
               objective = 'div')
+fit = mf.mf_run(model)
+
+
+# Example call of NMF - Connectivity with algorithm specific parameters set
+model = mf.mf(V, 
+             method = "nmf", 
+             rank = 10, 
+             seed = "random_vcol", 
+             max_iter = 200, 
+             update = 'euclidean', 
+             objective = 'conn',
+             conn_change = 40,
+             initialize_only = True)
 fit = mf.mf_run(model)
     
     

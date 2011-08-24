@@ -23,6 +23,10 @@ In [Schmidt2009]_ ICM is compared to the popular Lee and Seung's multiplicative 
 feature extraction test. ICM converges much faster than multiplicative update algorithm and with approximately the same
 rate per iteration as fast Newton algorithm. All three algorithms have approximately the same computational cost per
 iteration.  
+
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 50-63
+    
 """
 
 from mf.models import *

@@ -16,6 +16,16 @@ computation, NMF detects context-dependent patterns of gene expression in comple
 
 Besides usages in bioinformatics NMF can be applied to text analysis, image processing, multiway clustering,
 environmetrics etc.     
+
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 93-102
+    
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 105-114
+    
+.. literalinclude:: /code/methods_snippets.py
+    :lines: 117-127
+    
 """
 
 from mf.models import *
