@@ -5,12 +5,12 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "MF",
-    version = "0.1",
+    name = "MF - Matrix Factorization Techniques for Data Mining",
+    version = "1.0",
     author = "Marinka Zitnik",
     author_email = "marinka@zitnik.si", 
     description = "Python Matrix Factorization Techniques for Data Mining",
-    url = "http://orange.biolab.si/trac/wiki/MatrixFactorization",
+    url = "http://helikoid.si/mf/index.html",
     packages = find_packages(),
     package_dir = { "mf": "./mf"},
     license = "OSI Approved :: GNU General Public License (GPL)",
