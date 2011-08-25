@@ -11,11 +11,33 @@ MF - Matrix Factorization Techniques for Data Mining
 About
 #####
 
-**MF - Matrix Factorization Techniques for Data Mining**  is a Python scripting library which includes a number of published matrix factorization algorithms, initialization methods, quality and performance measures and facilitates the combination of these to produce new strategies. The library represents a unified and efficient interface to matrix factorization algorithms and methods.
+**MF - Matrix Factorization Techniques for Data Mining**  is a Python scripting library which includes a number of published matrix 
+factorization algorithms, initialization methods, quality and performance measures and facilitates the combination of these to 
+produce new strategies. The library represents a unified and efficient interface to matrix factorization algorithms and methods.
 
-The MF works with numpy dense matrices and scipy sparse matrices (where this is possible to save on space). The library has support for multiple runs of the algorithms which can be used for some quality measures. By setting runtime specific options tracking the residuals error within one (or more) run or tracking fitted factorization model is possible. Extensive documentation with working examples which demonstrate real applications, commonly used benchmark data and visualization methods are provided to help with the interpretation and comprehension of the results.
+The MF works with numpy dense matrices and scipy sparse matrices (where this is possible to save on space). The library has support for 
+multiple runs of the algorithms which can be used for some quality measures. By setting runtime specific options tracking the 
+residuals error within one (or more) run or tracking fitted factorization model is possible. Extensive documentation with working 
+examples which demonstrate real applications, commonly used benchmark data and visualization methods are provided to help with the 
+interpretation and comprehension of the results.
 
 `Project wiki`_ is available at `Orange`_ site. The MF library is part of the Google Summer of Code 2011 program by the `Orange`_ organization. 
+
+Matrix factorization methods have been shown to be a useful decomposition for multivariate data as low dimensional data representations are crucial 
+to numerous applications in statistics, signal processing and machine learning.
+
+An incomplete list of applications of matrix factorization methods includes:
+
+	* bioinformatics,
+	* environmetrics and chemometrics,
+	* image processing and computer graphics,
+	* text analysis,
+	* miscelllaneous, such as extracting speech features, transcription of polyphonic music passages, object characterization, spectral data 
+	  analysis, multiway clustering, learning sound dictionaries, etc. 
+
+With the library of factorization methods in Orange an easy-to-use interface to established algorithms is provided. 
+The MF library expands the already vast usage of Orange methods in numerous applications without the need to use external
+programming packages for factorizations.
 
 .. _Orange: http://orange.biolab.si
 
