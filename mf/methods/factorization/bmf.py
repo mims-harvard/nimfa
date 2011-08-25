@@ -27,7 +27,7 @@ programming and then solved by a penalty function algorithm. The algorithm is de
 
     1. Initialize basis, mixture matrix and parameters. 
     2. Normalize basis and mixture using Boundedness Theorem in [Zhang2007]_.
-    3. For basis and mixture, alternatively solve nonlinear optimization problem with the objective function 
+    3. For basis and mixture, alternately solve nonlinear optimization problem with the objective function 
        composed of three components: Euclidean distance of BMF estimate from target matrix; mixture penalty term
        and  basis penalty term. 
     4. Update parameters based on the level of the binarization of the basis and mixture matrix. 
@@ -160,10 +160,10 @@ class Bmf(nmf_std.Nmf_std):
         """
         val_w, _ = argmax(self.W, axis = 0)
         val_h, _ = argmax(self.H, axis = 1)
-        D_w = sp.spdiags(val_w, diags = 0, (self.W.shape[1], self.W.shape[1]))
-        D_h = sp.spdiags(val_h, diags = 0, (self.H.shape[0], self.H.shape[0]))
-        self.W = mutliply(self.W, dot(sop(D_w, s = -0.5, op = pow), sop(D_h, s = 0.5, op = pow)))
-        self.H = multiply(dot(sop(D_h, s = -0.5, op = pow), sop(D_w, s = 0.5, op = pow)), self.H)
+        D_w = sp.spdiags(val_w, 0, self.W.shape[1], self.W.shape[1])
+        D_h = sp.spdiags(val_h, 0, self.H.shape[0], self.H.shape[0])
+        self.W = dot(dot(self.W, sop(D_w, s = -0.5, op = pow)), sop(D_h, s = 0.5, op = pow))
+        self.H = dot(dot(sop(D_h, s = -0.5, op = pow), sop(D_w, s = 0.5, op = pow)), self.H)
         
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
