@@ -12,7 +12,15 @@ class Mf_track():
     
     The purpose of this class is to store matrix factors from multiple runs of the algorithm which can then be used
     for performing quality and performance measures. Because of additional space consumption for storing multiple 
-    matrix factors, tracking is used only if explicitly specified by user through runtime option. 
+    matrix factors, tracking is used only if explicitly specified by user through runtime option. In summary, when
+    tracking factors, the following is retained from each run:
+        
+        #. fitted factorization model depending on the factorization method; 
+        #. final value of objective function; 
+        #. performed number of iterations. 
+        
+    Instead of tracking fitted factorization model, callback function can be set, which will be called after each 
+    factorization run. For more details see :mod:`mf_run`.
     
     The purpose of this class is to store residuals across iterations which can then be used for plotting the trajectory 
     of the residuals track or estimating proper number of iterations. 
@@ -25,7 +33,7 @@ class Mf_track():
         self._factors = []
         self._residuals = {}
         
-    def _track_error(self, residuals, run):
+    def track_error(self, residuals, run):
         """
         Add residuals error after one iteration. 
         
@@ -37,7 +45,7 @@ class Mf_track():
         self._residuals.setdefault(run, [])
         self._residuals[run].append(residuals)
         
-    def _track_factor(self, **track_model):
+    def track_factor(self, **track_model):
         """
         Add matrix factorization factors (and method specific model data) after one factorization run.
         

@@ -97,7 +97,7 @@ class Snmf(nmf_std.Nmf_std):
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
                 iter += 1
                 if self.track_error:
-                    self.tracker._track_error(cobj, run)
+                    self.tracker.track_error(cobj, run)
             # basis and mixture matrix are now constructed and are now converted to CSR for fast LA operations
             if sp.isspmatrix(self.W):
                 self.W = self.W.tocsr()
@@ -112,7 +112,7 @@ class Snmf(nmf_std.Nmf_std):
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker._track_factor(W = self.W.copy(), H = self.H.copy())
+                self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), final_obj = cobj, n_iter = iter)
         
         self.n_iter = iter
         self.final_obj = cobj
