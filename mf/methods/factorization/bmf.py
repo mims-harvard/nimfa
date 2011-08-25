@@ -84,6 +84,7 @@ class Bmf(nmf_std.Nmf_std):
         self._lambda_h = self._lambda_w         
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
+            self.normalize()
             pobj = cobj = self.objective()
             iter = 0
             while self.is_satisfied(pobj, cobj, iter):
@@ -151,8 +152,18 @@ class Bmf(nmf_std.Nmf_std):
         self._lambda_w = self.lambda_w * self._lambda_w
         
     def normalize(self):
-        """Normalize initialized basis and mixture matrix, using Boundedness Theorem in [Zhang2007]_."""
-        pass
+        """
+        Normalize initialized basis and mixture matrix, using Boundedness Theorem in [Zhang2007]_. Normalization
+        makes the BMF factorization more robust.
+        
+        Normalization produces basis and mixture matrix with values in [0, 1]. 
+        """
+        val_w, _ = argmax(self.W, axis = 0)
+        val_h, _ = argmax(self.H, axis = 1)
+        D_w = sp.spdiags(val_w, diags = 0, (self.W.shape[1], self.W.shape[1]))
+        D_h = sp.spdiags(val_h, diags = 0, (self.H.shape[0], self.H.shape[0]))
+        self.W = mutliply(self.W, dot(sop(D_w, s = -0.5, op = pow), sop(D_h, s = 0.5, op = pow)))
+        self.H = multiply(dot(sop(D_h, s = -0.5, op = pow), sop(D_w, s = 0.5, op = pow)), self.H)
         
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
