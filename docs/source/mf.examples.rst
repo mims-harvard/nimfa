@@ -18,3 +18,10 @@ Examples (``examples``)
    
    mf.examples.medulloblastoma
    
+   mf.examples.cbcl_images
+   
+   mf.examples.documents
+   
+   mf.examples.orl_images
+   
+   mf.examples.recommendations
