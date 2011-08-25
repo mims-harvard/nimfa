@@ -8,7 +8,33 @@ Bmf (``methods.factorization.bmf``)
 
 BMF extends standard NMF to binary matrices. Given a binary target matrix (V), we want to factorize it into binary 
 basis and mixture matrices, thus conserving the most important integer property of the target matrix. Common methodologies 
-include penalty function algorithm and thresholding algorithm. This class implements penalty function algorithm.
+include penalty function algorithm and thresholding algorithm. 
+
+BMF can be derived based on variant of Standard NMF, but some problems need to be resolved:
+    
+    #. Uniqueness. Solution for basis and mixture matrix is not unique as it is always possible to find
+       a diagonal matrix and incorporate it current solution to get a new. 
+    #. Scale. Scale problem arises when discretizing basis and mixture matrix into binary matrices. This problem
+       can be resolved by using rescaling proposed in Boundedness Theorem in [Zhang2007]_. Therefore,
+       discretization works properly because basis and mixture matrix are in the same scales. The factorization
+       method is more robust in this way. It has been shown that the percentage of nonzero elements in normalized
+       case is lower than in nonnormalized case. Without normalization the mixture matrix is often very sparse
+       and the basis matrix very dense - much information, given via mixture matrix is lost and cannot be 
+       compensated with basis matrix.  
+
+This method implements penalty function algorithm. The problem of BMF can be represented in terms of nonlinear 
+programming and then solved by a penalty function algorithm. The algorithm is described as follows:
+
+    1. Initialize basis, mixture matrix and parameters. 
+    2. Normalize basis and mixture using Boundedness Theorem in [Zhang2007]_.
+    3. For basis and mixture, alternatively solve nonlinear optimization problem with the objective function 
+       composed of three components: Euclidean distance of BMF estimate from target matrix; mixture penalty term
+       and  basis penalty term. 
+    4. Update parameters based on the level of the binarization of the basis and mixture matrix. 
+    
+In step 1, basis and mixture matrix can be initialized with common initialization methods or with the result of the Standard 
+NMF by passing fixed factors to the factorization model. In step 3, the update rule is derived by taking the longest
+step that can maintain the nonnegativity of the basis, mixture matrix during the iterative process. 
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 38-47
@@ -113,14 +139,20 @@ class Bmf(nmf_std.Nmf_std):
     
     def update(self):
         """Update basis and mixture matrix."""
+        #update mixture matrix
         H1 = dot(self.W.T, self.V) + 3. * self._lambda_h * multiply(self.H, self.H)
         H2 = dot(dot(self.W.T, self.W), self.H) + 2. * self._lambda_h * sop(self.H, 3, pow) + self._lambda_h * self.H
         self.H = multiply(self.H, elop(H1, H2, div))
+        # update basis matrix, 
         W1 = dot(self.V, self.H.T) + 3. * self._lambda_w * multiply(self.W, self.W)
         W2 = dot(self.W, dot(self.H, self.H.T)) + 2. * self._lambda_w * sop(self.W, 3, pow) + self._lambda_w * self.W
         self.W = multiply(self.W, elop(W1, W2, div))
         self._lambda_h = self.lambda_h * self._lambda_h
         self._lambda_w = self.lambda_w * self._lambda_w
+        
+    def normalize(self):
+        """Normalize initialized basis and mixture matrix, using Boundedness Theorem in [Zhang2007]_."""
+        pass
         
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
