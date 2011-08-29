@@ -10,45 +10,71 @@
     each person. The images were taken at different times, lighting and facial expressions. The faces are in 
     an upright position in frontal view, with a slight left-right rotation. In example we performed factorization
     on reduced face images by constructing a matrix of shape 2576 (pixels) x 400 (faces) and on original face
-    images by constructing a matrix of shape 10304 (pixels) x 400 (faces). 
+    images by constructing a matrix of shape 10304 (pixels) x 400 (faces). To avoid too large values, the data matrix is 
+    divided by 100. Indeed, this division does not has any major impact on performance of the MF methods. 
     
     .. note:: ORL face images database used in this example is included in the `datasets` and need not to be
           downloaded. However, download links are listed in the ``datasets``. To run the example, the ORL face images
-          must be find in the `ORL_faces` folder under `datasets`. 
+          must be find in the ``ORL_faces`` folder under ``datasets``. 
           
-    We used NMF - Euclidean, LSNMF and PSMF factorization methods to learn the basis images from the ORL database.  
+    We used NMF - Euclidean, LSNMF and PSMF factorization methods to learn the basis images from the ORL database. The
+    number of bases is 25. In [Lee1999]_ Lee and Seung showed that Standard NMF (Euclidean or divergence) found a parts-based
+    representation when trained on face images from CBCL database. However, applying NMF to the ORL data set, in which images
+    are not as well aligned, a global decomposition emerges. To compare, this example applies different MF methods to the face 
+    images data set. Applying MF methods with sparseness constraint, namely PSMF, the resulting bases are not global, but instead
+    give spatially localized representations, as can be seen from the figure. Similar conclusions are published in [Hoyer2004]_.
+    Setting a high sparseness value for the basis images results in a local representation. 
+    
+    
+    .. note:: It is worth noting that sparseness constraints do not always lead to local solutions. Global solutions can 
+              be obtained by forcing low sparseness on basis matrix and high sparseness on coefficient matrix - forcing 
+              each coefficient to represent as much of the image as possible. 
+          
           
     .. figure:: /images/orl_faces_500_iters_large_LSNMF.png
-       :scale: 60 %
+       :scale: 70 %
        :alt: Basis images of LSNMF obtained after 500 iterations on original face images. 
        :align: center
 
-       Basis images of LSNMF obtained after 500 iterations on original face images. 
+       Basis images of LSNMF obtained after 500 iterations on original face images. The bases trained by LSNMF are additive
+       but not spatially localized for representation of faces. Random VCol initialization algorithm is used. The number of
+       subiterations for solving subproblems in LSNMF is a important issues. However, we stick to default and use 10 subiterations
+       in this example. 
 
 
-
-     .. figure:: /images/orl_faces_200_iters_small_NMF.png
-       :scale: 60 %
-       :alt: Basis images of NMF obtained after 200 iterations on reduced face images. 
+    .. figure:: /images/orl_faces_200_iters_small_NMF.png
+       :scale: 70 %
+       :alt: Basis images of NMF - Euclidean obtained after 200 iterations on reduced face images. 
        :align: center
 
-       Basis images of NMF obtained after 200 iterations on reduced face images.   
+       Basis images of NMF - Euclidean obtained after 200 iterations on reduced face images. The images show that
+       the bases trained by NMF are additive but not spatially localized for representation of faces. The Euclidean
+       distance of NMF estimate from target matrix is 33283.360. Random VCol initialization algorithm is used. 
        
        
     .. figure:: /images/orl_faces_200_iters_small_LSNMF.png
-       :scale: 60 %
+       :scale: 70 %
        :alt: Basis images of LSNMF obtained after 200 iterations on reduced face images.  
        :align: center
 
-       Basis images of LSNMF obtained after 200 iterations on reduced face images.  
+       Basis images of LSNMF obtained after 200 iterations on reduced face images. The bases trained by LSNMF are additive. The
+       Euclidean distance of LSNMF estimate from target matrix is 29631.784 and projected gradient norm, which is used as 
+       objective function in LSNMF is 7.9. Random VCol initialization algorithm is used. In LSNMF there is parameter beta, 
+       we set is to 0.1. Beta is the rate of reducing the step size to satisfy the sufficient decrease condition. Smaller
+       beta reduces the step size aggressively but may result in step size that is too small and the cost per iteration is thus
+       higher. 
     
        
     .. figure:: /images/orl_faces_5_iters_small_PSMF_prior5.png
-       :scale: 60 %
-       :alt: Basis images of PSMF obtained after 5 iterations on reduced face images.  
+       :scale: 70 %
+       :alt: Basis images of PSMF obtained after 5 iterations on reduced face images and with set prior parameter to 5.  
        :align: center
 
-       Basis images of PSMF obtained after 5 iterations on reduced face images.  
+       Basis images of PSMF obtained after 5 iterations on reduced face images and with set prior parameter to 5. The
+       bases trained from PSMF are both additive and spatially localized for representing faces. By setting prior to 5, in PSMF 
+       the basis matrix is found under structural sparseness constraint that each row contains at most 5 non zero entries. This
+       means, each row vector of target data matrix is explained by linear combination of at most 5 factors. Because we passed 
+       prior as scalar and not list, uniform prior is taken, reflecting no prior knowledge on the distribution.  
        
        
     To run the examples simply type::
@@ -60,7 +86,8 @@
         import mf.examples
         mf.examples.orl_images.run()
         
-    .. note:: This example uses matplotlib library for producing a heatmap of a consensus matrix.
+    .. note:: This example uses matplotlib library for producing a heatmap of a consensus matrix. It uses PIL library for 
+              displaying face images. 
 """
 
 import mf
