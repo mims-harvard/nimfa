@@ -4,10 +4,63 @@
     Orl_images (``examples.orl_images``)
     ####################################
     
+    In this example we consider the image problem used in [Hoyer2004]_. 
+    
+    We used the ORL face database composed of 400 images of size 112 x 92. There are 40 persons, 10 images per
+    each person. The images were taken at different times, lighting and facial expressions. The faces are in 
+    an upright position in frontal view, with a slight left-right rotation. In example we performed factorization
+    on reduced face images by constructing a matrix of shape 2576 (pixels) x 400 (faces) and on original face
+    images by constructing a matrix of shape 10304 (pixels) x 400 (faces). 
     
     .. note:: ORL face images database used in this example is included in the `datasets` and need not to be
           downloaded. However, download links are listed in the ``datasets``. To run the example, the ORL face images
           must be find in the `ORL_faces` folder under `datasets`. 
+          
+    We used NMF - Euclidean, LSNMF and PSMF factorization methods to learn the basis images from the ORL database.  
+          
+    .. figure:: /images/orl_faces_500_iters_large_LSNMF.png
+       :scale: 60 %
+       :alt: Basis images of LSNMF obtained after 500 iterations on original face images. 
+       :align: center
+
+       Basis images of LSNMF obtained after 500 iterations on original face images. 
+
+
+
+     .. figure:: /images/orl_faces_200_iters_small_NMF.png
+       :scale: 60 %
+       :alt: Basis images of NMF obtained after 200 iterations on reduced face images. 
+       :align: center
+
+       Basis images of NMF obtained after 200 iterations on reduced face images.   
+       
+       
+    .. figure:: /images/orl_faces_200_iters_small_LSNMF.png
+       :scale: 60 %
+       :alt: Basis images of LSNMF obtained after 200 iterations on reduced face images.  
+       :align: center
+
+       Basis images of LSNMF obtained after 200 iterations on reduced face images.  
+    
+       
+    .. figure:: /images/orl_faces_5_iters_small_PSMF_prior5.png
+       :scale: 60 %
+       :alt: Basis images of PSMF obtained after 5 iterations on reduced face images.  
+       :align: center
+
+       Basis images of PSMF obtained after 5 iterations on reduced face images.  
+       
+       
+    To run the examples simply type::
+        
+        python orl_images.py
+        
+    or call the module's function::
+    
+        import mf.examples
+        mf.examples.orl_images.run()
+        
+    .. note:: This example uses matplotlib library for producing a heatmap of a consensus matrix.
 """
 
 import mf
@@ -43,7 +96,7 @@ def factorize(V):
     """
     print "Performing LSNMF factorization ..." 
     model = mf.mf(V, 
-                  seed = "random_vcol", 
+                  seed = "random_vcol",
                   rank = 25, 
                   method = "lsnmf", 
                   max_iter = 50,
