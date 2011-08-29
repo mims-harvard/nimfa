@@ -12,7 +12,7 @@
 
 .. [Lee2001] Lee, D. D., and Seung, H. S., (2001). Algorithms for Non-negative Matrix Factorization, Adv. Neural Info. Proc. Syst. 13, 556-562.
 
-.. [Lee1999] ﻿Lee, D. D., Seung, H. S,. (1999). Learning the parts of objects by non-negative matrix factorization. Nature, 401(6755), 788-91. doi:10.1038/44565.
+.. [Lee1999] ﻿Lee, D. D., Seung, H. S., (1999). Learning the parts of objects by non-negative matrix factorization. Nature, 401(6755), 788-91. doi:10.1038/44565.
 
 .. [Brunet2004] Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P., (2004). Metagenes and molecular pattern discovery using matrix factorization. Proceedings of the National Academy of Sciences of the United States of America, 101(12), 4164-9. doi: 10.1073/pnas.0308531101.
 
