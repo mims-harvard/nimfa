@@ -11,6 +11,10 @@
     understood but is accepted that there are two known histological subclasses; classic (C) and desmoplastic (D). 
     These subclasses can be clearly seen under microscope.   
     
+    .. note:: Medulloblastoma data set used in this example is included in the `datasets` and need not to be
+          downloaded. However, download links are listed in the ``datasets``. To run the example, the data set
+          must be find in the `Medulloblastoma` folder under `datasets`. 
+    
     This example is inspired by [Brunet2004]_. In [Brunet2004]_ authors applied NMF to the medulloblastoma data set and managed to expose a
     separate desmoplastic (D) class. In [Brunet2004]_ authors also applied SOM and HC to these data but were unable to find a distinct
     desmoplastic class. Using HC desmoplastic samples were scattered among leaves and there was no level of the tree
@@ -178,7 +182,7 @@ def read():
     """
     V = np.matrix(np.zeros((5893, 34)))
     i = 0
-    for line in open(dirname(dirname(abspath(__file__)))+ '/datasets/Medulloblastoma_data.txt'):
+    for line in open(dirname(dirname(abspath(__file__)))+ '/datasets/Medulloblastoma/Medulloblastoma_data.txt'):
         V[i, :] =  map(float, line.split('\t'))
         i += 1
     return V

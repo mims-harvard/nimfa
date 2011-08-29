@@ -15,6 +15,10 @@
     including incorrect diagnosis of the samples. They are included them in example.The distinction between AML 
     and ALL, as well as the division of ALL into T and B cell subtypes is well known. 
     
+    .. note:: Leukemia data set used in this example is included in the `datasets` and need not to be
+              downloaded. However, download links are listed in the ``datasets``. To run the example, the data set
+              must be find in the `ALL_AML` folder under `datasets`. 
+    
     .. _Leukemia: http://orange.biolab.si/datasets/leukemia.htm 
     
     This example is inspired by [Brunet2004]_. In [Brunet2004]_ authors applied NMF to the leukemia data set. With rank, rank = 2, 
@@ -188,7 +192,7 @@ def read():
     """
     V = np.matrix(np.zeros((5000, 38)))
     i = 0
-    for line in open(dirname(dirname(abspath(__file__)))+ '/datasets/ALL_AML_data.txt'):
+    for line in open(dirname(dirname(abspath(__file__)))+ '/datasets/ALL_AML/ALL_AML_data.txt'):
         V[i, :] =  map(float, line.split('\t'))
         i += 1
     return V
