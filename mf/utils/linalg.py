@@ -640,7 +640,7 @@ def vstack(X, format = None, dtype = None):
     """
     if len([0 for x in X if not sp.isspmatrix(x)]) == 0:
         # scipy.sparse bug
-        #return sp.vstack(X, format = X[0].getformat() if format == None else format, dtype = X[0].dtype if dtype == None else dtype)
+        # return sp.vstack(X, format = X[0].getformat() if format == None else format, dtype = X[0].dtype if dtype == None else dtype)
         return sp.vstack(X)
     else:
         return np.vstack(X)

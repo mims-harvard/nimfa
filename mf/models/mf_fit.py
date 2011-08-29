@@ -74,7 +74,7 @@ class Mf_fit():
         :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model.
         :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-        if not metric:
+        if metric == None:
             return self.fit.final_obj
         else:
             return self.fit.distance(metric, idx)

@@ -213,7 +213,8 @@ def run_lsnmf(V):
                   initialize_only = True,
                   sub_iter = 10,
                   inner_sub_iter = 10, 
-                  beta = 0.1)
+                  beta = 0.1, 
+                  min_residuals = 1e-5)
     fit = mf.mf_run(model)
     print_info(fit)
 

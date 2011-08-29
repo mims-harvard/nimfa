@@ -21,8 +21,6 @@ residuals error within one (or more) run or tracking fitted factorization model 
 examples which demonstrate real applications, commonly used benchmark data and visualization methods are provided to help with the 
 interpretation and comprehension of the results.
 
-`Project wiki`_ is available at `Orange`_ site. The MF library is part of the Google Summer of Code 2011 program by the `Orange`_ organization. 
-
 Matrix factorization methods have been shown to be a useful decomposition for multivariate data as low dimensional data representations are crucial 
 to numerous applications in statistics, signal processing and machine learning.
 
@@ -39,16 +37,11 @@ With the library of factorization methods in Orange an easy-to-use interface to 
 The MF library expands the already vast usage of Orange methods in numerous applications without the need to use external
 programming packages for factorizations.
 
+`Project wiki`_ is available at `Orange`_ site. 
+
 .. _Orange: http://orange.biolab.si
 
 .. _Project wiki: http://orange.biolab.si/trac/wiki/MatrixFactorization
-
-.. image:: http://orange.biolab.si/small-logo.png
-	:target: http://orange.biolab.si
-	
-
-.. image:: http://code.google.com/p/google-summer-of-code/logo?cct=1280260724
-	:target: http://code.google.com/soc/
 
 
 
@@ -196,6 +189,33 @@ References
 .. include:: /content-references.rst
 
 
+
+###############
+Acknowledgement
+###############
+
+The MF - Matrix Factorization Techniques for Data Mining library is part of the Google Summer of Code 2011 program 
+under supervision of the `Orange`_ organization and mentor `Prof. Blaz Zupan, PhD`_. 
+
+.. _Prof. Blaz Zupan, PhD: http://www.biolab.si/en/blaz/
+
+.. image:: http://orange.biolab.si/small-logo.png
+	:target: http://orange.biolab.si
+	
+
+.. image:: http://code.google.com/p/google-summer-of-code/logo?cct=1280260724
+	:target: http://code.google.com/soc/
+	
+	
+##########
+Disclaimer	
+##########	
+	
+This software and data is provided as-is, and there are no guarantees
+that it fits your purposes or that it is bug-free. Use it at your own 
+risk! 
+
+		
 
 ################
 Index and Search

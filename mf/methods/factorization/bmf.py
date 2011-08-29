@@ -88,7 +88,7 @@ class Bmf(nmf_std.Nmf_std):
             pobj = cobj = self.objective()
             iter = 0
             while self.is_satisfied(pobj, cobj, iter):
-                pobj = cobj
+                pobj = cobj if not self.test_conv or iter % self.test_conv == 0 else pobj
                 self.update()
                 self._adjustment()
                 cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj

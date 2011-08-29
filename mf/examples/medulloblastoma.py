@@ -97,7 +97,7 @@ import mf
 import numpy as np
 from matplotlib.pyplot import savefig, imshow, set_cmap
 from scipy.cluster.hierarchy import linkage, leaves_list
-from os.path import dirname, abspath
+from os.path import dirname, abspath, sep
 
 def run():
     """Run Standard NMF on medulloblastoma data set. For each rank 50 Standard NMF runs are performed. """    
@@ -144,9 +144,9 @@ def run_one(V, rank):
     # reorder consensus matrix
     p_consensus = reorder(consensus)
     # plot reordered consensus matrix 
-    __plot(p_consensus, rank)
+    plot(p_consensus, rank)
     
-def __plot(C, rank):
+def plot(C, rank):
     """
     Plot reordered consensus matrix.
     
@@ -179,10 +179,12 @@ def read():
     """
     Read the medulloblastoma gene expression data. The matrix's shape is 5893 (genes) x 34 (samples). 
     It contains only positive data.
+    
+    Return the gene expression data matrix. 
     """
     V = np.matrix(np.zeros((5893, 34)))
     i = 0
-    for line in open(dirname(dirname(abspath(__file__)))+ '/datasets/Medulloblastoma/Medulloblastoma_data.txt'):
+    for line in open(dirname(dirname(abspath(__file__)))+ sep + 'datasets' + sep + 'Medulloblastoma' + sep + 'Medulloblastoma_data.txt'):
         V[i, :] =  map(float, line.split('\t'))
         i += 1
     return V

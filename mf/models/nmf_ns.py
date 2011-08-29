@@ -90,9 +90,9 @@ class Nmf_ns(Nmf):
         :param idx: Used in the multiple NMF model. In nonsmooth NMF :param:`idx` is always None.
         :type idx: None
         """
-        if metric == 'euclidean':
+        if metric.lower() == 'euclidean':
             return (sop(self.V - dot(dot(self.W, self.S), self.H), 2, pow)).sum()
-        elif metric == 'kl': 
+        elif metric.lower() == 'kl': 
             Va = dot(dot(self.W, self.S), self.H)
             return (multiply(self.V, sop(elop(self.V, Va, div), op = log)) - self.V + Va).sum()
         else:

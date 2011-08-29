@@ -13,57 +13,109 @@
 import mf
 import numpy as np
 from matplotlib.pyplot import savefig, imshow, set_cmap
-from os.path import dirname, abspath
+from os.path import dirname, abspath, sep
+
+try:
+    from PIL.Image import open, fromarray, new
+    from PIL.ImageOps import expand
+except ImportError, exc:
+    raise SystemExit("PIL must be installed to run this example.")
 
 def run():
     """Run LSNMF on ORL faces data set."""
-    read()
+    # read face image data from ORL database 
+    V = read()
+    # preprocess ORL faces data matrix
+    V = preprocess(V)
+    # run factorization
+    W, _ = factorize(V)
+    # plot parts-based representation 
+    plot(W)
     
+def factorize(V):
+    """
+    Perform LSNMF factorization on the ORL faces data matrix. 
+    
+    Return basis and mixture matrices of the fitted factorization model. 
+    
+    :param V: The ORL faces data matrix. 
+    :type V: `numpy.matrix`
+    """
+    print "Performing LSNMF factorization ..." 
+    model = mf.mf(V, 
+                  seed = "random_vcol", 
+                  rank = 25, 
+                  method = "lsnmf", 
+                  max_iter = 50,
+                  initialize_only = True,
+                  sub_iter = 10,
+                  inner_sub_iter = 10, 
+                  beta = 0.1,
+                  min_residuals = 1e-8)
+    fit = mf.mf_run(model)
+    print " ... Finished"
+    print """Stats:
+            - iterations: %d
+            - final projected gradients norm: %5.3f
+            - Euclidean distance: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric = 'euclidean'))
+    return fit.basis(), fit.coef()
     
 def read():
-    """Read face image date from ORL database. Step through each subject and each image."""
-    dir = dirname(dirname(abspath(__file__)))
+    """
+    Read face image data from ORL database. The matrix's shape is 2576 (pixels) x 400 (faces). 
+    
+    Step through each subject and each image. Reduce the size of the images by a factor of 0.5. 
+    
+    Return the ORL faces data matrix. 
+    """
+    print "Reading ORL faces database ..."
+    dir = dirname(dirname(abspath(__file__)))+ sep + 'datasets' + sep + 'ORL_faces' + sep + 's'
+    V = np.matrix(np.zeros((46 * 56, 400)))
     for subject in xrange(40):
         for image in xrange(10):
-            data = read_pgm(dir + '/datasets/ORL_faces/s' + str(subject +1) + "/" + str(image + 1) + ".pgm")
-            print data.shape
-            exit()
-    
-
-def reduce(data, factor = 0.5):
+            im = open(dir + str(subject + 1) + sep + str(image + 1) + ".pgm")
+            # reduce the size of the image
+            im = im.resize((46, 56))
+            V[:, image * subject + image] = np.mat(np.asarray(im).flatten()).T      
+    print "... Finished."
+    return V
+            
+def preprocess(V):
     """
-    Reduce the size of the image data by a given factor.
+    Preprocess ORL faces data matrix as Stan Li, et. al.
     
-    :param data: Image data which size will be reduced. 
-    :type data: `numpy.ndarray`
-    :param factor: Resize factor. Default is 0.5. 
-    :type factor: `float`
-    """    
-    pass
-
-def read_pgm(path):
+    :param V: The ORL faces data matrix. 
+    :type V: `numpy.matrix`
     """
-    Open a raw PGM file and read the data. Each PGM image consists of the following: 
-        #. a magic number for identifying the file type (i. e. P5 in the normal format or P2 in the plain format);
-        #. width and height, formatted ad ASCII;
-        #. the maximum gray value formatted in ASCII;
-        #. a raster of height rows, in order from top to bottom and each row consists of width gray values, in order
-           from left to right.
-    
-    Return numpy array containing image data.
-    
-    :param path: Path to image in raw PGM format.
-    :type path: `str`
+    print "Preprocessing data matrix ..." 
+    min_val = V.min(axis = 0)
+    V = V - np.mat(np.ones((V.shape[0], 1))) * min_val
+    max_val = V.max(axis = 0) + 1e-4
+    V = (255. * V) / (np.mat(np.ones((V.shape[0], 1))) * max_val)
+    # avoid too large values 
+    V = V / 100.
+    print "... Finished."
+    return V
+            
+def plot(W):
     """
-    f = open(path, 'rb')
-    magic = f.readline().rstrip()
-    w, h = map(int, f.readline().rstrip().split())
-    max_val = int(f.readline().rstrip())
-    # check consistency with the ORL database
-    if magic != 'P5' or w != 92 or h != 112 or max_val != 255:
-        return None
-    data = np.fromfile(f, dtype = np.uint8)
-    return np.reshape(data, (92, 112))
+    Plot basis vectors.
+    
+    :param W: Basis matrix of the fitted factorization model.
+    :type W: `numpy.matrix`
+    """
+    set_cmap('gray')
+    blank = new("L", (225 + 6, 280 + 6))
+    for i in xrange(5):
+        for j in xrange(5):
+            basis = np.array(W[:, 5 * i + j])[:, 0].reshape((56, 46))
+            basis = basis / np.max(basis) * 255
+            basis = 255 - basis
+            ima = fromarray(basis)
+            expand(ima, border = 1, fill = 'black')
+            blank.paste(ima.copy(), (j * 46 + j, i * 56 + i))
+    imshow(blank)
+    savefig("orl_faces.png")
 
 if __name__ == "__main__":
     """Run the ORL faces example."""
