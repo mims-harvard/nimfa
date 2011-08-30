@@ -46,36 +46,39 @@
     holds for the other factor, mixture matrix. Mixture matrix is a topic-by-document matrix with sparse nonnegative 
     columns. Element j of column 1 of mixture matrix measures the strength to which topic j appears in document 1. 
     
-    .. figure:: /images/ /images/documents_basisW1.png
+    .. figure:: /images/documents_basisW1.png
        :scale: 60 %
        :alt: Highest weighted terms in basis vector W1. 
        :align: center
 
-       Highest weighted terms in basis vector W1. 
+       Interpretation of NMF basis vectors on Medlars data set. Highest weighted terms in basis vector W1. The nonzero elements of column 1
+       of W (W1), which is sparse and nonnegative, correspond to particular terms. By considering the highest weighted terms in this vector, 
+       we can assign a label or topic to basis vector W1. As the NMF allows user the ability to interpret the basis vectors, a user might
+       attach the label "liver" to basis vector W1.  
        
        
-    .. figure:: /images/ /images/documents_basisW4.png
+    .. figure:: /images/documents_basisW4.png
        :scale: 60 %
        :alt: Highest weighted terms in basis vector W4. 
        :align: center
 
-       Highest weighted terms in basis vector W4. 
+       Interpretation of NMF basis vectors on Medlars data set. Highest weighted terms in basis vector W4. 
        
        
-    .. figure:: /images/ /images/documents_basis13.png
+    .. figure:: /images/documents_basisW13.png
        :scale: 60 %
        :alt: Highest weighted terms in basis vector W13. 
        :align: center
 
-       Highest weighted terms in basis vector W13. 
+       Interpretation of NMF basis vectors on Medlars data set. Highest weighted terms in basis vector W13. 
        
        
-    .. figure:: /images/ /images/documents_basisW15.png
+    .. figure:: /images/documents_basisW15.png
        :scale: 60 %
        :alt: Highest weighted terms in basis vector W15. 
        :align: center
 
-       Highest weighted terms in basis vector W15. 
+       Interpretation of NMF basis vectors on Medlars data set. Highest weighted terms in basis vector W15. 
     
     To run the examples simply type::
         
@@ -97,7 +100,7 @@ from os.path import dirname, abspath, sep
 from operator import itemgetter
 
 try:
-    from matplotlib.pylab import *
+    import matplotlib.pylab as plb
 except ImportError, exc:
     raise SystemExit("Matplotlib must be installed to run this example.")
 
@@ -144,7 +147,7 @@ def read():
     """
     Read medical abstracts data from Medlars data set. 
     
-    Construct term-by-document matrix. This matrix is sparse, therefore ``scipy.sparse`` format is used. For construction
+    Construct a term-by-document matrix. This matrix is sparse, therefore ``scipy.sparse`` format is used. For construction
     LIL sparse format is used, which is an efficient structure for constructing sparse matrices incrementally. 
     
     Return the Medlars sparse data matrix, term-to-index `dict` translator and index-to-term `dict` translator. 
@@ -229,14 +232,14 @@ def plot(W, idx2term):
             top10 = sorted(enumerate(W[:, c].ravel().tolist()[0]), key = itemgetter(1), reverse = True)[:10]
         pos = np.arange(10) + .5
         val = zip(*top10)[1][::-1]
-        figure((c+1))
-        barh(pos, val, color = "yellow", align = "center")
-        yticks(pos, [idx2term[idx] for idx in zip(*top10)[0]][::-1])
-        xlabel("Weight")
-        ylabel("Term")
-        title("Highest Weighted Terms in Basis Vector W%d" % (c + 1))
-        grid(True)
-        savefig("documents_basisW%d.png" % (c + 1), bbox_inches = "tight")
+        plb.figure(c + 1)
+        plb.barh(pos, val, color = "yellow", align = "center")
+        plb.yticks(pos, [idx2term[idx] for idx in zip(*top10)[0]][::-1])
+        plb.xlabel("Weight")
+        plb.ylabel("Term")
+        plb.title("Highest Weighted Terms in Basis Vector W%d" % (c + 1))
+        plb.grid(True)
+        plb.savefig("documents_basisW%d.png" % (c + 1), bbox_inches = "tight")
     print "... Finished."
 
 stop_words = ["a","able","about","across","after","all","almost","also","am","among","an","and","any","are","as","at","be",
