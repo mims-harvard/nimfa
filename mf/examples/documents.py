@@ -27,9 +27,55 @@
         immediately . 
     
     Because of the nature of analysis, the resulting data matrix is very sparse. Therefore we use ``scipy.sparse`` matrix
-    formats in factorization. This results in lower space consumption.
+    formats in factorization. This results in lower space consumption. Using, Standard NMF - Divergence, fitted
+    factorization model is sparse as well, according to [Hoyer2004]_ measure of sparseness, the basis matrix has
+    sparseness of 0.641 and the mixture matrix 0.863.
     
+    .. note:: This sparseness 
+              measure quantifies how much energy of a vector is packed into only few components. The sparseness of a vector
+              is a real number in [0, 1]. Sparser vector has value closer to 1. The measure is 1 iff vector contains single
+              nonzero component and the measure is equal to 0 iff all components are equal. Sparseness of a matrix is 
+              the mean sparseness of its column vectors.
     
+    The configuration of this example is sparse data matrix with Standard NMF - Divergence factorization method using 
+    Random Vcol algorithm for initialization and rank 15 (the number of hidden topics). 
+    
+    Because of nonnegativity constraints, NMF has impressive benefits in terms of interpretation of its factors. In text
+    processing applications, factorization rank can be considered the number of hidden topics present in the document
+    collection. The basis matrix becomes a term-by-topic matrix whose columns are the basis vectors. Similar interpretation
+    holds for the other factor, mixture matrix. Mixture matrix is a topic-by-document matrix with sparse nonnegative 
+    columns. Element j of column 1 of mixture matrix measures the strength to which topic j appears in document 1. 
+    
+    .. figure:: /images/ /images/documents_basisW1.png
+       :scale: 60 %
+       :alt: Highest weighted terms in basis vector W1. 
+       :align: center
+
+       Highest weighted terms in basis vector W1. 
+       
+       
+    .. figure:: /images/ /images/documents_basisW4.png
+       :scale: 60 %
+       :alt: Highest weighted terms in basis vector W4. 
+       :align: center
+
+       Highest weighted terms in basis vector W4. 
+       
+       
+    .. figure:: /images/ /images/documents_basis13.png
+       :scale: 60 %
+       :alt: Highest weighted terms in basis vector W13. 
+       :align: center
+
+       Highest weighted terms in basis vector W13. 
+       
+       
+    .. figure:: /images/ /images/documents_basisW15.png
+       :scale: 60 %
+       :alt: Highest weighted terms in basis vector W15. 
+       :align: center
+
+       Highest weighted terms in basis vector W15. 
     
     To run the examples simply type::
         
