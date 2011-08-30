@@ -15,7 +15,7 @@
     including incorrect diagnosis of the samples. They are included them in example.The distinction between AML 
     and ALL, as well as the division of ALL into T and B cell subtypes is well known. 
     
-    .. note:: Leukemia data set used in this example is included in the `datasets` and need not to be
+    .. note:: Leukemia data set used in this example is included in the `datasets` and does not need to be
               downloaded. However, download links are listed in the ``datasets``. To run the example, the data set
               must be find in the `ALL_AML` folder under `datasets`. 
     

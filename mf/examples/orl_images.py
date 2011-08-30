@@ -4,7 +4,7 @@
     Orl_images (``examples.orl_images``)
     ####################################
     
-    In this example we consider the image problem used in [Hoyer2004]_. 
+    In this example of image processing we consider the image problem used in [Hoyer2004]_. 
     
     We used the ORL face database composed of 400 images of size 112 x 92. There are 40 persons, 10 images per
     each person. The images were taken at different times, lighting and facial expressions. The faces are in 
@@ -13,7 +13,7 @@
     images by constructing a matrix of shape 10304 (pixels) x 400 (faces). To avoid too large values, the data matrix is 
     divided by 100. Indeed, this division does not has any major impact on performance of the MF methods. 
     
-    .. note:: ORL face images database used in this example is included in the `datasets` and need not to be
+    .. note:: ORL face images database used in this example is included in the `datasets` and does not need to be
           downloaded. However, download links are listed in the ``datasets``. To run the example, the ORL face images
           must be find in the ``ORL_faces`` folder under ``datasets``. 
           
@@ -86,8 +86,8 @@
         import mf.examples
         mf.examples.orl_images.run()
         
-    .. note:: This example uses matplotlib library for producing a heatmap of a consensus matrix. It uses PIL library for 
-              displaying face images. 
+    .. note:: This example uses matplotlib library for producing visual interpretation of basis vectors. It uses PIL 
+              library for displaying face images. 
 """
 
 import mf

@@ -11,7 +11,7 @@
     understood but is accepted that there are two known histological subclasses; classic (C) and desmoplastic (D). 
     These subclasses can be clearly seen under microscope.   
     
-    .. note:: Medulloblastoma data set used in this example is included in the `datasets` and need not to be
+    .. note:: Medulloblastoma data set used in this example is included in the `datasets` and does not need to be
           downloaded. However, download links are listed in the ``datasets``. To run the example, the data set
           must be find in the `Medulloblastoma` folder under `datasets`. 
     
