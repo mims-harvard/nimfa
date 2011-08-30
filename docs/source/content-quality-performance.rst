@@ -23,7 +23,7 @@
  
  * Sparseness [Hoyer2004]_
  
- * Cophenetic correlation coefficient of consensus matrix * can be used for rank estimate [Brunet2004]_
+ * Cophenetic correlation coefficient of consensus matrix - can be used for rank estimate [Brunet2004]_
  
  * Dispersion [Park2007]_
  

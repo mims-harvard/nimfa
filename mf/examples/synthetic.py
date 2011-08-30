@@ -9,7 +9,7 @@
     be used for demonstration of the library. 
     
     Examples are performed on 20 x 30 dense matrix, whose values are drawn from normal 
-    distribution with zero mean one one variance (an absolute of values is taken because of 
+    distribution with zero mean and variance of one (an absolute of values is taken because of 
     nonnegativity constraint).
     
     Only for the purpose of demonstration in all examples many optional (runtime or algorithm specific) 

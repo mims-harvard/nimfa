@@ -6,9 +6,9 @@
            measures. 
         #. Implementation of the standard model to manage factorizations that follow standard NMF model.
         #. Implementation of the alternative nonsmooth model to manage factorizations that follow nonstandard NMF model 
-           (e.g. nsnmf)
+           (e.g. nsnmf).
         #. Implementation of the alternative multiple model to manage factorizations that follow NMF nonstandard model 
-           (e.g. snmnmf)        
+           (e.g. snmnmf).
         #. Tracker of MF fitted model across multiple runs of the factorizations and tracker of
            the residuals error across iterations of single/multiple runs.  
         #. Implementation for storing MF fitted model and MF results. 

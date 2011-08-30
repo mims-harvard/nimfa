@@ -51,10 +51,10 @@
        :alt: Highest weighted terms in basis vector W1. 
        :align: center
 
-       Interpretation of NMF basis vectors on Medlars data set. Highest weighted terms in basis vector W1. The nonzero elements of column 1
+       Interpretation of NMF - Divergence basis vectors on Medlars data set. Highest weighted terms in basis vector W1. The nonzero elements of column 1
        of W (W1), which is sparse and nonnegative, correspond to particular terms. By considering the highest weighted terms in this vector, 
        we can assign a label or topic to basis vector W1. As the NMF allows user the ability to interpret the basis vectors, a user might
-       attach the label "liver" to basis vector W1.  
+       attach the label **liver** to basis vector W1.  
        
        
     .. figure:: /images/documents_basisW4.png
