@@ -95,9 +95,13 @@
 
 import mf
 import numpy as np
-from matplotlib.pyplot import savefig, imshow, set_cmap
 from scipy.cluster.hierarchy import linkage, leaves_list
 from os.path import dirname, abspath, sep
+
+try:
+    from matplotlib.pyplot import savefig, imshow, set_cmap
+except ImportError, exc:
+    raise SystemExit("Matplotlib must be installed to run this example.")
 
 def run():
     """Run Standard NMF on medulloblastoma data set. For each rank 50 Standard NMF runs are performed. """    

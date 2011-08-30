@@ -4,7 +4,7 @@
     Orl_images (``examples.orl_images``)
     ####################################
     
-    In this example of image processing we consider the image problem used in [Hoyer2004]_. 
+    In this example of image processing we consider the image problem presented in [Hoyer2004]_. 
     
     We used the ORL face database composed of 400 images of size 112 x 92. There are 40 persons, 10 images per
     each person. The images were taken at different times, lighting and facial expressions. The faces are in 
@@ -17,7 +17,7 @@
           downloaded. However, download links are listed in the ``datasets``. To run the example, the ORL face images
           must be find in the ``ORL_faces`` folder under ``datasets``. 
           
-    We used NMF - Euclidean, LSNMF and PSMF factorization methods to learn the basis images from the ORL database. The
+    We experimented NMF - Euclidean, LSNMF and PSMF factorization methods to learn the basis images from the ORL database. The
     number of bases is 25. In [Lee1999]_ Lee and Seung showed that Standard NMF (Euclidean or divergence) found a parts-based
     representation when trained on face images from CBCL database. However, applying NMF to the ORL data set, in which images
     are not as well aligned, a global decomposition emerges. To compare, this example applies different MF methods to the face 
@@ -92,8 +92,12 @@
 
 import mf
 import numpy as np
-from matplotlib.pyplot import savefig, imshow, set_cmap
 from os.path import dirname, abspath, sep
+
+try:
+    from matplotlib.pyplot import savefig, imshow, set_cmap
+except ImportError, exc:
+    raise SystemExit("Matplotlib must be installed to run this example.")
 
 try:
     from PIL.Image import open, fromarray, new

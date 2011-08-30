@@ -4,10 +4,31 @@
     Documents (``examples.documents``)
     ##################################
 
+    In this example of text analysis we consider the text processing application inspired by [Albright2006]_.
+    
+    We used the Medlars data set, which is a collection of 1033 medical abstracts. In example we performed factorization
+    on term-by-document matrix by constructing a matrix of shape 4765 (terms) x 1033 (documents). Original number
+    of terms is 16017, the reduced number is a result of text preprocessing, namely removing stop words, too short words, 
+    words that appear 2 times or less in the corpus and words that appear 50 times or more.
 
     .. note:: Medlars data set of medical abstracts used in this example is not included in the `datasets` and need to be
       downloaded. Download links are listed in the ``datasets``. Download compressed version of document text. To run the example, 
       the extracted Medlars data set must be find in the ``Medlars`` folder under ``datasets``. 
+      
+    Example of medical abstract::
+        
+        autolysis of bacillus subtilis by glucose depletion .                   
+        in cultures in minimal medium, rapid lysis of cells of bacillus       
+        subtilis was observed as soon as the carbon source, e.g. glucose, had   
+        been completely consumed . the cells died and ultraviolet-absorbing     
+        material was excreted in the medium . the results suggest that the cells
+        lyse because of the presence of autolytic enzymes . in the presence of  
+        glucose the damage to the cell wall caused by these enzymes is repaired 
+        immediately . 
+    
+    Because of the nature of analysis, the resulting data matrix is very sparse. Therefore we use ``scipy.sparse`` matrix
+    formats in factorization. This results in lower space consumption.
+    
     
     
     To run the examples simply type::
@@ -26,19 +47,24 @@
 import mf
 import numpy as np
 import scipy.sparse as sp
-from matplotlib.pyplot import savefig, imshow, set_cmap
 from os.path import dirname, abspath, sep
+from operator import itemgetter
+
+try:
+    from matplotlib.pylab import *
+except ImportError, exc:
+    raise SystemExit("Matplotlib must be installed to run this example.")
 
 def run():
     """Run NMF - Divergence on the Medlars data set."""
     # read medical abstracts from Medlars data set 
-    V = read()
+    V, term2idx, idx2term = read()
     # preprocess Medlars data matrix
-    V = preprocess(V)
+    V, term2idx, idx2term = preprocess(V, term2idx, idx2term)
     # run factorization
     W, _ = factorize(V)
     # plot interpretation of NMF basis vectors on Medlars data set. 
-    plot(W)
+    plot(W, idx2term)
     
 def factorize(V):
     """
@@ -49,85 +75,133 @@ def factorize(V):
     :param V: The Medlars data matrix. 
     :type V: `scipy.sparse.csr_matrix`
     """
-    print "Performing LSNMF factorization ..." 
+    print "Performing NMF - Divergence factorization ..." 
     model = mf.mf(V, 
-                  seed = "random_vcol",
-                  rank = 25, 
-                  method = "lsnmf", 
-                  max_iter = 50,
+                  seed = "random_vcol", 
+                  rank = 12, 
+                  method = "nmf", 
+                  max_iter = 15, 
                   initialize_only = True,
-                  sub_iter = 10,
-                  inner_sub_iter = 10, 
-                  beta = 0.1,
-                  min_residuals = 1e-8)
+                  update = 'divergence',
+                  objective = 'div')
     fit = mf.mf_run(model)
-    print " ... Finished"
+    print "... Finished"
+    sparse_w, sparse_h = fit.fit.sparseness()
     print """Stats:
             - iterations: %d
-            - final projected gradients norm: %5.3f
-            - Euclidean distance: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric = 'euclidean'))
+            - KL Divergence: %5.3f
+            - Euclidean distance: %5.3f
+            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric = 'euclidean'), sparse_w, sparse_h)
     return fit.basis(), fit.coef()
     
 def read():
     """
-    Read medical abstracts data from Medlars data set. The matrix's shape is 5831 (terms) x 1033 (documents). 
+    Read medical abstracts data from Medlars data set. 
     
     Construct term-by-document matrix. This matrix is sparse, therefore ``scipy.sparse`` format is used. For construction
     LIL sparse format is used, which is an efficient structure for constructing sparse matrices incrementally. 
     
-    Return the Medlars sparse data matrix. 
+    Return the Medlars sparse data matrix, term-to-index `dict` translator and index-to-term `dict` translator. 
     """
     print "Reading Medlars medical abstracts data set ..."
     dir = dirname(dirname(abspath(__file__)))+ sep + 'datasets' + sep + 'Medlars' + sep + 'med.all'
-    V = sp.lil_matrix((5831, 1033))
-    for subject in xrange(40):
-        for image in xrange(10):
-            im = open(dir + str(subject + 1) + sep + str(image + 1) + ".pgm")
-            # reduce the size of the image
-            im = im.resize((46, 56))
-            V[:, image * subject + image] = np.mat(np.asarray(im).flatten()).T      
+    doc = open(dir)
+    V = sp.lil_matrix((16017, 1033))
+    term2idx = {}
+    idx2term = {}
+    n_free = 0
+    line = doc.readline()
+    for abstract in xrange(1033):
+        ii = int(line.split()[1])
+        # omit .W char
+        doc.readline()
+        line = doc.readline()
+        while line != ".I " + str(ii + 1) and line != "":
+            for term in line.split():
+                term = term.strip().replace(',', '').replace('.', '')
+                if term not in term2idx:
+                    term2idx[term] = n_free
+                    idx2term[n_free] = term
+                    n_free += 1
+                V[term2idx[term], ii - 1] += 1 
+            line = doc.readline().strip()
     print "... Finished."
-    return V
+    return V, term2idx, idx2term
             
-def preprocess(V):
+def preprocess(V, term2idx, idx2term):
     """
-    Preprocess Medlars data matrix.
+    Preprocess Medlars data matrix. Remove stop words, digits, too short words, words that appear 2 times or less 
+    in the corpus and words that appear 50 times or more.
     
-    Return preprocessed term-by-document matrix. The sparse data matrixis converted to CSR format for fast arithmetic
-    and matrix vector operations. 
+    Return preprocessed term-by-document matrix. Returned matrix's shape is 4765 (terms) x 1033 (documents). 
+    The sparse data matrix is converted to CSR format for fast arithmetic and matrix vector operations. Return
+    updated index-to-term and term-to-index translators.
     
     :param V: The Medlars data matrix. 
     :type V: `scipy.sparse.lil_matrix`
+    :param term2idx: Term-to-index translator.
+    :type term2idx: `dict`
+    :param idx2term: Index-to-term translator.
+    :type idx2term: `dict`
     """
     print "Preprocessing data matrix ..." 
-    min_val = V.min(axis = 0)
-    V = V - np.mat(np.ones((V.shape[0], 1))) * min_val
-    max_val = V.max(axis = 0) + 1e-4
-    V = (255. * V) / (np.mat(np.ones((V.shape[0], 1))) * max_val)
-    # avoid too large values 
-    V = V / 100.
-    print "... Finished."
-    return V.tocsr()
+    # remove stop words, digits, too short words
+    rem = set()
+    for term in term2idx:
+        if term in stop_words or len(term) <= 2 or str.isdigit(term):
+            rem.add(term2idx[term])
+    # remove words that appear two times or less in corpus 
+    V = V.tocsr()
+    for r in xrange(V.shape[0]):
+        if V[r, :].sum() <= 2 or V[r, :].sum() >= 50:
+            rem.add(r)
+    retain = set(xrange(V.shape[0])).difference(rem)
+    n_free = 0
+    V1 = sp.lil_matrix((V.shape[0] - len(rem), 1033))
+    for r in retain:
+        term2idx[idx2term[r]] = n_free
+        idx2term[n_free] = idx2term[r]
+        V1[n_free, :] = V[r, :] 
+        n_free += 1
+    print "... Finished."    
+    return V1.tocsr(), term2idx, idx2term
             
-def plot(W):
+def plot(W, idx2term):
     """
     Plot the interpretation of NMF basis vectors on Medlars data set. 
     
     :param W: Basis matrix of the fitted factorization model.
     :type W: `scipy.sparse.csr_matrix`
+    :param idx2term: Index-to-term translator.
+    :type idx2term: `dict`
     """
-    set_cmap('gray')
-    blank = new("L", (225 + 6, 280 + 6))
-    for i in xrange(5):
-        for j in xrange(5):
-            basis = np.array(W[:, 5 * i + j])[:, 0].reshape((56, 46))
-            basis = basis / np.max(basis) * 255
-            basis = 255 - basis
-            ima = fromarray(basis)
-            expand(ima, border = 1, fill = 'black')
-            blank.paste(ima.copy(), (j * 46 + j, i * 56 + i))
-    imshow(blank)
-    savefig("orl_faces.png")
+    print "Plotting highest weighted terms in basis vectors ..."
+    for c in xrange(W.shape[1]):
+        if sp.isspmatrix(W):
+            top10 = sorted(enumerate(W[:, c].todense().ravel().tolist()[0]), key = itemgetter(1), reverse = True)[:10]
+        else:
+            top10 = sorted(enumerate(W[:, c].ravel().tolist()[0]), key = itemgetter(1), reverse = True)[:10]
+        pos = np.arange(10) + .5
+        val = zip(*top10)[1][::-1]
+        figure((c+1))
+        barh(pos, val, color = "yellow", align = "center")
+        yticks(pos, [idx2term[idx] for idx in zip(*top10)[0]][::-1])
+        xlabel("Weight")
+        ylabel("Term")
+        title("Highest Weighted Terms in Basis Vector W%d" % (c + 1))
+        grid(True)
+        savefig("documents_basisW%d.png" % (c + 1), bbox_inches = "tight")
+    print "... Finished."
+
+stop_words = ["a","able","about","across","after","all","almost","also","am","among","an","and","any","are","as","at","be",
+              "because","been","but","by","can","cannot","could","dear","did","do","does","either","else","ever","every",
+              "for","from","get","got","had","has","have","he","her","hers","him","his","how","however","i","if","in",
+              "into","is","it","its","just","least","let","like","likely","may","me","might","most","must","my","neither",
+              "no","nor","not","of","off","often","on","only","or","other","our","own","rather","said","say","says","she",
+              "should","since","so","some","than","that","the","their","them","then","there","these","they","this","tis",
+              "to","too","twas","us","wants","was","we","were","what","when","where","which","while","who","whom","why",
+              "will","with","would","yet","you","your","."," ","1","2","3","4","5","6","7","8","9","0", "during", "changes",
+              "(1)","(2)","(3)","(4)","(5)","(6)","(7)","(8)","(9)","usually","involved","labeled"]
 
 if __name__ == "__main__":
     """Run the Medlars example."""
