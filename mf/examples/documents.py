@@ -6,8 +6,8 @@
 
 
     .. note:: Medlars data set of medical abstracts used in this example is not included in the `datasets` and need to be
-      downloaded. Download links are listed in the ``datasets``. Download compress version of document text. To run the example, the Medlars data set
-      must be find in the ``Medlars`` folder under ``datasets``. 
+      downloaded. Download links are listed in the ``datasets``. Download compressed version of document text. To run the example, 
+      the extracted Medlars data set must be find in the ``Medlars`` folder under ``datasets``. 
     
     
     To run the examples simply type::
@@ -25,6 +25,7 @@
 
 import mf
 import numpy as np
+import scipy.sparse as sp
 from matplotlib.pyplot import savefig, imshow, set_cmap
 from os.path import dirname, abspath, sep
 
@@ -41,12 +42,12 @@ def run():
     
 def factorize(V):
     """
-    Perform NMF - Divergence factorization on the Medlars data matrix. 
+    Perform NMF - Divergence factorization on the sparse Medlars data matrix. 
     
     Return basis and mixture matrices of the fitted factorization model. 
     
     :param V: The Medlars data matrix. 
-    :type V: `numpy.matrix`
+    :type V: `scipy.sparse.csr_matrix`
     """
     print "Performing LSNMF factorization ..." 
     model = mf.mf(V, 
@@ -71,13 +72,14 @@ def read():
     """
     Read medical abstracts data from Medlars data set. The matrix's shape is 5831 (terms) x 1033 (documents). 
     
-    Construct term-by-document matrix. 
+    Construct term-by-document matrix. This matrix is sparse, therefore ``scipy.sparse`` format is used. For construction
+    LIL sparse format is used, which is an efficient structure for constructing sparse matrices incrementally. 
     
-    Return the Medlars data matrix. 
+    Return the Medlars sparse data matrix. 
     """
     print "Reading Medlars medical abstracts data set ..."
-    dir = dirname(dirname(abspath(__file__)))+ sep + 'datasets' + sep + 'ORL_faces' + sep + 's'
-    V = np.matrix(np.zeros((46 * 56, 400)))
+    dir = dirname(dirname(abspath(__file__)))+ sep + 'datasets' + sep + 'Medlars' + sep + 'med.all'
+    V = sp.lil_matrix((5831, 1033))
     for subject in xrange(40):
         for image in xrange(10):
             im = open(dir + str(subject + 1) + sep + str(image + 1) + ".pgm")
@@ -91,8 +93,11 @@ def preprocess(V):
     """
     Preprocess Medlars data matrix.
     
+    Return preprocessed term-by-document matrix. The sparse data matrixis converted to CSR format for fast arithmetic
+    and matrix vector operations. 
+    
     :param V: The Medlars data matrix. 
-    :type V: `numpy.matrix`
+    :type V: `scipy.sparse.lil_matrix`
     """
     print "Preprocessing data matrix ..." 
     min_val = V.min(axis = 0)
@@ -102,14 +107,14 @@ def preprocess(V):
     # avoid too large values 
     V = V / 100.
     print "... Finished."
-    return V
+    return V.tocsr()
             
 def plot(W):
     """
     Plot the interpretation of NMF basis vectors on Medlars data set. 
     
     :param W: Basis matrix of the fitted factorization model.
-    :type W: `numpy.matrix`
+    :type W: `scipy.sparse.csr_matrix`
     """
     set_cmap('gray')
     blank = new("L", (225 + 6, 280 + 6))

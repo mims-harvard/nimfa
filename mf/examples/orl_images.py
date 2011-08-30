@@ -164,6 +164,8 @@ def preprocess(V):
     """
     Preprocess ORL faces data matrix as Stan Li, et. al.
     
+    Return normalized and preprocessed data matrix. 
+    
     :param V: The ORL faces data matrix. 
     :type V: `numpy.matrix`
     """

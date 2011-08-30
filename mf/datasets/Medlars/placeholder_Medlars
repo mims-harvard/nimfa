@@ -1,4 +1,5 @@
 
 Medlars collection (1033 medical abstracts)
 
-Data set link available in ``datasets```section of documentation. It is available at: http://web.eecs.utk.edu/research/lsi/. Download compressed version of document text. 
+Data set link available in ``datasets```section of documentation. It is available at: http://web.eecs.utk.edu/research/lsi/. Download compressed version of document text. Extract the document, its 
+name should be ``med.all``.
