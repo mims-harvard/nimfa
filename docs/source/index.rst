@@ -37,13 +37,13 @@ With the library of factorization methods in Orange an easy-to-use interface to 
 The MF library expands the already vast usage of Orange methods in numerous applications without the need to use external
 programming packages for factorizations.
 
-`Project wiki`_ is available at `Orange`_ site. 
+`Project wiki`_ is available at `Orange`_ site. `Short presentation`_ about MF is available.
 
 .. _Orange: http://orange.biolab.si
 
 .. _Project wiki: http://orange.biolab.si/trac/wiki/MatrixFactorization
 
-
+.. _Short presentation: http://helikoid.si/mf/GSoC_MF.pdf
 
 ###################
 Scripting Reference

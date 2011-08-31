@@ -5,7 +5,7 @@
 
  * **ICM** - Iterated conditional modes nonnegative matrix factorization [Schmidt2009]_
 
- * **LFNMF** - Fisher nonnegative matrix factorization for learning Local features [Wang2004]_, [Li2001]_
+ * **LFNMF** - Fisher nonnegative matrix factorization for learning local features [Wang2004]_, [Li2001]_
 
  * **LSNMF** - Alternative nonnegative least squares matrix factorization using projected gradient method for subproblems [Lin2007]_
 
