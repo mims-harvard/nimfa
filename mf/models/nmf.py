@@ -483,6 +483,7 @@ class Nmf(object):
         self.n_run = n_run
         summaries = {}
         for rank in range: 
+            self.rank = rank
             fit = self.run()
             summaries[rank] = fit.summary(idx)
         return summaries

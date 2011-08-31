@@ -95,7 +95,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
             if self.track_factor:
                 self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), H1 = self.H1.copy(), 
                                           final_obj = cobj, n_iter = iter)
-        
+                
         self.n_iter = iter 
         self.final_obj = cobj
         mffit = mf_fit.Mf_fit(self)
