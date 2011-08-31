@@ -461,3 +461,19 @@ class Nmf(object):
         C = self.consensus(idx = idx)
         return sum(sum(4 * (C[i,j] - 0.5)**2 for j in xrange(C.shape[1])) for i in xrange(C.shape[0]))
     
+    def estimate_rank(self, range = xrange(30, 51), n_run = 10):
+        """
+        Choosing factorization parameters carefully is vital for success. However, a critical parameter is factorization rank. This
+        method tries different values for ranks, perform factorizations, compute some quality measures of the results and
+        choose the best value according to [Brunet2004]_ and [Hutchins2008]_.
+        
+        Return an estimated factorization rank and a set of quality measures for each value in range.
+        
+        :param range: Range of factorization ranks to try. 
+        :type range: tuple of lower and upper bound inclusive or range
+        :param n_run: The number of runs to be performed for each value in range. 
+        :type n_run: `int`
+        """
+        pass
+    
+    
