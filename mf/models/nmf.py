@@ -461,31 +461,70 @@ class Nmf(object):
         C = self.consensus(idx = idx)
         return sum(sum(4 * (C[i,j] - 0.5)**2 for j in xrange(C.shape[1])) for i in xrange(C.shape[0]))
     
-    def estimate_rank(self, range = xrange(30, 51), n_run = 10, idx = 0):
+    def estimate_rank(self, range = xrange(30, 51), n_run = 10, idx = 0, what = 'all'):
         """
-        Choosing factorization parameters carefully is vital for success. However, a critical parameter is factorization rank. This
-        method tries different values for ranks, perform factorizations, compute some quality measures of the results and
-        choose the best value according to [Brunet2004]_ and [Hutchins2008]_.
+        Choosing factorization parameters carefully is vital for success of a factorization. However, the most critical parameter 
+        is factorization rank. This method tries different values for ranks, performs factorizations, computes some quality 
+        measures of the results and chooses the best value according to [Brunet2004]_ and [Hutchins2008]_.
         
         .. note:: The process of rank estimation can be lenghty.     
         
-        Return a `dict` of quality measures for each value in range. This can be passed to visualization method, from which estimated
+        Return a `dict` of quality measures for each value in range. This can be passed to the visualization model, from which estimated
         rank can be established. 
         
-        :param range: Range of factorization ranks to try. Default is 30:50.
-        :type range: tuple of lower and upper bound inclusive or range
+        :param range: Range of factorization ranks to try. Default is ``xrange(30, 51)``.
+        :type range: list or tuple like range of `int`
         :param n_run: The number of runs to be performed for each value in range. Default is 10.  
         :type n_run: `int`
+        :param what: Specify quality measures of the results computed for each rank. By default, summary of the fitted factorization 
+                     model is computed. Instead, user can supply list of strings that matches some of the following 
+                     quality measures: 
+                     
+                         * `sparseness`
+                         * `rss`
+                         * `evar`
+                         * `residuals`
+                         * `connectivity`
+                         * `dispersion`
+                         * `cophenetic`
+                         * `consensus`
+                         * `euclidean`
+                         * `kl`
+                         
+        :type what: list or tuple like of `str`
         :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model. Default is 0 (first coefficient 
                     matrix).
         :type idx: `str` or `int`
         """
         self.n_run = n_run
+        def _measures(measure):
+            return {
+                'sparseness': fit.sparseness,
+                'rss': fit.rss,
+                'evar': fit.evar,
+                'residuals': fit.residuals,
+                'connectivity': fit.connectivity,
+                'dispersion': fit.dispersion,
+                'cophenetic': fit.coph_cor,
+                'consensus': fit.consensus}[measure]
         summaries = {}
         for rank in range: 
             self.rank = rank
             fit = self.run()
-            summaries[rank] = fit.summary(idx)
+            if what == 'all':
+                summaries[rank] = fit.summary(idx)
+            else:
+                summaries[rank] = {
+                'rank': self.fit.rank,
+                'n_iter': self.fit.n_iter,
+                'n_run': self.fit.n_run }
+                for measure in what:
+                    if measure == 'euclidean':
+                        summaries[rank][measure] = fit.distance(metric = 'euclidean', idx = idx)
+                    elif measure == 'kl':
+                        summaries[rank][measure] = fit.distance(metric = 'kl', idx = idx)
+                    else:
+                        summaries[rank][measure] = _measures(measure)(idx = idx)
         return summaries
     
     
