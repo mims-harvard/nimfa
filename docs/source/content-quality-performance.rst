@@ -27,4 +27,6 @@
  
  * Dispersion [Park2007]_
  
+ * Factorization rank estimation
+ 
  * Selected matrix factorization method specific
