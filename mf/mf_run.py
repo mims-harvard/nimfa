@@ -62,7 +62,8 @@ def mf(target, seed = None, W = None, H = None, H1 = None,
                   :class:`methods.factorization.nsnmf.Nsmf`, :class:`methods.factorization.pmf.Pmf`, 
                   :class:`methods.factorization.psmf.Psmf`, :class:`methods.factorization.snmf.Snmf`, 
                   :class:`methods.factorization.bmf.Bmf`, :class:`methods.factorization.snmnmf`
-    :param n_run: It specifies the number of runs of the algorithm. Default is 1.
+    :param n_run: It specifies the number of runs of the algorithm. Default is 1. If multiple runs are performed, fitted factorization
+                  model with the lowest objective function value is retained. 
     :type n_run: `int`
     :param callback: Pass a callback function that is called after each run when performing multiple runs. This is useful
                      if one wants to save summary measures or process the result before it gets discarded. The callback

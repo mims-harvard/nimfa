@@ -92,25 +92,29 @@ class Psmf(nmf_std.Nmf_std):
             self.sigma = self.sigma / np.tile(self.sigma.sum(axis = 1).reshape((self.sigma.shape[0], 1, self.sigma.shape[2])), (1, self.rank, 1))
             self.rho = np.tile(self.prior, (self.V.shape[0], 1))
             self._cross_terms()
-            pobj = cobj = self.objective()
+            p_obj = c_obj = self.objective()
+            best_obj = c_obj if run == 0 else best_obj
             iter = 0
-            while self.is_satisfied(pobj, cobj, iter):
-                pobj = cobj if not self.test_conv or iter % self.test_conv == 0 else pobj
+            while self.is_satisfied(p_obj, c_obj, iter):
+                p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update()
-                cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
+                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 iter += 1
                 if self.track_error:
-                    self.tracker.track_error(cobj, run)
+                    self.tracker.track_error(c_obj, run)
             if self.callback:
-                self.final_obj = cobj
+                self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), final_obj = cobj, n_iter = iter)
+                self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), final_obj = c_obj, n_iter = iter)
+            # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
+            if c_obj <= best_obj:
+                best_obj = c_obj
+                self.n_iter = iter 
+                self.final_obj = c_obj
+                mffit = mf_fit.Mf_fit(self)
         
-        self.n_iter = iter 
-        self.final_obj = cobj 
-        mffit = mf_fit.Mf_fit(self)
         return mffit
     
     def _cross_terms(self):

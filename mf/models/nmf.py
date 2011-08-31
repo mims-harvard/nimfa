@@ -469,8 +469,8 @@ class Nmf(object):
         
         .. note:: The process of rank estimation can be lenghty.     
         
-        Return a `dict` of quality measures for each value in range. This can be passed to the visualization model, from which estimated
-        rank can be established. 
+        Return a `dict` (keys are values of rank from range, values are `dict`s of measures) of quality measures for each value in 
+        rank's range. This can be passed to the visualization model, from which estimated rank can be established. 
         
         :param range: Range of factorization ranks to try. Default is ``xrange(30, 51)``.
         :type range: list or tuple like range of `int`

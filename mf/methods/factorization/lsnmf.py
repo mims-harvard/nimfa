@@ -69,24 +69,28 @@ class Lsnmf(nmf_std.Nmf_std):
             # iterW and iterH are not parameters, as these values are used only in first objective computation 
             self.iterW = 10
             self.iterH = 10
-            cobj = self.objective() 
+            c_obj = self.objective()
+            best_obj = c_obj if run == 0 else best_obj 
             iter = 0
-            while self.is_satisfied(cobj, iter):
+            while self.is_satisfied(c_obj, iter):
                 self.update()
-                cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
+                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 iter += 1
                 if self.track_error:
-                    self.tracker.track_error(cobj, run)
+                    self.tracker.track_error(c_obj, run)
             if self.callback:
-                self.final_obj = cobj
+                self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), final_obj = cobj, n_iter = iter)
+                self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), final_obj = c_obj, n_iter = iter)
+            # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
+            if c_obj <= best_obj:
+                best_obj = c_obj
+                self.n_iter = iter 
+                self.final_obj = c_obj
+                mffit = mf_fit.Mf_fit(self)
         
-        self.n_iter = iter 
-        self.final_obj = cobj
-        mffit = mf_fit.Mf_fit(self)
         return mffit
     
     def is_satisfied(self, c_obj, iter):

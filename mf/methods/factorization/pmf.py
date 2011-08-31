@@ -51,28 +51,32 @@ class Pmf(nmf_std.Nmf_std):
             self.V_n = sop(self.V.copy(), self.v_factor, div)
             self.P = sp.spdiags([1. / self.rank for _ in xrange(self.rank)], 0, self.rank, self.rank, 'csr')
             self.sqrt_P = sop(self.P, s = None, op = sqrt) 
-            pobj = cobj = self.objective() 
+            p_obj = c_obj = self.objective() 
+            best_obj = c_obj if run == 0 else best_obj
             iter = 0
-            while self.is_satisfied(pobj, cobj, iter):
-                pobj = cobj if not self.test_conv or iter % self.test_conv == 0 else pobj
+            while self.is_satisfied(p_obj, c_obj, iter):
+                p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update()
                 self._adjustment()
-                cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
+                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 iter += 1
                 if self.track_error:
-                    self.tracker.track_error(cobj, run)
+                    self.tracker.track_error(c_obj, run)
             self.W = self.v_factor * dot(self.W, self.sqrt_P) 
             self.H = dot(self.sqrt_P, self.H)
             if self.callback:
-                self.final_obj = cobj
+                self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), final_obj = cobj, n_iter = iter)
+                self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), final_obj = c_obj, n_iter = iter)
+            # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
+            if c_obj <= best_obj:
+                best_obj = c_obj
+                self.n_iter = iter 
+                self.final_obj = c_obj
+                mffit = mf_fit.Mf_fit(self)
         
-        self.n_iter = iter 
-        self.final_obj = cobj
-        mffit = mf_fit.Mf_fit(self)
         return mffit
     
     def is_satisfied(self, p_obj, c_obj, iter):

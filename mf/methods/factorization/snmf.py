@@ -80,7 +80,8 @@ class Snmf(nmf_std.Nmf_std):
             iter = 0
             self.idx_w_old = np.mat(np.zeros((self.V.shape[0], 1)))
             self.idx_h_old = np.mat(np.zeros((1, self.V.shape[1])))
-            cobj = self.objective() 
+            c_obj = self.objective() 
+            best_obj = c_obj if run == 0 else best_obj
             # count the number of convergence checks that column clusters and row clusters have not changed.
             self.inc = 0
             # normalize W
@@ -92,12 +93,12 @@ class Snmf(nmf_std.Nmf_std):
                 self.beta_vec = sqrt(self.beta) * np.ones((1, self.rank))
                 self.I_k = self.eta * np.mat(np.eye(self.rank))
             self.n_restart = 0
-            while self.is_satisfied(cobj, iter):
+            while self.is_satisfied(c_obj, iter):
                 self.update()
-                cobj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else cobj
+                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 iter += 1
                 if self.track_error:
-                    self.tracker.track_error(cobj, run)
+                    self.tracker.track_error(c_obj, run)
             # basis and mixture matrix are now constructed and are now converted to CSR for fast LA operations
             if sp.isspmatrix(self.W):
                 self.W = self.W.tocsr()
@@ -108,15 +109,18 @@ class Snmf(nmf_std.Nmf_std):
                 self.V = self.V.T
                 self.W, self.H = self.H.T, self.W.T
             if self.callback:
-                self.final_obj = cobj
+                self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), final_obj = cobj, n_iter = iter)
+                self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), final_obj = c_obj, n_iter = iter)
+            # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
+            if c_obj <= best_obj:
+                best_obj = c_obj
+                self.n_iter = iter 
+                self.final_obj = c_obj
+                mffit = mf_fit.Mf_fit(self)
         
-        self.n_iter = iter
-        self.final_obj = cobj
-        mffit = mf_fit.Mf_fit(self)
         return mffit
     
     def set_params(self): 
