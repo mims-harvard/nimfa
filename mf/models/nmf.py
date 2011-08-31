@@ -467,7 +467,10 @@ class Nmf(object):
         method tries different values for ranks, perform factorizations, compute some quality measures of the results and
         choose the best value according to [Brunet2004]_ and [Hutchins2008]_.
         
-        Return an estimated factorization rank and a `dict` of quality measures for each value in range.
+        .. note:: The process of rank estimation can be lenghty.     
+        
+        Return a `dict` of quality measures for each value in range. This can be passed to visualization method, from which estimated
+        rank can be established. 
         
         :param range: Range of factorization ranks to try. Default is 30:50.
         :type range: tuple of lower and upper bound inclusive or range
@@ -482,6 +485,6 @@ class Nmf(object):
         for rank in range: 
             fit = self.run()
             summaries[rank] = fit.summary(idx)
-        return estimated, summaries
+        return summaries
     
     
