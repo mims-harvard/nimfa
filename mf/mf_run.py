@@ -29,7 +29,7 @@ import methods
 l_factorization = methods.list_mf_methods()
 l_seed = methods.list_seeding_methods()
 
-def mf(target, seed = None, W = None, H = None, H1 = None,  
+def mf(target, seed = None, W = None, H = None,  
        rank = 30, method = "nmf",
        max_iter = 30, min_residuals = None, test_conv = None,
        n_run = 1, callback = None, initialize_only = False, **options):
@@ -50,8 +50,9 @@ def mf(target, seed = None, W = None, H = None, H1 = None,
     :type seed: `str` naming the method or :class:`methods.seeding.nndsvd.Nndsvd` or None
     :param W: Specify initial factorization of basis matrix W. Default is None. When specified, :param:`seed` must be None.
     :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or :class:`numpy.matrix` or None
-    :param H: Specify initial factorization of mixture matrix H. Default is None. When specified, :param:`seed` must be None.
-    :type H: Instance of the :class:`scipy.sparse` sparse matrices types, :class:`numpy.ndarray`, :class:`numpy.matrix` or
+    :param H: Specify initial factorization of mixture matrix H. In case of factorizations with multiple MF underlying model, initializations 
+              of multiple mixture matrices can be passed as tuples. Default is None. When specified, :param:`seed` must be None.
+    :type H: Instance of the :class:`scipy.sparse` sparse matrices types, :class:`numpy.ndarray`, :class:`numpy.matrix`,
              tuple of instances of the latter classes or None
     :param rank: The factorization rank to achieve. Default is 30.
     :type rank: `int`
@@ -128,15 +129,8 @@ def mf(target, seed = None, W = None, H = None, H1 = None,
                      n_run = n_run, callback = callback, options = options)
     except Exception as str_error:
         raise utils.MFError("Model initialization has been unsuccessful: " + str(str_error))
-    # Check if chosen seeding methods is compatible with chosed factorization method or fixed initialization is passed
-    if mf_model.seed == None and mf_model.W == None and mf_model.H == None: mf_model.seed = None if "none" in mf_model.aseeds else "random"
-    if mf_model.W != None and mf_model.H != None:
-        if mf_model.seed != None:
-            raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
-        else:
-            mf_model.seed = methods.seeding.fixed.Fixed()
-            mf_model.seed._set_fixed(mf_model.W, mf_model.H)
-    __is_smdefined(mf_model)
+    # Check if chosen seeding method is compatible with chosen factorization method or fixed initialization is passed
+    _compatibility(mf_model)
     # return factorization model if only initialization was requested
     if not initialize_only:
         return mf_model.run()
@@ -156,10 +150,25 @@ def mf_run(mf_model):
         raise utils.MFError("Unrecognized MF method.")
     return mf_model.run()
 
-def __compatibility(mf_model):
-    """Check if MF model is compatible with the seeding method."""
-    if not str(mf_model.seed).lower() in mf_model.aseeds:
-        raise utils.MFError("MF model is incompatible with chosen seeding method.") 
+def _compatibility(mf_model):
+    """
+    Check if chosen seeding method is compatible with chosen factorization method or fixed initialization is passed.
+    
+    :param mf_model: The underlying initialized model of matrix factorization.
+    :type mf_model: Class inheriting :class:`models.nmf.Nmf`
+    """
+    W = mf_model.basis()
+    H = mf_model.coef(0)
+    H1 = mf_model.coef(1) if mf_model.model_name == 'mm' else None
+    if mf_model.seed == None and W == None and H == None and H1 == None: mf_model.seed = None if "none" in mf_model.aseeds else "random"
+    if W != None and H != None:
+        if mf_model.seed != None:
+            raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
+        else:
+            mf_model.seed = methods.seeding.fixed.Fixed()
+            mf_model.seed._set_fixed(W, H, H1)
+    __is_smdefined(mf_model)
+    __compatibility(mf_model)
 
 def __is_smdefined(mf_model):
     """Check if MF and seeding methods are well defined."""
@@ -170,6 +179,8 @@ def __is_smdefined(mf_model):
     else:
         if not str(mf_model.seed).lower() in methods.seeding.methods:
             raise utils.MFError("Unrecognized seeding method.")
-    __compatibility(mf_model)
          
-
+def __compatibility(mf_model):
+    """Check if MF model is compatible with the seeding method."""
+    if not str(mf_model.seed).lower() in mf_model.aseeds:
+        raise utils.MFError("MF model is incompatible with chosen seeding method.") 

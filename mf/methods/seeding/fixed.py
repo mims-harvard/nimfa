@@ -19,7 +19,8 @@ class Fixed(object):
         """Set initial factorization."""
         self.factors = factors
         for f in factors:
-            f = np.matrix(f) if not sp.isspmatrix(f) else f.copy() 
+            if f != None: 
+                f = np.matrix(f) if not sp.isspmatrix(f) else f.copy() 
         
     def initialize(self, *args, **kwargs):
         """Return fixed matrix factors."""
