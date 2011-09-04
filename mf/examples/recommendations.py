@@ -4,6 +4,22 @@
     Recommendations (``examples.recommendations``)
     ##############################################
     
+    In this examples of collaborative filtering we consider movie recommendation using common MovieLens data set. It 
+    represents typical cold start problem. A recommender system compares the user's profile to reference
+    characteristics from the user's social environment. In the collaborative filtering approach, the recommender
+    system identify users who share the same preference with the active user and propose items which the like-minded
+    users favoured (and the active user has not yet seen).     
+    
+    We used the MovieLens 100k data set in this example. This data set consists of 100 000 ratings (1-5) from 943
+    users on 1682 movies. Each user has rated at least 20 movies. Simple demographic info for the users is included. 
+    Factorization is performed on a split data set as provided by the collector of the data. The data is split into 
+    two disjoint sets each consisting of training set and a test set with exactly 10 ratings per user. 
+    
+    It is common that matrices in the field of recommendation systems are very sparse (ordinary user rates only a small
+    fraction of items from the large items' set), therefore ``scipy.sparse`` matrix formats are used in this example. 
+    
+    The configuration of this example is SNMF/R factorization method using Random Vcol algorithm for initialization. 
+    
     .. note:: MovieLens movies' rating data set used in this example is not included in the `datasets` and need to be
       downloaded. Download links are listed in the ``datasets``. Download compressed version of the MovieLens 100k. 
       To run the example, the extracted data set must be find in the ``MovieLens`` folder under ``datasets``. 
