@@ -464,15 +464,16 @@ class Snmf(nmf_std.Nmf_std):
                 cols2solve = sorted_idx_set[break_idx[k] + 1 : break_idx[k + 1] + 1]
                 vars = p_set[:, sorted_idx_set[break_idx[k] + 1]]
                 vars = [i for i in xrange(vars.shape[0]) if vars[i, 0]]
-                sol = np.linalg.lstsq(CtC[:, vars][vars, :], CtA[:, cols2solve][vars, :])[0]
-                i = 0
-                for c in cols2solve:
-                    j = 0
-                    for v in vars:
-                        K[v, c] = sol[j,i]
-                        j += 1
-                    i += 1
-                # K[vars, cols2solve] = dot(np.linalg.pinv(CtC[vars, vars]), CtA[vars, cols2solve])
+                if vars != [] and cols2solve != []: 
+                    sol = np.linalg.lstsq(CtC[:, vars][vars, :], CtA[:, cols2solve][vars, :])[0]
+                    i = 0
+                    for c in cols2solve:
+                        j = 0
+                        for v in vars:
+                            K[v, c] = sol[j,i]
+                            j += 1
+                        i += 1
+                    # K[vars, cols2solve] = dot(np.linalg.pinv(CtC[vars, vars]), CtA[vars, cols2solve])
         return K
     
     def __str__(self):
