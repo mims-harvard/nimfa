@@ -91,7 +91,7 @@
         AML_7                   1            0
        ====================  ========== ========== 
     
-    To run the examples simply type::
+    To run the example simply type::
         
         python all_aml.py
         

@@ -80,7 +80,7 @@
 
        Interpretation of NMF basis vectors on Medlars data set. Highest weighted terms in basis vector W15. 
     
-    To run the examples simply type::
+    To run the example simply type::
         
         python documents.py
         

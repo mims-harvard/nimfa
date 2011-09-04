@@ -77,7 +77,7 @@
        prior as scalar and not list, uniform prior is taken, reflecting no prior knowledge on the distribution.  
        
        
-    To run the examples simply type::
+    To run the example simply type::
         
         python orl_images.py
         

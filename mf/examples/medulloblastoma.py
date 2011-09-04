@@ -81,7 +81,7 @@
         Brain_MD_60               D        1            0        0
        ====================  ========== ========== ========== ==========   
     
-    To run the examples simply type::
+    To run the example simply type::
         
         python medulloblastoma.py
         
