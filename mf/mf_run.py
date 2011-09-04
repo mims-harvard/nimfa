@@ -50,8 +50,9 @@ def mf(target, seed = None, W = None, H = None,
     :type seed: `str` naming the method or :class:`methods.seeding.nndsvd.Nndsvd` or None
     :param W: Specify initial factorization of basis matrix W. Default is None. When specified, :param:`seed` must be None.
     :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or :class:`numpy.matrix` or None
-    :param H: Specify initial factorization of mixture matrix H. In case of factorizations with multiple MF underlying model, initializations 
-              of multiple mixture matrices can be passed as tuples. Default is None. When specified, :param:`seed` must be None.
+    :param H: Specify initial factorization of mixture matrix H. In case of factorizations with multiple MF underlying model, initialization 
+              of multiple mixture matrices can be passed as tuples (in order H, H1, H2, etc. respectively). Default is None. When 
+              specified, :param:`seed` must be None.
     :type H: Instance of the :class:`scipy.sparse` sparse matrices types, :class:`numpy.ndarray`, :class:`numpy.matrix`,
              tuple of instances of the latter classes or None
     :param rank: The factorization rank to achieve. Default is 30.
@@ -120,11 +121,11 @@ def mf(target, seed = None, W = None, H = None,
     # Construct factorization model
     try:
         if type(method) is str:
-            mf_model = methods.factorization.methods[method.lower()](V = target, seed = seed, W = W, H = H, rank = rank,
-                     max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
+            mf_model = methods.factorization.methods[method.lower()](V = target, seed = seed, W = W, H = H, H1 = None, 
+                     rank = rank, max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
                      n_run = n_run, callback = callback, options = options)
         else:
-            mf_model = method(V = target, seed = seed, W = W, H = H, rank = rank,
+            mf_model = method(V = target, seed = seed, W = W, H = H, H1 = None, rank = rank,
                      max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
                      n_run = n_run, callback = callback, options = options)
     except Exception as str_error:
@@ -166,7 +167,7 @@ def _compatibility(mf_model):
             raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
         else:
             mf_model.seed = methods.seeding.fixed.Fixed()
-            mf_model.seed._set_fixed(W, H, H1)
+            mf_model.seed._set_fixed(W = W, H = H, H1 = H1)
     __is_smdefined(mf_model)
     __compatibility(mf_model)
 

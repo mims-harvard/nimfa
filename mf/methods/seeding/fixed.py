@@ -15,16 +15,36 @@ class Fixed(object):
     def __init__(self):
         self.name = "fixed"
         
-    def _set_fixed(self, *factors):
+    def _set_fixed(self, **factors):
         """Set initial factorization."""
-        self.factors = factors
-        for f in factors:
-            if f != None: 
-                f = np.matrix(f) if not sp.isspmatrix(f) else f.copy() 
+        for k in factors.keys():
+            if factors[k] != None: 
+                factors[k] = np.matrix(factors[k]) if not sp.isspmatrix(factors[k]) else factors[k].copy()
+            else:
+                factors.pop(k)
+        self.__dict__.update(factors) 
         
-    def initialize(self, *args, **kwargs):
-        """Return fixed matrix factors."""
-        return self.factors
+    def initialize(self, V, rank, options):
+        """
+        Return fixed initialized matrix factors.
+        
+        :param V: Target matrix, the matrix for MF method to estimate. 
+        :type V: One of the :class:`scipy.sparse` sparse matrices types or or :class:`numpy.matrix`
+        :param rank: Factorization rank. 
+        :type rank: `int`
+        :param options: Specify:
+                            #. algorithm;
+                            #. model specific options (e.g. initialization of extra matrix factor, seeding parameters).
+                    
+                        The following are Fixed options.
+                        
+                         :param idx: Name of the matrix (coefficient) matrix. Default is 0, corresponding to 
+                                     factorization models with one mixture matrix (e.g. standard, nonsmooth model).
+                         :type idx: `int`
+        :type options: `dict`
+        """
+        self.idx = options.get('idx', 0)
+        return (self.W, self.H) if self.idx == 0 else (self.W, getattr(self, 'H' + str(self.idx)))
     
     def __repr__(self):
         return "fixed.Fixed()"
