@@ -59,9 +59,9 @@ def print_info(fit, idx = None):
     print "================================================================================================="
     print "Factorization method:", fit.fit
     print "Initialization method:", fit.fit.seed
-    print "Basis matrix: "
+    print "Basis matrix W: "
     print __fact_factor(fit.basis())
-    print "Mixture (Coefficient) matrix: "
+    print "Mixture (Coefficient) matrix H%d: " % (idx if idx != None else 0)
     print __fact_factor(fit.coef(idx))
     print "Distance (Euclidean): ", fit.distance(metric = 'euclidean', idx = idx)
     # We can access actual number of iteration directly through fitted model. 

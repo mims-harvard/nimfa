@@ -150,10 +150,11 @@ def read():
     Construct a term-by-document matrix. This matrix is sparse, therefore ``scipy.sparse`` format is used. For construction
     LIL sparse format is used, which is an efficient structure for constructing sparse matrices incrementally. 
     
-    Return the Medlars sparse data matrix, term-to-index `dict` translator and index-to-term `dict` translator. 
+    Return the Medlars sparse data matrix in LIL format, term-to-index `dict` translator and index-to-term 
+    `dict` translator. 
     """
     print "Reading Medlars medical abstracts data set ..."
-    dir = dirname(dirname(abspath(__file__)))+ sep + 'datasets' + sep + 'Medlars' + sep + 'med.all'
+    dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'Medlars' + sep + 'med.all'
     doc = open(dir)
     V = sp.lil_matrix((16017, 1033))
     term2idx = {}
@@ -182,7 +183,7 @@ def preprocess(V, term2idx, idx2term):
     Preprocess Medlars data matrix. Remove stop words, digits, too short words, words that appear 2 times or less 
     in the corpus and words that appear 50 times or more.
     
-    Return preprocessed term-by-document matrix. Returned matrix's shape is 4765 (terms) x 1033 (documents). 
+    Return preprocessed term-by-document sparse matrix in CSR format. Returned matrix's shape is 4765 (terms) x 1033 (documents). 
     The sparse data matrix is converted to CSR format for fast arithmetic and matrix vector operations. Return
     updated index-to-term and term-to-index translators.
     

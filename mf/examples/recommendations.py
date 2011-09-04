@@ -50,7 +50,8 @@ def run():
         # run factorization
         W, H = factorize(V)
         # plot RMSE rate on MovieLens data set. 
-        plot(W, H)
+        plot(W, H, data_set)
+        exit()
         
 def factorize(V):
     """
@@ -87,28 +88,35 @@ def read(data_set):
     Construct a user-by-item matrix. This matrix is sparse, therefore ``scipy.sparse`` format is used. For construction
     LIL sparse format is used, which is an efficient structure for constructing sparse matrices incrementally. 
     
-    Return the MovieLens sparse data matrix. 
+    Return the MovieLens sparse data matrix in LIL format. 
     
     :param data_set: Name of the split data set to be read. 
     :type data_set: `str`
     """
     print "Reading MovieLens ratings data set ..."
+    dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'MovieLens' + sep + data_set + '.base'
+    V = sp.lil_matrix((943, 1682))
+    for line in open(dir): 
+        u, i, r, _ = map(int, line.split())
+        V[u - 1, i - 1] = r
+    return V 
     print "... Finished."
             
 def preprocess(V):
     """
     Preprocess MovieLens data matrix. Normalize data.
     
-    Return preprocessed target data matrix. Returned matrix's shape is 943 (users) x 1682 (movies). 
+    Return preprocessed target sparse data matrix in CSR format. Returned matrix's shape is 943 (users) x 1682 (movies). 
     The sparse data matrix is converted to CSR format for fast arithmetic and matrix vector operations. 
     
     :param V: The MovieLens data matrix. 
     :type V: `scipy.sparse.lil_matrix`
     """
     print "Preprocessing data matrix ..." 
+    return V
     print "... Finished."    
             
-def plot(W, H):
+def plot(W, H, data_set):
     """
     Plot the RMSE error rate on MovieLens data set. 
     
@@ -116,6 +124,8 @@ def plot(W, H):
     :type W: `scipy.sparse.csr_matrix`
     :param H: Mixture matrix of the fitted factorization model.
     :type H: `scipy.sparse.csr_matrix`
+    :param data_set: Name of the split data set to be read. 
+    :type data_set: `str`
     """
     print "Plotting RMSE rates ..."
     print "... Finished."

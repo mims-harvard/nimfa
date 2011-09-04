@@ -106,7 +106,7 @@ class Bd(nmf_std.Nmf_std):
                 self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), sigma = self.sigma, 
                                            final_obj = c_obj, n_iter = iter)
             # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
-            if c_obj <= best_obj:
+            if c_obj <= best_obj or run == 0:
                 best_obj = c_obj
                 self.n_iter = iter 
                 self.final_obj = c_obj
