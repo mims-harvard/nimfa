@@ -17,10 +17,13 @@
               the extracted CBCL data set must be find in the ``CBCL_faces`` directory under ``datasets``. Once you have 
               the data installed, you are ready to start running the experiments. 
       
-     We experimented the following factorization algorithms to learn the basis images from the CBCL database: 
-     NMF - Euclidean, LSNMF, SNMF/R and SNMF/L. The number of bases is 49. Random Vcol algorithm is used for factorization
-     initialization. The algorithms mostly converges after less than 50 iterations. 
+     We experimented with the following factorization algorithms to learn the basis images from the CBCL database: 
+     Standard NMF - Euclidean, LSNMF, SNMF/R and SNMF/L. The number of bases is 49. Random Vcol algorithm is used for factorization
+     initialization. The algorithms mostly converge after less than 50 iterations. 
      
+     Unlike vector quantization and principal components analysis ([Lee1999]_), these algorithms learn a parts-based representations of 
+     faces and some also spatially localized representations depending on different types of constraints on basis and mixture matrix. 
+     Following are 7 x 7 montages of learned basis images by different factorization algorithms. 
       
     .. figure:: /images/cbcl_faces_50_iters_LSNMF.png
        :scale: 90 %
@@ -48,8 +51,8 @@
        
        Basis images of SNMF/L obtained after 10 iterations on original CBCL face images. The
        bases trained from LSNMF/L are both additive and spatially localized for representing faces. LSNMF/L imposes
-       sparseness constraints on basis matrix, whereas LSNMF/R imposes sparsity on mixture matrix. The Euclidean
-       distance of SNMF/L estimate from target matrix is 1827.66.  
+       sparseness constraints on basis matrix, whereas LSNMF/R imposes sparseness on mixture matrix. Therefore obtained basis images
+       are very sparse as it can be shown in the figure. The Euclidean distance of SNMF/L estimate from target matrix is 1827.66.  
        
        
     .. figure:: /images/cbcl_faces_10_iters_SNMF_R.png

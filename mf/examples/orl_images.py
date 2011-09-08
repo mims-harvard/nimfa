@@ -17,7 +17,7 @@
           downloaded. However, download links are listed in the ``datasets``. To run the example, the ORL face images
           must be find in the ``ORL_faces`` directory under ``datasets``. 
           
-    We experimented NMF - Euclidean, LSNMF and PSMF factorization methods to learn the basis images from the ORL database. The
+    We experimented with the Standard NMF - Euclidean, LSNMF and PSMF factorization methods to learn the basis images from the ORL database. The
     number of bases is 25. In [Lee1999]_ Lee and Seung showed that Standard NMF (Euclidean or divergence) found a parts-based
     representation when trained on face images from CBCL database. However, applying NMF to the ORL data set, in which images
     are not as well aligned, a global decomposition emerges. To compare, this example applies different MF methods to the face 
