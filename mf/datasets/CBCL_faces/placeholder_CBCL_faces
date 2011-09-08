@@ -1,5 +1,8 @@
 
-CBCL face images data set 
+CBCL face images data set:
+	* 19 x 19 Grayscale PGM format images,
+	* Training Set: 2429 faces, 4548 nonfaces, 
+	* Test Set: 472 faces, 23573 nonfaces.
 
 Data set link available in ``datasets```section of documentation. It is available at: http://cbcl.mit.edu/cbcl/software-datasets/FaceData2.html. Download compressed version of MovieLens 100k. The database
 shoould be uncompressed and put into this data directory. 
