@@ -1,0 +1,21 @@
+
+CBCL face images data set 
+
+Data set link available in ``datasets```section of documentation. It is available at: http://cbcl.mit.edu/cbcl/software-datasets/FaceData2.html. Download compressed version of MovieLens 100k. The database
+shoould be uncompressed and put into this data directory. 
+
+Directory structure should look like:
+
+datasets/
+  CBCL_faces/
+    README
+    face/
+      face00001.pgm
+      [...]
+      face02429.pgm
+    non-face/
+      [...]
+  [other data sets data directories]
+
+
+In order to run the experiments, the user must only install the face images data set in proper directory. 

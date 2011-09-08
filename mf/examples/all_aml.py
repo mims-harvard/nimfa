@@ -17,7 +17,7 @@
     
     .. note:: Leukemia data set used in this example is included in the `datasets` and does not need to be
               downloaded. However, download links are listed in the ``datasets``. To run the example, the data set
-              must be find in the `ALL_AML` folder under `datasets`. 
+              must be find in the ``ALL_AML`` directory under `datasets`. 
     
     .. _Leukemia: http://orange.biolab.si/datasets/leukemia.htm 
     

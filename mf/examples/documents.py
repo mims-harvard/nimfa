@@ -13,7 +13,7 @@
 
     .. note:: Medlars data set of medical abstracts used in this example is not included in the `datasets` and need to be
       downloaded. Download links are listed in the ``datasets``. Download compressed version of document text. To run the example, 
-      the extracted Medlars data set must be find in the ``Medlars`` folder under ``datasets``. 
+      the extracted Medlars data set must be find in the ``Medlars`` directory under ``datasets``. 
       
     Example of medical abstract::
         

@@ -22,7 +22,7 @@
     
     .. note:: MovieLens movies' rating data set used in this example is not included in the `datasets` and need to be
       downloaded. Download links are listed in the ``datasets``. Download compressed version of the MovieLens 100k. 
-      To run the example, the extracted data set must be find in the ``MovieLens`` folder under ``datasets``. 
+      To run the example, the extracted data set must be find in the ``MovieLens`` directory under ``datasets``. 
       
     .. note:: No additional knowledge in terms of ratings' timestamps, information about items and their
        genres or demographic information about users is used in this example. 

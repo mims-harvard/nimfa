@@ -13,7 +13,7 @@
     
     .. note:: Medulloblastoma data set used in this example is included in the `datasets` and does not need to be
           downloaded. However, download links are listed in the ``datasets``. To run the example, the data set
-          must be find in the `Medulloblastoma` folder under `datasets`. 
+          must be find in the ``Medulloblastoma`` directory under `datasets`. 
     
     This example is inspired by [Brunet2004]_. In [Brunet2004]_ authors applied NMF to the medulloblastoma data set and managed to expose a
     separate desmoplastic (D) class. In [Brunet2004]_ authors also applied SOM and HC to these data but were unable to find a distinct

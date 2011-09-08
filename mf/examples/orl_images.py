@@ -13,9 +13,9 @@
     images by constructing a matrix of shape 10304 (pixels) x 400 (faces). To avoid too large values, the data matrix is 
     divided by 100. Indeed, this division does not has any major impact on performance of the MF methods. 
     
-    .. note:: ORL face images database used in this example is included in the `datasets` and does not need to be
+    .. note:: The ORL face images database used in this example is included in the `datasets` and does not need to be
           downloaded. However, download links are listed in the ``datasets``. To run the example, the ORL face images
-          must be find in the ``ORL_faces`` folder under ``datasets``. 
+          must be find in the ``ORL_faces`` directory under ``datasets``. 
           
     We experimented NMF - Euclidean, LSNMF and PSMF factorization methods to learn the basis images from the ORL database. The
     number of bases is 25. In [Lee1999]_ Lee and Seung showed that Standard NMF (Euclidean or divergence) found a parts-based
@@ -146,7 +146,7 @@ def factorize(V):
     
 def read():
     """
-    Read face image data from ORL database. The matrix's shape is 2576 (pixels) x 400 (faces). 
+    Read face image data from the ORL database. The matrix's shape is 2576 (pixels) x 400 (faces). 
     
     Step through each subject and each image. Reduce the size of the images by a factor of 0.5. 
     
