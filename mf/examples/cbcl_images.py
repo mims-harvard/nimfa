@@ -4,42 +4,62 @@
     Cbcl_images (``examples.cbcl_images``)
     ######################################
     
+    In this example of image processing we consider the problem demonstrated in [Lee1999]_.
+    
+    We used the CBCL face images database consisting of 2429 face images of size 19 x 19. The facial images 
+    consist of frontal views hand aligned in a 19 x 19 grid. Each face image is preprocessed. For each image, 
+    the greyscale intensities are first linearly scaled, so that the pixel mean and standard deviation are
+    equal to 0.25, and then clipped to the range [0, 1].  
+    
     .. note:: The CBCL face images database used in this example is not included in the `datasets`. If you wish to
               perform the CBCL data experiments, start by downloading the images.  Download links are listed in the 
               ``datasets``. To run the example, uncompress the data and put it into corresponding data directory, namely 
               the extracted CBCL data set must be find in the ``CBCL_faces`` directory under ``datasets``. Once you have 
               the data installed, you are ready to start running the experiments. 
       
+     We experimented the following factorization algorithms to learn the basis images from the CBCL database: 
+     NMF - Euclidean, LSNMF, SNMF/R and SNMF/L. The number of bases is 49. Random Vcol algorithm is used for factorization
+     initialization. The algorithms mostly converges after less than 50 iterations. 
+     
+      
     .. figure:: /images/cbcl_faces_50_iters_LSNMF.png
-       :scale: 70 %
+       :scale: 90 %
        :alt: Basis images of LSNMF obtained after 50 iterations on original CBCL face images. 
        :align: center
        
-       Basis images of LSNMF obtained after 50 iterations on original CBCL face images.
+       Basis images of LSNMF obtained after 50 iterations on original CBCL face images. The bases trained by LSNMF are additive
+       but not spatially localized for representation of faces. 10 subiterations and 10 inner subiterations are performed
+       (these are LSNMF specific parameters). 
        
        
     .. figure:: /images/cbcl_faces_50_iters_NMF.png
-       :scale: 70 %
+       :scale: 90 %
        :alt: Basis images of NMF obtained after 50 iterations on original CBCL face images. 
        :align: center
        
-       Basis images of NMF obtained after 50 iterations on original CBCL face images.
+       Basis images of NMF obtained after 50 iterations on original CBCL face images. The images show that
+       the bases trained by NMF are additive but not spatially localized for representation of faces. 
        
         
     .. figure:: /images/cbcl_faces_10_iters_SNMF_L.png
-       :scale: 70 %
+       :scale: 90 %
        :alt: Basis images of LSNMF obtained after 10 iterations on original CBCL face images. 
        :align: center
        
-       Basis images of SNMF/L obtained after 10 iterations on original CBCL face images.
+       Basis images of SNMF/L obtained after 10 iterations on original CBCL face images. The
+       bases trained from LSNMF/L are both additive and spatially localized for representing faces. LSNMF/L imposes
+       sparseness constraints on basis matrix, whereas LSNMF/R imposes sparsity on mixture matrix. The Euclidean
+       distance of SNMF/L estimate from target matrix is 1827.66.  
        
        
     .. figure:: /images/cbcl_faces_10_iters_SNMF_R.png
-       :scale: 70 %
+       :scale: 90 %
        :alt: Basis images of SNMF/R obtained after 10 iterations on original CBCL face images. 
        :align: center
        
-       Basis images of SNMF/R obtained after 10 iterations on original CBCL face images.
+       Basis images of SNMF/R obtained after 10 iterations on original CBCL face images. The images show that
+       the bases trained by NMF are additive but not spatially localized for representation of faces. The Euclidean
+       distance of SNMF/R estimate from target matrix is 3948.149. 
        
           
     To run the example simply type::
@@ -104,10 +124,12 @@ def factorize(V):
                   min_residuals = 1e-8)
     fit = mf.mf_run(model)
     print "... Finished"
+    sparse_w, sparse_h = fit.fit.sparseness()
     print """Stats:
             - iterations: %d
             - final projected gradients norm: %5.3f
-            - Euclidean distance: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric = 'euclidean'))
+            - Euclidean distance: %5.3f 
+            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric = 'euclidean'), sparse_w, sparse_h)
     return fit.basis(), fit.coef()
     
 def read():
