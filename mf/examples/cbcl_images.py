@@ -63,16 +63,16 @@ def factorize(V):
     print "Performing LSNMF factorization ..." 
     model = mf.mf(V, 
                   seed = "random_vcol",
-                  rank = 25, 
+                  rank = 49, 
                   method = "lsnmf", 
-                  max_iter = 50,
+                  max_iter = 30, 
                   initialize_only = True,
                   sub_iter = 10,
                   inner_sub_iter = 10, 
                   beta = 0.1,
                   min_residuals = 1e-8)
     fit = mf.mf_run(model)
-    print " ... Finished"
+    print "... Finished"
     print """Stats:
             - iterations: %d
             - final projected gradients norm: %5.3f
@@ -81,21 +81,18 @@ def factorize(V):
     
 def read():
     """
-    Read face image data from the CBCL database. The matrix's shape is 2576 (pixels) x 400 (faces). 
+    Read face image data from the CBCL database. The matrix's shape is 361 (pixels) x 2429 (faces). 
     
     Step through each subject and each image. Images' sizes are not reduced.  
     
     Return the CBCL faces data matrix. 
     """
     print "Reading CBCL faces database ..."
-    dir = dirname(dirname(abspath(__file__)))+ sep + 'datasets' + sep + 'CBCL_faces' + sep + 's'
-    V = np.matrix(np.zeros((46 * 56, 400)))
-    for subject in xrange(40):
-        for image in xrange(10):
-            im = open(dir + str(subject + 1) + sep + str(image + 1) + ".pgm")
-            # reduce the size of the image
-            im = im.resize((46, 56))
-            V[:, image * subject + image] = np.mat(np.asarray(im).flatten()).T      
+    dir = dirname(dirname(abspath(__file__)))+ sep + 'datasets' + sep + 'CBCL_faces' + sep + 'face'
+    V = np.matrix(np.zeros((19 * 19, 2429)))
+    for image in xrange(2429):
+        im = open(dir + sep + "face0" + str(image + 1).zfill(4) + ".pgm")
+        V[:, image] = np.mat(np.asarray(im).flatten()).T      
     print "... Finished."
     return V
             
@@ -108,13 +105,13 @@ def preprocess(V):
     :param V: The CBCL faces data matrix. 
     :type V: `numpy.matrix`
     """
-    print "Preprocessing data matrix ..." 
-    min_val = V.min(axis = 0)
-    V = V - np.mat(np.ones((V.shape[0], 1))) * min_val
-    max_val = V.max(axis = 0) + 1e-4
-    V = (255. * V) / (np.mat(np.ones((V.shape[0], 1))) * max_val)
-    # avoid too large values 
-    V = V / 100.
+    print "Preprocessing data matrix ..."
+    V = V - V.mean()
+    V = V / np.sqrt(np.multiply(V, V).mean())
+    V = V + 0.25
+    V = V * 0.25
+    V = np.minimum(V, 1)
+    V = np.maximum(V, 0)
     print "... Finished."
     return V
             
@@ -126,15 +123,16 @@ def plot(W):
     :type W: `numpy.matrix`
     """
     set_cmap('gray')
-    blank = new("L", (225 + 6, 280 + 6))
-    for i in xrange(5):
-        for j in xrange(5):
-            basis = np.array(W[:, 5 * i + j])[:, 0].reshape((56, 46))
+    blank = new("L", (133 + 6, 133 + 6))
+    for i in xrange(7):
+        for j in xrange(7):
+            basis = np.array(W[:, 7 * i + j])[:, 0].reshape((19, 19))
             basis = basis / np.max(basis) * 255
             basis = 255 - basis
             ima = fromarray(basis)
+            ima = ima.rotate(180)
             expand(ima, border = 1, fill = 'black')
-            blank.paste(ima.copy(), (j * 46 + j, i * 56 + i))
+            blank.paste(ima.copy(), (j * 19 + j, i * 19 + i))
     imshow(blank)
     savefig("cbcl_faces.png")
 

@@ -137,7 +137,7 @@ def factorize(V):
                   beta = 0.1,
                   min_residuals = 1e-8)
     fit = mf.mf_run(model)
-    print " ... Finished"
+    print "... Finished"
     print """Stats:
             - iterations: %d
             - final projected gradients norm: %5.3f
