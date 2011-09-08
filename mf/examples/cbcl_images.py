@@ -10,6 +10,37 @@
               the extracted CBCL data set must be find in the ``CBCL_faces`` directory under ``datasets``. Once you have 
               the data installed, you are ready to start running the experiments. 
       
+    .. figure:: /images/cbcl_faces_50_iters_LSNMF.png
+       :scale: 70 %
+       :alt: Basis images of LSNMF obtained after 50 iterations on original CBCL face images. 
+       :align: center
+       
+       Basis images of LSNMF obtained after 50 iterations on original CBCL face images.
+       
+       
+    .. figure:: /images/cbcl_faces_50_iters_NMF.png
+       :scale: 70 %
+       :alt: Basis images of NMF obtained after 50 iterations on original CBCL face images. 
+       :align: center
+       
+       Basis images of NMF obtained after 50 iterations on original CBCL face images.
+       
+        
+    .. figure:: /images/cbcl_faces_10_iters_SNMF_L.png
+       :scale: 70 %
+       :alt: Basis images of LSNMF obtained after 10 iterations on original CBCL face images. 
+       :align: center
+       
+       Basis images of SNMF/L obtained after 10 iterations on original CBCL face images.
+       
+       
+    .. figure:: /images/cbcl_faces_10_iters_SNMF_R.png
+       :scale: 70 %
+       :alt: Basis images of SNMF/R obtained after 10 iterations on original CBCL face images. 
+       :align: center
+       
+       Basis images of SNMF/R obtained after 10 iterations on original CBCL face images.
+       
           
     To run the example simply type::
         
@@ -64,9 +95,10 @@ def factorize(V):
     model = mf.mf(V, 
                   seed = "random_vcol",
                   rank = 49, 
-                  method = "lsnmf", 
-                  max_iter = 30, 
+                  method = "snmf", 
+                  max_iter = 10, 
                   initialize_only = True,
+                  version = "r",
                   sub_iter = 10,
                   inner_sub_iter = 10, 
                   beta = 0.1,

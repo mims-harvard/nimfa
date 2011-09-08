@@ -180,7 +180,10 @@ class Snmf(nmf_std.Nmf_std):
             self.inc = 0
             self.W, _ = self.seed.initialize(self.V, self.rank, self.options)
             # normalize W and convert to lil
-            self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div).tolil()
+            if (sp.issparse(self.W)):
+                self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div).tolil()
+            else:
+                self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div)
             return 
         # min_w ||[H'; I_k]*W' - [A'; 0]||, s.t. W>=0, for given A and H.
         if sp.isspmatrix(self.V):
