@@ -37,7 +37,14 @@ With the library of factorization methods in Orange an easy-to-use interface to 
 The MF library expands the already vast usage of Orange methods in numerous applications without the need to use external
 programming packages for factorizations.
 
-`Project wiki`_ is available at `Orange`_ site. `Short presentation`_ about MF is available.
+.. note:: `Project wiki`_ is available at `Orange`_ site. 
+
+.. note:: `Short presentation`_ about MF - Matrix Factorization Techniques for Data Mining library is available.
+
+.. note:: `Document describing possible visualizations` is available. These visualizations will be included in near-future 
+		  releases of the library and possibly some supported as widgets when integration to Orange will be done.  
+
+.. _Document describing possible visualizations: http://helikoid.si/mf/visualizations_MF.pdf
 
 .. _Orange: http://orange.biolab.si
 
