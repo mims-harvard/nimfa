@@ -41,8 +41,8 @@ programming packages for factorizations.
 
 .. note:: `Short presentation`_ about MF - Matrix Factorization Techniques for Data Mining library is available.
 
-.. note:: `Document describing possible visualizations` is available. These visualizations will be included in near-future 
-		  releases of the library and possibly some supported as widgets when integration to Orange will be done.  
+.. note:: `Document describing possible visualizations`_ is available. These visualizations will be included in near-future 
+		  release of the library and possibly some supported as widgets when integration with Orange will be done.  
 
 .. _Document describing possible visualizations: http://helikoid.si/mf/visualizations_MF.pdf
 
