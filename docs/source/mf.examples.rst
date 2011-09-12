@@ -25,3 +25,5 @@ Examples (``examples``)
    mf.examples.orl_images
    
    mf.examples.recommendations
+   
+   mf.examples.gene_func_prediction

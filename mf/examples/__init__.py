@@ -15,6 +15,7 @@
     applications on real world data sets in:
     
         * bioinformatics,
+        * functional genomics, 
         * text analysis,
         * image processing,
         * recommendation systems.
@@ -27,3 +28,4 @@ import cbcl_images
 import documents
 import orl_images
 import recommendations
+import gene_func_prediction
