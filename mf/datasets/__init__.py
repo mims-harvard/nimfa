@@ -4,7 +4,7 @@
 
     .. note:: For some data sets links to download pages are available here. All needed data preprocessing code
               for successful running of the particular example is included in its corresponding example code. In order
-              to run the example download and put the dataset in `mf/datasets` directory.
+              to run the example download and put the dataset in ``mf/datasets`` directory.
     
     List of data sets used in the examples. 
     
