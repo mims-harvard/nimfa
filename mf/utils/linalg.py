@@ -455,7 +455,7 @@ def _sop_spmatrix(X, s = None, op = None):
     Compute sparse scalar element wise operation of matrix X and scalar :param:`s`.
     
     :param X: The input matrix.
-    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia 
     :param s: Input scalar. If not specified, element wise operation of input matrix is computed. 
     :type s: `float`
     :param op: Operation to be performed. 
@@ -476,7 +476,7 @@ def _sop_matrix(X, s = None, op = None):
     Compute scalar element wise operation of matrix :param:`X` and scalar :param:`s`.
     
     :param X: The input matrix.
-    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :type X: :class:`numpy.matrix`
     :param s: Input scalar. If not specified, element wise operation of input matrix is computed. 
     :type s: `float`
     :param op: Operation to be performed. 

@@ -25,11 +25,11 @@ class Mf_fit():
 
         NMF method of factorization.
 
-    .. attribute:: niter
+    .. attribute:: n_iter
 
         The number of iterations performed.
 
-    .. attribute:: nrun
+    .. attribute:: n_run
 
         The number of NMF runs performed.
 
@@ -50,6 +50,11 @@ class Mf_fit():
         :type fit: class from methods.mf package
         """
         self.fit = fit
+        self.algorithm = str(self.fit)
+        self.n_iter = self.fit.n_iter
+        self.n_run = self.fit.n_run
+        self.seeding = str(self.fit.seed)
+        self.options = self.fit.options
         
     def basis(self):
         """Return the matrix of basis vectors."""
