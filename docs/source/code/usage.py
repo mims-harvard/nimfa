@@ -118,7 +118,7 @@ print V
 # Run LSNMF rank 3 algorithm
 # We don't specify any algorithm specific parameters. Defaults will be used.
 # We specify Random V Col initialization algorithm. 
-# We enable tracking the error from each iteration of the factorization, by default only the final value of objecitve function is retained. 
+# We enable tracking the error from each iteration of the factorization, by default only the final value of objective function is retained. 
 # Perform initialization separately. 
 model = mf.mf(V, seed = "random_vcol", method = "lsnmf", max_iter = 10, rank = 3, track_error = True, initialize_only = True)
 
@@ -136,7 +136,7 @@ H = fit.coef()
 print "Coef"
 print H
 
-# Return the loss function according to Kullback-Leibler divergence. By default Euclidean metric is used.
+# Error tracking. 
 print "Error tracking"
 # A list of objective function values for each iteration in factorization is printed.
 # If error tracking is enabled and user specifies multiple runs of the factorization, get_error(run = n) return a list of objective values from n-th run. 
