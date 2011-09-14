@@ -171,10 +171,13 @@ For details and descriptions on algorithm specific options see specific algorith
 Usage
 #####
 
-Following are two basic usage examples that employ Standard NMF algorithm and LSNMF algorithm. For more see examples and 
-methods' documentation.
+Following are three basic usage examples that employ Standard NMF algorithm and LSNMF algorithm. For examples with real world
+applications see Examples section and methods' documentation. 
 
-.. note:: Consider these examples as Hello World examples for the MF library. 
+.. note:: Consider these examples as Hello World examples for the MF library.
+
+.. note:: These examples demonstrate factorization of ``scipy.sparse`` matrix, ``numpy```dense matrix, computation 
+		  of quality and performance measures, error tracking, computation of MF estimate and matrix factors. 
 
 Example No. 1
 
@@ -187,7 +190,10 @@ Example No. 2
 	.. literalinclude:: /code/usage.py
    		:lines: 58-100
 
+Example No. 3
 
+	.. literalinclude:: /code/usage.py
+   		:lines: 108-153
 
 ##########
 References
