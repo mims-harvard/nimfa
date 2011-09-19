@@ -380,16 +380,16 @@ class Nmf(object):
         the first value where the RSS curve presents an inflection point. (Frigyesi and Hoglund, 2008) suggested to use the 
         smallest value at which the decrease in the RSS is lower than the decrease of the RSS obtained from random data. 
         
+        RSS tells us how much of the variation in the dependent variables our model did not explain. 
+        
         Return real value.
         
         :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
                     :param:`idx` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-        V = self.target(idx)
         X = self.residuals(idx = idx)
-        xX = V - X 
-        return multiply(xX, xX).sum()
+        return multiply(X, X).sum()
     
     def sparseness(self, idx = None):
         """
