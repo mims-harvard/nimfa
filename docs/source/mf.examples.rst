@@ -11,7 +11,7 @@ Examples (``examples``)
 
 .. toctree::
    :maxdepth: 2
-
+   
    mf.examples.synthetic
    
    mf.examples.all_aml

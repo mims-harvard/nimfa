@@ -4,8 +4,10 @@
     Gene_func_prediction (``examples.gene_func_prediction``)
     ########################################################
     
-    As a background reading before this example, we suggest reading [Schietgat2010]_ and [﻿Schachtner2008]_.
+    .. note:: This example is in progress.
     
+    As a background reading before this example, we suggest reading [Schietgat2010]_ and [Schachtner2008]_
+        
     This example from functional genomics deals with gene function prediction. Two main characteristics of function 
     prediction task are:
     
@@ -16,8 +18,6 @@
     
     These characteristics describe hierarchical multi-label classification setting. 
     
-    .. note:: This example is in progress ...
-    
     Here is the outline of this gene function prediction task. 
     
         #. Dataset Preprocessing.
@@ -26,7 +26,7 @@
         #. Feature selection
         #. Classification of the mixture matrix and comply with the hierarchy constraint. 
     
-      To run the example simply type::
+    To run the example simply type::
         
         python gene_func_prediction.py
         
@@ -51,10 +51,10 @@ except ImportError, exc:
 
 def run():
     """Run the NMF - Divergence on the S. cerevisiae dataset."""
-
+    pass
 
 if __name__ == "__main__": 
-    """"Run the gene function prediction example."""
+    """Run the gene function prediction example."""
     run()
 
 

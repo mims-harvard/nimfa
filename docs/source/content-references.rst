@@ -47,3 +47,4 @@
 .. [Schietgat2010] ﻿Schietgat, L. et. al., (2010). Predicting gene function using hierarchical multi-label decision tree ensembles. BMC bioinformatics, 11, 14. doi:10.1186/1471-2105-11-2.
 
 .. [﻿Schachtner2008] ﻿Schachtner, R., et. al., (2008). Knowledge-based gene expression classification via matrix factorization. Bioinformatics (Oxford, England), 24(15), 1688-97. doi:10.1093/bioinformatics/btn245.
+
