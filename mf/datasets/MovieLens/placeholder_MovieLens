@@ -1,5 +1,5 @@
 
 Movielens data set (100000 ratings from 1000 users on 1700 movies)
 
-Data set link available in ``datasets```section of documentation. It is available at: http://www.grouplens.org/node/12. Download compressed version of MovieLens 100k. Extract the file and put its 
-content to this folder. 
+Data set link available in ``datasets```section of documentation. It is available at: http://www.grouplens.org/node/12. 
+Download compressed version of MovieLens 100k. Extract the archive and put its content to this folder. 
