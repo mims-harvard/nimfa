@@ -16,6 +16,8 @@
     
     These characteristics describe hierarchical multi-label classification setting. 
     
+    .. note:: This example is in progress ...
+    
     Here is the outline of this gene function prediction task. 
     
         #. Dataset Preprocessing.
