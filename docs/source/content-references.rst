@@ -43,3 +43,7 @@
 .. [Hutchins2008] ﻿Hutchins, L. N., et. al., (2008). Position-dependent motif characterization using non-negative matrix factorization. Bioinformatics, 24(23), 2684-90.
 
 .. [Frigyesi2008] Frigyesi A., Höglund M., (2008). Non-negative matrix factorization for the analysis of complex gene expression data: identification of clinically relevant tumor subtypes. Cancer informatics 2008, 6:275-292.
+
+.. [Schietgat2010] ﻿Schietgat, L. et. al., (2010). Predicting gene function using hierarchical multi-label decision tree ensembles. BMC bioinformatics, 11, 14. doi:10.1186/1471-2105-11-2.
+
+.. [﻿Schachtner2008] ﻿Schachtner, R., et. al., (2008). Knowledge-based gene expression classification via matrix factorization. Bioinformatics (Oxford, England), 24(15), 1688-97. doi:10.1093/bioinformatics/btn245.
