@@ -17,7 +17,13 @@ datasets/
     	pheno_yeast_FUN.valid.arff
     	pheno_yeast_FUN.train.arff
     seq_yeast_FUN/
+    	seq_yeast_FUN.train.arff
+    	seq_yeast_FUN.test.arff
+    	seq_yeast_FUN.valid.arff
     struc_yeast_FUN/
+    	struc_yeast_FUN.train.arff
+    	struc_yeast_FUN.test.arff
+    	struc_yeast_FUn.valid.arff
     [...]
   [other data sets data directories]
 
