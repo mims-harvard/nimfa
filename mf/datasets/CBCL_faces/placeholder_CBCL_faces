@@ -20,5 +20,4 @@ datasets/
       [...]
   [other data sets data directories]
 
-
-In order to run the experiments, the user must only install the face images data set in proper directory. 
+In order to run the experiments, the user must only install the face images dataset in the proper directory. 
