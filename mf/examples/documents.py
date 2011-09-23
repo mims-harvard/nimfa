@@ -156,7 +156,7 @@ def read():
     Return the Medlars sparse data matrix in LIL format, term-to-index `dict` translator and index-to-term 
     `dict` translator. 
     """
-    print "Reading Medlars medical abstracts data set ..."
+    print "Reading Medlars medical abstracts dataset ..."
     dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'Medlars' + sep + 'med.all'
     doc = open(dir)
     V = sp.lil_matrix((16017, 1033))
