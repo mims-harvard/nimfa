@@ -51,10 +51,17 @@ except ImportError, exc:
 
 def run():
     """Run the NMF - Divergence on the S. cerevisiae sequence dataset."""
-    pass
+    data = read()
+    data = preprocess(data)
+    data = factorize(data)
 
 def read():
-    """Read S. cerevisiae FunCat annotated sequence dataset."""
+    """
+    Read S. cerevisiae FunCat annotated sequence dataset.
+    
+    Return attributes' values and class information. Additional mapping functions are returned mapping attributes' names and classes' names 
+    to indices. 
+    """
     print "Reading S. cerevisiae FunCat annotated sequence dataset ..."
     dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'S_cerevisiae_FC' + sep
     train_data = dir + 'seq_yeast_FUN.train.arff'
@@ -70,7 +77,7 @@ def transform_data(path, include_meta = False):
     """
     Read data in the ARFF format and transform it to suitable matrix for factorization process.
     
-    Return attributes values and class information. If :param:`include_meta` is specified additional mapping functions are provided with 
+    Return attributes' values and class information. If :param:`include_meta` is specified additional mapping functions are provided with 
     attributes' names and classes' names.  
     
     :param path: Path of directory with sequence dataset.
@@ -132,14 +139,26 @@ def _reverse(object2idx):
     """
     return dict(zip(object2idx.values(), object2idx.keys()))
 
-def factorize():
-    """Perform factorization on S. cerevisiae FunCat annotated sequence dataset."""
+def factorize(data):
+    """
+    Perform factorization on S. cerevisiae FunCat annotated sequence dataset.
+    
+    Return factorized data. 
+    
+    :param data: Transformed dataset containing attributes' values, class information and possibly additional meta information.  
+    :type data: `tuple`
+    """
     pass
 
-def preprocess():
+def preprocess(data):
     """
     Preprocess S.cerevisiae FunCat annotated sequence dataset. Preprocessing step includes building matrix exposing
     hierarchy constraints of FunCat annotations.
+    
+    Return preprocessed data. 
+    
+    :param data: Transformed dataset containing attributes' values, class information and possibly additional meta information.  
+    :type data: `tuple`
     """
     pass
 
