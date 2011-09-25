@@ -4,17 +4,17 @@
 
     .. note:: For some data sets links to download pages are available here. All needed data preprocessing code
               for successful running of the particular example is included in its corresponding example code. In order
-              to run the example download and put the dataset in ``mf/datasets`` directory.
+              to run the example download and put the data set in ``mf/datasets`` directory.
     
     List of data sets used in the examples. 
     
-        #. Leukemia dataset; `leukemia gene expressions`_, `leukemia samples`_, `leukemia genes`_.
-        #. Medulloblastoma dataset; `medulloblastoma gene expressions`_, `medulloblastoma samples`_, `medulloblastoma genes`_.
+        #. Leukemia data set; `leukemia gene expressions`_, `leukemia samples`_, `leukemia genes`_.
+        #. Medulloblastoma data set; `medulloblastoma gene expressions`_, `medulloblastoma samples`_, `medulloblastoma genes`_.
         #. `CBCL face images`_ database.
         #. `ORL face images`_ database.
-        #. `MovieLens 100k`_ dataset.
-        #. `Medlars`_ dataset.
-        #. `S. cerevisiae`_ with annotations from the MIPS Functional Catalogue dataset. 
+        #. `MovieLens 100k`_ data set.
+        #. `Medlars`_ data set.
+        #. `S. cerevisiae`_ with annotations from the MIPS Functional Catalogue data set. 
         
     .. _leukemia gene expressions: http://www.broadinstitute.org/mpr/publications/projects/NMF/ALL_AML_data.txt
     .. _leukemia samples: http://www.broadinstitute.org/mpr/publications/projects/NMF/ALL_AML_samples.txt

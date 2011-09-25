@@ -13,7 +13,7 @@
     
         #. single gene can have multiple functions, 
         #. the functions are organized in a hierarchy, in particular in a hierarchy structered as a rooted tree -- MIPS's
-           FunCat. In example is used dataset that originates from S. cerevisiae and has annotations from the MIPS Functional
+           FunCat. In example is used data set that originates from S. cerevisiae and has annotations from the MIPS Functional
            Catalogue. A gene related to some function is automatically related to all its ancestor functions.
     
     These characteristics describe hierarchical multi-label classification setting. 
@@ -50,28 +50,34 @@ except ImportError, exc:
     
 
 def run():
-    """Run the NMF - Divergence on the S. cerevisiae sequence dataset."""
-    data = read()
+    """Run the NMF - Divergence on the S. cerevisiae sequence data set."""
+    data, test, idx2attr, idx2class = read()
     data = preprocess(data)
     data = factorize(data)
 
 def read():
     """
-    Read S. cerevisiae FunCat annotated sequence dataset.
+    Read S. cerevisiae FunCat annotated sequence data set.
     
-    Return attributes' values and class information. Additional mapping functions are returned mapping attributes' names and classes' names 
-    to indices. 
+    Return attributes' values and class information of the test data set and joined train and validation data set. Additional mapping functions 
+    are returned mapping attributes' names and classes' names to indices. 
     """
-    print "Reading S. cerevisiae FunCat annotated sequence dataset ..."
-    dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'S_cerevisiae_FC' + sep
+    print "Reading S. cerevisiae FunCat annotated sequence data set ..."
+    dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'S_cerevisiae_FC' + sep + 'seq_yeast_FUN' + sep
     train_data = dir + 'seq_yeast_FUN.train.arff'
     valid_data = dir + 'seq_yeast_FUN.valid.arff'
     test_data = dir + 'seq_yeast_FUN.test.arff'
-    train_attr_data, train_class_data, idx2attr, idx2class = transform_data(train_data, include_meta = True)
-    valid_attr_data, valid_class_data = transform_data(valid_data)
-    test_attr_data, test_class_data = transform_data(test_data)
-    print "... Finished."
-    return train_attr_data, train_class_data, idx2attr, idx2class, valid_attr_data, valid_class_data, test_attr_data, test_class_data
+    print " Reading S. cerevisiae FunCat annotated sequence TRAIN set ..."
+    train, idx2attr, idx2class = transform_data(train_data, include_meta = True)
+    print " Reading S. cerevisiae FunCat annotated sequence VALIDATION set ..."
+    valid = transform_data(valid_data)
+    print " Reading S. cerevisiae FunCat annotated sequence TEST set ..."
+    test = transform_data(test_data)
+    print " ... Finished."
+    print " Joining S. cerevisiae FunCat annotated sequence TEST and VALIDATION set ..."
+    tv_data = _join(train, valid)
+    print " ... Finished."    
+    return tv_data, test, idx2attr, idx2class
 
 def transform_data(path, include_meta = False):
     """
@@ -80,7 +86,7 @@ def transform_data(path, include_meta = False):
     Return attributes' values and class information. If :param:`include_meta` is specified additional mapping functions are provided with 
     attributes' names and classes' names.  
     
-    :param path: Path of directory with sequence dataset.
+    :param path: Path of directory with sequence data set.
     :type path: `str`
     :param include_meta: Specify if the header of the ARFF file should be skipped. The header of the ARFF file 
                                contains the name of the relation, a list of the attributes and their types. Default
@@ -93,74 +99,94 @@ def transform_data(path, include_meta = False):
     idx_attr = 0
     idx_class = 0
     idx = 0
-    gene = 0
-    section = HEADER
+    feature = 0
+    used_idx = set()
+    section = 'h'
 
     for line in open(path):
-        if section == HEADER: 
+        if section == 'h': 
             tokens = line.strip().split()
             line_type = tokens[0] if tokens else None
             if line_type == "@ATTRIBUTE":
                 if tokens[2] in ["numeric"]:
                     attr2idx[tokens[1]] = idx_attr
                     idx_attr += 1
+                    used_idx.add(idx)
                 if tokens[1] in ["class"] and tokens[2] in ["hierarchical", "classes"]:
-                    class2idx = dict(list(enumerate(tokens[3].split(","))))
+                    class2idx = _reverse(dict(list(enumerate((tokens[3] if tokens[3] != '%' else tokens[5]).split(",")))))
                     idx_class = idx
-            idx += 1
+                idx += 1
             if line_type == "@DATA":
-                section = DATA
+                section = 'd'
+                idxs = set(xrange(idx)).intersection(used_idx)
                 attr_data = np.mat(np.zeros((1e4, len(attr2idx))))
-                class_data = np.mat(np.zeros((1e-4, len(class2idx))))
-        elif section == DATA:
-            d, comment = line.strip().partition("%")
+                class_data = np.mat(np.zeros((1e4, len(class2idx))))
+        elif section == 'd':
+            d, _, comment = line.strip().partition("%")
             values = d.split(",")
-            # update class information for current gene
+            # update class information for current feature
             class_var = map(str.strip, values[idx_class].split("@"))
             for cl in class_var:
-                class_data[gene, class2idx[cl]] = 1.0
-            # update attribute values information for current gene 
-            idxs = set(xrange(len(values))).intersection(attr2idx.values())
+                class_data[feature, class2idx[cl]] = 1.0
+            # update attribute values information for current feature 
             i = 0 
-            if idx in idxs:
-                data[gene, i] = double(values[idx])
+            for idx in idxs:
+                attr_data[feature, i] = float(values[idx] if values[idx] != '?' else 0.)
                 i += 1
-            gene += 1
-    return attr_data, class_data if not include_attributes else attr_data, class_data, _reverse(attr2idx), _reverse(class2idx)
+            feature += 1
+    return ({'feat': feature, 'attr': attr_data, 'class': class_data}, _reverse(attr2idx), _reverse(class2idx)) if include_meta else {'feat': feature, 'attr': attr_data, 'class': class_data}
+
+def _join(train, valid):
+    """
+    Join test and validation data of the S. cerevisiae FunCat annotated sequence data set. 
+    
+    Return joined test and validation attributes' values and class information.
+     
+    :param train: Attributes' values and class information of the train data set. 
+    :type train: `numpy.matrix`
+    :param valid: Attributes' values and class information of the validation data set.
+    :type valid: `numpy.matrix`
+    """
+    n_train =  train['feat']
+    n_valid =  valid['feat']
+    return {'attr': np.vstack((train['attr'][:n_train, :], valid['attr'][:n_valid, :])),
+            'class': np.vstack((train['class'][:n_train, :], valid['class'][:n_valid, :]))}
 
 def _reverse(object2idx):
     """
-    Reverse mapping function (objects --> indices).
+    Reverse mapping function.
     
     Return reversed mapping.
     
-    :param object2idx: Mapping of objects to indices.
+    :param object2idx: Mapping of objects to indices or vice verse.
     :type object2idx: `dict`
     """
     return dict(zip(object2idx.values(), object2idx.keys()))
 
 def factorize(data):
     """
-    Perform factorization on S. cerevisiae FunCat annotated sequence dataset.
+    Perform factorization on S. cerevisiae FunCat annotated sequence data set.
     
     Return factorized data. 
     
-    :param data: Transformed dataset containing attributes' values, class information and possibly additional meta information.  
+    :param data: Transformed data set containing attributes' values, class information and possibly additional meta information.  
     :type data: `tuple`
     """
-    pass
+    print "Performing NMF - Divergence factorization ..." 
+    print "... Finished."
 
 def preprocess(data):
     """
-    Preprocess S.cerevisiae FunCat annotated sequence dataset. Preprocessing step includes building matrix exposing
+    Preprocess S.cerevisiae FunCat annotated sequence data set. Preprocessing step includes building matrix exposing
     hierarchy constraints of FunCat annotations.
     
     Return preprocessed data. 
     
-    :param data: Transformed dataset containing attributes' values, class information and possibly additional meta information.  
+    :param data: Transformed data set containing attributes' values, class information and possibly additional meta information.  
     :type data: `tuple`
     """
-    pass
+    print "Preprocessing data matrix ..."
+    print "... Finished."
 
 if __name__ == "__main__": 
     """Run the gene function prediction example."""

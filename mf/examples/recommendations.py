@@ -110,7 +110,7 @@ def read(data_set):
     :param data_set: Name of the split data set to be read. 
     :type data_set: `str`
     """
-    print "Reading MovieLens ratings dataset ..."
+    print "Reading MovieLens ratings data set ..."
     dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'MovieLens' + sep + data_set + '.base'
     V = sp.lil_matrix((943, 1682))
     for line in open(dir): 
