@@ -81,7 +81,8 @@ def read():
 
 def transform_data(path, include_meta = False):
     """
-    Read data in the ARFF format and transform it to suitable matrix for factorization process.
+    Read data in the ARFF format and transform it to suitable matrix for factorization process. For each feature update direct and indirect 
+    class information exploiting properties of Functional Catalogue hierarchy. 
     
     Return attributes' values and class information. If :param:`include_meta` is specified additional mapping functions are provided with 
     attributes' names and classes' names.  
@@ -127,7 +128,19 @@ def transform_data(path, include_meta = False):
             # update class information for current feature
             class_var = map(str.strip, values[idx_class].split("@"))
             for cl in class_var:
-                class_data[feature, class2idx[cl]] = 1.0
+                # update direct class information
+                class_data[feature, class2idx[cl]] = 4.
+                # update indirect class information through FunCat hierarchy
+                cl_a = cl.split("/")
+                cl = "/".join(cl_a[:3] + ['0'])
+                if cl in class2idx and class_data[feature, class2idx[cl]] < 3.:
+                    class_data[feature, class2idx[cl]] = 3.
+                cl = "/".join(cl_a[:2] + ['0', '0'])
+                if cl in class2idx and  class_data[feature, class2idx[cl]] < 2.:
+                    class_data[feature, class2idx[cl]] = 2.
+                cl = "/".join(cl_a[:1] + ['0', '0', '0'])
+                if cl in class2idx and class_data[feature, class2idx[cl]] < 1.:
+                    class_data[feature, class2idx[cl]] = 1.
             # update attribute values information for current feature 
             i = 0 
             for idx in idxs:
