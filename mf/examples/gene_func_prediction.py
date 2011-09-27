@@ -390,12 +390,15 @@ def plot(labels, test, idx2class):
     of correctly predicting the negative ones (i. e. gene does not have a particular function). That means that ROC
     curve might be less suited for the task as they reward a learner if it correctly predicts negative instances. 
     
+    Return PR evaluations measures
+    
     :param labels: Mapping of genes to their predicted gene functions. 
     :type labels: `dict`
     :param test: Class information of test data set. 
     :type test: `dict`
     :param idx2class: Mapping between classes' indices and classes' labels. 
     :type idx2class: `dict`
+    :rtype: `tuple`
     """
     avg_precision = 0. 
     avg_recall = 0.
