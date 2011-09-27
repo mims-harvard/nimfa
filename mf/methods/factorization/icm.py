@@ -59,6 +59,7 @@ class Icm(nmf_std.Nmf_std):
         self.name = "icm"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
+        self.set_params()
         
     def factorize(self):
         """
@@ -66,7 +67,6 @@ class Icm(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        self.set_params()
         self.v = multiply(self.V, self.V).sum() / 2.
                 
         for run in xrange(self.n_run):
@@ -186,3 +186,5 @@ class Icm(nmf_std.Nmf_std):
     def __str__(self):
         return self.name  
     
+    def __repr__(self):
+        return self.name

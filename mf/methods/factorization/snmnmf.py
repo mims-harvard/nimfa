@@ -65,6 +65,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
         self.name = "snmnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_mm.Nmf_mm.__init__(self, params)
+        self.set_params()
         
     def factorize(self):
         """
@@ -72,7 +73,6 @@ class Snmnmf(nmf_mm.Nmf_mm):
          
         Return fitted factorization model.
         """
-        self.set_params()
         if self.V.shape[0] != self.V1.shape[0]:
             raise utils.MFError("Input matrices should have the same number of rows.")
                 
@@ -186,3 +186,5 @@ class Snmnmf(nmf_mm.Nmf_mm):
     def __str__(self):
         return self.name
     
+    def __repr__(self):
+        return self.name 

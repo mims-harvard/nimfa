@@ -59,6 +59,7 @@ class Psmf(nmf_std.Nmf_std):
         self.name = "psmf"
         self.aseeds = ["none"]
         nmf_std.Nmf_std.__init__(self, params)
+        self.set_params()
         
     def factorize(self):
         """
@@ -66,7 +67,6 @@ class Psmf(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        self.set_params()
         self.N = len(self.prior)
         sm = sum(self.prior)
         self.prior = np.array([p / sm for p in self.prior])
@@ -313,3 +313,6 @@ class Psmf(nmf_std.Nmf_std):
        
     def __str__(self):
         return self.name 
+    
+    def __repr__(self):
+        return self.name

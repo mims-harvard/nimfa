@@ -48,15 +48,14 @@ class Nsnmf(nmf_ns.Nmf_ns):
         self.name = "nsnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_ns.Nmf_ns.__init__(self, params)
+        self.set_params()
         
     def factorize(self):
         """
         Compute matrix factorization.
          
         Return fitted factorization model.
-        """
-        self.set_params()
-                
+        """     
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             self.S = sop((1 - self.theta) * sp.spdiags([1 for _ in xrange(self.rank)], 0, self.rank, self.rank, 'csr'), 
@@ -136,4 +135,7 @@ class Nsnmf(nmf_ns.Nmf_ns):
         return (multiply(self.V, sop(elop(self.V, Va, div), op = log)) - self.V + Va).sum()
     
     def __str__(self):
+        return self.name
+    
+    def __repr__(self):
         return self.name

@@ -71,6 +71,7 @@ class Bmf(nmf_std.Nmf_std):
         self.name = "bmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
+        self.set_params()
         
     def factorize(self):
         """
@@ -78,8 +79,6 @@ class Bmf(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        self.set_params()
-        
         self._lambda_w = 1. / self.max_iter if self.max_iter else 1. / 10
         self._lambda_h = self._lambda_w         
         for run in xrange(self.n_run):
@@ -181,3 +180,5 @@ class Bmf(nmf_std.Nmf_std):
     def __str__(self):
         return self.name    
         
+    def __repr__(self):
+        return self.name

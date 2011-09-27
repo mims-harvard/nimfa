@@ -48,6 +48,7 @@ class Lfnmf(nmf_std.Nmf_std):
         self.name = "lfnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
+        self.set_params()
         
     def factorize(self):
         """
@@ -55,8 +56,6 @@ class Lfnmf(nmf_std.Nmf_std):
         
         Return fitted factorization model.
         """
-        self.set_params()
-        
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             self.Sw, self.Sb = np.mat(np.zeros((1, 1))), np.mat(np.zeros((1, 1)))
@@ -172,3 +171,5 @@ class Lfnmf(nmf_std.Nmf_std):
     def __str__(self):
         return self.name
         
+    def __repr__(self):
+        return self.name

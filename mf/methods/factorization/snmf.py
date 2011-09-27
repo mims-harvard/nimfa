@@ -59,6 +59,7 @@ class Snmf(nmf_std.Nmf_std):
         self.name = "snmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
+        self.set_params()
         
     def factorize(self):
         """
@@ -66,7 +67,6 @@ class Snmf(nmf_std.Nmf_std):
                 
         Return fitted factorization model.
         """
-        self.set_params()
         # in version SNMF/L, V is transposed while W and H are swapped and transposed.
         if self.version == 'l':
             self.V = self.V.T
@@ -126,7 +126,6 @@ class Snmf(nmf_std.Nmf_std):
     def set_params(self): 
         """Set algorithm specific model options."""   
         self.version = self.options.get('version', 'r')
-        self.name = self.name + " - " + self.version
         self.eta = self.options.get('eta', np.max(self.V) if not sp.isspmatrix(self.V) else np.max(self.V.data))
         if self.eta < 0: self.eta = np.max(self.V) if not sp.isspmatrix(self.V) else 0.
         self.beta = self.options.get('beta', 1e-4)
@@ -480,6 +479,9 @@ class Snmf(nmf_std.Nmf_std):
         return K
     
     def __str__(self):
-        return self.name   
+        return self.name + " - " + self.version
+    
+    def __repr__(self):
+        return self.name 
         
         

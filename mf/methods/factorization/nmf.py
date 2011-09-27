@@ -62,15 +62,14 @@ class Nmf(nmf_std.Nmf_std):
         self.name = "nmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
+        self.set_params()
         
     def factorize(self):
         """
         Compute matrix factorization.
          
         Return fitted factorization model.
-        """
-        self.set_params()
-                
+        """     
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             p_obj = c_obj = self.objective()
@@ -152,7 +151,6 @@ class Nmf(nmf_std.Nmf_std):
         """Set algorithm specific model options."""
         self.update = getattr(self, self.options.get('update', 'euclidean') + '_update')
         self.objective = getattr(self, self.options.get('objective', 'fro') + '_objective')
-        self.name = self.name + " - update: " + self.options.get('update', 'euclidean') + " - obj: " + self.options.get('objective', 'fro')
         self.conn_change = self.options.get('conn_change', 30) if 'conn' in self.objective.__name__ else None
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
@@ -199,4 +197,7 @@ class Nmf(nmf_std.Nmf_std):
         return conn_change > 0
         
     def __str__(self):
+        return self.name + " - update: " + self.options.get('update', 'euclidean') + " - obj: " + self.options.get('objective', 'fro')
+    
+    def __repr__(self):
         return self.name

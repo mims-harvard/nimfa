@@ -123,7 +123,7 @@ def mf(target, seed = None, W = None, H = None,
     mf_model = None
     # Construct factorization model
     try:
-        if type(method) is str:
+        if isinstance(method, str):
             mf_model = methods.factorization.methods[method.lower()](V = target, seed = seed, W = W, H = H, H1 = None, 
                      rank = rank, max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
                      n_run = n_run, callback = callback, options = options)
@@ -150,7 +150,7 @@ def mf_run(mf_model):
     :param mf_model: The underlying initialized model of matrix factorization.
     :type mf_model: Class inheriting :class:`models.nmf.Nmf`
     """
-    if mf_model.__str__() not in l_factorization:
+    if repr(mf_model) not in l_factorization:
         raise utils.MFError("Unrecognized MF method.")
     return mf_model.run()
 

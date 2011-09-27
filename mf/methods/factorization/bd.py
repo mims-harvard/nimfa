@@ -76,6 +76,7 @@ class Bd(nmf_std.Nmf_std):
         self.name = "bd"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
+        self.set_params()
         
     def factorize(self):
         """
@@ -83,7 +84,6 @@ class Bd(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        self.set_params()
         self.v = multiply(self.V, self.V).sum() / 2.
         
         for run in xrange(self.n_run):
@@ -219,4 +219,7 @@ class Bd(nmf_std.Nmf_std):
         return (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
     
     def __str__(self):
+        return self.name
+    
+    def __repr__(self):
         return self.name

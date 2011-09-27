@@ -34,15 +34,14 @@ class Pmf(nmf_std.Nmf_std):
         self.name = "pmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
+        self.set_params()
         
     def factorize(self):
         """
         Compute matrix factorization.
          
         Return fitted factorization model.
-        """
-        self.set_params()
-                
+        """     
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             self.W = elop(self.W, repmat(self.W.sum(axis = 0), self.V.shape[0], 1), div)
@@ -142,4 +141,7 @@ class Pmf(nmf_std.Nmf_std):
         return (sop(self.V - dot(dot(dot(self.W, self.sqrt_P) * self.v_factor, self.sqrt_P), self.H), 2, pow)).sum()
         
     def __str__(self):
+        return self.name
+
+    def __repr__(self):
         return self.name
