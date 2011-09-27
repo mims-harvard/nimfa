@@ -16,7 +16,7 @@
            FunCat. In example is used data set that originates from S. cerevisiae and has annotations from the MIPS Functional
            Catalogue. A gene related to some function is automatically related to all its ancestor functions.
     
-    These characteristics describe hierarchical multi-label classification setting. 
+    These characteristics describe hierarchical multi-label classification (HMC) setting. 
     
     Here is the outline of this gene function prediction task. 
     
@@ -73,7 +73,13 @@ def run():
     tv_data = factorize(tv_data)
     # factorization of test data matrix
     test_data = factorize(test_data)
-
+    # correlation computation 
+    corrs = compute_correlations(tv_data, test_data)
+    # class assignments
+    labels = assign_labels(corrs, tv_data, idx2class)
+    # precision and recall measurements
+    plot(labels, test_data)    
+    
 def read():
     """
     Read S. cerevisiae FunCat annotated sequence data set.
@@ -104,7 +110,7 @@ def transform_data(path, include_meta = False):
     class information exploiting properties of Functional Catalogue hierarchy. 
     
     Return attributes' values and class information. If :param:`include_meta` is specified additional mapping functions are provided with 
-    attributes' names and classes' names.  
+    mapping from indices to attributes' names and indices to classes' names.  
     
     :param path: Path of directory with sequence data set.
     :type path: `str`
@@ -193,14 +199,29 @@ def _reverse(object2idx):
     
     :param object2idx: Mapping of objects to indices or vice verse.
     :type object2idx: `dict`
+    :rtype: `dict`
     """
     return dict(zip(object2idx.values(), object2idx.keys()))
+
+def preprocess(data):
+    """
+    Preprocess S.cerevisiae FunCat annotated sequence data set. Preprocessing step includes data normalization.
+    
+    Return preprocessed data. 
+    
+    :param data: Transformed data set containing attributes' values, class information and possibly additional meta information.  
+    :type data: `tuple`
+    """
+    print "Preprocessing data matrix ..."
+    data['attr'] = (data['attr'] - data['attr'].min() + np.finfo(data['attr'].dtype).eps) / (data['attr'].max() - data['attr'].min())
+    print "... Finished."
+    return data
 
 def factorize(data):
     """
     Perform factorization on S. cerevisiae FunCat annotated sequence data set.
     
-    Return factorized data. 
+    Return factorized data, this is matrix factors as result of factorization (basis and mixture matrix). 
     
     :param data: Transformed data set containing attributes' values, class information and possibly additional meta information.  
     :type data: `tuple`
@@ -226,25 +247,94 @@ def factorize(data):
     data['W'] = fit.basis()
     data['H'] = fit.coef()
     return data
-
-def preprocess(data):
-    """
-    Preprocess S.cerevisiae FunCat annotated sequence data set. Preprocessing step includes data normalization.
     
-    Return preprocessed data. 
-    
-    :param data: Transformed data set containing attributes' values, class information and possibly additional meta information.  
-    :type data: `tuple`
+def compute_correlations(train, test):
     """
-    print "Preprocessing data matrix ..."
-    data['attr'] = (data['attr'] - data['attr'].min() + np.finfo(data['attr'].dtype).eps) / (data['attr'].max() - data['attr'].min())
+    Estimate correlation coefficients between profiles of train basis matrix and profiles of test basis matrix. 
+    
+    Return estimated correlation coefficients.  
+    
+    :param train: Factorization matrix factors of train data set. 
+    :type train: `dict`
+    :param test: Factorization matrix factors of test data set. 
+    :type test: `dict`
+    :rtype: `dict`
+    """
+    print "Estimating correlation coefficients ..."
+    corrs = {}
+    for i in xrange(test['W'].shape[0]):
+        corrs.setdefault(i, [])
+        for j in xrange(train['W'].shape[0]):
+            corrs[i].append(_corr(test['W'][i, :], train['W'][i, :]))
     print "... Finished."
-    return data
+    return corrs
+
+def _corr(x, y):
+    """
+    Compute Pearson's correlation coefficient of x and y. Numerically stable algebraically equivalent equation for 
+    coefficient computation is used. 
+    
+    Return correlation coefficient between x and y which is by definition in [-1, 1].
+    
+    :param x: Random variable.
+    :type x: `numpy.matrix`
+    :param y: Random variable.
+    :type y: `numpy.matrix`
+    :rtype: `float`
+    """
+    n1 = x.size - 1
+    xm = x.mean()
+    ym = y.mean()
+    sx = x.std(ddof = 1)
+    sy = y.std(ddof = 1)
+    return 1. / n1 * np.multiply((x - xm) / sx, (y - ym) / sy).sum()
+
+def assign_labels(corrs, train, idx2class):
+    """
+    Apply rules for class assignments. In [Schachtner2008]_ two rules are proposed, average correlation and maximal 
+    correlation. Here, the average correlation rule is used. 
+    
+    Though any method based on similarity measures can be used, we estimate correlation coefficients. Let w be the
+    gene profile of test basis matrix for which we want to predict gene functions. For each class C a separate 
+    index set A of indices is created, where A encompasses all indices m, for which m-th profile of train basis 
+    matrix has label C. Index set B contains all remaining indices. Now, the average correlation coefficient between w
+    and elements of A is computed, similarly average correlation coefficient between w and elements of B. Finally, 
+    w is assigned label C if the former correlation over the respective index set is greater than the 
+    latter correlation.
+    
+    .. note: Described rule assigns the class label according to an average correlation of test vector with all
+             vectors belonging to one or the other index set. Minor modification of this rule is to assign the class
+             label according to the maximal correlation occurring between the test vector and the members of each
+             index set. 
+             
+    .. note: As noted before the main problem of this example is the HMC (hierarchical multi-label classification) 
+             setting. Therefore we generalized the concepts from articles describing the use of factorization
+             for binary classification problems to multi-label classification. Additionally, we use the weights
+             for class memberships to incorporate hierarchical structure of MIPS MIPS Functional
+             Catalogue.
+    
+    Return mapping between genes and their predicted gene functions. 
+    
+    :param corrs: Estimated correlation coefficients between profiles of train basis matrix and profiles of test 
+                  basis matrix. 
+    :type corrs: `dict`
+    :param train: Class information of train data set. 
+    :type train: `dict`
+    :param idx2class: Mapping between classes' indices and classes' labels. 
+    :type idx2class: `dict`
+    :rtype: `dict`
+    """
+    print "Assigning class labels ..."
+    labels = {}
+    for key in corrs:
+        for cl_idx in idx2class:
+            a = 1
+    print "... Finished."
+    return labels
+
+def plot(labels, test):
+    pass
 
 if __name__ == "__main__": 
     """Run the gene function prediction example."""
     run()
-
-
-
-    
