@@ -78,7 +78,7 @@ def run():
     # class assignments
     labels = assign_labels(corrs, tv_data, idx2class)
     # precision and recall measurements
-    plot(labels, test_data)    
+    plot(labels, test_data, idx2class)    
     
 def read():
     """
@@ -233,9 +233,9 @@ def factorize(data):
     V = data['attr']
     model = mf.mf(V, 
                   seed = "random_vcol", 
-                  rank = 12, 
+                  rank = 40, 
                   method = "nmf", 
-                  max_iter = 15, 
+                  max_iter = 75, 
                   initialize_only = True,
                   update = 'divergence',
                   objective = 'div')
@@ -295,7 +295,7 @@ def _corr(x, y):
     sy = y.std(ddof = 1)
     return 1. / n1 * np.multiply((x - xm) / sx, (y - ym) / sy).sum()
 
-def assign_labels(corrs, train, idx2class, method = 0.7):
+def assign_labels(corrs, train, idx2class, method = 0.001):
     """
     Apply rules for class assignments. In [Schachtner2008]_ two rules are proposed, average correlation and maximal 
     correlation. Here, the average correlation rule is used. These rules are generalized to multi-label 
@@ -325,7 +325,7 @@ def assign_labels(corrs, train, idx2class, method = 0.7):
              for class memberships to incorporate hierarchical structure of MIPS MIPS Functional
              Catalogue.
     
-    Return mapping between genes and their predicted gene functions. 
+    Return mapping of genes to their predicted gene functions. 
     
     :param corrs: Estimated correlation coefficients between profiles of train basis matrix and profiles of test 
                   basis matrix. 
@@ -379,8 +379,29 @@ def assign_labels(corrs, train, idx2class, method = 0.7):
     print labels
     return labels
 
-def plot(labels, test):
-    pass
+def plot(labels, test, idx2class):
+    """
+    Report the performance with the precision-recall (PR) based evaluation measures. 
+    
+    Beside PR also ROC based evaluations have been used before to evaluate gene function prediction approaches. PR
+    based better suits the characteristics of the common HMC task, in which many classes are infrequent with a small
+    number of genes having particular function. That is for most classes the number of negative instances exceeds
+    the number of positive instances. Therefore it is sometimes preferred to recognize the positive instances instead
+    of correctly predicting the negative ones (i. e. gene does not have a particular function). That means that ROC
+    curve might be less suited for the task as they reward a learner if it correctly predicts negative instances. 
+    
+    :param labels: Mapping of genes to their predicted gene functions. 
+    :type labels: `dict`
+    :param test: Class information of test data set. 
+    :type test: `dict`
+    :param idx2class: Mapping between classes' indices and classes' labels. 
+    :type idx2class: `dict`
+    """
+    avg_precision = 0. 
+    avg_recall = 0.
+    print "Average precision: %5.3f" % avg_precision
+    print "Average recall: %5.3f" % avg_recall
+    return avg_precision, avg_recall
 
 if __name__ == "__main__": 
     """Run the gene function prediction example."""
