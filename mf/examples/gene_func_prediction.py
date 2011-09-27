@@ -6,7 +6,7 @@
     
     .. note:: This example is in progress.
     
-    As a background reading before this example, we suggest reading [Schietgat2010]_ and [Schachtner2008]_
+    As a background reading before this example, we suggest reading [Schietgat2010]_ and [Schachtner2008]_ .
         
     This example from functional genomics deals with gene function prediction. Two main characteristics of function 
     prediction task are:
@@ -50,10 +50,29 @@ except ImportError, exc:
     
 
 def run():
-    """Run the NMF - Divergence on the S. cerevisiae sequence data set."""
-    data, test, idx2attr, idx2class = read()
-    data = preprocess(data)
-    data = factorize(data)
+    """
+    Run the gene function prediction example on the S. cerevisiae sequence data set.
+    
+    The methodology is as follows:
+        #. Reading S. cerevisiae sequence data, i. e. train, validation and test set. Reading meta data,  
+           attributes' labels and class labels.
+        #. Preprocessing, i. e. normalizing data matrix of test data and data matrix of joined train and validation
+           data. 
+        #. Factorization of train data matrix. 
+        #. Factorization of test data matrix.  
+        #. Application of rules for class assignments. Two rules are used, average correlation and maximal 
+           correlation, as in [Schachtner2008]_ .
+    """
+    # reading data set, attributes' labels and class labels 
+    tv_data, test_data, idx2attr, idx2class = read()
+    # normalization of train data set
+    tv_data = preprocess(tv_data)
+    # normalization of test data set
+    test_data = preprocess(test_data)
+    # factorization of train data matrix
+    tv_data = factorize(tv_data)
+    # factorization of test data matrix
+    test_data = factorize(test_data)
 
 def read():
     """
@@ -144,10 +163,10 @@ def transform_data(path, include_meta = False):
             # update attribute values information for current feature 
             i = 0 
             for idx in idxs:
-                attr_data[feature, i] = float(values[idx] if values[idx] != '?' else 0.)
+                attr_data[feature, i] = abs(float(values[idx] if values[idx] != '?' else 0.))
                 i += 1
             feature += 1
-    return ({'feat': feature, 'attr': attr_data, 'class': class_data}, _reverse(attr2idx), _reverse(class2idx)) if include_meta else {'feat': feature, 'attr': attr_data, 'class': class_data}
+    return ({'feat': feature, 'attr': attr_data, 'class': class_data}, _reverse(attr2idx), _reverse(class2idx)) if include_meta else {'feat': feature, 'attr': attr_data[:feature, :], 'class': class_data}
 
 def _join(train, valid):
     """
@@ -162,7 +181,8 @@ def _join(train, valid):
     """
     n_train =  train['feat']
     n_valid =  valid['feat']
-    return {'attr': np.vstack((train['attr'][:n_train, :], valid['attr'][:n_valid, :])),
+    return {'feat': n_train + n_valid, 
+            'attr': np.vstack((train['attr'][:n_train, :], valid['attr'][:n_valid, :])),
             'class': np.vstack((train['class'][:n_train, :], valid['class'][:n_valid, :]))}
 
 def _reverse(object2idx):
@@ -185,13 +205,31 @@ def factorize(data):
     :param data: Transformed data set containing attributes' values, class information and possibly additional meta information.  
     :type data: `tuple`
     """
-    print "Performing NMF - Divergence factorization ..." 
-    print "... Finished."
+    V = data['attr']
+    model = mf.mf(V, 
+                  seed = "random_vcol", 
+                  rank = 12, 
+                  method = "nmf", 
+                  max_iter = 15, 
+                  initialize_only = True,
+                  update = 'divergence',
+                  objective = 'div')
+    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
+    fit = mf.mf_run(model)
+    print "... Finished"
+    sparse_w, sparse_h = fit.fit.sparseness()
+    print """Stats:
+            - iterations: %d
+            - KL Divergence: %5.3f
+            - Euclidean distance: %5.3f
+            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric = 'euclidean'), sparse_w, sparse_h)
+    data['W'] = fit.basis()
+    data['H'] = fit.coef()
+    return data
 
 def preprocess(data):
     """
-    Preprocess S.cerevisiae FunCat annotated sequence data set. Preprocessing step includes building matrix exposing
-    hierarchy constraints of FunCat annotations.
+    Preprocess S.cerevisiae FunCat annotated sequence data set. Preprocessing step includes data normalization.
     
     Return preprocessed data. 
     
@@ -199,7 +237,9 @@ def preprocess(data):
     :type data: `tuple`
     """
     print "Preprocessing data matrix ..."
+    data['attr'] = (data['attr'] - data['attr'].min() + np.finfo(data['attr'].dtype).eps) / (data['attr'].max() - data['attr'].min())
     print "... Finished."
+    return data
 
 if __name__ == "__main__": 
     """Run the gene function prediction example."""
