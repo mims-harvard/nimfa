@@ -295,11 +295,16 @@ def _corr(x, y):
     sy = y.std(ddof = 1)
     return 1. / n1 * np.multiply((x - xm) / sx, (y - ym) / sy).sum()
 
-def assign_labels(corrs, train, idx2class):
+def assign_labels(corrs, train, idx2class, method = 0.7):
     """
     Apply rules for class assignments. In [Schachtner2008]_ two rules are proposed, average correlation and maximal 
     correlation. Here, the average correlation rule is used. These rules are generalized to multi-label 
     classification incorporating hierarchy constraints. 
+    
+    User can specify the usage of one of the following rules:
+        #. average correlation,
+        #. maximal correlation,
+        #. threshold average correlation.
     
     Though any method based on similarity measures can be used, we estimate correlation coefficients. Let w be the
     gene profile of test basis matrix for which we want to predict gene functions. For each class C a separate 
@@ -329,6 +334,11 @@ def assign_labels(corrs, train, idx2class):
     :type train: `dict`
     :param idx2class: Mapping between classes' indices and classes' labels. 
     :type idx2class: `dict`
+    :param method: Type of rule for class assignments. Possible are average correlation, maximal correlation by 
+                   specifying ``average`` or ``maximal`` respectively. In addition threshold average correlation is
+                   supported. If threshold rule is desired, threshold is specified instead. By default 
+                   threshold rule is applied. 
+    :type method: `float` or `str`
     :rtype: `dict`
     """
     print "Assigning class labels ..."
@@ -338,15 +348,30 @@ def assign_labels(corrs, train, idx2class):
     for test_idx in xrange(n_train, corrs.shape[0]):
         labels.setdefault(key, [])
         for cl_idx in idx2class:
-            count = (train['class'][:, cl_idx] != 0).sum()
-            if count == 0:
-                continue
-            weights_sum = train['class'][:, cl_idx].sum()
-            # weighted summation of correlations over respective index sets
-            avg_corr_A = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx]) / weights_sum
-            avg_corr_B = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx] != 0) / (n_train - count)
-            if (avg_corr_A > avg_corr_B):
-               labels[key].append(cl_idx) 
+            if method == "average":
+                count = (train['class'][:, cl_idx] != 0).sum()
+                if count == 0:
+                    continue
+                # weighted summation of correlations over respective index sets
+                avg_corr_A = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx]) / count
+                avg_corr_B = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx] != 0) / (n_train - count)
+                if (avg_corr_A > avg_corr_B):
+                   labels[key].append(cl_idx) 
+            elif method == "maximal": 
+                max_corr_A = np.multiply(corrs[:n_train, test_idx], train['class'][:, cl_idx]).max()
+                max_corr_B = np.multiply(corrs[:n_train, test_idx], train['class'][:, cl_idx] != 0).max()
+                if (max_corr_A > max_corr_B):
+                   labels[key].append(cl_idx) 
+            elif isinstance(method, float):
+                count = (train['class'][:, cl_idx] != 0).sum()
+                if count == 0:
+                    continue
+                # weighted summation of correlations over respective index set
+                avg_corr = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx]) / count
+                if (avg_corr >= method):
+                    labels[key].append(cl_idx)
+            else:
+                raise ValueError("Unrecognized class assignment rule.")
         key += 1
         if key % 100 == 0:
             print " %d/%d" % (key, corrs.shape[0] - n_train)
