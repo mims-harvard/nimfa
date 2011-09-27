@@ -51,7 +51,7 @@ except ImportError, exc:
 
 def run():
     """
-    Run the gene function prediction example on the S. cerevisiae sequence data set.
+    Run the gene function prediction example on the S. cerevisiae sequence data set (D1 FC seq).
     
     The methodology is as follows:
         #. Reading S. cerevisiae sequence data, i. e. train, validation and test set. Reading meta data,  
@@ -82,26 +82,29 @@ def run():
     
 def read():
     """
-    Read S. cerevisiae FunCat annotated sequence data set.
+    Read S. cerevisiae FunCat annotated sequence data set (D1 FC seq).
     
     Return attributes' values and class information of the test data set and joined train and validation data set. Additional mapping functions 
     are returned mapping attributes' names and classes' names to indices. 
     """
-    print "Reading S. cerevisiae FunCat annotated sequence data set ..."
+    print "Reading S. cerevisiae FunCat annotated sequence data set (D1 FC seq) ..."
     dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'S_cerevisiae_FC' + sep + 'seq_yeast_FUN' + sep
     train_data = dir + 'seq_yeast_FUN.train.arff'
     valid_data = dir + 'seq_yeast_FUN.valid.arff'
     test_data = dir + 'seq_yeast_FUN.test.arff'
-    print " Reading S. cerevisiae FunCat annotated sequence TRAIN set ..."
+    print " Reading S. cerevisiae FunCat annotated sequence (D1 FC seq) TRAIN set ..."
     train, idx2attr, idx2class = transform_data(train_data, include_meta = True)
-    print " Reading S. cerevisiae FunCat annotated sequence VALIDATION set ..."
+    print " ... Finished."  
+    print " Reading S. cerevisiae FunCat annotated sequence (D1 FC seq) VALIDATION set ..."
     valid = transform_data(valid_data)
-    print " Reading S. cerevisiae FunCat annotated sequence TEST set ..."
+    print " ... Finished."  
+    print " Reading S. cerevisiae FunCat annotated sequence (D1 FC seq) TEST set ..."
     test = transform_data(test_data)
     print " ... Finished."
-    print " Joining S. cerevisiae FunCat annotated sequence TEST and VALIDATION set ..."
+    print " Joining S. cerevisiae FunCat annotated sequence (D1 FC seq) TEST and VALIDATION set ..."
     tv_data = _join(train, valid)
     print " ... Finished."    
+    print "... Finished"
     return tv_data, test, idx2attr, idx2class
 
 def transform_data(path, include_meta = False):
@@ -112,7 +115,7 @@ def transform_data(path, include_meta = False):
     Return attributes' values and class information. If :param:`include_meta` is specified additional mapping functions are provided with 
     mapping from indices to attributes' names and indices to classes' names.  
     
-    :param path: Path of directory with sequence data set.
+    :param path: Path of directory with sequence data set (D1 FC seq).
     :type path: `str`
     :param include_meta: Specify if the header of the ARFF file should be skipped. The header of the ARFF file 
                                contains the name of the relation, a list of the attributes and their types. Default
@@ -154,18 +157,18 @@ def transform_data(path, include_meta = False):
             class_var = map(str.strip, values[idx_class].split("@"))
             for cl in class_var:
                 # update direct class information
-                class_data[feature, class2idx[cl]] = 4.
+                class_data[feature, class2idx[cl]] += 4.
                 # update indirect class information through FunCat hierarchy
                 cl_a = cl.split("/")
                 cl = "/".join(cl_a[:3] + ['0'])
-                if cl in class2idx and class_data[feature, class2idx[cl]] < 3.:
-                    class_data[feature, class2idx[cl]] = 3.
+                if cl in class2idx:
+                    class_data[feature, class2idx[cl]] += 3.
                 cl = "/".join(cl_a[:2] + ['0', '0'])
-                if cl in class2idx and  class_data[feature, class2idx[cl]] < 2.:
-                    class_data[feature, class2idx[cl]] = 2.
+                if cl in class2idx:
+                    class_data[feature, class2idx[cl]] += 2.
                 cl = "/".join(cl_a[:1] + ['0', '0', '0'])
-                if cl in class2idx and class_data[feature, class2idx[cl]] < 1.:
-                    class_data[feature, class2idx[cl]] = 1.
+                if cl in class2idx:
+                    class_data[feature, class2idx[cl]] += 1.
             # update attribute values information for current feature 
             i = 0 
             for idx in idxs:
@@ -176,7 +179,7 @@ def transform_data(path, include_meta = False):
 
 def _join(train, valid):
     """
-    Join test and validation data of the S. cerevisiae FunCat annotated sequence data set. 
+    Join test and validation data of the S. cerevisiae FunCat annotated sequence data set (D1 FC seq). 
     
     Return joined test and validation attributes' values and class information.
      
@@ -193,7 +196,7 @@ def _join(train, valid):
 
 def _reverse(object2idx):
     """
-    Reverse mapping function.
+    Reverse 1-to-1 mapping function.
     
     Return reversed mapping.
     
@@ -205,7 +208,8 @@ def _reverse(object2idx):
 
 def preprocess(data):
     """
-    Preprocess S.cerevisiae FunCat annotated sequence data set. Preprocessing step includes data normalization.
+    Preprocess S.cerevisiae FunCat annotated sequence data set (D1 FC seq). Preprocessing step includes data 
+    normalization.
     
     Return preprocessed data. 
     
@@ -219,7 +223,7 @@ def preprocess(data):
 
 def factorize(data):
     """
-    Perform factorization on S. cerevisiae FunCat annotated sequence data set.
+    Perform factorization on S. cerevisiae FunCat annotated sequence data set (D1 FC seq).
     
     Return factorized data, this is matrix factors as result of factorization (basis and mixture matrix). 
     
@@ -252,20 +256,22 @@ def compute_correlations(train, test):
     """
     Estimate correlation coefficients between profiles of train basis matrix and profiles of test basis matrix. 
     
-    Return estimated correlation coefficients.  
+    Return the estimated correlation coefficients of the features (variables).  
     
     :param train: Factorization matrix factors of train data set. 
     :type train: `dict`
     :param test: Factorization matrix factors of test data set. 
     :type test: `dict`
-    :rtype: `dict`
+    :rtype: `numpy.matrix`
     """
     print "Estimating correlation coefficients ..."
-    corrs = {}
+    corrs = np.corrcoef(train['W'], test['W'])
+    # alternative, it is time consuming - can be used for partial evaluation
+    """corrs = {}
     for i in xrange(test['W'].shape[0]):
-        corrs.setdefault(i, [])
+        corrs.setdefault(i, np.mat(np.zeros((train['W'].shape[0], 1))))
         for j in xrange(train['W'].shape[0]):
-            corrs[i].append(_corr(test['W'][i, :], train['W'][i, :]))
+            corrs[i][j, 0] = _corr(test['W'][i, :], train['W'][j, :])"""
     print "... Finished."
     return corrs
 
@@ -292,7 +298,8 @@ def _corr(x, y):
 def assign_labels(corrs, train, idx2class):
     """
     Apply rules for class assignments. In [Schachtner2008]_ two rules are proposed, average correlation and maximal 
-    correlation. Here, the average correlation rule is used. 
+    correlation. Here, the average correlation rule is used. These rules are generalized to multi-label 
+    classification incorporating hierarchy constraints. 
     
     Though any method based on similarity measures can be used, we estimate correlation coefficients. Let w be the
     gene profile of test basis matrix for which we want to predict gene functions. For each class C a separate 
@@ -326,10 +333,25 @@ def assign_labels(corrs, train, idx2class):
     """
     print "Assigning class labels ..."
     labels = {}
-    for key in corrs:
+    n_train = train['feat']
+    key = 0
+    for test_idx in xrange(n_train, corrs.shape[0]):
+        labels.setdefault(key, [])
         for cl_idx in idx2class:
-            a = 1
+            count = (train['class'][:, cl_idx] != 0).sum()
+            if count == 0:
+                continue
+            weights_sum = train['class'][:, cl_idx].sum()
+            # weighted summation of correlations over respective index sets
+            avg_corr_A = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx]) / weights_sum
+            avg_corr_B = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx] != 0) / (n_train - count)
+            if (avg_corr_A > avg_corr_B):
+               labels[key].append(cl_idx) 
+        key += 1
+        if key % 100 == 0:
+            print " %d/%d" % (key, corrs.shape[0] - n_train)
     print "... Finished."
+    print labels
     return labels
 
 def plot(labels, test):
