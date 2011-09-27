@@ -77,7 +77,6 @@ def factorize(V):
     :param V: The MovieLens data matrix. 
     :type V: `scipy.sparse.csr_matrix`
     """
-    print "Performing SNMF/R factorization ..." 
     model = mf.mf(V, 
                   seed = "random_vcol", 
                   rank = 12, 
@@ -89,6 +88,7 @@ def factorize(V):
                   beta = 1e-4, 
                   i_conv = 10,
                   w_min_change = 0)
+    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
     fit = mf.mf_run(model)
     print "... Finished"
     sparse_w, sparse_h = fit.fit.sparseness()

@@ -127,7 +127,6 @@ def factorize(V):
     :param V: The Medlars data matrix. 
     :type V: `scipy.sparse.csr_matrix`
     """
-    print "Performing NMF - Divergence factorization ..." 
     model = mf.mf(V, 
                   seed = "random_vcol", 
                   rank = 12, 
@@ -136,6 +135,7 @@ def factorize(V):
                   initialize_only = True,
                   update = 'divergence',
                   objective = 'div')
+    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
     fit = mf.mf_run(model)
     print "... Finished"
     sparse_w, sparse_h = fit.fit.sparseness()

@@ -125,7 +125,6 @@ def factorize(V):
     :param V: The ORL faces data matrix. 
     :type V: `numpy.matrix`
     """
-    print "Performing LSNMF factorization ..." 
     model = mf.mf(V, 
                   seed = "random_vcol",
                   rank = 25, 
@@ -136,6 +135,7 @@ def factorize(V):
                   inner_sub_iter = 10, 
                   beta = 0.1,
                   min_residuals = 1e-8)
+    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
     fit = mf.mf_run(model)
     print "... Finished"
     print """Stats:
