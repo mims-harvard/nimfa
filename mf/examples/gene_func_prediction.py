@@ -4,27 +4,44 @@
     Gene_func_prediction (``examples.gene_func_prediction``)
     ########################################################
     
-    .. note:: This example is in progress.
-    
-    As a background reading before this example, we suggest reading [Schietgat2010]_ and [Schachtner2008]_ .
+    As a background reading before this example, we recommend user to read [Schietgat2010]_ and [Schachtner2008]_ where
+    the authors study the use of decision tree based models for predicting the multiple gene functions and unsupervised 
+    matrix factorization techniques to extract marker genes from gene expression profiles for classification into
+    diagnostic categories, respectively. 
         
-    This example from functional genomics deals with gene function prediction. Two main characteristics of function 
+    This example from functional genomics deals with predicting gene functions. Two main characteristics of gene function 
     prediction task are:
     
         #. single gene can have multiple functions, 
-        #. the functions are organized in a hierarchy, in particular in a hierarchy structered as a rooted tree -- MIPS's
-           FunCat. In example is used data set that originates from S. cerevisiae and has annotations from the MIPS Functional
-           Catalogue. A gene related to some function is automatically related to all its ancestor functions.
+        #. the functions are organized in a hierarchy, in particular in a hierarchy structered as a rooted tree -- MIPS
+           Functional Catalogue. A gene related to some function is automatically related to all its ancestor 
+           functions. Data set used in this example originates from S. cerevisiae and has annotations from the MIPS 
+           Functional Catalogue. 
     
-    These characteristics describe hierarchical multi-label classification (HMC) setting. 
+    The latter problem setting describes hierarchical multi-label classification (HMC).
+    
+    .. note:: The S. cerevisiae FunCat annotated data set used in this example is not included in the `datasets`. If you 
+              wish to perform the gene function prediction experiments, start by downloading the data set. In particular
+              D1 (FC) seq data set must be available for the example to run.  Download links are listed in the 
+              ``datasets``. To run the example, uncompress the data and put it into corresponding data directory, namely 
+              the extracted data set must be find in the ``S_cerevisiae_FC`` directory under ``datasets``. Once you have 
+              the data installed, you are ready to start running the experiments.  
     
     Here is the outline of this gene function prediction task. 
     
-        #. Dataset Preprocessing.
-        #. Gene selection
-        #. Feature generation. 
-        #. Feature selection
-        #. Classification of the mixture matrix and comply with the hierarchy constraint. 
+        #. Reading S. cerevisiae sequence data, i. e. train, validation and test set. Reading meta data,  
+           attributes' labels and class labels. Weights are used to distinguish direct and indirect class 
+           memberships of genes in gene function classes according to FunCat annotations. 
+        #. Preprocessing, i. e. normalizing data matrix of test data and data matrix of joined train and validation
+           data. 
+        #. Factorization of train data matrix. We used SNMF/L factorization algorithm for train data. 
+        #. Factorization of test data matrix. We used SNMF/L factorization algorithm for train data.
+        #. Application of rules for class assignments. Three rules can be used, average correlation and maximal 
+           correlation, as in [Schachtner2008]_ and threshold maximal correlation. All class assignments rules
+           are generalized to meet the hierarchy constraint imposed by the rooted tree structure of MIPS Functional 
+           Catalogue. 
+        #. Precision-recall (PR) evaluation measures. 
+        
     
     To run the example simply type::
         
@@ -48,7 +65,6 @@ try:
 except ImportError, exc:
     raise SystemExit("Matplotlib must be installed to run this example.")
     
-
 def run():
     """
     Run the gene function prediction example on the S. cerevisiae sequence data set (D1 FC seq).
@@ -58,10 +74,13 @@ def run():
            attributes' labels and class labels.
         #. Preprocessing, i. e. normalizing data matrix of test data and data matrix of joined train and validation
            data. 
-        #. Factorization of train data matrix. 
-        #. Factorization of test data matrix.  
-        #. Application of rules for class assignments. Two rules are used, average correlation and maximal 
-           correlation, as in [Schachtner2008]_ .
+        #. Factorization of train data matrix. We used SNMF/L factorization algorithm for train data. 
+        #. Factorization of test data matrix. We used SNMF/L factorization algorithm for train data.
+        #. Application of rules for class assignments. Three rules can be used, average correlation and maximal 
+           correlation, as in [Schachtner2008]_ and threshold maximal correlation. All class assignments rules
+           are generalized to meet the hierarchy constraint imposed by the rooted tree structure of MIPS Functional 
+           Catalogue. 
+        #. PR evaluation measures. 
     """
     # reading data set, attributes' labels and class labels 
     tv_data, test_data, idx2attr, idx2class = read()
@@ -311,8 +330,9 @@ def _corr(x, y):
 def assign_labels(corrs, train, idx2class, method = 0.):
     """
     Apply rules for class assignments. In [Schachtner2008]_ two rules are proposed, average correlation and maximal 
-    correlation. Here, the average correlation rule is used. These rules are generalized to multi-label 
-    classification incorporating hierarchy constraints. 
+    correlation. Here, both the rules are implemented and can be specified through :param:`method``parameter. In addition to 
+    these the threshold maximal correlation rule is possible as well. Class assignments rules are generalized to 
+    multi-label classification incorporating hierarchy constraints. 
     
     User can specify the usage of one of the following rules:
         #. average correlation,
@@ -327,16 +347,16 @@ def assign_labels(corrs, train, idx2class, method = 0.):
     w is assigned label C if the former correlation over the respective index set is greater than the 
     latter correlation.
     
-    .. note: Described rule assigns the class label according to an average correlation of test vector with all
-             vectors belonging to one or the other index set. Minor modification of this rule is to assign the class
-             label according to the maximal correlation occurring between the test vector and the members of each
-             index set. 
+    .. note:: Described rule assigns the class label according to an average correlation of test vector with all
+              vectors belonging to one or the other index set. Minor modification of this rule is to assign the class
+              label according to the maximal correlation occurring between the test vector and the members of each
+              index set. 
              
-    .. note: As noted before the main problem of this example is the HMC (hierarchical multi-label classification) 
-             setting. Therefore we generalized the concepts from articles describing the use of factorization
-             for binary classification problems to multi-label classification. Additionally, we use the weights
-             for class memberships to incorporate hierarchical structure of MIPS MIPS Functional
-             Catalogue.
+    .. note:: As noted before the main problem of this example is the HMC (hierarchical multi-label classification) 
+              setting. Therefore we generalized the concepts from articles describing the use of factorization
+              for binary classification problems to multi-label classification. Additionally, we use the weights
+              for class memberships to incorporate hierarchical structure of MIPS MIPS Functional
+              Catalogue.
     
     Return mapping of gene functions to genes.  
     
