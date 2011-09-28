@@ -76,9 +76,9 @@ def run():
     # correlation computation 
     corrs = compute_correlations(tv_data, test_data)
     # class assignments
-    labels = assign_labels(corrs, tv_data, idx2class)
+    func2gene = assign_labels(corrs, tv_data, idx2class)
     # precision and recall measurements
-    plot(labels, test_data, idx2class)    
+    plot(func2gene, test_data, idx2class)    
     
 def read():
     """
@@ -175,7 +175,7 @@ def transform_data(path, include_meta = False):
                 attr_data[feature, i] = abs(float(values[idx] if values[idx] != '?' else 0.))
                 i += 1
             feature += 1
-    return ({'feat': feature, 'attr': attr_data, 'class': class_data}, _reverse(attr2idx), _reverse(class2idx)) if include_meta else {'feat': feature, 'attr': attr_data[:feature, :], 'class': class_data}
+    return ({'feat': feature, 'attr': attr_data[:feature, :], 'class': class_data[:feature, :]}, _reverse(attr2idx), _reverse(class2idx)) if include_meta else {'feat': feature, 'attr': attr_data[:feature, :], 'class': class_data[:feature, :]}
 
 def _join(train, valid):
     """
@@ -295,7 +295,7 @@ def _corr(x, y):
     sy = y.std(ddof = 1)
     return 1. / n1 * np.multiply((x - xm) / sx, (y - ym) / sy).sum()
 
-def assign_labels(corrs, train, idx2class, method = 0.001):
+def assign_labels(corrs, train, idx2class, method = 0.01):
     """
     Apply rules for class assignments. In [Schachtner2008]_ two rules are proposed, average correlation and maximal 
     correlation. Here, the average correlation rule is used. These rules are generalized to multi-label 
@@ -304,7 +304,7 @@ def assign_labels(corrs, train, idx2class, method = 0.001):
     User can specify the usage of one of the following rules:
         #. average correlation,
         #. maximal correlation,
-        #. threshold average correlation.
+        #. threshold maximal correlation.
     
     Though any method based on similarity measures can be used, we estimate correlation coefficients. Let w be the
     gene profile of test basis matrix for which we want to predict gene functions. For each class C a separate 
@@ -325,7 +325,7 @@ def assign_labels(corrs, train, idx2class, method = 0.001):
              for class memberships to incorporate hierarchical structure of MIPS MIPS Functional
              Catalogue.
     
-    Return mapping of genes to their predicted gene functions. 
+    Return mapping of gene functions to genes.  
     
     :param corrs: Estimated correlation coefficients between profiles of train basis matrix and profiles of test 
                   basis matrix. 
@@ -335,19 +335,19 @@ def assign_labels(corrs, train, idx2class, method = 0.001):
     :param idx2class: Mapping between classes' indices and classes' labels. 
     :type idx2class: `dict`
     :param method: Type of rule for class assignments. Possible are average correlation, maximal correlation by 
-                   specifying ``average`` or ``maximal`` respectively. In addition threshold average correlation is
+                   specifying ``average`` or ``maximal`` respectively. In addition threshold maximal correlation is
                    supported. If threshold rule is desired, threshold is specified instead. By default 
                    threshold rule is applied. 
     :type method: `float` or `str`
     :rtype: `dict`
     """
-    print "Assigning class labels ..."
-    labels = {}
+    print "Assigning class labels - gene functions to genes ..."
+    func2gene = {}
     n_train = train['feat']
     key = 0
     for test_idx in xrange(n_train, corrs.shape[0]):
-        labels.setdefault(key, [])
         for cl_idx in idx2class:
+            func2gene.setdefault(cl_idx, [])
             if method == "average":
                 count = (train['class'][:, cl_idx] != 0).sum()
                 if count == 0:
@@ -356,30 +356,27 @@ def assign_labels(corrs, train, idx2class, method = 0.001):
                 avg_corr_A = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx]) / count
                 avg_corr_B = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx] != 0) / (n_train - count)
                 if (avg_corr_A > avg_corr_B):
-                   labels[key].append(cl_idx) 
+                    func2gene[cl_idx].append(key)
             elif method == "maximal": 
                 max_corr_A = np.multiply(corrs[:n_train, test_idx], train['class'][:, cl_idx]).max()
                 max_corr_B = np.multiply(corrs[:n_train, test_idx], train['class'][:, cl_idx] != 0).max()
                 if (max_corr_A > max_corr_B):
-                   labels[key].append(cl_idx) 
+                    func2gene[cl_idx].append(key)
             elif isinstance(method, float):
-                count = (train['class'][:, cl_idx] != 0).sum()
-                if count == 0:
-                    continue
-                # weighted summation of correlations over respective index set
-                avg_corr = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx]) / count
-                if (avg_corr >= method):
-                    labels[key].append(cl_idx)
+                max_corr = np.multiply(corrs[:n_train, test_idx], train['class'][:, cl_idx]).max()
+                print key, max_corr, idx2class[cl_idx]
+                if (max_corr >= method):
+                    func2gene[cl_idx].append(key)
             else:
                 raise ValueError("Unrecognized class assignment rule.")
         key += 1
         if key % 100 == 0:
             print " %d/%d" % (key, corrs.shape[0] - n_train)
     print "... Finished."
-    print labels
-    return labels
+    print func2gene
+    return func2gene
 
-def plot(labels, test, idx2class):
+def plot(func2gene, test, idx2class):
     """
     Report the performance with the precision-recall (PR) based evaluation measures. 
     
@@ -400,8 +397,25 @@ def plot(labels, test, idx2class):
     :type idx2class: `dict`
     :rtype: `tuple`
     """
-    avg_precision = 0. 
-    avg_recall = 0.
+    def tp(g_function):
+        # number of true positives for g_function (correctly predicted positive instances) 
+        return (test['class'][func2gene[g_function], g_function] != 0).sum()
+    def fp(g_function):
+        # number of false positives for g_function (positive predictions that are incorrect)
+        return (test['class'][func2gene[g_function], g_function] == 0).sum()
+    def fn(g_function):
+        # number of false negatives for g_function (positive instances that are incorrectly predicted negative)
+        n_pred = set(xrange(len(idx2class))).difference(func2gene[g_function])
+        return (test['class'][n_pred, g_function] != 0).sum()
+    tp_sum = 0.
+    fp_sum = 0.
+    fn_sum = 0.
+    for g_function in idx2class: 
+        tp_sum += tp(g_function)
+        fp_sum += fp(g_function)
+        fn_sum += fn(g_function)
+    avg_precision = tp_sum / (tp_sum + fp_sum) 
+    avg_recall = tp_sum / (tp_sum + fn_sum)
     print "Average precision: %5.3f" % avg_precision
     print "Average recall: %5.3f" % avg_recall
     return avg_precision, avg_recall
