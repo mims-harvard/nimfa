@@ -35,7 +35,7 @@
         import mf.examples
         mf.examples.gene_func_prediction.run()
         
-    .. note:: This example uses matplotlib library for producing visual interpretation.
+    .. note:: This example uses ``matplotlib`` library for producing visual interpretation.
 """
 
 import mf

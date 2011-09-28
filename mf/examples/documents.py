@@ -92,7 +92,7 @@
         import mf.examples
         mf.examples.documents.run()
         
-    .. note:: This example uses matplotlib library for producing visual interpretation of NMF basis vectors on Medlars
+    .. note:: This example uses ``matplotlib`` library for producing visual interpretation of NMF basis vectors on Medlars
               data set.
 """
 

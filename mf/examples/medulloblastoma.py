@@ -90,7 +90,7 @@
         import mf.examples
         mf.examples.medulloblastoma.run()
         
-    .. note:: This example uses matplotlib library for producing a heatmap of a consensus matrix.
+    .. note:: This example uses ``matplotlib`` library for producing a heatmap of a consensus matrix.
 """
 
 import mf

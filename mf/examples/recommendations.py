@@ -36,7 +36,7 @@
         import mf.examples
         mf.examples.recommendations.run()
         
-    .. note:: This example uses matplotlib library for producing visual interpretation of the RMSE error measure. 
+    .. note:: This example uses ``matplotlib`` library for producing visual interpretation of the RMSE error measure. 
     
 """
 

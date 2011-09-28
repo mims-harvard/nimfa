@@ -86,7 +86,7 @@
         import mf.examples
         mf.examples.orl_images.run()
         
-    .. note:: This example uses matplotlib library for producing visual interpretation of basis vectors. It uses PIL 
+    .. note:: This example uses ``matplotlib`` library for producing visual interpretation of basis vectors. It uses PIL 
               library for displaying face images. 
 """
 
