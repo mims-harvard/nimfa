@@ -41,7 +41,6 @@
            are generalized to meet the hierarchy constraint imposed by the rooted tree structure of MIPS Functional 
            Catalogue. 
         #. Precision-recall (PR) evaluation measures. 
-        
     
     To run the example simply type::
         
