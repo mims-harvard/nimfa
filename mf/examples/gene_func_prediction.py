@@ -397,6 +397,7 @@ def plot(func2gene, test, idx2class):
     :type idx2class: `dict`
     :rtype: `tuple`
     """
+    print "Computing PR evaluations measures ..."
     def tp(g_function):
         # number of true positives for g_function (correctly predicted positive instances) 
         return (test['class'][func2gene[g_function], g_function] != 0).sum()
@@ -410,14 +411,16 @@ def plot(func2gene, test, idx2class):
     tp_sum = 0.
     fp_sum = 0.
     fn_sum = 0.
+
     for g_function in idx2class: 
         tp_sum += tp(g_function)
         fp_sum += fp(g_function)
         fn_sum += fn(g_function)
     avg_precision = tp_sum / (tp_sum + fp_sum) 
     avg_recall = tp_sum / (tp_sum + fn_sum)
-    print "Average precision: %5.3f" % avg_precision
-    print "Average recall: %5.3f" % avg_recall
+    print "Average precision over all gene functions: %5.3f" % avg_precision
+    print "Average recall over all gene functions: %5.3f" % avg_recall
+    print "... Finished."
     return avg_precision, avg_recall
 
 if __name__ == "__main__": 
