@@ -411,7 +411,6 @@ def plot(func2gene, test, idx2class):
     tp_sum = 0.
     fp_sum = 0.
     fn_sum = 0.
-
     for g_function in idx2class: 
         tp_sum += tp(g_function)
         fp_sum += fp(g_function)
