@@ -75,10 +75,12 @@ def run():
     test_data = factorize(test_data)
     # correlation computation 
     corrs = compute_correlations(tv_data, test_data)
-    # class assignments
-    func2gene = assign_labels(corrs, tv_data, idx2class)
-    # precision and recall measurements
-    plot(func2gene, test_data, idx2class)    
+    for method in 0.5 * np.random.random_sample(50) + 1.: 
+        print method
+        # class assignments
+        func2gene = assign_labels(corrs, tv_data, idx2class, method = method)
+        # precision and recall measurements
+        plot(func2gene, test_data, idx2class)    
     
 def read():
     """
@@ -157,7 +159,7 @@ def transform_data(path, include_meta = False):
             class_var = map(str.strip, values[idx_class].split("@"))
             for cl in class_var:
                 # update direct class information
-                class_data[feature, class2idx[cl]] += 4.
+                class_data[feature, class2idx[cl]] += 10.
                 # update indirect class information through FunCat hierarchy
                 cl_a = cl.split("/")
                 cl = "/".join(cl_a[:3] + ['0'])
@@ -231,14 +233,25 @@ def factorize(data):
     :type data: `tuple`
     """
     V = data['attr']
-    model = mf.mf(V, 
+    """model = mf.mf(V, 
                   seed = "random_vcol", 
                   rank = 40, 
                   method = "nmf", 
                   max_iter = 75, 
                   initialize_only = True,
-                  update = 'divergence',
-                  objective = 'div')
+                  update = 'euclidean',
+                  objective = 'fro')"""
+    model = mf.mf(V, 
+                  seed = "random_vcol", 
+                  rank = 40, 
+                  method = "snmf", 
+                  max_iter = 5, 
+                  initialize_only = True,
+                  version = 'l',
+                  eta = 1.,
+                  beta = 1e-4, 
+                  i_conv = 10,
+                  w_min_change = 0)
     print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
     fit = mf.mf_run(model)
     print "... Finished"
@@ -273,7 +286,7 @@ def compute_correlations(train, test):
         for j in xrange(train['W'].shape[0]):
             corrs[i][j, 0] = _corr(test['W'][i, :], train['W'][j, :])"""
     print "... Finished."
-    return corrs
+    return np.mat(corrs)
 
 def _corr(x, y):
     """
@@ -295,7 +308,7 @@ def _corr(x, y):
     sy = y.std(ddof = 1)
     return 1. / n1 * np.multiply((x - xm) / sx, (y - ym) / sy).sum()
 
-def assign_labels(corrs, train, idx2class, method = 0.01):
+def assign_labels(corrs, train, idx2class, method = 0.):
     """
     Apply rules for class assignments. In [Schachtner2008]_ two rules are proposed, average correlation and maximal 
     correlation. Here, the average correlation rule is used. These rules are generalized to multi-label 
@@ -342,38 +355,39 @@ def assign_labels(corrs, train, idx2class, method = 0.01):
     :rtype: `dict`
     """
     print "Assigning class labels - gene functions to genes ..."
-    func2gene = {}
+    func2gene = {}    
     n_train = train['feat']
+    n_cl = len(idx2class)
+    for cl_idx in xrange(n_cl):
+        func2gene.setdefault(cl_idx, [])
     key = 0
     for test_idx in xrange(n_train, corrs.shape[0]):
-        for cl_idx in idx2class:
-            func2gene.setdefault(cl_idx, [])
-            if method == "average":
-                count = (train['class'][:, cl_idx] != 0).sum()
-                if count == 0:
-                    continue
-                # weighted summation of correlations over respective index sets
-                avg_corr_A = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx]) / count
-                avg_corr_B = np.dot(corrs[:n_train, test_idx], train['class'][:, cl_idx] != 0) / (n_train - count)
-                if (avg_corr_A > avg_corr_B):
+        if method == "average":
+            # weighted summation of correlations over respective index sets
+            avg_corr_A = np.sum(np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class']), 0)
+            avg_corr_B = np.sum(np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class'] != 0), 0) 
+            avg_corr_A = avg_corr_A / (np.sum(train['class'] != 0, 0) + 1)
+            avg_corr_B = avg_corr_B / (np.sum(train['class'] == 0, 0) + 1)
+            for cl_idx in xrange(n_cl):
+                if (avg_corr_A[0, cl_idx] > avg_corr_B[0, cl_idx]):
                     func2gene[cl_idx].append(key)
-            elif method == "maximal": 
-                max_corr_A = np.multiply(corrs[:n_train, test_idx], train['class'][:, cl_idx]).max()
-                max_corr_B = np.multiply(corrs[:n_train, test_idx], train['class'][:, cl_idx] != 0).max()
-                if (max_corr_A > max_corr_B):
+        elif method == "maximal": 
+            max_corr_A = np.amax(np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class']), 0)
+            max_corr_B = np.amax(np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class'] != 0), 0)
+            for cl_idx in xrange(n_cl):
+                if (max_corr_A[0, cl_idx] > max_corr_B[0, cl_idx]):
                     func2gene[cl_idx].append(key)
-            elif isinstance(method, float):
-                max_corr = np.multiply(corrs[:n_train, test_idx], train['class'][:, cl_idx]).max()
-                print key, max_corr, idx2class[cl_idx]
-                if (max_corr >= method):
+        elif isinstance(method, float):
+            max_corr = np.amax(np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class']), 0)
+            for cl_idx in xrange(n_cl):
+                if (max_corr[0, cl_idx] >= method):
                     func2gene[cl_idx].append(key)
-            else:
-                raise ValueError("Unrecognized class assignment rule.")
+        else:
+            raise ValueError("Unrecognized class assignment rule.")
         key += 1
         if key % 100 == 0:
             print " %d/%d" % (key, corrs.shape[0] - n_train)
     print "... Finished."
-    print func2gene
     return func2gene
 
 def plot(func2gene, test, idx2class):
@@ -406,7 +420,7 @@ def plot(func2gene, test, idx2class):
         return (test['class'][func2gene[g_function], g_function] == 0).sum()
     def fn(g_function):
         # number of false negatives for g_function (positive instances that are incorrectly predicted negative)
-        n_pred = set(xrange(len(idx2class))).difference(func2gene[g_function])
+        n_pred = list(set(xrange(len(idx2class))).difference(func2gene[g_function]))
         return (test['class'][n_pred, g_function] != 0).sum()
     tp_sum = 0.
     fp_sum = 0.
