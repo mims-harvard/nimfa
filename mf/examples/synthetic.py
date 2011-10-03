@@ -87,7 +87,7 @@ def run_snmnmf(V, V1):
     :param V: First target matrix to estimate.
     :type V: :class:`numpy.matrix`
     :param V1: Second target matrix to estimate.
-    :type V1: :clas:`numpy.matrix`
+    :type V1: :class:`numpy.matrix`
     """
     rank = 10
     model = mf.mf(target = (V, V1), 
