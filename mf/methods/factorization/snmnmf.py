@@ -37,7 +37,7 @@ the corresponding rows of coefficients matrices, H1 and H2.
 
 In SNMNMF a strategy suggested by Kim and Park (2007) is adopted to make the coefficient matrices sparse. 
 
-.. note:: In [Zhang2001]_ ``H1`` and ``H2`` notation corresponds to the ``H`` and ``H1``, respectively. 
+.. note:: In [Zhang2001]_ ``H1`` and ``H2`` notation corresponds to the ``H`` and ``H1`` here, respectively. 
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 2-15
