@@ -22,12 +22,22 @@ The inputs for the SNMNMF are:
     #. two sets of expression profiles (represented by the matrices V and V1 of shape s x m, s x n, respectively) for 
        miRNA and genes measured on the same set of samples;
     #. (PRIOR KNOWLEDGE) a gene-gene interaction network (represented by the matrix A of shape n x n), including protein-protein interactions
-       and DNA-protein interactions;
+       and DNA-protein interactions; the network is presented in the form of the adjacency matrix of gene network; 
     #. (PRIOR KNOWLEDGE) a list of predicted miRNA-gene regulatory interactions (represented by the matrix B of shape m x n) based on
-       sequence data. 
+       sequence data; the network is presented in the form of the adjacency matrix of a bipartite miRNA-gene network. 
+       Network regularized constraints are used to enforce "must-link" constraints and to ensure that genes with known 
+       interactions have similar coefficient profiles. 
+       
 Gene and miRNA expression matrices are simultaneously factored into a common basis matrix (W) and two
 coefficients matrices (H and H1). Additional knowledge is incorporated into this framework with network 
-regularized constraints. Because of the imposed sparsity constraints easily interpretable solution is obtained. 
+regularized constraints. Because of the imposed sparsity constraints easily interpretable solution is obtained. In 
+[Zhang2011]_ decomposed matrix componentsare used to provide information about miRNA-gene regulatory comodules. They
+identified the comodules based on shared components (a column in basis matrix W) with significant association values in 
+the corresponding rows of coefficients matrices, H1 and H2. 
+
+In SNMNMF a strategy suggested by Kim and Park (2007) is adopted to make the coefficient matrices sparse. 
+
+.. note:: In [Zhang2001]_ ``H1`` and ``H2`` notation corresponds to the ``H`` and ``H1``, respectively. 
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 2-15
@@ -53,7 +63,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
     :type B: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix` 
     :param gamma: Limit the growth of the basis matrix (W). Default is 0.01.
     :type gamma: `float`
-    :param gamma_1: Limit the growth of the mixture matrices (H and H1). Default is 0.01.
+    :param gamma_1: Encourage sparsity of the mixture (coefficient) matrices (H and H1). Default is 0.01.
     :type gamma_1: `float`
     :param lamb: Weight for the must-link constraints defined in :param:`A`. Default is 0.01.
     :type lamb: `float`
