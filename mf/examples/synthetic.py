@@ -84,8 +84,10 @@ def run_snmnmf(V, V1):
     """
     Run sparse network-regularized multiple NMF. 
     
-    :param V: Target matrix to estimate.
+    :param V: First target matrix to estimate.
     :type V: :class:`numpy.matrix`
+    :param V1: Second target matrix to estimate.
+    :type V1: :clas:`numpy.matrix`
     """
     rank = 10
     model = mf.mf(target = (V, V1), 
