@@ -31,7 +31,7 @@ def diff(X):
     :param X: Vector for which consecutive differences are computed.
     :type X: :class:`numpy.matrix`
     """   
-    assert 1 in X.shape, "X should be a vector."
+    assert 1 in X.shape, "sX should be a vector."
     assert not sp.isspmatrix(X), "X is sparse matrix."
     X = X.flatten()
     return [X[0, j + 1] - X[0, j] for j in xrange(X.shape[1] - 1)]
@@ -326,7 +326,7 @@ def _svd_right(X):
     """
     XXt = dot(X, X.T)
     if X.shape[0] > 1:
-        if scipy.version.version == '0.9.0':
+        if '0.9.0' in scipy.version.version or '0.10.0' in scipy.version.version or '0.11.0' in scipy.version.version:
             # In scipy 0.9.0 ARPACK interface has changed. eigen_symmetric routine was renamed to eigsh
             # see http://docs.scipy.org/doc/scipy/reference/release.0.9.0.html#scipy-sparse
             try:
@@ -367,7 +367,8 @@ def _svd_left(X):
     """
     XtX = dot(X.T, X)
     if X.shape[1] > 1:
-        if '0.9.0' in scipy.version.version or '0.10.0' in scipy.version.version:
+        print scipy.version.version
+        if '0.9.0' in scipy.version.version or '0.10.0' in scipy.version.version or '0.11.0' in scipy.version.version:
             # In scipy 0.9.0 ARPACK interface has changed. eigen_symmetric routine was renamed to eigsh
             # see http://docs.scipy.org/doc/scipy/reference/release.0.9.0.html#scipy-sparse
             try:
