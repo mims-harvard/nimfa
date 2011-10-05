@@ -65,6 +65,7 @@ class Pmf(nmf_std.Nmf_std):
             self.H = dot(self.sqrt_P, self.H)
             if self.callback:
                 self.final_obj = c_obj
+                self.n_iter = iter
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:

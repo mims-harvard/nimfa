@@ -110,6 +110,7 @@ class Snmf(nmf_std.Nmf_std):
                 self.W, self.H = self.H.T, self.W.T
             if self.callback:
                 self.final_obj = c_obj
+                self.n_iter = iter
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:

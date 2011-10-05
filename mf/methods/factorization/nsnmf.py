@@ -72,6 +72,7 @@ class Nsnmf(nmf_ns.Nmf_ns):
                     self.tracker.track_error(c_obj, run)
             if self.callback:
                 self.final_obj = c_obj
+                self.n_iter = iter
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
