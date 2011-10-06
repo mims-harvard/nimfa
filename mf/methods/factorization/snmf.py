@@ -94,6 +94,8 @@ class Snmf(nmf_std.Nmf_std):
                 self.I_k = self.eta * np.mat(np.eye(self.rank))
             self.n_restart = 0
             if self.callback_init:
+                self.final_obj = c_obj
+                self.n_iter = iter
                 mffit = mf_fit.Mf_fit(self)
                 self.callback_init(mffit)
             while self.is_satisfied(c_obj, iter):

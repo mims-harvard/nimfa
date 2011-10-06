@@ -64,6 +64,8 @@ class Nsnmf(nmf_ns.Nmf_ns):
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
             if self.callback_init:
+                self.final_obj = c_obj
+                self.n_iter = iter
                 mffit = mf_fit.Mf_fit(self)
                 self.callback_init(mffit)
             while self.is_satisfied(p_obj, c_obj, iter):

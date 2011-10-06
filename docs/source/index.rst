@@ -190,10 +190,18 @@ Example No. 2
 	.. literalinclude:: /code/usage.py
    		:lines: 58-100
 
+
 Example No. 3
 
 	.. literalinclude:: /code/usage.py
    		:lines: 108-153
+
+   		
+Example No. 4
+   
+   	.. literalinclude:: /code/usage.py
+   		:lines: 161-210
+
 
 ##########
 References

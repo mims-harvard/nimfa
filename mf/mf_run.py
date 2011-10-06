@@ -137,11 +137,11 @@ def mf(target, seed = None, W = None, H = None,
         if isinstance(method, str):
             mf_model = methods.factorization.methods[method.lower()](V = target, seed = seed, W = W, H = H, H1 = None, 
                      rank = rank, max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
-                     n_run = n_run, callback = callback, options = options)
+                     n_run = n_run, callback = callback, callback_init = callback_init, options = options)
         else:
             mf_model = method(V = target, seed = seed, W = W, H = H, H1 = None, rank = rank,
                      max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
-                     n_run = n_run, callback = callback, options = options)
+                     n_run = n_run, callback = callback, callback_init = callback_init, options = options)
     except Exception as str_error:
         raise utils.MFError("Model initialization has been unsuccessful: " + str(str_error))
     # Check if chosen seeding method is compatible with chosen factorization method or fixed initialization is passed
