@@ -171,13 +171,14 @@ For details and descriptions on algorithm specific options see specific algorith
 Usage
 #####
 
-Following are three basic usage examples that employ Standard NMF algorithm and LSNMF algorithm. For examples with real world
+Following are four basic usage examples that employ different implemented factorization algorithms. For examples with real world
 applications see Examples section and methods' documentation. 
 
 .. note:: Consider these examples as Hello World examples for the MF library.
 
-.. note:: These examples demonstrate factorization of ``scipy.sparse`` matrix, ``numpy`` dense matrix, computation 
-		  of quality and performance measures, error tracking, computation of MF estimate and matrix factors. 
+.. note:: These examples demonstrate factorization of ``scipy.sparse`` matrices, factorization of ``numpy`` dense matrices, computation 
+		  of quality and performance measures, error tracking, computation of MF estimate and matrix factors, 
+		  passing callback initialization function. 
 
 Example No. 1
 
