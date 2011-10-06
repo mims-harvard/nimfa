@@ -71,6 +71,9 @@ class Lsnmf(nmf_std.Nmf_std):
             c_obj = self.objective()
             best_obj = c_obj if run == 0 else best_obj 
             iter = 0
+            if self.callback_init:
+                mffit = mf_fit.Mf_fit(self)
+                self.callback_init(mffit)
             while self.is_satisfied(c_obj, iter):
                 self.update()
                 c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj

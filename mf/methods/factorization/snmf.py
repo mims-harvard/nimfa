@@ -93,6 +93,9 @@ class Snmf(nmf_std.Nmf_std):
                 self.beta_vec = sqrt(self.beta) * np.ones((1, self.rank))
                 self.I_k = self.eta * np.mat(np.eye(self.rank))
             self.n_restart = 0
+            if self.callback_init:
+                mffit = mf_fit.Mf_fit(self)
+                self.callback_init(mffit)
             while self.is_satisfied(c_obj, iter):
                 self.update()
                 c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj

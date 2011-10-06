@@ -95,6 +95,9 @@ class Psmf(nmf_std.Nmf_std):
             p_obj = c_obj = self.objective()
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
+            if self.callback_init:
+                mffit = mf_fit.Mf_fit(self)
+                self.callback_init(mffit)
             while self.is_satisfied(p_obj, c_obj, iter):
                 p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update()

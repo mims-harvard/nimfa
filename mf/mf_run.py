@@ -32,7 +32,7 @@ l_seed = methods.list_seeding_methods()
 def mf(target, seed = None, W = None, H = None,  
        rank = 30, method = "nmf",
        max_iter = 30, min_residuals = None, test_conv = None,
-       n_run = 1, callback = None, initialize_only = False, **options):
+       n_run = 1, callback = None, callback_init = None, initialize_only = False, **options):
     """
     Run the specified MF algorithm.
     
@@ -71,6 +71,13 @@ def mf(target, seed = None, W = None, H = None,
                      if one wants to save summary measures or process the result before it gets discarded. The callback
                      function is called with only one argument :class:`models.mf_fit.Mf_fit` that contains the fitted model. Default is None.
     :type callback: `function`
+    :param callback_init: Pass a callback function that is called after each initialization of the matrix factors. In case of multiple runs
+                          the function is called before each run (more precisely after initialization and before the factorization). In case
+                          of single run, the passed callback function is called after the only initialization of the matrix factors. This is 
+                          useful if one wants to obtain the initialized matrix factors for further analysis. The callback function is called
+                          with only one argument :class:`models.mf_fit.Mf_fit` that (among others) contains also initialized matrix factors.
+                          Default is None. 
+    :type callback_init: `function`
     :param initialize_only: The specified MF model and its parameters will only be initialized. Model initialization includes:
                                 #. target matrix format checking and possibly conversion into one of accepting formats,
                                 #. checking if target matrix (or matrices) are nonnegative (in case of NMF factorization algorithms),
