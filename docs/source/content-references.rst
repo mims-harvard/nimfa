@@ -32,7 +32,7 @@
 
 .. [Park2007] Hyuonsoo Kim and Haesun Park. Sparse non-negative matrix factorizations via alternating non-negativity-constrained least squares for microarray data analysis. Bioinformatics, 23(12): 1495-1502, 2007. 
 
-.. [Zhang2011] Shihua Zhang, Qingjiao Li and Xianghong J. Zhou. A novel computational framework for simultaneous integration of multiple types of genomic data to identify microRNA-gene regulatory modules. Bioinformatics, 27(13): 401-i409, 2011. 
+.. [Zhang2011] Shihua Zhang, Qingjiao Li and Xianghong J. Zhou. A novel computational framework for simultaneous integration of multiple types of genomic data to identify microRNA-gene regulatory modules. Bioinformatics, 27(13): 401-409, 2011. 
 
 .. [Boutsidis2007] Christos Boutsidis and Efstratios Gallopoulos. SVD-based initialization: A head start for nonnegative matrix factorization. Pattern Recognition, 41(4): 1350-1362, 2008. 
 
