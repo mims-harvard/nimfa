@@ -1,50 +1,50 @@
 
 
-.. [Schmidt2009] Schmidt, M.N., Winther, O.,  and Hansen, L.K., (2009). Bayesian Non-negative Matrix Factorization. In Proceedings of ICA. 2009, 540-547.    
+.. [Schmidt2009] Mikkel N. Schmidt, Ole Winther, and Lars K. Hansen. Bayesian non-negative matrix factorization. In Proceedings of the 9th International Conference on Independent Component Analysis and Signal Separation, pages 540-547, Paraty, Brazil, 2009.
 
-.. [Zhang2007] Zhang Z., Li T., Ding C. H. Q., Zhang X., (2007). Binary Matrix Factorization with Applications. ICDM 2007.
+.. [Zhang2007] Zhongyuan Zhang,ÊTao Li,ÊChris H. Q. Ding andÊXiangsun Zhang.ÊBinary Matrix Factorization with applications.ÊIn Proceedings of 7th IEEE International Conference on Data Mining, pages 391-400, Omaha, USA, 2007.ÊÊÊ
 
-.. [Wang2004] Wang, Y., et. al., (2004). Fisher non-negative matrix factorization for learning local features. Proc. Asian Conf. on Comp. Vision. 2004.    
+.. [Wang2004] Yuan Wang, Yunde Jia, Changbo Hu and Matthew Turk. Fisher non-negative matrix factorization for learning local features. In Proceedings of the 6th Asian Conference on Computer Vision, pages 27-30, Jeju, Korea, 2004.  
 
-.. [Li2001] Li, S. Z., et. al., (2001). Learning spatially localized, parts-based representation. Proc. of the 2001 IEEE Comp. Soc. Conf. on Comp. Vision and Pattern Recognition. CVPR 2001, I-207-I-212. IEEE Comp. Soc. doi: 10.1109/CVPR.2001.990477.
+.. [Li2001] Stan Z. Li, Xinwen Huo, Hongjiang Zhang and Qian S. Cheng. Learning spatially localized, parts-based representation. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 207-212, Kauai, USA, 2001.  
 
-.. [Lin2007] Lin, C.-J., (2007). Projected gradient methods for nonnegative matrix factorization. Neural computation, 19(10), 2756-79. doi: 10.1162/neco.2007.19.10.2756.
+.. [Lin2007] Chin J. Lin. Projected gradient methods for nonnegative matrix factorization. Neural Computation, 19(10): 2756-2779, 2007. 
 
-.. [Lee2001] Lee, D. D., and Seung, H. S., (2001). Algorithms for Non-negative Matrix Factorization, Adv. Neural Info. Proc. Syst. 13, 556-562.
+.. [Lee2001] Daniel D. Lee and H. Sebastian Seung. Algorithms for non-negative matrix factorization. In Proceedings of the Neural Information Processing Systems, pages 556-562, Vancouver, Canada, 2001. 
 
-.. [Lee1999] ï»¿Lee, D. D., Seung, H. S., (1999). Learning the parts of objects by non-negative matrix factorization. Nature, 401(6755), 788-91. doi:10.1038/44565.
+.. [Lee1999] Daniel D. Lee and H. Sebastian Seung. Learning the parts of objects by non-negative matrix factorization. Nature, 401(6755): 788-791, 1999. 
 
-.. [Brunet2004] Brunet, J.-P., Tamayo, P., Golub, T. R., Mesirov, J. P., (2004). Metagenes and molecular pattern discovery using matrix factorization. Proceedings of the National Academy of Sciences of the United States of America, 101(12), 4164-9. doi: 10.1073/pnas.0308531101.
+.. [Brunet2004] Jean-P. Brunet, Pablo Tamayo, Todd R. Golub and Jill P. Mesirov. Metagenes and molecular pattern discovery using matrix factorization. In Proceedings of the National Academy of Sciences of the USA, 101(12): 4164-4169, 2004.
+  
+.. [Montano2006] Alberto Pascual-Montano, J. M. Carazo, Kieko Kochi, Dietrich Lehmann and Roberto D. Pascual-Marqui. Nonsmooth nonnegative matrix factorization (nsnmf). In IEEE Transactions on Pattern Analysis and Machine Intelligence, 28(3): 403-415, 2006. 
 
-.. [Montano2006] Pascual-Montano, A., et. al., (2006). Nonsmooth nonnegative matrix factorization (nsnmf). IEEE transactions on pattern analysis and machine intelligence, 28(3), 403-415.
+.. [Laurberg2008] Hans Laurberg, Mads G. Christensen, Mark D. Plumbley, Lars K. Hansen and Soren H. Jensen. Theorems on positive data: on the uniqueness of NMF. Computational Intelligence and Neuroscience, doi: 10.1155/2008/764206, 2008. 
 
-.. [Laurberg2008] Laurberg, H.,et. al., (2008). Theorems on positive data: on the uniqueness of NMF. Computational intelligence and neuroscience.
+.. [Hansen2008] Lars K. Hansen. Generalization in high-dimensional factor models. Web: http://www.stanford.edu/group/mmds/slides2008/hansen.pdf, 2008. 
 
-.. [Hansen2008] Hansen, L. K., (2008). Generalization in high-dimensional factor models. Web: http://www.stanford.edu/group/mmds/slides2008/hansen.pdf.
+.. [Dueck2005] Delbert Dueck, Quaid D. Morris and Brendan J. Frey. Multi-way clustering of microarray data using probabilistic sparse matrix factorization. Bioinformatics, 21(Suppl 1): 144-151, 2005. 
 
-.. [Dueck2005] Dueck, D., Morris, Q. D., Frey, B. J, (2005). Multi-way clustering of microarray data using probabilistic sparse matrix factorization. Bioinformatics 21. Suppl 1, i144-51.
+.. [Dueck2004] Delbert Dueck and Brendan J. Frey. Probabilistic sparse matrix factorization. University of Toronto Technical Report PSI-2004-23, Probabilistic and Statistical Inference Group, University of Toronto, 2004. 
 
-.. [Dueck2004] Deck, D., Frey, B. J., (2004). Probabilistic Sparse Matrix Factorization Probabilistic Sparse Matrix Factorization. University of Toronto Technical Report PSI-2004-23.
+.. [Srebro2001] Nathan Srebro and Tommi Jaakkola. Sparse matrix Factorization of gene expression data. Artificial Intelligence Laboratory, Massachusetts Institute of Technology, 2001. 
 
-.. [Srebro2001] Srebro, N. and Jaakkola, T., (2001). Sparse Matrix Factorization of Gene Expression Data. Unpublished note, MIT Artificial Intelligence Laboratory.
+.. [Li2007] Huan Li, Yu Sun and Ming Zhan. The discovery of transcriptional modules by a two-stage matrix decomposition approach. Bioinformatics, 23(4): 473-479, 2007. 
 
-.. [Li2007] Li, H., Sun, Y., Zhan, M., (2007). The discovery of transcriptional modules by a two-stage matrix decomposition approach. Bioinformatics, 23(4), 473-479.
+.. [Park2007] Hyuonsoo Kim and Haesun Park. Sparse non-negative matrix factorizations via alternating non-negativity-constrained least squares for microarray data analysis. Bioinformatics, 23(12): 1495-1502, 2007. 
 
-.. [Park2007] Kim H., Park H., (2007). Sparse Non-negative Matrix Factorizations via Alternating Non-negativity-constrained Least Squares for Microarray Data Analysis, Bioinformatics.
+.. [Zhang2011] Shihua Zhang, Qingjiao Li and Xianghong J. Zhou. A novel computational framework for simultaneous integration of multiple types of genomic data to identify microRNA-gene regulatory modules. Bioinformatics, 27(13): 401-i409, 2011. 
 
-.. [Zhang2011] ï»¿Zhang, S. et. al., (2011). A novel computational framework for simultaneous integration of multiple types of genomic data to identify microRNA-gene regulatory modules. Bioinformatics 2011, 27(13), i401-i409. doi:10.1093/bioinformatics/btr206.
+.. [Boutsidis2007] Christos Boutsidis and Efstratios Gallopoulos. SVD-based initialization: A head start for nonnegative matrix factorization. Pattern Recognition, 41(4): 1350-1362, 2008. 
 
-.. [Boutsidis2007] Boutsidis, C., Gallopoulos, E., (2007). SVD-based initialization: A head start for nonnegative matrix factorization, Pattern Recognition, 2007, doi:10.1016/j.patcog.2007.09.010.
-    
-.. [Albright2006] Albright, R. et al., (2006). Algorithms, initializations, and convergence for the nonnegative matrix factorization. Matrix, (919), p.1-18.
+.. [Albright2006] Russell Albright, Carl D. Meyer and Amy N. Langville. Algorithms, initializations, and convergence for the nonnegative matrix factorization. NCSU Technical Report Math 81706, NC State University, Releigh, USA, 2006. 
 
-.. [Hoyer2004] ï»¿Hoyer, P. O,. (2004). Non-negative Matrix Factorization with Sparseness Constraints. Journal of Machine Learning Research, 5, 1457-1469.
+.. [Hoyer2004] Patrik O. Hoyer. Non-negative matrix factorization with sparseness constraints. Journal of Machine Learning Research, 5: 1457-1469, 2004. 
 
-.. [Hutchins2008] ï»¿Hutchins, L. N., et. al., (2008). Position-dependent motif characterization using non-negative matrix factorization. Bioinformatics, 24(23), 2684-90.
+.. [Hutchins2008] Lucie N. Hutchins, Sean P. Murphy, Priyam Singh and Joel H. Graber. Position-dependent motif characterization using non-negative matrix factorization. Bioinformatics, 24(23): 2684-2690, 2008. 
 
-.. [Frigyesi2008] Frigyesi A., HÃ¶glund M., (2008). Non-negative matrix factorization for the analysis of complex gene expression data: identification of clinically relevant tumor subtypes. Cancer informatics 2008, 6:275-292.
+.. [Frigyesi2008] Attila Frigyesi and Mattias Hoglund. Non-negative matrix factorization for the analysis of complex gene expression data: identification of clinically relevant tumor subtypes. Cancer Informatics, 6: 275-292, 2008.  
 
-.. [Schietgat2010] ï»¿Schietgat, L. et. al., (2010). Predicting gene function using hierarchical multi-label decision tree ensembles. BMC bioinformatics, 11, 14. doi:10.1186/1471-2105-11-2.
+.. [Schietgat2010] Leander Schietgat, Celine Vens, Jan Struyf, Hendrik Blockeel, Dragi Kocev and Saso Dzeroski. Predicting gene function using hierarchical multi-label decision tree ensembles. BMC Bioinformatics, 11(2), 2010. 
 
-.. [ï»¿Schachtner2008] ï»¿Schachtner, R., et. al., (2008). Knowledge-based gene expression classification via matrix factorization. Bioinformatics (Oxford, England), 24(15), 1688-97. doi:10.1093/bioinformatics/btn245.
+.. [Schachtner2008] R. Schachtner, D. Lutter, P. Knollmueller, A. M. Tome, F. J. Theis, G. Schmitz, M. Stetter, P. Gomez Vilda and E. W. Lang. Knowledge-based gene expression classification via matrix factorization. Bioinformatics, 24(15): 1688-1697, 2008. 
 
