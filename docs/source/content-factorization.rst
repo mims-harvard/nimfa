@@ -7,7 +7,7 @@
 
  * **LFNMF** - Fisher nonnegative matrix factorization for learning local features [Wang2004]_, [Li2001]_
 
- * **LSNMF** - Alternative nonnegative least squares matrix factorization using projected gradient method for subproblems [Lin2007]_
+ * **LSNMF** - Alternating nonnegative least squares matrix factorization using projected gradient method for subproblems [Lin2007]_
 
  * **NMF** - Standard nonnegative matrix factorization with Euclidean / Kullback-Leibler update equations and Frobenius / divergence / connectivity cost functions [Lee2001]_, [Brunet2004]_
 
@@ -19,4 +19,4 @@
 
  * **SNMF** - Sparse nonnegative matrix factorization based on alternating nonnegativity constrained least squares [Park2007]_
     
- * **SNMNMF** - Sparse network regularized multiple nonnegative matrix factorization [Zhang2011]_
+ * **SNMNMF** - Sparse network-regularized multiple nonnegative matrix factorization [Zhang2011]_
