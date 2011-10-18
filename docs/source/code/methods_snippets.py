@@ -87,7 +87,7 @@ model = mf.mf(V,
               inner_sub_iter = 10, 
               beta = 0.1)
 fit = mf.mf_run(model)
-print_info(fit)
+
 
 
 # Example call of NMF - Euclidean with algorithm specific parameters set

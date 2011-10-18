@@ -142,8 +142,7 @@ Resulting documentation is saved to `html` directory. Without make
 utility, execute::
 
 	cd docs/source
-
-    sphinx-build -b html <source dir [.]>  <build dir [html]>
+	sphinx-build -b html <source dir [.]>  <build dir [html]>
     
 from the MF library root directory. 
 

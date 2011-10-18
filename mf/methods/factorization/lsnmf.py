@@ -18,7 +18,7 @@ procedure and requires a stopping condition. A common way to check whether curre
 stationary point is the form of the projected gradient [Lin2007]_.   
 
 .. literalinclude:: /code/methods_snippets.py
-    :lines: 79-90
+    :lines: 79-89
       
 """
 
