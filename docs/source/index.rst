@@ -33,11 +33,9 @@ An incomplete list of applications of matrix factorization methods includes:
 	* miscelllaneous, such as extracting speech features, transcription of polyphonic music passages, object characterization, spectral data 
 	  analysis, multiway clustering, learning sound dictionaries, etc. 
 
-With the library of factorization methods in Orange an easy-to-use interface to established algorithms is provided. 
+With the library of factorization methods in `Orange`_ an easy-to-use interface to established algorithms is provided. 
 The nimfa library expands the already vast usage of Orange methods in numerous applications without the need to use external
 programming packages for factorizations.
-
-.. note:: `Project wiki`_ is available at `Orange`_ site. 
 
 .. note:: `Short presentation`_ about nimfa - A Python Library for Nonnegative Matrix Factorization Techniques is available.
 
@@ -47,8 +45,6 @@ programming packages for factorizations.
 .. _Document describing possible visualizations: http://helikoid.si/mf/visualizations_MF.pdf
 
 .. _Orange: http://orange.biolab.si
-
-.. _Project wiki: http://orange.biolab.si/trac/wiki/MatrixFactorization
 
 .. _Short presentation: http://helikoid.si/mf/GSoC_MF.pdf
 
