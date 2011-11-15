@@ -376,3 +376,5 @@ if __name__ == "__main__":
     V1 = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 25))))
     # run examples
     run(V, V1)
+    
+    

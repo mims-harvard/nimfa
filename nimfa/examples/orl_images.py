@@ -206,3 +206,4 @@ def plot(W):
 if __name__ == "__main__":
     """Run the ORL faces example."""
     run()
+    

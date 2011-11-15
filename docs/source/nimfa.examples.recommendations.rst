@@ -3,3 +3,7 @@
 	:undoc-members:
 	:inherited-members:
 	:show-inheritance:
+	
+.. literalinclude:: ../../nimfa/examples/recommendations.py 
+	:lines: 43-172
+	:linenos:

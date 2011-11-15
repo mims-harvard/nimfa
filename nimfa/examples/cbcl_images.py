@@ -195,3 +195,4 @@ def plot(W):
 if __name__ == "__main__":
     """Run the CBCL faces example."""
     run()
+    

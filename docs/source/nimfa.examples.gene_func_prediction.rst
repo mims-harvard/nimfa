@@ -3,3 +3,7 @@
 	:undoc-members:
 	:inherited-members:
 	:show-inheritance:
+	
+.. literalinclude:: ../../nimfa/examples/gene_func_prediction.py 
+	:lines: 57-460
+	:linenos:
