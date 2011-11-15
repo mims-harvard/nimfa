@@ -28,9 +28,9 @@ both the basis and the encoding vectors. Therefore, the parameter theta controls
        
 """
 
-from mf.models import *
-from mf.utils import *
-from mf.utils.linalg import *
+from nimfa.models import *
+from nimfa.utils import *
+from nimfa.utils.linalg import *
 
 class Nsnmf(nmf_ns.Nmf_ns):
     """

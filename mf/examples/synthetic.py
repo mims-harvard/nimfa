@@ -14,7 +14,7 @@
     
     Only for the purpose of demonstration in all examples many optional (runtime or algorithm specific) 
     parameters are set. The user could as well run the factorization by providing only the target matrix.
-    In that case the defaults would be used. General model parameters are explained in :mod:`mf.mf_run`, 
+    In that case the defaults would be used. General model parameters are explained in :mod:`nimfa.mf_run`, 
     algorithm specific parameters in Python module implementing the algorithm. Nevertheless for best results, 
     careful choice of parameters is recommended. No tracking is demonstrated here.
     
@@ -28,11 +28,11 @@
         
     or call the module's function::
     
-        import mf.examples
-        mf.examples.synthetic.run()
+        import nimfa.examples
+        nimfa.examples.synthetic.run()
 """
 
-import mf
+import nimfa
 import numpy as np
 import scipy.sparse as sp
 
@@ -50,7 +50,7 @@ def print_info(fit, idx = None):
     Print to stdout info about the factorization.
     
     :param fit: Fitted factorization model.
-    :type fit: :class:`mf.models.mf_fit.Mf_fit`
+    :type fit: :class:`nimfa.models.mf_fit.Mf_fit`
     :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model. Therefore in factorizations 
                 that follow standard or nonsmooth model, this parameter can be omitted. Currently, SNMNMF implements 
                 multiple NMF model.
@@ -90,7 +90,7 @@ def run_snmnmf(V, V1):
     :type V1: :class:`numpy.matrix`
     """
     rank = 10
-    model = mf.mf(target = (V, V1), 
+    model = nimfa.mf(target = (V, V1), 
                   seed = "random_c", 
                   rank = rank, 
                   method = "snmnmf", 
@@ -102,7 +102,7 @@ def run_snmnmf(V, V1):
                   gamma_1 = 0.01,
                   lamb = 0.01,
                   lamb_1 = 0.01)
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     # print all quality measures concerning first target and mixture matrix in multiple NMF
     print_info(fit, idx = 0)
     # print all quality measures concerning second target and mixture matrix in multiple NMF
@@ -116,7 +116,7 @@ def run_bd(V):
     :type V: :class:`numpy.matrix`
     """
     rank = 10
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_c", 
                   rank = rank, 
                   method = "bd", 
@@ -132,7 +132,7 @@ def run_bd(V):
                   n_w = np.mat(np.zeros((rank, 1))),
                   n_h = np.mat(np.zeros((rank, 1))),
                   n_sigma = False)
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
 
 def run_bmf(V):
@@ -143,7 +143,7 @@ def run_bmf(V):
     :type V: :class:`numpy.matrix`
     """
     rank = 10
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_vcol", 
                   rank = rank, 
                   method = "bmf", 
@@ -151,7 +151,7 @@ def run_bmf(V):
                   initialize_only = True,
                   lambda_w = 1.1,
                   lambda_h = 1.1)
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
     
 def run_icm(V):
@@ -163,7 +163,7 @@ def run_icm(V):
     """
     rank = 10
     pnrg = np.random.RandomState()
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "nndsvd", 
                   rank = rank, 
                   method = "icm", 
@@ -175,7 +175,7 @@ def run_icm(V):
                   theta = 0.,
                   k = 0.,
                   sigma = 1.)
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
     
 def run_lfnmf(V):
@@ -187,7 +187,7 @@ def run_lfnmf(V):
     """
     rank = 10
     pnrg = np.random.RandomState()
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = None,
                   W = abs(pnrg.randn(V.shape[0], rank)), 
                   H = abs(pnrg.randn(rank, V.shape[1])),
@@ -196,7 +196,7 @@ def run_lfnmf(V):
                   max_iter = 12, 
                   initialize_only = True,
                   alpha = 0.01)
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
     
 def run_lsnmf(V):
@@ -207,7 +207,7 @@ def run_lsnmf(V):
     :type V: :class:`numpy.matrix`
     """
     rank = 10
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_vcol", 
                   rank = rank, 
                   method = "lsnmf", 
@@ -217,7 +217,7 @@ def run_lsnmf(V):
                   inner_sub_iter = 10, 
                   beta = 0.1, 
                   min_residuals = 1e-5)
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
 
 def run_nmf(V):
@@ -229,7 +229,7 @@ def run_nmf(V):
     """
     # Euclidean
     rank = 10
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_vcol", 
                   rank = rank, 
                   method = "nmf", 
@@ -237,10 +237,10 @@ def run_nmf(V):
                   initialize_only = True,
                   update = 'euclidean',
                   objective = 'fro')
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
     # divergence
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_vcol", 
                   rank = rank, 
                   method = "nmf", 
@@ -248,7 +248,7 @@ def run_nmf(V):
                   initialize_only = True,
                   update = 'divergence',
                   objective = 'div')
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
     
 def run_nsnmf(V):
@@ -259,14 +259,14 @@ def run_nsnmf(V):
     :type V: :class:`numpy.matrix`
     """
     rank = 10
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random", 
                   rank = rank, 
                   method = "nsnmf", 
                   max_iter = 12, 
                   initialize_only = True,
                   theta = 0.5)
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
     
 def run_pmf(V):
@@ -277,14 +277,14 @@ def run_pmf(V):
     :type V: :class:`numpy.matrix`
     """
     rank = 10
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_vcol", 
                   rank = rank, 
                   method = "pmf", 
                   max_iter = 12, 
                   initialize_only = True,
                   rel_error = 1e-5)
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
     
 def run_psmf(V):
@@ -296,14 +296,14 @@ def run_psmf(V):
     """
     rank = 10
     prng = np.random.RandomState()
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = None,
                   rank = rank, 
                   method = "psmf", 
                   max_iter = 12, 
                   initialize_only = True,
                   prior = prng.uniform(low = 0., high = 1., size = 10))
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
 
 def run_snmf(V):
@@ -315,7 +315,7 @@ def run_snmf(V):
     """
     # SNMF/R
     rank = 10
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_c", 
                   rank = rank, 
                   method = "snmf", 
@@ -326,10 +326,10 @@ def run_snmf(V):
                   beta = 1e-4, 
                   i_conv = 10,
                   w_min_change = 0)
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
     # SNMF/L
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_vcol", 
                   rank = rank, 
                   method = "snmf", 
@@ -340,7 +340,7 @@ def run_snmf(V):
                   beta = 1e-4, 
                   i_conv = 10,
                   w_min_change = 0)
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print_info(fit)
 
 def run(V = None, V1 = None):

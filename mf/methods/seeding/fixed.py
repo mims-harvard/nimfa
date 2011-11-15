@@ -8,7 +8,7 @@ Fixed factorization. This is the option to completely specify the initial factor
 matrix factors.  
 """
 
-from mf.utils.linalg import *
+from nimfa.utils.linalg import *
 
 class Fixed(object):
 

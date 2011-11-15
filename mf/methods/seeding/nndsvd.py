@@ -14,8 +14,8 @@ to rapid reduction of the approximation error of many NMF algorithms. By setting
 generated. 
 """
 
-from mf.utils.utils import *
-from mf.utils.linalg import *
+from nimfa.utils.utils import *
+from nimfa.utils.linalg import *
 
 class Nndsvd(object):
 

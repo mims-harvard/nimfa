@@ -87,13 +87,13 @@
         
     or call the module's function::
     
-        import mf.examples
-        mf.examples.medulloblastoma.run()
+        import nimfa.examples
+        nimfa.examples.medulloblastoma.run()
         
     .. note:: This example uses ``matplotlib`` library for producing a heatmap of a consensus matrix.
 """
 
-import mf
+import nimfa
 import numpy as np
 from scipy.cluster.hierarchy import linkage, leaves_list
 from os.path import dirname, abspath, sep
@@ -128,7 +128,7 @@ def run_one(V, rank):
         # We demand that factorization does not terminate before 30 consecutive iterations in which connectivity matrix
         # does not change. For a backup we also specify the maximum number of iterations. Note that the satisfiability
         # of one stopping criteria terminates the run (there is no chance for divergence). 
-        model = mf.mf(V, 
+        model = nimfa.mf(V, 
                     method = "nmf", 
                     rank = rank, 
                     seed = "random_vcol", 
@@ -137,10 +137,10 @@ def run_one(V, rank):
                     objective = 'conn',
                     conn_change = 40,
                     initialize_only = True)
-        fit = mf.mf_run(model)
+        fit = nimfa.mf_run(model)
         print "%2d / 50 :: %s - init: %s ran with  ... %3d / 200 iters ..." % (i + 1, fit.fit, fit.fit.seed, fit.fit.n_iter)
         # Compute connectivity matrix of factorization.
-        # Again, we could use multiple runs support of the MF library, track factorization model across 50 runs and then
+        # Again, we could use multiple runs support of the nimfa library, track factorization model across 50 runs and then
         # just call fit.consensus()
         consensus += fit.fit.connectivity()
     # averaging connectivity matrices

@@ -41,9 +41,9 @@ step that can maintain the nonnegativity of the basis, mixture matrix during the
          
 """
 
-from mf.models import *
-from mf.utils import *
-from mf.utils.linalg import *
+from nimfa.models import *
+from nimfa.utils import *
+from nimfa.utils.linalg import *
 
 class Bmf(nmf_std.Nmf_std):
     """

@@ -13,7 +13,7 @@ Initialization of each column of basis matrix is done by averaging p random colu
 of mixture matrix is similar except for row operations.    
 """
 
-from mf.utils.linalg import *
+from nimfa.utils.linalg import *
 
 class Random_c(object):
     

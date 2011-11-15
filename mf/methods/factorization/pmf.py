@@ -13,9 +13,9 @@ convergence test. It is expectation maximization algorithm.
     
 """
 
-from mf.models import *
-from mf.utils import *
-from mf.utils.linalg import *
+from nimfa.models import *
+from nimfa.utils import *
+from nimfa.utils.linalg import *
 
 class Pmf(nmf_std.Nmf_std):
     """

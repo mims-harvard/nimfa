@@ -1,6 +1,6 @@
 
 """
-    This package contains examples of usage of MF library. It demonstrates the following:
+    This package contains nimfa library examples of usage. It demonstrates the following:
         
         #. Single run of the specified factorization algorithm.
         #. Multiple runs of the specified factorization algorithm.
@@ -10,7 +10,7 @@
         
     Applications of factorization methods on both synthetic and real world data sets are provided. 
     
-    Example using synthetic data set is intended as demonstration of the MF library since all currently implemented 
+    Example using synthetic data set is intended as demonstration of the nimfa library since all currently implemented 
     factorization algorithms with different initialization methods and specific settings are ran. Others include 
     applications on real world data sets in:
     

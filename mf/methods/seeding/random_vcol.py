@@ -14,7 +14,7 @@ Method's performance lies between random initialization and centroid initializat
 decomposition.      
 """
 
-from mf.utils.linalg import *
+from nimfa.utils.linalg import *
 
 class Random_vcol(object):
     

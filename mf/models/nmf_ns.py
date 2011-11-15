@@ -29,7 +29,7 @@ class Nmf_ns(Nmf):
         
     The interpretation of the basis and mixture matrix is such as in the standard NMF model. The smoothing matrix is an
     extra square matrix whose entries depends on smoothing parameter theta which can be specified as algorithm specific model 
-    option. For detailed explanation of the NSNMF algorithm see :mod:`methods.mf.nsnmf`.        
+    option. For detailed explanation of the NSNMF algorithm see :mod:`methods.factorization.nsnmf`.    
     """
 
     def __init__(self, params):

@@ -33,14 +33,14 @@
         
     or call the module's function::
     
-        import mf.examples
-        mf.examples.recommendations.run()
+        import nimfa.examples
+        nimfa.examples.recommendations.run()
         
     .. note:: This example uses ``matplotlib`` library for producing visual interpretation of the RMSE error measure. 
     
 """
 
-import mf
+import nimfa
 import numpy as np
 import scipy.sparse as sp
 from os.path import dirname, abspath, sep
@@ -77,7 +77,7 @@ def factorize(V):
     :param V: The MovieLens data matrix. 
     :type V: `scipy.sparse.csr_matrix`
     """
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_vcol", 
                   rank = 12, 
                   method = "snmf", 
@@ -89,7 +89,7 @@ def factorize(V):
                   i_conv = 10,
                   w_min_change = 0)
     print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print "... Finished"
     sparse_w, sparse_h = fit.fit.sparseness()
     print """Stats:

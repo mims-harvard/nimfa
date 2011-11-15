@@ -5,8 +5,8 @@
     ###################
 """
 
-import mf.utils.utils as utils
-from mf.utils.linalg import *
+import nimfa.utils.utils as utils
+from nimfa.utils.linalg import *
 
 class Nmf(object):
     """

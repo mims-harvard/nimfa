@@ -48,13 +48,13 @@
         
     or call the module's function::
     
-        import mf.examples
-        mf.examples.gene_func_prediction.run()
+        import nimfa.examples
+        nimfa.examples.gene_func_prediction.run()
         
     .. note:: This example uses ``matplotlib`` library for producing visual interpretation.
 """
 
-import mf
+import nimfa
 import numpy as np
 import scipy.sparse as sp
 from os.path import dirname, abspath, sep
@@ -251,7 +251,7 @@ def factorize(data):
     :type data: `tuple`
     """
     V = data['attr']
-    """model = mf.mf(V, 
+    """model = nimfa.mf(V, 
                   seed = "random_vcol", 
                   rank = 40, 
                   method = "nmf", 
@@ -259,7 +259,7 @@ def factorize(data):
                   initialize_only = True,
                   update = 'euclidean',
                   objective = 'fro')"""
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_vcol", 
                   rank = 40, 
                   method = "snmf", 
@@ -271,7 +271,7 @@ def factorize(data):
                   i_conv = 10,
                   w_min_change = 0)
     print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print "... Finished"
     sparse_w, sparse_h = fit.fit.sparseness()
     print """Stats:

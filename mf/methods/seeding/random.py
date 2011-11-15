@@ -10,7 +10,7 @@ The entries of factors are drawn from a uniform distribution over [0, max(target
 matrices with the default density parameter of 0.01. 
 """
 
-from mf.utils.linalg import *
+from nimfa.utils.linalg import *
 
 class Random(object):
     

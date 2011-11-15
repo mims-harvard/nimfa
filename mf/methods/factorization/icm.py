@@ -29,9 +29,9 @@ iteration.
     
 """
 
-from mf.models import *
-from mf.utils import *
-from mf.utils.linalg import *
+from nimfa.models import *
+from nimfa.utils import *
+from nimfa.utils.linalg import *
 
 class Icm(nmf_std.Nmf_std):
     """

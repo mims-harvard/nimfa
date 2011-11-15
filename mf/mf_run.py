@@ -57,13 +57,13 @@ def mf(target, seed = None, W = None, H = None,
              tuple of instances of the latter classes or None
     :param rank: The factorization rank to achieve. Default is 30.
     :type rank: `int`
-    :param method: The algorithm to use to perform MF on target matrix. Default is :class:`methods.mf.nmf`
+    :param method: The algorithm to use to perform MF on target matrix. Default is :class:`methods.factorization.nmf.Nmf`
     :type method: `str` naming the algorithm or :class:`methods.factorization.bd.Bd`, 
                   :class:`methods.factorization.icm.Icm`, :class:`methods.factorization.Lfnmf.Lfnmf`
                   :class:`methods.factorization.lsnmf.Lsnmf`, :class:`methods.factorization.nmf.Nmf`, 
                   :class:`methods.factorization.nsnmf.Nsmf`, :class:`methods.factorization.pmf.Pmf`, 
                   :class:`methods.factorization.psmf.Psmf`, :class:`methods.factorization.snmf.Snmf`, 
-                  :class:`methods.factorization.bmf.Bmf`, :class:`methods.factorization.snmnmf`
+                  :class:`methods.factorization.bmf.Bmf`, :class:`methods.factorization.snmnmf.Snmnmf`
     :param n_run: It specifies the number of runs of the algorithm. Default is 1. If multiple runs are performed, fitted factorization
                   model with the lowest objective function value is retained. 
     :type n_run: `int`

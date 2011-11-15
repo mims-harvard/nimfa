@@ -89,14 +89,14 @@
         
     or call the module's function::
     
-        import mf.examples
-        mf.examples.documents.run()
+        import nimfa.examples
+        nimfa.examples.documents.run()
         
     .. note:: This example uses ``matplotlib`` library for producing visual interpretation of NMF basis vectors on Medlars
               data set.
 """
 
-import mf
+import nimfa
 import numpy as np
 import scipy.sparse as sp
 from os.path import dirname, abspath, sep
@@ -127,7 +127,7 @@ def factorize(V):
     :param V: The Medlars data matrix. 
     :type V: `scipy.sparse.csr_matrix`
     """
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_vcol", 
                   rank = 12, 
                   method = "nmf", 
@@ -136,7 +136,7 @@ def factorize(V):
                   update = 'divergence',
                   objective = 'div')
     print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print "... Finished"
     sparse_w, sparse_h = fit.fit.sparseness()
     print """Stats:

@@ -1,21 +1,21 @@
-.. MF - Matrix Factorization Techniques for Data Mining documentation master file, created by
+.. nimfa - A Python Library for Nonnegative Matrix Factorization Techniques documentation master file, created by
    sphinx-quickstart on Tue Aug 23 13:23:27 2011.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
  
 
-MF - Matrix Factorization Techniques for Data Mining
+nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
 ================================================================================
 
 #####
 About
 #####
 
-**MF - Matrix Factorization Techniques for Data Mining**  is a Python scripting library which includes a number of published matrix 
+**Nimfa**  is a Python scripting library which includes a number of published matrix 
 factorization algorithms, initialization methods, quality and performance measures and facilitates the combination of these to 
 produce new strategies. The library represents a unified and efficient interface to matrix factorization algorithms and methods.
 
-The MF works with numpy dense matrices and scipy sparse matrices (where this is possible to save on space). The library has support for 
+The nimfa works with numpy dense matrices and scipy sparse matrices (where this is possible to save on space). The library has support for 
 multiple runs of the algorithms which can be used for some quality measures. By setting runtime specific options tracking the 
 residuals error within one (or more) run or tracking fitted factorization model is possible. Extensive documentation with working 
 examples which demonstrate real applications, commonly used benchmark data and visualization methods are provided to help with the 
@@ -34,12 +34,12 @@ An incomplete list of applications of matrix factorization methods includes:
 	  analysis, multiway clustering, learning sound dictionaries, etc. 
 
 With the library of factorization methods in Orange an easy-to-use interface to established algorithms is provided. 
-The MF library expands the already vast usage of Orange methods in numerous applications without the need to use external
+The nimfa library expands the already vast usage of Orange methods in numerous applications without the need to use external
 programming packages for factorizations.
 
 .. note:: `Project wiki`_ is available at `Orange`_ site. 
 
-.. note:: `Short presentation`_ about MF - Matrix Factorization Techniques for Data Mining library is available.
+.. note:: `Short presentation`_ about nimfa - A Python Library for Nonnegative Matrix Factorization Techniques is available.
 
 .. note:: `Document describing possible visualizations`_ is available. These visualizations will be included in near-future 
 		  release of the library and possibly some supported as widgets when integration with Orange will be done.  
@@ -59,17 +59,17 @@ Scripting Reference
 .. toctree::
    :maxdepth: 3
 
-   mf.mf_run
+   nimfa.mf_run
 
-   mf.models
+   nimfa.models
    
-   mf.methods
+   nimfa.methods
    
-   mf.utils
+   nimfa.utils
    
-   mf.examples
+   nimfa.examples
    
-   mf.datasets
+   nimfa.datasets
 	
 
 
@@ -107,11 +107,11 @@ Utils
 Install
 #######
 
-************************************************************
-MF - Matrix Factorization Techniques for Data Mining Library
-************************************************************
+*************************************************************************
+nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
+*************************************************************************
 
-No special installation procedure is specified. However, the MF library makes extensive use of `SciPy`_ and `NumPy`_ 
+No special installation procedure is specified. However, the nimfa library makes extensive use of `SciPy`_ and `NumPy`_ 
 libraries for fast and convenient dense and sparse matrix manipulation and some linear
 algebra operations. There are not any additional prerequisites. 
 
@@ -126,13 +126,13 @@ To build and install run::
 	
 	python setup.py install
 
-******************************************************************
-MF - Matrix Factorization Techniques for Data Mining Documentation
-******************************************************************
+***************************************************************************************
+nimfa - A Python Library for Nonnegative Matrix Factorization Techniques Documentation
+***************************************************************************************
 
 For building the documentation use Sphinx 1.0 or newer. Sphinx is available at `Sphinx home page`_ and
-MF library documentation sources are available at `Github repository`_. Before building documentation, 
-please install MF library.
+nimfa library documentation sources are available at `Github repository`_. Before building documentation, 
+please install nimfa library.
 
 Documentation can be built by issuing::
 
@@ -144,9 +144,9 @@ utility, execute::
 	cd docs/source
 	sphinx-build -b html <source dir [.]>  <build dir [html]>
     
-from the MF library root directory. 
+from the nimfa library root directory. 
 
-.. note:: The MF library documentation is contained in docs/source directory and in scripts in mf directory.  
+.. note:: The nimfa library documentation is contained in ``nimfa/docs`` source directory and and scripts are in ``nimfa/nimfa`` directory.  
 
 .. _Sphinx home page: http://sphinx.pocoo.org
 
@@ -173,10 +173,10 @@ Usage
 Following are four basic usage examples that employ different implemented factorization algorithms. For examples with real world
 applications see Examples section and methods' documentation. 
 
-.. note:: Consider these examples as Hello World examples for the MF library.
+.. note:: Consider these examples as Hello World examples for the nimfa library.
 
 .. note:: These examples demonstrate factorization of ``scipy.sparse`` matrices, factorization of ``numpy`` dense matrices, computation 
-		  of quality and performance measures, error tracking, computation of MF estimate and matrix factors, 
+		  of quality and performance measures, error tracking, computation of nimfa estimate and matrix factors, 
 		  passing callback initialization function. 
 
 Example No. 1
@@ -215,7 +215,7 @@ References
 Acknowledgement
 ###############
 
-The MF - Matrix Factorization Techniques for Data Mining library is part of the Google Summer of Code 2011 program 
+The nimfa - A Python Library for Nonnegative Matrix Factorization Techniques is part of the Google Summer of Code 2011 program 
 under supervision of the `Orange`_ organization and mentor `Prof. Blaz Zupan, PhD`_. 
 
 .. _Prof. Blaz Zupan, PhD: http://www.biolab.si/en/blaz/

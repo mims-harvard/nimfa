@@ -44,9 +44,9 @@ In SNMNMF a strategy suggested by Kim and Park (2007) is adopted to make the coe
     
 """
 
-from mf.models import *
-from mf.utils import *
-from mf.utils.linalg import *
+from nimfa.models import *
+from nimfa.utils import *
+from nimfa.utils.linalg import *
 
 class Snmnmf(nmf_mm.Nmf_mm):
     """

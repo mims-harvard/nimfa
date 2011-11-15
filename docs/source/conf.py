@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# MF - Matrix Factorization Techniques for Data Mining documentation build configuration file, created by
+# nimfa - A Python Library for Nonnegative Matrix Factorization Techniques documentation build configuration file, created by
 # sphinx-quickstart on Tue Aug 23 13:23:27 2011.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'MF - Matrix Factorization Techniques for Data Mining'
+project = u'nimfa - A Python Library for Nonnegative Matrix Factorization Techniques'
 copyright = u'2011, Marinka Zitnik'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -164,7 +164,7 @@ html_show_sphinx = False
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'MF-MatrixFactorizationTechniquesforDataMiningdoc'
+htmlhelp_basename = 'nimfa-APythonLibraryforNonnegativeMatrixFactorizationTechniquesdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -178,7 +178,7 @@ htmlhelp_basename = 'MF-MatrixFactorizationTechniquesforDataMiningdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'MF-MatrixFactorizationTechniquesforDataMining.tex', u'MF - Matrix Factorization Techniques for Data Mining Documentation',
+  ('index', 'nimfa-APythonLibraryforNonnegativeMatrixFactorizationTechniques.tex', u'nimfa - A Python Library for Nonnegative Matrix Factorization Techniques Documentation',
    u'Marinka Zitnik', 'manual'),
 ]
 
@@ -211,7 +211,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'mf-matrixfactorizationtechniquesfordatamining', u'MF - Matrix Factorization Techniques for Data Mining Documentation',
+    ('index', 'nimfa-APythonLibraryforNonnegativeMatrixFactorizationTechniques', u'nimfa - A Python Library for Nonnegative Matrix Factorization Techniques Documentation',
      [u'Marinka Zitnik'], 1)
 ]
 

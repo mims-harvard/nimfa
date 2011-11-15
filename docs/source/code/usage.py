@@ -4,8 +4,8 @@
 ####
 
 
-# Import MF library entry point for factorization
-import mf
+# Import nimfa library entry point for factorization
+import nimfa
 
 # Construct sparse matrix in CSR format, which will be our input for factorization
 from scipy.sparse import csr_matrix
@@ -23,7 +23,7 @@ print V.todense()
 # In Standard NMF case, by default random is used.
 # Returned object is fitted factorization model. Through it user can access quality and performance measures.
 # The fit's attribute `fit` contains all the attributes of the factorization.
-fit = mf.mf(V, method = "nmf", max_iter = 30, rank = 4, update = 'divergence', objective = 'div')
+fit = nimfa.mf(V, method = "nmf", max_iter = 30, rank = 4, update = 'divergence', objective = 'div')
 
 # Basis matrix. It is sparse, as input V was sparse as well.
 W = fit.basis()
@@ -55,8 +55,8 @@ print dot(W.todense(), H.todense())
 ####
 
 
-# Import MF library entry point for factorization
-import mf
+# Import nimfa library entry point for factorization
+import nimfa
 
 # Here we will work with numpy matrix
 import numpy as np
@@ -71,7 +71,7 @@ print V
 # In LSNMF case, by default random is used.
 # Returned object is fitted factorization model. Through it user can access quality and performance measures.
 # The fit's attribute `fit` contains all the attributes of the factorization.  
-fit = mf.mf(V, method = "lsnmf", max_iter = 10, rank = 3)
+fit = nimfa.mf(V, method = "lsnmf", max_iter = 10, rank = 3)
 
 # Basis matrix.
 W = fit.basis()
@@ -105,8 +105,8 @@ print np.dot(W, H)
 ####
 
 
-# Import MF library entry point for factorization
-import mf
+# Import nimfa library entry point for factorization
+import nimfa
 
 # Here we will work with numpy matrix
 import numpy as np
@@ -120,11 +120,11 @@ print V
 # We specify Random V Col initialization algorithm. 
 # We enable tracking the error from each iteration of the factorization, by default only the final value of objective function is retained. 
 # Perform initialization separately. 
-model = mf.mf(V, seed = "random_vcol", method = "lsnmf", max_iter = 10, rank = 3, track_error = True, initialize_only = True)
+model = nimfa.mf(V, seed = "random_vcol", method = "lsnmf", max_iter = 10, rank = 3, track_error = True, initialize_only = True)
 
 # Returned object is fitted factorization model. Through it user can access quality and performance measures.
 # The fit's attribute `fit` contains all the attributes of the factorization.  
-fit = mf.mf_run(model)
+fit = nimfa.mf_run(model)
 
 # Basis matrix.
 W = fit.basis()
@@ -140,7 +140,7 @@ print H
 print "Error tracking"
 # A list of objective function values for each iteration in factorization is printed.
 # If error tracking is enabled and user specifies multiple runs of the factorization, get_error(run = n) return a list of objective values from n-th run. 
-# fit.fit.tracker is an instance of Mf_track -- isinstance(fit.fit.tracker, mf.models.mf_track.Mf_track)
+# fit.fit.tracker is an instance of Mf_track -- isinstance(fit.fit.tracker, nimfa.models.mf_track.Mf_track)
 print fit.fit.tracker.get_error()
 
 # Compute generic set of measures to evaluate the quality of the factorization
@@ -158,8 +158,8 @@ print "Iterations: %d" % sm['n_iter']
 ####
 
 
-# Import MF library entry point for factorization
-import mf
+# Import nimfa library entry point for factorization
+import nimfa
 
 # Here we will work with numpy matrix
 import numpy as np
@@ -180,11 +180,11 @@ def init_info(model):
 # We specify Random C initialization algorithm.
 # We specify callback_init parameter by passing a init_info function 
 # This function is called after initialization and prior to factorization in each run.  
-model = mf.mf(V, seed = "random_c", method = "icm", max_iter = 10, rank = 3, initialize_only = True, callback_init = init_info)
+model = nimfa.mf(V, seed = "random_c", method = "icm", max_iter = 10, rank = 3, initialize_only = True, callback_init = init_info)
 
 # Returned object is fitted factorization model. Through it user can access quality and performance measures.
 # The fit's attribute `fit` contains all the attributes of the factorization.  
-fit = mf.mf_run(model)
+fit = nimfa.mf_run(model)
 
 # Basis matrix.
 W = fit.basis()

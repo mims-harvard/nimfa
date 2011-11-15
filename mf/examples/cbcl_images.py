@@ -71,15 +71,15 @@
         
     or call the module's function::
     
-        import mf.examples
-        mf.examples.cbcl_images.run()
+        import nimfa.examples
+        nimfa.examples.cbcl_images.run()
         
     .. note:: This example uses ``matplotlib`` library for producing visual interpretation of basis vectors. It uses PIL 
               library for displaying face images. 
     
 """
 
-import mf
+import nimfa
 import numpy as np
 from os.path import dirname, abspath, sep
 
@@ -114,7 +114,7 @@ def factorize(V):
     :param V: The CBCL faces data matrix. 
     :type V: `numpy.matrix`
     """
-    model = mf.mf(V, 
+    model = nimfa.mf(V, 
                   seed = "random_vcol",
                   rank = 49, 
                   method = "lsnmf", 
@@ -125,7 +125,7 @@ def factorize(V):
                   beta = 0.1,
                   min_residuals = 1e-8)
     print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
-    fit = mf.mf_run(model)
+    fit = nimfa.mf_run(model)
     print "... Finished"
     sparse_w, sparse_h = fit.fit.sparseness()
     print """Stats:
