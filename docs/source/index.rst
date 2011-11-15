@@ -144,9 +144,9 @@ utility, execute::
 	cd docs/source
 	sphinx-build -b html <source dir [.]>  <build dir [html]>
     
-from the nimfa library root directory. 
+from the nimfa root directory. 
 
-.. note:: The nimfa library documentation is contained in ``nimfa/docs`` source directory and and scripts are in ``nimfa/nimfa`` directory.  
+.. note:: The nimfa library documentation is contained in ``docs`` source directory and and scripts are in ``nimfa`` directory.  
 
 .. _Sphinx home page: http://sphinx.pocoo.org
 
