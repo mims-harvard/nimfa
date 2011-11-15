@@ -1,4 +1,4 @@
-.. automodule:: mf.methods.seeding.fixed
+.. automodule:: nimfa.methods.seeding.fixed
 	:members:
 	:undoc-members:
 	:inherited-members:

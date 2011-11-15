@@ -2,7 +2,7 @@
 Seeding (``methods.seeding``)
 #############################
     
-.. automodule:: mf.methods.seeding
+.. automodule:: nimfa.methods.seeding
 	:members:
 	:undoc-members:
 	:inherited-members:
@@ -12,14 +12,14 @@ Seeding (``methods.seeding``)
 .. toctree::
    :maxdepth: 2
 
-   mf.methods.seeding.nndsvd
+   nimfa.methods.seeding.nndsvd
    
-   mf.methods.seeding.random_c
+   nimfa.methods.seeding.random_c
    
-   mf.methods.seeding.random_vcol
+   nimfa.methods.seeding.random_vcol
    
-   mf.methods.seeding.random
+   nimfa.methods.seeding.random
    
-   mf.methods.seeding.fixed
+   nimfa.methods.seeding.fixed
    
 

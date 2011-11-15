@@ -2,7 +2,7 @@
 Factorization (``methods.factorization``)
 #########################################
 
-.. automodule:: mf.methods.factorization
+.. automodule:: nimfa.methods.factorization
 	:members:
 	:undoc-members:
 	:inherited-members:
@@ -12,25 +12,25 @@ Factorization (``methods.factorization``)
 .. toctree::
    :maxdepth: 2
 
-   mf.methods.factorization.bd
+   nimfa.methods.factorization.bd
    
-   mf.methods.factorization.bmf
+   nimfa.methods.factorization.bmf
    
-   mf.methods.factorization.icm
+   nimfa.methods.factorization.icm
    
-   mf.methods.factorization.lfnmf
+   nimfa.methods.factorization.lfnmf
    
-   mf.methods.factorization.lsnmf
+   nimfa.methods.factorization.lsnmf
    
-   mf.methods.factorization.nmf
+   nimfa.methods.factorization.nmf
    
-   mf.methods.factorization.nsnmf
+   nimfa.methods.factorization.nsnmf
    
-   mf.methods.factorization.pmf
+   nimfa.methods.factorization.pmf
    
-   mf.methods.factorization.psmf
+   nimfa.methods.factorization.psmf
    
-   mf.methods.factorization.snmf
+   nimfa.methods.factorization.snmf
    
-   mf.methods.factorization.snmnmf
+   nimfa.methods.factorization.snmnmf
 

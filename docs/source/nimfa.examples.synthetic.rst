@@ -1,4 +1,4 @@
-.. automodule:: mf.examples.synthetic
+.. automodule:: nimfa.examples.synthetic
 	:members:
 	:undoc-members:
 	:inherited-members:

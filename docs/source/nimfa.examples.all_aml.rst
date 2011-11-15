@@ -1,4 +1,4 @@
-.. automodule:: mf.examples.all_aml
+.. automodule:: nimfa.examples.all_aml
 	:members:
 	:undoc-members:
 	:inherited-members:

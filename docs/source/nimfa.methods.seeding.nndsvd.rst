@@ -1,4 +1,4 @@
-.. automodule:: mf.methods.seeding.nndsvd
+.. automodule:: nimfa.methods.seeding.nndsvd
 	:members:
 	:undoc-members:
 	:inherited-members:

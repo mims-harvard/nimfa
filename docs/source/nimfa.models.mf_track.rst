@@ -1,4 +1,4 @@
-.. automodule:: mf.models.mf_track
+.. automodule:: nimfa.models.mf_track
 	:members:
 	:undoc-members:
 	:inherited-members:

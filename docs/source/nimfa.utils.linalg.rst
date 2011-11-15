@@ -1,4 +1,4 @@
-.. automodule:: mf.utils.linalg
+.. automodule:: nimfa.utils.linalg
 	:members:
 	:undoc-members:
 	:inherited-members:

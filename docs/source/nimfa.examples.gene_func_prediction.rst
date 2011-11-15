@@ -1,4 +1,4 @@
-.. automodule:: mf.examples.gene_func_prediction
+.. automodule:: nimfa.examples.gene_func_prediction
 	:members:
 	:undoc-members:
 	:inherited-members:

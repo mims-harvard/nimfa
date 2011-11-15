@@ -1,4 +1,4 @@
-.. automodule:: mf.methods.factorization.icm
+.. automodule:: nimfa.methods.factorization.icm
 	:members:
 	:undoc-members:
 	:inherited-members:

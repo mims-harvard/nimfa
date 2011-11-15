@@ -2,7 +2,7 @@
 Examples (``examples``)
 #######################
 
-.. automodule:: mf.examples
+.. automodule:: nimfa.examples
 	:members:
 	:undoc-members:
 	:inherited-members:
@@ -12,18 +12,18 @@ Examples (``examples``)
 .. toctree::
    :maxdepth: 2
    
-   mf.examples.synthetic
+   nimfa.examples.synthetic
    
-   mf.examples.all_aml
+   nimfa.examples.all_aml
    
-   mf.examples.medulloblastoma
+   nimfa.examples.medulloblastoma
    
-   mf.examples.cbcl_images
+   nimfa.examples.cbcl_images
    
-   mf.examples.documents
+   nimfa.examples.documents
    
-   mf.examples.orl_images
+   nimfa.examples.orl_images
    
-   mf.examples.recommendations
+   nimfa.examples.recommendations
    
-   mf.examples.gene_func_prediction
+   nimfa.examples.gene_func_prediction

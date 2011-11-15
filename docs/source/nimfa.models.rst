@@ -2,7 +2,7 @@
 Models (``models``)
 ###################
     
-.. automodule:: mf.models
+.. automodule:: nimfa.models
 	:members:
 	:undoc-members:
 	:inherited-members:
@@ -12,16 +12,16 @@ Models (``models``)
 .. toctree::
    :maxdepth: 2
 
-   mf.models.nmf
+   nimfa.models.nmf
    
-   mf.models.nmf_std
+   nimfa.models.nmf_std
    
-   mf.models.nmf_ns
+   nimfa.models.nmf_ns
    
-   mf.models.nmf_mm
+   nimfa.models.nmf_mm
    
-   mf.models.mf_fit
+   nimfa.models.mf_fit
    
-   mf.models.mf_track
+   nimfa.models.mf_track
    
 

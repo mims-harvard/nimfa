@@ -2,7 +2,7 @@
 Utils (``utils``)
 #################
     
-.. automodule:: mf.utils
+.. automodule:: nimfa.utils
 	:members:
 	:undoc-members:
 	:inherited-members:
@@ -12,8 +12,8 @@ Utils (``utils``)
 .. toctree::
    :maxdepth: 2
 
-   mf.utils.utils
+   nimfa.utils.utils
    
-   mf.utils.linalg
+   nimfa.utils.linalg
    
 

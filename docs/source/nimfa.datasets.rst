@@ -2,7 +2,7 @@
 Datasets (``datasets``)
 #######################
     
-.. automodule:: mf.datasets
+.. automodule:: nimfa.datasets
 	:members:
 	:undoc-members:
 	:inherited-members:

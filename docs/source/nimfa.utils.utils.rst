@@ -1,4 +1,4 @@
-.. automodule:: mf.utils.utils
+.. automodule:: nimfa.utils.utils
 	:members:
 	:undoc-members:
 	:inherited-members:

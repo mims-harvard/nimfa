@@ -1,4 +1,4 @@
-.. automodule:: mf.examples.medulloblastoma
+.. automodule:: nimfa.examples.medulloblastoma
 	:members:
 	:undoc-members:
 	:inherited-members:

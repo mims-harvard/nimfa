@@ -1,4 +1,4 @@
-.. automodule:: mf.examples.recommendations
+.. automodule:: nimfa.examples.recommendations
 	:members:
 	:undoc-members:
 	:inherited-members:

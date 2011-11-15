@@ -1,4 +1,4 @@
-.. automodule:: mf.models.nmf_std
+.. automodule:: nimfa.models.nmf_std
 	:members:
 	:undoc-members:
 	:inherited-members:

@@ -1,4 +1,4 @@
-.. automodule:: mf.mf_run
+.. automodule:: nimfa.mf_run
 	:members:
 	:undoc-members:
 	:inherited-members:

@@ -2,7 +2,7 @@
 Methods (``methods``)
 #####################
     
-.. automodule:: mf.methods
+.. automodule:: nimfa.methods
 	:members:
 	:undoc-members:
 	:inherited-members:
@@ -12,7 +12,7 @@ Methods (``methods``)
 .. toctree::
    :maxdepth: 3
 
-   mf.methods.factorization
+   nimfa.methods.factorization
    
-   mf.methods.seeding   
+   nimfa.methods.seeding   
 
