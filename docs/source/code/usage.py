@@ -18,8 +18,8 @@ print V.todense()
 
 # Run Standard NMF rank 4 algorithm
 # Update equations and cost function are Standard NMF specific parameters (among others).
-# If not specified the Euclidean update and Forbenius cost function would be used.
-# We don't specify initialization method. Algorithm specific or random intialization will be used.
+# If not specified the Euclidean update and Frobenius cost function would be used.
+# We don't specify initialization method. Algorithm specific or random initialization will be used.
 # In Standard NMF case, by default random is used.
 # Returned object is fitted factorization model. Through it user can access quality and performance measures.
 # The fit's attribute `fit` contains all the attributes of the factorization.
@@ -67,7 +67,7 @@ print V
 
 # Run LSNMF rank 3 algorithm
 # We don't specify any algorithm specific parameters. Defaults will be used.
-# We don't specify initialization method. Algorithm specific or random intialization will be used. 
+# We don't specify initialization method. Algorithm specific or random initialization will be used. 
 # In LSNMF case, by default random is used.
 # Returned object is fitted factorization model. Through it user can access quality and performance measures.
 # The fit's attribute `fit` contains all the attributes of the factorization.  

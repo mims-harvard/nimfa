@@ -175,29 +175,25 @@ applications see Examples section and methods' documentation.
 
 .. note:: Consider these examples as Hello World examples for the nimfa library.
 
-.. note:: These examples demonstrate factorization of ``scipy.sparse`` matrices, factorization of ``numpy`` dense matrices, computation 
-		  of quality and performance measures, error tracking, computation of nimfa estimate and matrix factors, 
-		  passing callback initialization function. 
-
-Example No. 1
+Standard NMF - Divergence on ``scipy.sparse`` matrix with matrix factors estimation. 
 
 	.. literalinclude:: /code/usage.py
    		:lines: 7-50
 
 
-Example No. 2
+LSNMF on ``numpy`` dense matrix with quality and performance measures.
 
 	.. literalinclude:: /code/usage.py
    		:lines: 58-100
 
 
-Example No. 3
+LSNMF with Random VCol initialization and error tracking.
 
 	.. literalinclude:: /code/usage.py
    		:lines: 108-153
 
    		
-Example No. 4
+ICM with Random C initialization and passed callback initialization function.
    
    	.. literalinclude:: /code/usage.py
    		:lines: 161-210
