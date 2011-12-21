@@ -19,11 +19,11 @@
  
  * Purity [Park2007]_
  
- * Residual sum of squares - can be used for rank estimate [Hutchins2008]_, [Frigyesi2008]_
+ * Residual sum of squares (rank estimation) [Hutchins2008]_, [Frigyesi2008]_
  
  * Sparseness [Hoyer2004]_
  
- * Cophenetic correlation coefficient of consensus matrix - can be used for rank estimate [Brunet2004]_
+ * Cophenetic correlation coefficient of consensus matrix (rank estimation) [Brunet2004]_
  
  * Dispersion [Park2007]_
  

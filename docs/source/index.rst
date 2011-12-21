@@ -33,9 +33,13 @@ An incomplete list of applications of matrix factorization methods includes:
 	* miscelllaneous, such as extracting speech features, transcription of polyphonic music passages, object characterization, spectral data 
 	  analysis, multiway clustering, learning sound dictionaries, etc. 
 
-With the library of factorization methods in `Orange`_ an easy-to-use interface to established algorithms is provided. 
-The nimfa library expands the already vast usage of Orange methods in numerous applications without the need to use external
-programming packages for factorizations.
+An example script. The sample calls below demonstrate performing factorization using alternating least squares NMF with projected gradient method for 
+subproblems [Lin2007]_ and Random Vcol [Albright2006]_ initialization algorithm. Returned object is fitted factorization model 
+through which user can access matrix factors, quality and performance measures. Further real-world examples and demonstrations of library capabilities
+are provided. 
+   
+   	.. literalinclude:: /code/usage.py
+   		:lines: 218-228
 
 .. note:: `Short presentation`_ about nimfa - A Python Library for Nonnegative Matrix Factorization Techniques is available.
 

@@ -24,6 +24,8 @@
 """
 
 from utils import *
+
+import examples
 import methods
 
 l_factorization = methods.list_mf_methods()
@@ -32,11 +34,11 @@ l_seed = methods.list_seeding_methods()
 def mf(target, seed = None, W = None, H = None,  
        rank = 30, method = "nmf",
        max_iter = 30, min_residuals = None, test_conv = None,
-       n_run = 1, callback = None, callback_init = None, initialize_only = False, **options):
+       n_run = 1, callback = None, callback_init = None, initialize_only = True, **options):
     """
     Run the specified MF algorithm.
     
-    Return fitted factorization model storing MF results. If :param:`initialize_only` is set, only initialized model is returned.
+    Return fitted factorization model storing MF results. If :param:`initialize_only` is set, only initialized model is returned (default behaviour).
     
     :param target: The target matrix to estimate. Some algorithms (e. g. multiple NMF) specify more than one target matrix. 
                    In that case target matrices are passed as tuples. Internally, additional attributes with names following 
@@ -83,7 +85,7 @@ def mf(target, seed = None, W = None, H = None,
                                 #. checking if target matrix (or matrices) are nonnegative (in case of NMF factorization algorithms),
                                 #. validation of the specified factorization method,
                                 #. validation of the specified initialization method. 
-                            When this parameter is specified factorization will not be ran. Default is False.
+                            When this parameter is specified factorization will not be ran. Default is True.
     :type initialize_only: `bool`
     
     
