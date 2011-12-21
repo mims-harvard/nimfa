@@ -86,7 +86,7 @@ Initialization Methods
 .. include:: /content-initialization.rst
 
 ********************************
-Quality and Performance Measures
+Quality Measures
 ********************************
 
 .. include:: /content-quality-performance.rst
@@ -99,9 +99,9 @@ Utils
 
 
 	
-#######
-Install
-#######
+############
+Installation
+############
 
 *************************************************************************
 nimfa - A Python Library for Nonnegative Matrix Factorization Techniques

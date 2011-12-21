@@ -326,7 +326,9 @@ def _svd_right(X):
     """
     XXt = dot(X, X.T)
     if X.shape[0] > 1:
-        if '0.9.0' in scipy.version.version or '0.10.0' in scipy.version.version or '0.11.0' in scipy.version.version:
+        if scipy.version.short_version == '0.8.0':
+            val, u_vec = sla.eigen_symmetric(XXt, k = X.shape[0] - 1)
+        else:
             # In scipy 0.9.0 ARPACK interface has changed. eigen_symmetric routine was renamed to eigsh
             # see http://docs.scipy.org/doc/scipy/reference/release.0.9.0.html#scipy-sparse
             try:
@@ -335,8 +337,6 @@ def _svd_right(X):
                 # If eigenvalue iteration fails to converge, partially converged results can be accessed
                 val = err.eigenvalues
                 u_vec = err.eigenvectors
-        else:
-            val, u_vec = sla.eigen_symmetric(XXt, k = X.shape[0] - 1)
     else:
         val, u_vec = nla.eigh(XXt.todense())
     # remove insignificant eigenvalues
