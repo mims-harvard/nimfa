@@ -40,6 +40,13 @@ through which user can access matrix factors, quality and performance measures.
    	.. literalinclude:: /code/usage.py
    		:lines: 218-228
 
+This example script produces output which might slightly differ due to Random Vcol initialization method::
+	
+	Rss: 0.2668
+	Evar: 0.9997
+	K-L divergence: 38.8744
+	Sparseness, W: 0.7297, H: 0.8796
+
 Further real-world examples and demonstrations of library capabilities are provided in the Examples section and below, respectively.
 
 .. note:: `Short presentation`_ about nimfa - A Python Library for Nonnegative Matrix Factorization Techniques is available.
