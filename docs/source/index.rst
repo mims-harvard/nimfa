@@ -34,7 +34,7 @@ An incomplete list of applications of matrix factorization methods includes:
 	  analysis, multiway clustering, learning sound dictionaries, etc. 
 
 An example script. The sample calls below demonstrate performing factorization on medulloblastoma gene expression data. Alternating least squares NMF with projected gradient method 
-for subproblems [Lin2007]_ and Random Vcol [Albright2006]_ initialization algorithm is used. Returned object is fitted factorization model 
+for subproblems [Lin2007]_ and Random Vcol [Albright2006]_ initialization algorithm are used. Returned object is fitted factorization model 
 through which user can access matrix factors, quality and performance measures. 
     
    	.. literalinclude:: /code/usage.py
