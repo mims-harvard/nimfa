@@ -222,8 +222,8 @@ V = nimfa.examples.medulloblastoma.read(normalize = True)
 model = nimfa.mf(V, seed = 'random_vcol', method = 'lsnmf', rank = 40, max_iter = 65)
 fitted = nimfa.mf_run(model)
 
-print 'K-L divergence %5.4f:' % fitted.distance(metric = 'kl')
-print 'Residual sum of squares %5.4f:' % fitted.fit.rss()
+print 'K-L divergence: %5.4f' % fitted.distance(metric = 'kl')
+print 'Residual sum of squares: %5.4f' % fitted.fit.rss()
 print 'Sparseness, W: %5.4f, H: %5.4f' % fitted.fit.sparseness()
 print "Explained variance: %5.4f" % fitted.fit.evar()
 
