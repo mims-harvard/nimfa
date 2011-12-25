@@ -126,11 +126,11 @@ algebra operations. There are not any additional prerequisites.
 .. _SciPy: http://www.scipy.org/
 .. _NumPy: http://numpy.scipy.org/
 
-Download source code from `Github repository`_.
+Download source code (zipped archive) from `Github repository`_.
 
 .. _Github repository: http://github.com/marinkaz/mf
 
-To build and install run::
+Unzip the archive. To build and install run::
 	
 	python setup.py install
 
@@ -140,19 +140,14 @@ nimfa - A Python Library for Nonnegative Matrix Factorization Techniques Documen
 
 For building the documentation use Sphinx 1.0 or newer. Sphinx is available at `Sphinx home page`_ and
 nimfa library documentation sources are available at `Github repository`_. Before building documentation, 
-please install nimfa library.
+please install the nimfa library.
 
 Documentation can be built by issuing::
 
-    make html
-
-Resulting documentation is saved to `html` directory. Without make 
-utility, execute::
-
-	cd docs/source
-	sphinx-build -b html <source dir [.]>  <build dir [html]>
-    
-from the nimfa root directory. 
+	sphinx-build -b html -E <source dir [docs/source]>  <build dir [html]>
+	    
+from the nimfa root directory. After completion, the documentation should reside in the `html` directory. The built documentation
+should resemble closely the one you are currently reading.  
 
 .. note:: The nimfa library documentation is contained in ``docs`` source directory and and scripts are in ``nimfa`` directory.  
 
