@@ -7,58 +7,37 @@
 nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
 ================================================================================
 
-#####
-About
-#####
+**Nimfa** is an open-source Python library that provides a unified interface to nonnegative matrix factorization algorithms. 
+It includes implementations of state-of-the-art factorization methods, initialization approaches, and quality scoring. 
+Both dense and sparse matrix representation are supported.
 
-**Nimfa**  is a Python scripting library which includes a number of published matrix 
-factorization algorithms, initialization methods, quality and performance measures and facilitates the combination of these to 
-produce new strategies. The library represents a unified and efficient interface to matrix factorization algorithms and methods.
-
-The nimfa works with numpy dense matrices and scipy sparse matrices (where this is possible to save on space). The library has support for 
-multiple runs of the algorithms which can be used for some quality measures. By setting runtime specific options tracking the 
-residuals error within one (or more) run or tracking fitted factorization model is possible. Extensive documentation with working 
-examples which demonstrate real applications, commonly used benchmark data and visualization methods are provided to help with the 
-interpretation and comprehension of the results.
-
-Matrix factorization methods have been shown to be a useful decomposition for multivariate data as low dimensional data representations are crucial 
-to numerous applications in statistics, signal processing and machine learning.
-
-An incomplete list of applications of matrix factorization methods includes:
-
-	* bioinformatics,
-	* environmetrics and chemometrics,
-	* image processing and computer graphics,
-	* text analysis,
-	* miscelllaneous, such as extracting speech features, transcription of polyphonic music passages, object characterization, spectral data 
-	  analysis, multiway clustering, learning sound dictionaries, etc. 
-
-An example script. The sample calls below demonstrate performing factorization on medulloblastoma gene expression data. Alternating least squares NMF with projected gradient method 
-for subproblems [Lin2007]_ and Random Vcol [Albright2006]_ initialization algorithm are used. Returned object is fitted factorization model 
-through which user can access matrix factors, quality and performance measures. 
+The sample script using Nimfa on medulloblastoma gene expression data is given below. It uses alternating least squares nonnegative matrix 
+factorization with projected gradient method for subproblems [Lin2007]_ and Random Vcol [Albright2006]_ initialization algorithm. An object returned by ``nimfa.mf_run`` is 
+fitted factorization model through which user can access matrix factors and estimate quality measures.
     
    	.. literalinclude:: /code/usage.py
    		:lines: 218-228
 
-This example script produces output which might slightly differ due to Random Vcol initialization method::
+Running this script produces the following output, where slight differences in reported scores across different 
+runs can be contributed to randomness of the Random Vcol initialization method::
 	
 	Rss: 0.2668
 	Evar: 0.9997
 	K-L divergence: 38.8744
 	Sparseness, W: 0.7297, H: 0.8796
 
-Further real-world examples and demonstrations of library capabilities are provided in the Examples section and below, respectively.
+Further real-world examples and demonstrations of library capabilities are provided in the `Examples section`_ and in `sample scripts on this page`_.
 
-.. note:: `Short presentation`_ about nimfa - A Python Library for Nonnegative Matrix Factorization Techniques is available.
+.. note:: See also a `short presentation about nimfa.`_ 
 
-.. note:: `Document describing possible visualizations`_ is available. These visualizations will be included in near-future 
-		  release of the library and possibly some supported as widgets when integration with Orange will be done.  
 
-.. _Document describing possible visualizations: http://helikoid.si/mf/visualizations_MF.pdf
+.. _Examples section: nimfa.examples.html
+
+.. _sample scripts on this page: http://nimfa.biolab.si/#usage
 
 .. _Orange: http://orange.biolab.si
 
-.. _Short presentation: http://helikoid.si/mf/GSoC_MF.pdf
+.. _short presentation about nimfa.: http://helikoid.si/mf/GSoC_MF.pdf
 
 ###################
 Scripting Reference
