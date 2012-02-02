@@ -5,5 +5,5 @@
 	:show-inheritance:
 	
 .. literalinclude:: ../../nimfa/examples/cbcl_images.py 
-	:lines: 82-197
+	:lines: 82-198
 	:linenos:

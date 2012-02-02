@@ -58,11 +58,12 @@ import nimfa
 import numpy as np
 import scipy.sparse as sp
 from os.path import dirname, abspath, sep
+from warnings import warn
 
 try:
     import matplotlib.pylab as plb
 except ImportError, exc:
-    raise SystemExit("Matplotlib must be installed to run this example.")
+    warn("Matplotlib must be installed to run Gene Function prediction example.")
     
 def run():
     """

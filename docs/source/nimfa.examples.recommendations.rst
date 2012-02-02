@@ -5,5 +5,5 @@
 	:show-inheritance:
 	
 .. literalinclude:: ../../nimfa/examples/recommendations.py 
-	:lines: 43-172
+	:lines: 43-173
 	:linenos:

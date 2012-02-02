@@ -5,5 +5,5 @@
 	:show-inheritance:
 	
 .. literalinclude:: ../../nimfa/examples/all_aml.py 
-	:lines: 106-208
+	:lines: 106-209
 	:linenos:

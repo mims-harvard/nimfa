@@ -5,5 +5,5 @@
 	:show-inheritance:
 	
 .. literalinclude:: ../../nimfa/examples/medulloblastoma.py 
-	:lines: 96-198
+	:lines: 96-199
 	:linenos:

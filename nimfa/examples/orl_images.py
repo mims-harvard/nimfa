@@ -93,11 +93,12 @@
 import nimfa
 import numpy as np
 from os.path import dirname, abspath, sep
+from warnings import warn
 
 try:
     from matplotlib.pyplot import savefig, imshow, set_cmap
 except ImportError, exc:
-    raise SystemExit("Matplotlib must be installed to run this example.")
+    warn("Matplotlib must be installed to run ORL images example.")
 
 try:
     from PIL.Image import open, fromarray, new

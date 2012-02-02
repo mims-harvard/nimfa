@@ -97,11 +97,12 @@ import nimfa
 import numpy as np
 from scipy.cluster.hierarchy import linkage, leaves_list
 from os.path import dirname, abspath, sep
+from warnings import warn
 
 try:
     from matplotlib.pyplot import savefig, imshow, set_cmap
 except ImportError, exc:
-    raise SystemExit("Matplotlib must be installed to run this example.")
+    warn("Matplotlib must be installed to run Medulloblastoma example.")
 
 def run():
     """Run Standard NMF on medulloblastoma data set. For each rank 50 Standard NMF runs are performed. """    

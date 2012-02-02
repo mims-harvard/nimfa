@@ -5,5 +5,5 @@
 	:show-inheritance:
 	
 .. literalinclude:: ../../nimfa/examples/gene_func_prediction.py 
-	:lines: 57-460
+	:lines: 57-461
 	:linenos:

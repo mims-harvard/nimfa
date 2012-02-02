@@ -5,5 +5,5 @@
 	:show-inheritance:
 	
 .. literalinclude:: ../../nimfa/examples/documents.py 
-	:lines: 99-261
+	:lines: 99-262
 	:linenos:

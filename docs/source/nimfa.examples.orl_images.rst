@@ -5,5 +5,5 @@
 	:show-inheritance:
 	
 .. literalinclude:: ../../nimfa/examples/orl_images.py 
-	:lines: 93-208
+	:lines: 93-209
 	:linenos:

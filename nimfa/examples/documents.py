@@ -101,11 +101,12 @@ import numpy as np
 import scipy.sparse as sp
 from os.path import dirname, abspath, sep
 from operator import itemgetter
+from warnings import warn
 
 try:
     import matplotlib.pylab as plb
 except ImportError, exc:
-    raise SystemExit("Matplotlib must be installed to run this example.")
+    warn("Matplotlib must be installed to run Documents example.")
 
 def run():
     """Run NMF - Divergence on the Medlars data set."""
