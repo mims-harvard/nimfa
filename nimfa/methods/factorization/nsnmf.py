@@ -60,7 +60,7 @@ class Nsnmf(nmf_ns.Nmf_ns):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             self.S = sop((1 - self.theta) * sp.spdiags([1 for _ in xrange(self.rank)], 0, self.rank, self.rank, 'csr'), 
                          self.theta / self.rank, add)
-            p_obj = c_obj = self.objective()
+            p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
             if self.callback_init:
@@ -71,8 +71,8 @@ class Nsnmf(nmf_ns.Nmf_ns):
             while self.is_satisfied(p_obj, c_obj, iter):
                 p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update()
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 iter += 1
+                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(c_obj, run)
             if self.callback:

@@ -7,6 +7,7 @@
     Linear algebra helper routines and wrapper functions for handling sparse matrices and dense matrices representation.
 """
 
+import sys
 import numpy as np
 import scipy
 import scipy.sparse as sp

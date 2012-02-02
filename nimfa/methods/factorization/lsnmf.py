@@ -68,7 +68,7 @@ class Lsnmf(nmf_std.Nmf_std):
             # iterW and iterH are not parameters, as these values are used only in first objective computation 
             self.iterW = 10
             self.iterH = 10
-            c_obj = self.objective()
+            c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj 
             iter = 0
             if self.callback_init:
@@ -78,8 +78,8 @@ class Lsnmf(nmf_std.Nmf_std):
                 self.callback_init(mffit)
             while self.is_satisfied(c_obj, iter):
                 self.update()
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 iter += 1
+                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(c_obj, run)
             if self.callback:

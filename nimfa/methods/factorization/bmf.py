@@ -84,7 +84,7 @@ class Bmf(nmf_std.Nmf_std):
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             self.normalize()
-            p_obj = c_obj = self.objective()
+            p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
             if self.callback_init:
@@ -96,8 +96,8 @@ class Bmf(nmf_std.Nmf_std):
                 p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update()
                 self._adjustment()
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 iter += 1
+                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(c_obj, run)
             if self.callback:

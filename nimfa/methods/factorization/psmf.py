@@ -92,7 +92,7 @@ class Psmf(nmf_std.Nmf_std):
             self.sigma = self.sigma / np.tile(self.sigma.sum(axis = 1).reshape((self.sigma.shape[0], 1, self.sigma.shape[2])), (1, self.rank, 1))
             self.rho = np.tile(self.prior, (self.V.shape[0], 1))
             self._cross_terms()
-            p_obj = c_obj = self.objective()
+            p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
             if self.callback_init:
@@ -103,8 +103,8 @@ class Psmf(nmf_std.Nmf_std):
             while self.is_satisfied(p_obj, c_obj, iter):
                 p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update()
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 iter += 1
+                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(c_obj, run)
             if self.callback:

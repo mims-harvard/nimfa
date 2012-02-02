@@ -59,7 +59,7 @@ class Lfnmf(nmf_std.Nmf_std):
         for run in xrange(self.n_run):
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
             self.Sw, self.Sb = np.mat(np.zeros((1, 1))), np.mat(np.zeros((1, 1)))
-            p_obj = c_obj = self.objective()
+            p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
             if self.callback_init:
@@ -70,8 +70,8 @@ class Lfnmf(nmf_std.Nmf_std):
             while self.is_satisfied(p_obj, c_obj, iter):
                 p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update()
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 iter += 1
+                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(c_obj, run)
             if self.callback:

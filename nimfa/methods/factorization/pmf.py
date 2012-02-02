@@ -50,7 +50,7 @@ class Pmf(nmf_std.Nmf_std):
             self.V_n = sop(self.V.copy(), self.v_factor, div)
             self.P = sp.spdiags([1. / self.rank for _ in xrange(self.rank)], 0, self.rank, self.rank, 'csr')
             self.sqrt_P = sop(self.P, s = None, op = sqrt) 
-            p_obj = c_obj = self.objective() 
+            p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
             if self.callback_init:
@@ -62,8 +62,8 @@ class Pmf(nmf_std.Nmf_std):
                 p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update()
                 self._adjustment()
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 iter += 1
+                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(c_obj, run)
             self.W = self.v_factor * dot(self.W, self.sqrt_P) 

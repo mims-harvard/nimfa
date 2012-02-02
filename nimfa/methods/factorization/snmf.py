@@ -80,7 +80,7 @@ class Snmf(nmf_std.Nmf_std):
             iter = 0
             self.idx_w_old = np.mat(np.zeros((self.V.shape[0], 1)))
             self.idx_h_old = np.mat(np.zeros((1, self.V.shape[1])))
-            c_obj = self.objective() 
+            c_obj = sys.float_info.max 
             best_obj = c_obj if run == 0 else best_obj
             # count the number of convergence checks that column clusters and row clusters have not changed.
             self.inc = 0
@@ -100,8 +100,8 @@ class Snmf(nmf_std.Nmf_std):
                 self.callback_init(mffit)
             while self.is_satisfied(c_obj, iter):
                 self.update()
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 iter += 1
+                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(c_obj, run)
             # basis and mixture matrix are now constructed and are now converted to CSR for fast LA operations
