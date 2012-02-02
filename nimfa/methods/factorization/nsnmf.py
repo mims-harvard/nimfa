@@ -104,10 +104,10 @@ class Nsnmf(nmf_ns.Nmf_ns):
         :param iter: Current iteration number. 
         :type iter: `int`
         """
-        if self.test_conv and iter % self.test_conv != 0:
-            return True
         if self.max_iter and self.max_iter <= iter:
             return False
+        if self.test_conv and iter % self.test_conv != 0:
+            return True
         if self.min_residuals and iter > 0 and p_obj - c_obj < self.min_residuals:
             return False
         if iter > 0 and c_obj > p_obj:

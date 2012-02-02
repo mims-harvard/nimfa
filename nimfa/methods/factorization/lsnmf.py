@@ -109,10 +109,10 @@ class Lsnmf(nmf_std.Nmf_std):
         :param iter: Current iteration number. 
         :type iter: `int`
         """
-        if self.test_conv and iter % self.test_conv != 0:
-            return True
         if self.max_iter and self.max_iter <= iter:
             return False
+        if self.test_conv and iter % self.test_conv != 0:
+            return True
         if iter > 0 and c_obj < self.min_residuals * self.init_grad:
             return False
         if self.iterW == 0 and self.iterH == 0 and self.epsW + self.epsH < self.min_residuals * self.init_grad:

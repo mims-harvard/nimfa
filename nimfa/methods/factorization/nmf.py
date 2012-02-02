@@ -117,10 +117,10 @@ class Nmf(nmf_std.Nmf_std):
         :param iter: Current iteration number. 
         :type iter: `int`
         """
-        if self.test_conv and iter % self.test_conv != 0:
-            return True
         if self.max_iter and self.max_iter <= iter:
             return False
+        if self.test_conv and iter % self.test_conv != 0:
+            return True
         if self.conn_change != None:
             return self.__is_satisfied(p_obj, c_obj, iter)
         if self.min_residuals and iter > 0 and p_obj - c_obj < self.min_residuals:

@@ -153,12 +153,12 @@ class Snmf(nmf_std.Nmf_std):
         :param iter: Current iteration number. 
         :type iter: `int`
         """
-        if self.test_conv and iter % self.test_conv != 0:
-            return True
         if iter == 0:
             self.init_erravg = c_obj
         if self.max_iter and self.max_iter <= iter:
             return False
+        if self.test_conv and iter % self.test_conv != 0:
+            return True
         if self.inc >= self.i_conv and c_obj < self.min_residuals * self.init_erravg:
             return False
         return True
