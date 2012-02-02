@@ -45,11 +45,12 @@ class Random(object):
         """
         self.rank = rank
         self.density = options.get('density', 0.7)
-        self.max = V.data.max()
         if sp.isspmatrix(V):
+            self.max = V.data.max()
             self._format = V.getformat()
             gen = self.gen_sparse
         else:
+            self.max = V.max()
             self.prng = np.random.RandomState()
             gen = self.gen_dense
         self.W = gen(V.shape[0], self.rank)
