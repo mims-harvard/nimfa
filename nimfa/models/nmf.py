@@ -94,31 +94,31 @@ class Nmf(object):
                 self.H = self.H[0]
         if isinstance(self.W, tuple):
             raise utils.MFError("Multiple NMF uses one basis matrix.")
-        # copy target and factor matrices into the program
+        # do not copy target and factor matrices into the program
         if sp.isspmatrix(self.V):
-            self.V = self.V.copy().tocsr().astype('d')
+            self.V = self.V.tocsr().astype('d')
         else:
-            self.V = np.matrix(self.V, dtype = 'd', copy = True)
+            self.V = self.V if self.V.dtype == np.dtype(float) else np.mat(self.V, dtype = 'd')
         if hasattr(self, "V1"):
             if sp.isspmatrix(self.V1):
-                self.V1 = self.V1.copy().tocsr().astype('d')
+                self.V1 = self.V1.tocsr().astype('d')
             else:
-                self.V1 = np.matrix(self.V1, dtype = 'd', copy = True)
+                self.V1 = self.V1 if self.V1.dtype == np.dtype(float) else np.mat(self.V1, dtype = 'd')
         if self.W != None:
             if sp.isspmatrix(self.W):
-                self.W = self.W.copy().tocsr().astype('d')
+                self.W = self.W.tocsr().astype('d')
             else:
-                self.W = np.matrix(self.W, dtype = 'd', copy = True)
+                self.W = self.W if self.W.dtype == np.dtype(float) else np.mat(self.W, dtype = 'd')
         if self.H != None:
             if sp.isspmatrix(self.H):
-                self.H = self.H.copy().tocsr().astype('d')
+                self.H = self.H.tocsr().astype('d')
             else:
-                self.H = np.matrix(self.H, dtype = 'd', copy = True)
-        if hasattr(self, "H1"):
+                self.H = self.H if self.H.dtype == np.dtype(float) else np.mat(self.H, dtype = 'd')
+        if self.H1 != None:
             if sp.isspmatrix(self.H1):
-                self.H1 = self.H1.copy().tocsr().astype('d')
+                self.H1 = self.H1.tocsr().astype('d')
             else:
-                self.H1 = np.matrix(self.H1, dtype = 'd', copy = True)
+                self.H1 = self.H1 if self.H1.dtype == np.dtype(float) else np.mat(self.H1, dtype = 'd')
     
     def run(self):
         """Run the specified MF algorithm."""
