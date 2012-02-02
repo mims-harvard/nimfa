@@ -45,7 +45,7 @@ class Random(object):
         """
         self.rank = rank
         self.density = options.get('density', 0.7)
-        self.max = argmax(V, axis = None)[0]
+        self.max = V.data.max()
         if sp.isspmatrix(V):
             self._format = V.getformat()
             gen = self.gen_sparse
