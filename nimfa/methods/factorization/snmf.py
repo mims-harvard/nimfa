@@ -99,6 +99,7 @@ class Snmf(nmf_std.Nmf_std):
                 mffit = mf_fit.Mf_fit(self)
                 self.callback_init(mffit)
             while self.is_satisfied(c_obj, iter):
+                print iter
                 self.update()
                 iter += 1
                 c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj

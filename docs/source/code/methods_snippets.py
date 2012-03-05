@@ -1,6 +1,6 @@
 
 # Example call of SNMNMF with algorithm specific parameters set
-model = nimfa.mf(target = (V, V1), 
+fctr = nimfa.mf(target = (V, V1), 
               seed = "random_c", 
               rank = 10, 
               method = "snmnmf", 
@@ -12,11 +12,11 @@ model = nimfa.mf(target = (V, V1),
               gamma_1 = 0.01,
               lamb = 0.01,
               lamb_1 = 0.01)
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
 
 
 # Example call of BD with algorithm specific parameters set
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = "random_c", 
               rank = 10, 
               method = "bd", 
@@ -32,11 +32,11 @@ model = nimfa.mf(V,
               n_w = np.mat(np.zeros((rank, 1))),
               n_h = np.mat(np.zeros((rank, 1))),
               n_sigma = False)
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
 
 
 # Example call of BMF with algorithm specific parameters set
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = "nndsvd", 
               rank = 10, 
               method = "bmf", 
@@ -44,11 +44,11 @@ model = nimfa.mf(V,
               initialize_only = True,
               lambda_w = 1.1,
               lambda_h = 1.1)
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
 
 
 # Example call of ICM with algorithm specific parameters set    
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = "nndsvd", 
               rank = 10, 
               method = "icm", 
@@ -60,11 +60,11 @@ model = nimfa.mf(V,
               theta = 0.,
               k = 0.,
               sigma = 1.)
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
 
 
 # Example call of LFNMF with algorithm specific parameters set    
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = None,
               W = abs(pnrg.randn(V.shape[0], rank)), 
               H = abs(pnrg.randn(rank, V.shape[1])),
@@ -73,11 +73,11 @@ model = nimfa.mf(V,
               max_iter = 12, 
               initialize_only = True,
               alpha = 0.01)
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
     
 
 # Example call of LSNMF with algorithm specific parameters set    
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = "random_vcol", 
               rank = 10, 
               method = "lsnmf", 
@@ -86,12 +86,12 @@ model = nimfa.mf(V,
               sub_iter = 10,
               inner_sub_iter = 10, 
               beta = 0.1)
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
 
 
 
 # Example call of NMF - Euclidean with algorithm specific parameters set
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = "nndsvd", 
               rank = 10, 
               method = "nmf", 
@@ -99,11 +99,11 @@ model = nimfa.mf(V,
               initialize_only = True,
               update = 'euclidean',
               objective = 'fro')
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
 
 
 # Example call of NMF - Divergence with algorithm specific parameters set
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = "random_c", 
               rank = 10, 
               method = "nmf", 
@@ -111,11 +111,11 @@ model = nimfa.mf(V,
               initialize_only = True,
               update = 'divergence',
               objective = 'div')
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
 
 
 # Example call of NMF - Connectivity with algorithm specific parameters set
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
              method = "nmf", 
              rank = 10, 
              seed = "random_vcol", 
@@ -124,44 +124,44 @@ model = nimfa.mf(V,
              objective = 'conn',
              conn_change = 40,
              initialize_only = True)
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
     
     
 # Example call of NSNMF with algorithm specific parameters set    
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = "random", 
               rank = 10, 
               method = "nsnmf", 
               max_iter = 12, 
               initialize_only = True,
               theta = 0.5)
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
     
     
 # Example call of PMF with algorithm specific parameters set    
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = "random_vcol", 
               rank = 10, 
               method = "pmf", 
               max_iter = 12, 
               initialize_only = True,
               rel_error = 1e-5)
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
 
 
 # Example call of PSMF with algorithm specific parameters set    
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = None,
               rank = 10, 
               method = "psmf", 
               max_iter = 12, 
               initialize_only = True,
               prior = prng.uniform(low = 0., high = 1., size = 10))
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
 
 
 # Example call of SNMF/R with algorithm specific parameters set
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = "random_c", 
               rank = 10, 
               method = "snmf", 
@@ -172,11 +172,11 @@ model = nimfa.mf(V,
               beta = 1e-4, 
               i_conv = 10,
               w_min_change = 0)
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
 
     
 # Example call of SNMF/L with algorithm specific parameters set    
-model = nimfa.mf(V, 
+fctr = nimfa.mf(V, 
               seed = "random_vcol", 
               rank = 10, 
               method = "snmf", 
@@ -187,5 +187,5 @@ model = nimfa.mf(V,
               beta = 1e-4, 
               i_conv = 10,
               w_min_change = 0)
-fit = nimfa.mf_run(model)
+fctr_res = nimfa.mf_run(fctr)
 

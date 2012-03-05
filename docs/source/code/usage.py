@@ -22,24 +22,25 @@ print V.todense()
 # We don't specify initialization method. Algorithm specific or random initialization will be used.
 # In Standard NMF case, by default random is used.
 # Returned object is fitted factorization model. Through it user can access quality and performance measures.
-# The fit's attribute `fit` contains all the attributes of the factorization.
-fit = nimfa.mf(V, method = "nmf", max_iter = 30, rank = 4, update = 'divergence', objective = 'div')
+# The fctr_res's attribute `fit` contains all the attributes of the factorization.
+fctr = nimfa.mf(V, method = "nmf", max_iter = 30, rank = 4, update = 'divergence', objective = 'div')
+fctr_res = nimfa.mf_run(fctr)
 
 # Basis matrix. It is sparse, as input V was sparse as well.
-W = fit.basis()
+W = fctr_res.basis()
 print "Basis matrix"
 print W.todense()
 
 # Mixture matrix. We print this tiny matrix in dense format.
-H = fit.coef()
+H = fctr_res.coef()
 print "Coef"
 print H.todense()
 
 # Return the loss function according to Kullback-Leibler divergence. By default Euclidean metric is used.
-print "Distance Kullback-Leibler: %5.3e" % fit.distance(metric = "kl")
+print "Distance Kullback-Leibler: %5.3e" % fctr_res.distance(metric = "kl")
 
 # Compute generic set of measures to evaluate the quality of the factorization
-sm = fit.summary()
+sm = fctr_res.summary()
 # Print sparseness (Hoyer, 2004) of basis and mixture matrix
 print "Sparseness Basis: %5.3f  Mixture: %5.3f" % (sm['sparseness'][0], sm['sparseness'][1])
 # Print actual number of iterations performed
@@ -70,24 +71,25 @@ print V
 # We don't specify initialization method. Algorithm specific or random initialization will be used. 
 # In LSNMF case, by default random is used.
 # Returned object is fitted factorization model. Through it user can access quality and performance measures.
-# The fit's attribute `fit` contains all the attributes of the factorization.  
-fit = nimfa.mf(V, method = "lsnmf", max_iter = 10, rank = 3)
+# The fctr_res's attribute `fit` contains all the attributes of the factorization.  
+fctr = nimfa.mf(V, method = "lsnmf", max_iter = 10, rank = 3)
+fctr_res = nimfa.mf_run(fctr)
 
 # Basis matrix.
-W = fit.basis()
+W = fctr_res.basis()
 print "Basis matrix"
 print W
 
 # Mixture matrix. 
-H = fit.coef()
+H = fctr_res.coef()
 print "Coef"
 print H
 
 # Print the loss function according to Kullback-Leibler divergence. By default Euclidean metric is used.
-print "Distance Kullback-Leibler: %5.3e" % fit.distance(metric = "kl")
+print "Distance Kullback-Leibler: %5.3e" % fctr_res.distance(metric = "kl")
 
 # Compute generic set of measures to evaluate the quality of the factorization
-sm = fit.summary()
+sm = fctr_res.summary()
 # Print residual sum of squares (Hutchins, 2008). Can be used for estimating optimal factorization rank.
 print "Rss: %8.3f" % sm['rss']
 # Print explained variance.
@@ -119,20 +121,20 @@ print V
 # We don't specify any algorithm specific parameters. Defaults will be used.
 # We specify Random V Col initialization algorithm. 
 # We enable tracking the error from each iteration of the factorization, by default only the final value of objective function is retained. 
-# Perform initialization separately. 
-model = nimfa.mf(V, seed = "random_vcol", method = "lsnmf", max_iter = 10, rank = 3, track_error = True, initialize_only = True)
+# Perform initialization. 
+fctr = nimfa.mf(V, seed = "random_vcol", method = "lsnmf", max_iter = 10, rank = 3, track_error = True)
 
 # Returned object is fitted factorization model. Through it user can access quality and performance measures.
-# The fit's attribute `fit` contains all the attributes of the factorization.  
-fit = nimfa.mf_run(model)
+# The fctr_res's attribute `fit` contains all the attributes of the factorization.  
+fctr_res = nimfa.mf_run(fctr)
 
 # Basis matrix.
-W = fit.basis()
+W = fctr_res.basis()
 print "Basis matrix"
 print W
 
 # Mixture matrix. 
-H = fit.coef()
+H = fctr_res.coef()
 print "Coef"
 print H
 
@@ -140,11 +142,11 @@ print H
 print "Error tracking"
 # A list of objective function values for each iteration in factorization is printed.
 # If error tracking is enabled and user specifies multiple runs of the factorization, get_error(run = n) return a list of objective values from n-th run. 
-# fit.fit.tracker is an instance of Mf_track -- isinstance(fit.fit.tracker, nimfa.models.mf_track.Mf_track)
-print fit.fit.tracker.get_error()
+# fctr_res.fit.tracker is an instance of Mf_track -- isinstance(fctr_res.fit.tracker, nimfa.models.mf_track.Mf_track)
+print fctr_res.fit.tracker.get_error()
 
 # Compute generic set of measures to evaluate the quality of the factorization
-sm = fit.summary()
+sm = fctr_res.summary()
 # Print residual sum of squares (Hutchins, 2008). Can be used for estimating optimal factorization rank.
 print "Rss: %8.3f" % sm['rss']
 # Print explained variance.
@@ -180,24 +182,24 @@ def init_info(model):
 # We specify Random C initialization algorithm.
 # We specify callback_init parameter by passing a init_info function 
 # This function is called after initialization and prior to factorization in each run.  
-model = nimfa.mf(V, seed = "random_c", method = "icm", max_iter = 10, rank = 3, initialize_only = True, callback_init = init_info)
+fctr = nimfa.mf(V, seed = "random_c", method = "icm", max_iter = 10, rank = 3, callback_init = init_info)
 
 # Returned object is fitted factorization model. Through it user can access quality and performance measures.
-# The fit's attribute `fit` contains all the attributes of the factorization.  
-fit = nimfa.mf_run(model)
+# The fctr_res's attribute `fit` contains all the attributes of the factorization.  
+fctr_res = nimfa.mf_run(fctr)
 
 # Basis matrix.
-W = fit.basis()
+W = fctr_res.basis()
 print "Resulting basis matrix"
 print W
 
 # Mixture matrix. 
-H = fit.coef()
+H = fctr_res.coef()
 print "Resulting mixture matrix"
 print H
 
 # Compute generic set of measures to evaluate the quality of the factorization
-sm = fit.summary()
+sm = fctr_res.summary()
 # Print residual sum of squares (Hutchins, 2008). Can be used for estimating optimal factorization rank.
 print "Rss: %8.3e" % sm['rss']
 # Print explained variance.
@@ -219,12 +221,12 @@ import nimfa
 
 V = nimfa.examples.medulloblastoma.read(normalize = True)
 
-model = nimfa.mf(V, seed = 'random_vcol', method = 'lsnmf', rank = 40, max_iter = 65)
-fitted = nimfa.mf_run(model)
+fctr = nimfa.mf(V, seed = 'random_vcol', method = 'lsnmf', rank = 40, max_iter = 65)
+fctr_res = nimfa.mf_run(fctr)
 
-print 'Rss: %5.4f' % fitted.fit.rss()
-print 'Evar: %5.4f' % fitted.fit.evar()
-print 'K-L divergence: %5.4f' % fitted.distance(metric = 'kl')
-print 'Sparseness, W: %5.4f, H: %5.4f' % fitted.fit.sparseness()
+print 'Rss: %5.4f' % fctr_res.fit.rss()
+print 'Evar: %5.4f' % fctr_res.fit.evar()
+print 'K-L divergence: %5.4f' % fctr_res.distance(metric = 'kl')
+print 'Sparseness, W: %5.4f, H: %5.4f' % fctr_res.fit.sparseness()
 
 
