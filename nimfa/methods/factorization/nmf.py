@@ -4,7 +4,7 @@
 Nmf (``methods.factorization.nmf``)
 ###################################
 
-**Standard Nonnegative Matrix Factorization (NMF)**. Based on Kullbach-Leibler divergence, it uses simple multiplicative
+**Standard Nonnegative Matrix Factorization (NMF)**. Based on Kullback-Leibler divergence, it uses simple multiplicative
 updates [Lee2001]_, enhanced to avoid numerical underflow [Brunet2004]_. Based on Euclidean distance, it uses simple multiplicative
 updates [Lee2001]_. Different objective functions can be used, namely Euclidean distance, divergence or connectivity 
 matrix convergence. 

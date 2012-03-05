@@ -467,7 +467,7 @@ class Nmf(object):
         is factorization rank. This method tries different values for ranks, performs factorizations, computes some quality 
         measures of the results and chooses the best value according to [Brunet2004]_ and [Hutchins2008]_.
         
-        .. note:: The process of rank estimation can be lenghty.     
+        .. note:: The process of rank estimation can be lengthy.     
         
         Return a `dict` (keys are values of rank from range, values are `dict`s of measures) of quality measures for each value in 
         rank's range. This can be passed to the visualization model, from which estimated rank can be established. 

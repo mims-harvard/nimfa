@@ -14,7 +14,7 @@
     .. note:: The CBCL face images database used in this example is not included in the `datasets`. If you wish to
               perform the CBCL data experiments, start by downloading the images.  Download links are listed in the 
               ``datasets``. To run the example, uncompress the data and put it into corresponding data directory, namely 
-              the extracted CBCL data set must be find in the ``CBCL_faces`` directory under ``datasets``. Once you have 
+              the extracted CBCL data set must exist in the ``CBCL_faces`` directory under ``datasets``. Once you have 
               the data installed, you are ready to start running the experiments. 
       
     We experimented with the following factorization algorithms to learn the basis images from the CBCL database: 

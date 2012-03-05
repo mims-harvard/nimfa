@@ -6,14 +6,14 @@
 
     In this example of text analysis we consider the text processing application inspired by [Albright2006]_.
     
-    We used the Medlars data set, which is a collection of 1033 medical abstracts. In example we performed factorization
+    We used the Medlars data set, which is a collection of 1033 medical abstracts. For example we performed factorization
     on term-by-document matrix by constructing a matrix of shape 4765 (terms) x 1033 (documents). Original number
     of terms is 16017, the reduced number is a result of text preprocessing, namely removing stop words, too short words, 
     words that appear 2 times or less in the corpus and words that appear 50 times or more.
 
     .. note:: Medlars data set of medical abstracts used in this example is not included in the `datasets` and need to be
       downloaded. Download links are listed in the ``datasets``. Download compressed version of document text. To run the example, 
-      the extracted Medlars data set must be find in the ``Medlars`` directory under ``datasets``. 
+      the extracted Medlars data set must exist in the ``Medlars`` directory under ``datasets``. 
       
     Example of medical abstract::
         

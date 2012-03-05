@@ -24,7 +24,7 @@
               wish to perform the gene function prediction experiments, start by downloading the data set. In particular
               D1 (FC) seq data set must be available for the example to run.  Download links are listed in the 
               ``datasets``. To run the example, uncompress the data and put it into corresponding data directory, namely 
-              the extracted data set must be find in the ``S_cerevisiae_FC`` directory under ``datasets``. Once you have 
+              the extracted data set must exist in the ``S_cerevisiae_FC`` directory under ``datasets``. Once you have 
               the data installed, you are ready to start running the experiments.  
     
     Here is the outline of this gene function prediction task. 

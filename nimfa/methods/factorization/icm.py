@@ -41,10 +41,10 @@ class Icm(nmf_std.Nmf_std):
     
     :param iiter: Number of inner iterations. Default is 20. 
     :type iiter: `int`
-    :param alpha: The prior for basis matrix (W) of proper dimensions. Default is uniformely distributed random sparse matrix prior with
+    :param alpha: The prior for basis matrix (W) of proper dimensions. Default is uniformly distributed random sparse matrix prior with
                   0.8 density parameter.
     :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
-    :param beta: The prior for mixture matrix (H) of proper dimensions. Default is uniformely distributed random sparse matrix prior with
+    :param beta: The prior for mixture matrix (H) of proper dimensions. Default is uniformly distributed random sparse matrix prior with
                  0.8 density parameter.
     :type beta: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
     :param theta: The prior for :param:`sigma`. Default is 0.
