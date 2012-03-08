@@ -20,9 +20,20 @@ for some quality measures. By setting runtime specific options tracking the resi
 Extensive documentation with working examples which demonstrate real applications, commonly used benchmark data and visualization methods are provided to help with the 
 interpretation and comprehension of the results.
 
-Nimfa library is a result of the Google Summer of Code 2011 program by the `Orange`_ organization. 
+Warranty
+========
 
-.. _Orange: http://orange.biolab.si
+THIS SOURCE CODE IS SUPPLIED ÒAS ISÓ WITHOUT WARRANTY OF ANY KIND, AND ITS AUTHOR AND THE JOURNAL OF MACHINE LEARNING RESEARCH (JMLR) 
+AND JMLRÕS PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL WARRANTIES, INCLUDING BUT NOT LIMITED TO ANY IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND ANY WARRANTIES OR NON INFRINGEMENT. THE USER ASSUMES ALL LIABILITY 
+AND RESPONSIBILITY FOR USE OF THIS SOURCE CODE, AND NEITHER THE AUTHOR NOR JMLR, NOR JMLRÕS PUBLISHERS AND DISTRIBUTORS, WILL BE 
+LIABLE FOR DAMAGES OF ANY KIND RESULTING FROM ITS USE. 
+
+Without limiting the generality of the foregoing, neither the author, nor JMLR, nor JMLRÕs publishers and distributors, warrant that 
+the Source Code will be error-free, will operate without interruption, or will meet the needs of the user.
+
+
+
 
 
 
