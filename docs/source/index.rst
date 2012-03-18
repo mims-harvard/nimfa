@@ -19,7 +19,7 @@ fitted factorization model through which user can access matrix factors and esti
    		:lines: 220-230
 
 Running this script produces the following output, where slight differences in reported scores across different 
-runs can be contributed to randomness of the Random Vcol initialization method::
+runs can be attributed to randomness of the Random Vcol initialization method::
 	
 	Rss: 0.2668
 	Evar: 0.9997
