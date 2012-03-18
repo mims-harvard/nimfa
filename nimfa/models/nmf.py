@@ -98,27 +98,27 @@ class Nmf(object):
         if sp.isspmatrix(self.V):
             self.V = self.V.tocsr().astype('d')
         else:
-            self.V = self.V if self.V.dtype == np.dtype(float) else np.mat(self.V, dtype = 'd')
+            self.V = np.asmatrix(self.V) if self.V.dtype == np.dtype(float) else np.asmatrix(self.V, dtype = 'd')
         if hasattr(self, "V1"):
             if sp.isspmatrix(self.V1):
                 self.V1 = self.V1.tocsr().astype('d')
             else:
-                self.V1 = self.V1 if self.V1.dtype == np.dtype(float) else np.mat(self.V1, dtype = 'd')
+                self.V1 = np.asmatrix(self.V1) if self.V1.dtype == np.dtype(float) else np.asmatrix(self.V1, dtype = 'd')
         if self.W != None:
             if sp.isspmatrix(self.W):
                 self.W = self.W.tocsr().astype('d')
             else:
-                self.W = self.W if self.W.dtype == np.dtype(float) else np.mat(self.W, dtype = 'd')
+                self.W = np.asmatrix(self.W) if self.W.dtype == np.dtype(float) else np.asmatrix(self.W, dtype = 'd')
         if self.H != None:
             if sp.isspmatrix(self.H):
                 self.H = self.H.tocsr().astype('d')
             else:
-                self.H = self.H if self.H.dtype == np.dtype(float) else np.mat(self.H, dtype = 'd')
+                self.H = np.asmatrix(self.H) if self.H.dtype == np.dtype(float) else np.asmatrix(self.H, dtype = 'd')
         if self.H1 != None:
             if sp.isspmatrix(self.H1):
                 self.H1 = self.H1.tocsr().astype('d')
             else:
-                self.H1 = self.H1 if self.H1.dtype == np.dtype(float) else np.mat(self.H1, dtype = 'd')
+                self.H1 = np.asmatrix(self.H1) if self.H1.dtype == np.dtype(float) else np.asmatrix(self.H1, dtype = 'd')
     
     def run(self):
         """Run the specified MF algorithm."""

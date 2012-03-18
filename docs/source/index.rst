@@ -29,7 +29,13 @@ runs can be attributed to randomness of the Random Vcol initialization method::
 Further real-world examples and demonstrations of library capabilities are provided in the `Examples section`_ and in `sample scripts on this page`_.
 
 .. note:: See also a `short presentation about nimfa.`_ 
+	
+.. topic:: News:
 
+    A paper entitled "NIMFA -- A Python Library for Nonnegative Matrix Factorization" has been accepted for publication in the `Journal of Machine Learning Research`_ (JMLR). 
+
+
+.. _Journal of Machine Learning Research: http://www.jmlr.org
 
 .. _Examples section: nimfa.examples.html
 

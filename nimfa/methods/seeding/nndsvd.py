@@ -88,7 +88,7 @@ class Nndsvd(object):
         self.H[self.H < 1e-11] = 0
         # NNDSVD 
         if self.flag == 0:
-            return sp.lil_matrix(self.W), sp.lil_matrix(self.H)
+            return (sp.lil_matrix(self.W).tocsr(), sp.lil_matrix(self.H).tocsr()) if sp.isspmatrix(V) else self.W, self.H
         # NNDSVDa
         if self.flag == 1:
             avg = V.mean()
