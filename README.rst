@@ -20,7 +20,24 @@ for some quality measures. By setting runtime specific options tracking the resi
 Extensive documentation with working examples which demonstrate real applications, commonly used benchmark data and visualization methods are provided to help with the 
 interpretation and comprehension of the results.
 
-Warranty
+Licese
+======
+
+	nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
+    Copyright (C) 2011  
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+
+JMLR Warranty
 ========
 
 THIS SOURCE CODE IS SUPPLIED "AS IS" WITHOUT WARRANTY OF ANY KIND, AND ITS AUTHOR AND THE JOURNAL OF MACHINE LEARNING RESEARCH (JMLR) 
