@@ -20,11 +20,11 @@ for some quality measures. By setting runtime specific options tracking the resi
 Extensive documentation with working examples which demonstrate real applications, commonly used benchmark data and visualization methods are provided to help with the 
 interpretation and comprehension of the results.
 
-Licese
+License
 ======
 
 	nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
-    Copyright (C) 2011  
+    Copyright (C) 2011-2012 Marinka Zitnik and Blaz Zupan 
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
