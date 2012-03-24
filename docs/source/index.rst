@@ -100,9 +100,9 @@ Utils
 Installation
 ############
 
-*************************************************************************
-nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
-*************************************************************************
+******
+Source
+******
 
 No special installation procedure is specified. However, the nimfa library makes extensive use of `SciPy`_ and `NumPy`_ 
 libraries for fast and convenient dense and sparse matrix manipulation and some linear
@@ -119,9 +119,9 @@ Unzip the archive. To build and install run::
 	
 	python setup.py install
 
-***************************************************************************************
-nimfa - A Python Library for Nonnegative Matrix Factorization Techniques Documentation
-***************************************************************************************
+*************
+Documentation
+*************
 
 For building the documentation use Sphinx 1.0 or newer. Sphinx is available at `Sphinx home page`_ and
 nimfa library documentation sources are available at `Github repository`_. Before building documentation, 
