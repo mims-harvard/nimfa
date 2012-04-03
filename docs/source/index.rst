@@ -30,12 +30,10 @@ Further real-world examples and demonstrations of library capabilities are provi
 
 .. note:: See also a `short presentation about nimfa.`_ 
 	
-.. topic:: News:
+.. note:: Marinka Zitnik, Blaz Zupan. Nimfa: `A Python Library for Nonnegative Matrix Factorization, Journal of Machine Learning Research`_, 13, 849--853, 2012.
 
-    A paper entitled "NIMFA -- A Python Library for Nonnegative Matrix Factorization" has been accepted for publication in the `Journal of Machine Learning Research`_ (JMLR). 
-
-
-.. _Journal of Machine Learning Research: http://www.jmlr.org
+ 
+.. _A Python Library for Nonnegative Matrix Factorization, Journal of Machine Learning Research: http://jmlr.csail.mit.edu/papers/v13/zitnik12a.html
 
 .. _Examples section: nimfa.examples.html
 
@@ -240,9 +238,12 @@ References
 .. [Schachtner2008] R. Schachtner, D. Lutter, P. Knollmueller, A. M. Tome, F. J. Theis, G. Schmitz, M. Stetter, P. Gomez Vilda and E. W. Lang. Knowledge-based gene expression classification via matrix factorization. Bioinformatics, 24(15): 1688-1697, 2008. 
 
 
-###############
-Acknowledgement
-###############
+################
+Acknowledgements
+################
+
+We would like to acknowledge support for this project from the Google Summer of Code 2011 program and 
+from the Slovenian Research Agency grants P2-0209, J2-9699, and L2- 1112.
 
 The nimfa - A Python Library for Nonnegative Matrix Factorization Techniques is part of the Google Summer of Code 2011 program by `Marinka Zitnik`_
 under supervision of the `Orange`_ organization and mentor `Prof. Blaz Zupan, PhD`_. 
@@ -250,12 +251,13 @@ under supervision of the `Orange`_ organization and mentor `Prof. Blaz Zupan, Ph
 .. _Prof. Blaz Zupan, PhD: http://www.biolab.si/en/blaz/
 .. _Marinka Zitnik: http://helikoid.si
 
-.. image:: http://orange.biolab.si/small-logo.png
+.. image:: /images/base/orange-logo.png
 	:target: http://orange.biolab.si
 	
 
-.. image:: http://code.google.com/p/google-summer-of-code/logo?cct=1280260724
+.. image:: /images/base/google-logo.png
 	:target: http://code.google.com/soc/
+	:scale: 50 %
 	
 	
 ##########

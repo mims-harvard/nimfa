@@ -20,6 +20,12 @@ for some quality measures. By setting runtime specific options tracking the resi
 Extensive documentation with working examples which demonstrate real applications, commonly used benchmark data and visualization methods are provided to help with the 
 interpretation and comprehension of the results.
 
+
+Citing
+======
+
+Marinka Zitnik, Blaz Zupan. Nimfa: A Python Library for Nonnegative Matrix Factorization, Journal of Machine Learning Research, 13, 849--853, 2012.
+
 License
 ======
 
