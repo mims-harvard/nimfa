@@ -158,6 +158,7 @@ class Nmf(nmf_std.Nmf_std):
         self.update = getattr(self, self.options.get('update', 'euclidean') + '_update')
         self.objective = getattr(self, self.options.get('objective', 'fro') + '_objective')
         self.conn_change = self.options.get('conn_change', 30) if 'conn' in self.objective.__name__ else None
+        self._conn_change = 0
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None

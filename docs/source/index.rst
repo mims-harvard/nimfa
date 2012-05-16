@@ -30,8 +30,6 @@ Further real-world examples and demonstrations of library capabilities are provi
 
 .. note:: See also a `short presentation about nimfa.`_ 
 	
-.. note:: Marinka Zitnik, Blaz Zupan. Nimfa: `A Python Library for Nonnegative Matrix Factorization, Journal of Machine Learning Research`_, 13, 849--853, 2012.
-
  
 .. _A Python Library for Nonnegative Matrix Factorization, Journal of Machine Learning Research: http://jmlr.csail.mit.edu/papers/v13/zitnik12a.html
 
@@ -259,6 +257,21 @@ under supervision of the `Orange`_ organization and mentor `Prof. Blaz Zupan, Ph
 	:target: http://code.google.com/soc/
 	:scale: 50 %
 	
+########
+Citation
+########
+
+	.. code-block:: none
+	
+		@article{ZitnikZ12,
+		  author    = {Marinka Zitnik and Blaz Zupan},
+		  title     = {NIMFA: A Python Library for Nonnegative Matrix Factorization},
+		  journal   = {Journal of Machine Learning Research},
+		  volume    = {13},
+		  year      = {2012},
+		  pages     = {849-853},
+		}
+
 	
 ##########
 Disclaimer	

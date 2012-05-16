@@ -170,8 +170,8 @@ def plot(C, rank):
     :param rank: Factorization rank.
     :type rank: `int`
     """
-    set_cmap("RdBu_r")
-    imshow(np.array(C)) 
+    imshow(np.array(C))
+    set_cmap("RdBu_r") 
     savefig("all_aml_consensus" + str(rank) + ".png")
     
 def reorder(C):
