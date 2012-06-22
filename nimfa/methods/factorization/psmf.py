@@ -119,7 +119,7 @@ class Psmf(nmf_std.Nmf_std):
                 best_obj = c_obj
                 self.n_iter = iter 
                 self.final_obj = c_obj
-                mffit = mf_fit.Mf_fit(self)
+                mffit = mf_fit.Mf_fit(copy.deepcopy(self))
         
         return mffit
     

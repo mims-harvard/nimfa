@@ -196,7 +196,7 @@ class Nmf(object):
     def consensus(self, idx = None):
         """
         Compute consensus matrix as the mean connectivity matrix across multiple runs of the factorization. It has been
-        proposed by Brunet et. al. (2004) to help visualize and measure the stability of the clusters obtained by NMF.
+        proposed by [Brunet2004]_ to help visualize and measure the stability of the clusters obtained by NMF.
         
         Tracking of matrix factors across multiple runs must be enabled for computing consensus matrix. For results
         of a single NMF run, the consensus matrix reduces to the connectivity matrix.
@@ -230,7 +230,7 @@ class Nmf(object):
     
     def entropy(self, membership = None, idx = None):
         """
-        Compute the entropy of the NMF model given a priori known groups of samples (Kim, Park, 2007).
+        Compute the entropy of the NMF model given a priori known groups of samples [Park2007]_.
         
         The entropy is a measure of performance of a clustering method in recovering classes defined by a list a priori known (true class
         labels). 
@@ -301,7 +301,7 @@ class Nmf(object):
         
     def score_features(self, idx = None):
         """
-        Compute the score for each feature that represents its specificity to one of the basis vector (Kim, Park, 2007).
+        Compute the score for each feature that represents its specificity to one of the basis vector [Park2007]_.
         
         A row vector of the basis matrix (W) indicates the contributions of a gene to the r (i.e. columns of W) biological pathways or
         processes. As genes can participate in more than one biological process, it is beneficial to investigate genes that have relatively 
@@ -325,9 +325,9 @@ class Nmf(object):
     
     def select_features(self, idx = None):
         """
-        Compute the most basis-specific features for each basis vector (Kim, Park, 2007).
+        Compute the most basis-specific features for each basis vector [Park2007]_.
         
-        (Kim, Park, 2007) scoring schema and feature selection method is used. The features are first scored using the :func:`score_features`.
+        [Park2007]_ scoring schema and feature selection method is used. The features are first scored using the :func:`score_features`.
         Then only the features that fulfill both the following criteria are retained:
         #. score greater than u + 3s, where u and s are the median and the median absolute deviation (MAD) of the scores, resp.,
         #. the maximum contribution to a basis component (i.e the maximal value in the corresponding row of the basis matrix (W)) is larger 
@@ -349,7 +349,7 @@ class Nmf(object):
     
     def purity(self, membership = None, idx = None):
         """
-        Compute the purity given a priori known groups of samples (Kim, Park, 2007).
+        Compute the purity given a priori known groups of samples [Park2007]_.
         
         The purity is a measure of performance of a clustering method in recovering classes defined by a list a priori known (true class
         labels). 
@@ -374,10 +374,10 @@ class Nmf(object):
     
     def rss(self, idx = None):
         """
-        Compute Residual Sum of Squares (RSS) between NMF estimate and target matrix (Hutchins, 2008).
+        Compute Residual Sum of Squares (RSS) between NMF estimate and target matrix [Hutchins2008]_.
         
-        This measure can be used to estimate optimal factorization rank. (Hutchins et. al., 2008) suggested to choose
-        the first value where the RSS curve presents an inflection point. (Frigyesi and Hoglund, 2008) suggested to use the 
+        This measure can be used to estimate optimal factorization rank. [Hutchins2008]_ suggested to choose
+        the first value where the RSS curve presents an inflection point. [Frigyesi2008]_ suggested to use the 
         smallest value at which the decrease in the RSS is lower than the decrease of the RSS obtained from random data. 
         
         RSS tells us how much of the variation in the dependent variables our model did not explain. 
@@ -393,7 +393,7 @@ class Nmf(object):
     
     def sparseness(self, idx = None):
         """
-        Compute sparseness of matrix (basis vectors matrix, mixture coefficients) (Hoyer, 2004). This sparseness 
+        Compute sparseness of matrix (basis vectors matrix, mixture coefficients) [Hoyer2004]_. This sparseness 
         measure quantifies how much energy of a vector is packed into only few components. The sparseness of a vector
         is a real number in [0, 1]. Sparser vector has value closer to 1. The measure is 1 iff vector contains single
         nonzero component and the measure is equal to 0 iff all components are equal. 
@@ -423,7 +423,7 @@ class Nmf(object):
         on the average of connectivity matrices. It measures the stability of the clusters obtained from NMF. 
         It is computed as the Pearson correlation of two distance matrices: the first is the distance between samples induced by the 
         consensus matrix; the second is the distance between samples induced by the linkage used in the reordering of the consensus 
-        matrix (Brunet, 2004).
+        matrix [Brunet2004]_.
         
         Return real number. In a perfect consensus matrix, cophenetic correlation equals 1. When the entries in consensus matrix are
         scattered between 0 and 1, the cophenetic correlation is < 1. We observe how this coefficient changes as factorization rank 
@@ -447,7 +447,7 @@ class Nmf(object):
         Compute the dispersion coefficient of consensus matrix, generally obtained from multiple
         NMF runs.
         
-        The dispersion coefficient is based on the average of connectivity matrices (Kim, Park, 2007). It 
+        The dispersion coefficient is based on the average of connectivity matrices [Park2007]_. It 
         measures the reproducibility of the clusters obtained from multiple NMF runs.
         
         Return the real value in [0,1]. Dispersion is 1 iff for a perfect consensus matrix, where all entries are 0 or 1.
