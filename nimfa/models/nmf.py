@@ -499,30 +499,30 @@ class Nmf(object):
         self.n_run = n_run
         def _measures(measure):
             return {
-                'sparseness': fit.sparseness,
-                'rss': fit.rss,
-                'evar': fit.evar,
-                'residuals': fit.residuals,
-                'connectivity': fit.connectivity,
-                'dispersion': fit.dispersion,
-                'cophenetic': fit.coph_cor,
-                'consensus': fit.consensus}[measure]
+                'sparseness': fctr.fit.sparseness,
+                'rss': fctr.fit.rss,
+                'evar': fctr.fit.evar,
+                'residuals': fctr.fit.residuals,
+                'connectivity': fctr.fit.connectivity,
+                'dispersion': fctr.fit.dispersion,
+                'cophenetic': fctr.fit.coph_cor,
+                'consensus': fctr.fit.consensus}[measure]
         summaries = {}
         for rank in range: 
             self.rank = rank
-            fit = self.run()
+            fctr = self.run()
             if what == 'all':
-                summaries[rank] = fit.summary(idx)
+                summaries[rank] = fctr.summary(idx)
             else:
                 summaries[rank] = {
-                'rank': self.fit.rank,
-                'n_iter': self.fit.n_iter,
-                'n_run': self.fit.n_run }
+                'rank': fctr.fit.rank,
+                'n_iter': fctr.fit.n_iter,
+                'n_run': fctr.fit.n_run }
                 for measure in what:
                     if measure == 'euclidean':
-                        summaries[rank][measure] = fit.distance(metric = 'euclidean', idx = idx)
+                        summaries[rank][measure] = fctr.distance(metric = 'euclidean', idx = idx)
                     elif measure == 'kl':
-                        summaries[rank][measure] = fit.distance(metric = 'kl', idx = idx)
+                        summaries[rank][measure] = fctr.distance(metric = 'kl', idx = idx)
                     else:
                         summaries[rank][measure] = _measures(measure)(idx = idx)
         return summaries
