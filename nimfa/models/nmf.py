@@ -427,7 +427,7 @@ class Nmf(object):
         
         Return real number. In a perfect consensus matrix, cophenetic correlation equals 1. When the entries in consensus matrix are
         scattered between 0 and 1, the cophenetic correlation is < 1. We observe how this coefficient changes as factorization rank 
-        increases. We select the first rank, where the magnitude of the cophenetic correlation coefficient begins to fall (Brunet, 2004).
+        increases. We select the first rank, where the magnitude of the cophenetic correlation coefficient begins to fall [Brunet2004]_.
         
         :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
                     :param:`idx` is always None.
