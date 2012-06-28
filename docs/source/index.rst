@@ -233,7 +233,9 @@ References
 
 .. [Schietgat2010] Leander Schietgat, Celine Vens, Jan Struyf, Hendrik Blockeel, Dragi Kocev and Saso Dzeroski. Predicting gene function using hierarchical multi-label decision tree ensembles. BMC Bioinformatics, 11(2), 2010. 
 
-.. [Schachtner2008] R. Schachtner, D. Lutter, P. Knollmueller, A. M. Tome, F. J. Theis, G. Schmitz, M. Stetter, P. Gomez Vilda and E. W. Lang. Knowledge-based gene expression classification via matrix factorization. Bioinformatics, 24(15): 1688-1697, 2008. 
+.. [Schachtner2008] R. Schachtner, D. Lutter, P. Knollmueller, A. M. Tome, F. J. Theis, G. Schmitz, M. Stetter, P. Gomez Vilda and E. W. Lang. Knowledge-based gene expression classification via matrix factorization. Bioinformatics, 24(15): 1688-1697, 2008.
+
+.. [FWang2008] F. Wang, T. Li, C. Zhang. Semi-Supervised Clustering via Matrix Factorization. SDM 2008: 1-12, 2008.  
 
 
 ################

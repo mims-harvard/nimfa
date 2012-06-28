@@ -189,3 +189,13 @@ fctr = nimfa.mf(V,
               w_min_change = 0)
 fctr_res = nimfa.mf_run(fctr)
 
+# Example call of PMFCC with algorithm specific parameters set    
+fctr = nimfa.mf(V, 
+              seed = "random_vcol", 
+              rank = 10, 
+              method = "pmfcc", 
+              max_iter = 12, 
+              initialize_only = True,
+              theta = np.random.random((V.shape[1], V.shape[1])))
+fctr_res = nimfa.mf_run(fctr)
+

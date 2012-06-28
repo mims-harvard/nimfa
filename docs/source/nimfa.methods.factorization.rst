@@ -33,4 +33,6 @@ Factorization (``methods.factorization``)
    nimfa.methods.factorization.snmf
    
    nimfa.methods.factorization.snmnmf
+   
+   nimfa.methods.factorization.pmfcc
 

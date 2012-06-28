@@ -20,6 +20,8 @@ Models (``models``)
    
    nimfa.models.nmf_mm
    
+   nimfa.models.smf
+   
    nimfa.models.mf_fit
    
    nimfa.models.mf_track

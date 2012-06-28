@@ -3,7 +3,8 @@
     This package contains factorization models used in the library nimfa. Specifically, it contains the following:
     
         #. Generic factorization model for handling common computations and assessing quality and performance 
-           measures. 
+           measures in NMF. 
+        #. Generic factorization model for handling standard MF. 
         #. Implementation of the standard model to manage factorizations that follow standard NMF model.
         #. Implementation of the alternative nonsmooth model to manage factorizations that follow nonstandard NMF model 
            (e.g. nsnmf).
@@ -19,5 +20,6 @@ import nmf
 import nmf_std
 import nmf_ns
 import nmf_mm
+import smf
 import mf_track
 import mf_fit
