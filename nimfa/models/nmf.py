@@ -10,7 +10,7 @@ from nimfa.utils.linalg import *
 
 class Nmf(object):
     """
-    This class defines a common interface / model to handle NMF models in generic way.
+    This class defines a common interface / model to handle NMF models in a generic way.
     
     It contains definitions of the minimum set of generic methods that are used in 
     common computations and matrix factorizations. Besides it contains some quality and performance measures 
