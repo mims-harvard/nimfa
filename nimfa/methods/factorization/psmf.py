@@ -4,7 +4,9 @@
 Psmf (``methods.factorization.psmf``)
 #####################################
 
-**Probabilistic Sparse Matrix Factorization (PSMF)** [Dueck2005]_, [Dueck2004]_. PSMF allows for varying levels of sensor noise in the
+**Probabilistic Sparse Matrix Factorization (PSMF)** [Dueck2005]_, [Dueck2004]_. 
+
+PSMF allows for varying levels of sensor noise in the
 data, uncertainty in the hidden prototypes used to explain the data and uncertainty as to the prototypes selected
 to explain each data vector stacked in target matrix (V). 
 

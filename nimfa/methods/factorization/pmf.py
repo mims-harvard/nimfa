@@ -4,9 +4,10 @@
 Pmf (``methods.factorization.pmf``)
 ###################################
 
-**Probabilistic Nonnegative Matrix Factorization (PMF)** interpreting target matrix (V) as samples 
-from a multinomial [Laurberg2008]_, [Hansen2008]_ and using Euclidean distance for 
-convergence test. It is expectation maximization algorithm. 
+**Probabilistic Nonnegative Matrix Factorization (PMF).** 
+
+PMF interprets target matrix (V) as samples from a multinomial [Laurberg2008]_, [Hansen2008]_ and uses Euclidean distance for 
+convergence test. Factorization is guided by an expectation maximization algorithm. 
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 141-149

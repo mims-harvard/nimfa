@@ -4,9 +4,10 @@
 Pmfcc (``methods.factorization.pmfcc``)
 #######################################
 
-**Penalized Matrix Factorization for Constrained Clustering (PMFCC)**. PMFCC implements factorization approach proposed in [FWang2008]_. 
-Intra-type information is represented as constraints to guide the factorization process. The constraints are of two types: (i) must-link:
-two data points belong to the same class, (ii) cannot-link: two data points cannot belong to the same class.
+**Penalized Matrix Factorization for Constrained Clustering (PMFCC)** [FWang2008]_. 
+
+PMFCC is used for semi-supervised co-clustering. Intra-type information is represented as constraints to guide the factorization process. 
+The constraints are of two types: (i) must-link: two data points belong to the same class, (ii) cannot-link: two data points cannot belong to the same class.
 
 PMFCC solves the following problem. Given a target matrix V = [v_1, v_2, ..., v_n], it produces W = [f_1, f_2, ... f_rank], containing
 cluster centers and matrix H of data point cluster membership values.    
@@ -148,7 +149,7 @@ class Pmfcc(smf.Smf):
         self.H = Ht.T
     
     def objective(self):
-        """Compute Frobenius distance cost function with penalized term."""
+        """Compute Frobenius distance cost function with penalization term."""
         return (sop(self.V - dot(self.W, self.H), 2, pow)).sum() + trace(dot(self.H, dot(self.Theta, self.H.T)))
         
     def __str__(self):

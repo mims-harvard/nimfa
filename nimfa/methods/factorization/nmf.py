@@ -4,10 +4,11 @@
 Nmf (``methods.factorization.nmf``)
 ###################################
 
-**Standard Nonnegative Matrix Factorization (NMF)**. Based on Kullback-Leibler divergence, it uses simple multiplicative
-updates [Lee2001]_, enhanced to avoid numerical underflow [Brunet2004]_. Based on Euclidean distance, it uses simple multiplicative
-updates [Lee2001]_. Different objective functions can be used, namely Euclidean distance, divergence or connectivity 
-matrix convergence. 
+**Standard Nonnegative Matrix Factorization (NMF)** [Lee2001]_, [Lee1999]. 
+
+Based on Kullback-Leibler divergence, it uses simple multiplicative updates [Lee2001]_, [Lee1999], enhanced to avoid numerical 
+underflow [Brunet2004]_. Based on Euclidean distance, it uses simple multiplicative updates [Lee2001]_. Different objective 
+functions can be used, namely Euclidean distance, divergence or connectivity matrix convergence. 
 
 Together with a novel model selection mechanism, NMF is an efficient method for identification of distinct molecular
 patterns and provides a powerful method for class discovery. It appears to have higher resolution such as HC or 

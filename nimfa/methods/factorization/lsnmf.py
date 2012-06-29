@@ -5,7 +5,9 @@ Lsnmf (``methods.factorization.lsnmf``)
 #######################################
 
 **Alternating Nonnegative Least Squares Matrix Factorization Using Projected Gradient (bound constrained optimization)
-method for each subproblem (LSNMF)** [Lin2007]_. It converges faster than the popular multiplicative update approach. 
+method for each subproblem (LSNMF)** [Lin2007]_. 
+
+It converges faster than the popular multiplicative update approach. 
 
 Algorithm relies on efficiently solving bound constrained subproblems. They are solved using the projected gradient 
 method. Each subproblem contains some (m) independent nonnegative least squares problems. Not solving these separately

@@ -227,15 +227,15 @@ References
 
 .. [Hoyer2004] Patrik O. Hoyer. Non-negative matrix factorization with sparseness constraints. Journal of Machine Learning Research, 5: 1457-1469, 2004. 
 
-.. [Hutchins2008] Lucie N. Hutchins, Sean P. Murphy, Priyam Singh and Joel H. Graber. Position-dependent motif characterization using non-negative matrix factorization. Bioinformatics, 24(23): 2684-2690, 2008. 
+.. [Hutchins2008] Lucie N. Hutchins, Sean P. Murphy, Priyam Singh and Joel H. Graber. Position-dependent motif characterization using non-negative matrix factorization. Bioinformatics, 24(23): 2684-2690, 2008.
 
-.. [Frigyesi2008] Attila Frigyesi and Mattias Hoglund. Non-negative matrix factorization for the analysis of complex gene expression data: identification of clinically relevant tumor subtypes. Cancer Informatics, 6: 275-292, 2008.  
+.. [Frigyesi2008] Attila Frigyesi and Mattias Hoglund. Non-negative matrix factorization for the analysis of complex gene expression data: identification of clinically relevant tumor subtypes. Cancer Informatics, 6: 275-292, 2008.
 
-.. [Schietgat2010] Leander Schietgat, Celine Vens, Jan Struyf, Hendrik Blockeel, Dragi Kocev and Saso Dzeroski. Predicting gene function using hierarchical multi-label decision tree ensembles. BMC Bioinformatics, 11(2), 2010. 
+.. [FWang2008] Fei Wang, Tao Li, Changshui Zhang. Semi-Supervised Clustering via Matrix Factorization. SDM 2008, 1-12, 2008.  
 
+.. [Schietgat2010] Leander Schietgat, Celine Vens, Jan Struyf, Hendrik Blockeel, Dragi Kocev and Saso Dzeroski. Predicting gene function using hierarchical multi-label decision tree ensembles. BMC Bioinformatics, 11(2), 2010.
+ 
 .. [Schachtner2008] R. Schachtner, D. Lutter, P. Knollmueller, A. M. Tome, F. J. Theis, G. Schmitz, M. Stetter, P. Gomez Vilda and E. W. Lang. Knowledge-based gene expression classification via matrix factorization. Bioinformatics, 24(15): 1688-1697, 2008.
-
-.. [FWang2008] F. Wang, T. Li, C. Zhang. Semi-Supervised Clustering via Matrix Factorization. SDM 2008: 1-12, 2008.  
 
 
 ################
