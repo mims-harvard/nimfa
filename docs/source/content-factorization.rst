@@ -20,3 +20,5 @@
  * **SNMF** - Sparse nonnegative matrix factorization based on alternating nonnegativity constrained least squares [Park2007]_
     
  * **SNMNMF** - Sparse network-regularized multiple nonnegative matrix factorization [Zhang2011]_
+ 
+ * **PMFCC** - Penalized Matrix Factorization for Constrained Clustering [FWang2008]_
