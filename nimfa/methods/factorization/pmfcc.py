@@ -121,7 +121,33 @@ class Pmfcc(smf.Smf):
         
     def update(self):
         """Update basis and mixture matrix."""
-        pass
+        F = dot(X, dot(G, inv_svd(dot(G.T, G))))
+        
+        tmp1 = sop(Theta, 0, ge)
+        tmp2 = tmp1 - 1
+        Theta_p = multiply(Theta, tmp1)
+        Theta_n = multiply(Theta, tmp2)
+        FtF = dot(F.T, F)
+        XtF = dot(X.T, F)
+        tmp1 = sop(FtF, 0, ge)
+        tmp2 = tmp1 - 1
+        FtF_p = multiply(FtF, tmp1)
+        FtF_n = multiply(FtF, tmp2) 
+        tmp1 = sop(XtF, 0, ge)
+        tmp2 = tmp1 - 1 
+        XtF_p = multiply(XtF, tmp1)
+        XtF_n = multiply(XtF, tmp2)
+        
+        Theta_n_G = dot(Theta_n, G)
+        Theta_p_G = dot(Theta_p, G)
+        
+        GFtF_p = dot(G, FtF_p)
+        GFtF_n = dot(G, FtF_n) 
+        
+        enum = XtF_p + GFtF_n + Theta_n_G
+        denom = XtF_n + GFtF_p + Theta_p_G
+        
+        G = multiply(G, sop(sop(enum, denom + np.finfo(float).eps, div)), s = None, sqrt)
     
     def objective(self):
         """Compute Frobenius distance cost function with penalized term."""
