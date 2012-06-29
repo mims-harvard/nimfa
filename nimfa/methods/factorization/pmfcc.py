@@ -49,7 +49,6 @@ class Pmfcc(smf.Smf):
         for run in xrange(self.n_run):
             # [FWang2008]_; H = G.T, W = F (Table 2)
             self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
-            self.H = self.H.T
             p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
@@ -119,14 +118,14 @@ class Pmfcc(smf.Smf):
         
     def update(self):
         """Update basis and mixture matrix."""
-        F = dot(X, dot(G, inv_svd(dot(G.T, G))))
+        self.W = dot(self.V, dot(self.H.T, inv_svd(dot(self.H, self.H.T))))
         
-        tmp1 = sop(Theta, 0, ge)
+        tmp1 = sop(self.Theta, 0, ge)
         tmp2 = tmp1 - 1
-        Theta_p = multiply(Theta, tmp1)
-        Theta_n = multiply(Theta, tmp2)
-        FtF = dot(F.T, F)
-        XtF = dot(X.T, F)
+        Theta_p = multiply(self.Theta, tmp1)
+        Theta_n = multiply(self.Theta, tmp2)
+        FtF = dot(self.W.T, self.W)
+        XtF = dot(self.V.T, self.W)
         tmp1 = sop(FtF, 0, ge)
         tmp2 = tmp1 - 1
         FtF_p = multiply(FtF, tmp1)
@@ -136,20 +135,21 @@ class Pmfcc(smf.Smf):
         XtF_p = multiply(XtF, tmp1)
         XtF_n = multiply(XtF, tmp2)
         
-        Theta_n_G = dot(Theta_n, G)
-        Theta_p_G = dot(Theta_p, G)
+        Theta_n_G = dot(Theta_n, self.H.T)
+        Theta_p_G = dot(Theta_p, self.H.T)
         
-        GFtF_p = dot(G, FtF_p)
-        GFtF_n = dot(G, FtF_n) 
+        GFtF_p = dot(self.H.T, FtF_p)
+        GFtF_n = dot(self.H.T, FtF_n) 
         
         enum = XtF_p + GFtF_n + Theta_n_G
         denom = XtF_n + GFtF_p + Theta_p_G
         
-        G = multiply(G, sop(sop(enum, denom + np.finfo(float).eps, div)), s = None, op = sqrt)
+        Ht = multiply(self.H.T, sop(elop(enum, denom + np.finfo(float).eps, div), s = None, op = sqrt))
+        self.H = Ht.T
     
     def objective(self):
         """Compute Frobenius distance cost function with penalized term."""
-        return (sop(self.V - dot(self.W, self.H), 2, pow)).sum() + trace(dot(self.H, self.Theta), self.H.T)
+        return (sop(self.V - dot(self.W, self.H), 2, pow)).sum() + trace(dot(self.H, dot(self.Theta, self.H.T)))
         
     def __str__(self):
         return self.name 
