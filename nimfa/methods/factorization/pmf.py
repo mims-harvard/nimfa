@@ -66,7 +66,7 @@ class Pmf(nmf_std.Nmf_std):
                 iter += 1
                 c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
-                    self.tracker.track_error(c_obj, run)
+                    self.tracker.track_error(run, c_obj)
             self.W = self.v_factor * dot(self.W, self.sqrt_P) 
             self.H = dot(self.sqrt_P, self.H)
             if self.callback:
@@ -75,7 +75,7 @@ class Pmf(nmf_std.Nmf_std):
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(W = self.W.copy(), H = self.H.copy(), final_obj = c_obj, n_iter = iter)
+                self.tracker.track_factor(run, W = self.W.copy(), H = self.H.copy(), final_obj = c_obj, n_iter = iter)
             # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
             if c_obj <= best_obj or run == 0:
                 best_obj = c_obj

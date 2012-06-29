@@ -212,7 +212,7 @@ class Nmf(object):
             else:
                 cons = np.mat(np.zeros((V.shape[1], V.shape[1])))
             for i in xrange(self.n_run):
-                cons += self.connectivity(H = self.tracker.get_factor(i + 1).H, idx = idx)
+                cons += self.connectivity(H = self.tracker.get_factor(i).H, idx = idx)
             return sop(cons, self.n_run, div)
         else:
             return self.connectivity(H = self.coef(idx), idx = idx) 

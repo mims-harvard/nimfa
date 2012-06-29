@@ -30,44 +30,50 @@ class Mf_track():
         """
         Construct model for tracking fitted factorization model across multiple runs or tracking the residuals error across iterations. 
         """
-        self._factors = []
+        self._factors = {}
         self._residuals = {}
         
-    def track_error(self, residuals, run):
+    def track_error(self, run, residuals):
         """
         Add residuals error after one iteration. 
         
-        :param residuals: Residuals between the target matrix and its MF estimate.
-        :type residuals: `float`
         :param run: Specify the run to which :param:`residuals` belongs. Error tracking can be also used if multiple runs are enabled. 
         :type run: `int`
+        :param residuals: Residuals between the target matrix and its MF estimate.
+        :type residuals: `float`
         """
         self._residuals.setdefault(run, [])
         self._residuals[run].append(residuals)
         
-    def track_factor(self, **track_model):
+    def track_factor(self, run, **track_model):
         """
         Add matrix factorization factors (and method specific model data) after one factorization run.
         
+        :param run: Specify the run to which :param:`track_model` belongs. 
+        :type run: 'int'
         :param track_model: Matrix factorization factors.
         :type track_model:  algorithm specific
         """
+        class t_model:
+            def __init__(self, td):
+                self.__dict__.update(td)
+        self._factors[run] = t_model(track_model)
         
-    def get_factor(self, run):
+    def get_factor(self, run = 0):
         """
         Return matrix factorization factors from run :param:`run`.
         
         :param run: Saved factorization factors (and method specific model data) of :param:`run`'th run are returned. 
         :type run: `int`
         """
-        return self._factors[run - 1]
+        return self._factors[run]
     
-    def get_error(self, run = 1):
+    def get_error(self, run = 0):
         """
         Return residuals track from one run of the factorization.
         
         :param run: Specify the run of which error track is desired. By default :param:`run` is 1. 
         :type run: `int`
         """
-        return self._residuals[run - 1]
+        return self._residuals[run]
     
