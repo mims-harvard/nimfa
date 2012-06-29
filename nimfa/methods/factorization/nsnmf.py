@@ -89,6 +89,7 @@ class Nsnmf(nmf_ns.Nmf_ns):
                 self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(copy.deepcopy(self))
         
+        mffit.fit.tracker = self.tracker
         return mffit
     
     def is_satisfied(self, p_obj, c_obj, iter):

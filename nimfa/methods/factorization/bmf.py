@@ -114,6 +114,7 @@ class Bmf(nmf_std.Nmf_std):
                 self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(copy.deepcopy(self))
         
+        mffit.fit.tracker = self.tracker
         return mffit
     
     def is_satisfied(self, p_obj, c_obj, iter):

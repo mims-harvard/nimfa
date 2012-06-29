@@ -123,6 +123,7 @@ class Psmf(nmf_std.Nmf_std):
                 self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(copy.deepcopy(self))
         
+        mffit.fit.tracker = self.tracker
         return mffit
     
     def _cross_terms(self):
