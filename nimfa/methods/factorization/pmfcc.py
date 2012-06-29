@@ -103,8 +103,6 @@ class Pmfcc(smf.Smf):
             return False
         if iter > 0 and c_obj > p_obj:
             return False
-        if self.rel_error and self.error_v_n < self.rel_error:
-            return False
         return True
     
     def _adjustment(self):
@@ -147,7 +145,7 @@ class Pmfcc(smf.Smf):
         enum = XtF_p + GFtF_n + Theta_n_G
         denom = XtF_n + GFtF_p + Theta_p_G
         
-        G = multiply(G, sop(sop(enum, denom + np.finfo(float).eps, div)), s = None, sqrt)
+        G = multiply(G, sop(sop(enum, denom + np.finfo(float).eps, div)), s = None, op = sqrt)
     
     def objective(self):
         """Compute Frobenius distance cost function with penalized term."""

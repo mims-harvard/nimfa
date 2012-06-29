@@ -26,6 +26,10 @@ class Smf(object):
         if self.W != None or self.H != None or self.H1 != None: 
             raise MFError("Passing fixed initialized factors is not supported in SMF model.")
         self.model_name = "smf"
+        
+    def run(self):
+        """Run the specified MF algorithm."""
+        return self.factorize()
             
     def basis(self):
         """Return the matrix of basis vectors (factor 1 matrix)."""
