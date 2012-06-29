@@ -106,7 +106,7 @@ class Bmf(nmf_std.Nmf_std):
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(run, W = self.W.copy(), H = self.H.copy(), final_obj = c_obj, n_iter = iter)
+                self.tracker.track_factor(run, W = self.W, H = self.H, final_obj = c_obj, n_iter = iter)
             # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
             if c_obj <= best_obj or run == 0:
                 best_obj = c_obj
@@ -169,8 +169,14 @@ class Bmf(nmf_std.Nmf_std):
         """
         val_w, _ = argmax(self.W, axis = 0)
         val_h, _ = argmax(self.H, axis = 1)
-        D_w = sp.spdiags(val_w, 0, self.W.shape[1], self.W.shape[1])
-        D_h = sp.spdiags(val_h, 0, self.H.shape[0], self.H.shape[0])
+        if sp.isspmatrix(self.W):
+            D_w = sp.spdiags(val_w, 0, self.W.shape[1], self.W.shape[1])
+        else:
+            D_w = np.diag(val_w)
+        if sp.isspmatrix(self.H):
+            D_h = sp.spdiags(val_h, 0, self.H.shape[0], self.H.shape[0])
+        else:
+            D_h = np.diag(val_h)
         self.W = dot(dot(self.W, sop(D_w, s = -0.5, op = pow)), sop(D_h, s = 0.5, op = pow))
         self.H = dot(dot(sop(D_h, s = -0.5, op = pow), sop(D_w, s = 0.5, op = pow)), self.H)
         

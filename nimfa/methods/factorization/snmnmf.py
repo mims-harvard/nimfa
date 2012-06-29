@@ -113,7 +113,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
                 mffit = mf_fit.Mf_fit(self) 
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(run, W = self.W.copy(), H = self.H.copy(), H1 = self.H1.copy(), 
+                self.tracker.track_factor(run, W = self.W, H = self.H, H1 = self.H1.copy(), 
                                           final_obj = c_obj, n_iter = iter)
             # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
             if c_obj <= best_obj or run == 0:

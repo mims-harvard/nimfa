@@ -54,9 +54,6 @@ class Mf_track():
         :param track_model: Matrix factorization factors.
         :type track_model:  algorithm specific
         """
-        class t_model:
-            def __init__(self, td):
-                self.__dict__.update(td)
         self._factors[run] = t_model(track_model)
         
     def get_factor(self, run = 0):
@@ -76,4 +73,11 @@ class Mf_track():
         :type run: `int`
         """
         return self._residuals[run]
+    
+class t_model:
+    """
+    Tracking factors model.
+    """
+    def __init__(self, td):
+        self.__dict__.update(td)
     
