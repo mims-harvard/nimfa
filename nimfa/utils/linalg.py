@@ -303,6 +303,18 @@ def repmat(X, m, n):
     else:
         return np.tile(np.asmatrix(X), (m, n))
     
+def inv_svd(X):
+    """
+    Compute matrix inversion using SVD.
+    
+    :param X: The input matrix. 
+    :type X: :class:`scipy.sparse` or :class:`numpy.matrix`
+    """
+    U, S, V = svd(X)
+    S_inv = np.diag(1. / np.diagonal(S))
+    X_inv = dot(dot(V.T, S_inv), U.T)
+    return X_inv
+    
 def svd(X):
     """
     Compute standard SVD on matrix X.
@@ -316,7 +328,8 @@ def svd(X):
        else:
            U, S, V = _svd_right(X)
     else: 
-        U, S, V = nla.svd(np.mat(X))
+        U, S, V = nla.svd(np.mat(X), full_matrices = False)
+        S = np.mat(np.diag(S))
     return U, S, V
 
 def _svd_right(X):
