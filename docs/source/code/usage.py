@@ -254,13 +254,13 @@ print "Distance Kullback-Leibler: %5.3e" % fctr_res.distance(metric = "kl")
 
 # Compute generic set of measures to evaluate the quality of the factorization
 sm = fctr_res.summary()
-# Print residual sum of squares (Hutchins, 2008). Can be used for estimating optimal factorization rank.
+# Print residual sum of squares.
 print "Rss: %8.3f" % sm['rss']
 # Print explained variance.
 print "Evar: %8.3f" % sm['evar']
-# Print actual number of iterations performed
+# Print actual number of iterations performed.
 print "Iterations: %d" % sm['n_iter']
-# Print cophenetic correlation
+# Print cophenetic correlation. Can be used for rank estimation.
 print "cophenetic: %8.3f" % sm['cophenetic']
 
 
