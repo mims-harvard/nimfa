@@ -181,6 +181,12 @@ ICM with Random C initialization and passed callback initialization function.
    
    	.. literalinclude:: /code/usage.py
    		:lines: 163-212
+   		
+   		
+BMF with default parameters, multiple runs and factor tracking for consensus matrix computation.
+   
+   	.. literalinclude:: /code/usage.py
+   		:lines: 238-264
 
 
 ##########

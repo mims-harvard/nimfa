@@ -230,3 +230,37 @@ print 'K-L divergence: %5.4f' % fctr_res.distance(metric = 'kl')
 print 'Sparseness, W: %5.4f, H: %5.4f' % fctr_res.fit.sparseness()
 
 
+####
+# Example 5
+####
+
+
+# Import nimfa library entry point for factorization
+import nimfa
+
+# Here we will work with numpy matrix
+import numpy as np
+V = np.random.random((23, 200))
+
+# Run BMF.
+# We don't specify any algorithm parameters or initialization method. Defaults will be used.
+# Factorization will be run 3 times (n_run) and factors will be tracked for computing 
+# cophenetic correlation. Note increased time and space complexity.
+fctr = nimfa.mf(V, method = "bmf", max_iter = 10, rank = 30, n_run = 3, track_factor = True)
+fctr_res = nimfa.mf_run(fctr)
+
+# Print the loss function according to Kullback-Leibler divergence. 
+print "Distance Kullback-Leibler: %5.3e" % fctr_res.distance(metric = "kl")
+
+# Compute generic set of measures to evaluate the quality of the factorization
+sm = fctr_res.summary()
+# Print residual sum of squares (Hutchins, 2008). Can be used for estimating optimal factorization rank.
+print "Rss: %8.3f" % sm['rss']
+# Print explained variance.
+print "Evar: %8.3f" % sm['evar']
+# Print actual number of iterations performed
+print "Iterations: %d" % sm['n_iter']
+# Print cophenetic correlation
+print "cophenetic: %8.3f" % sm['cophenetic']
+
+
