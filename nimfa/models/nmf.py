@@ -7,6 +7,7 @@
 
 import nimfa.utils.utils as utils
 from nimfa.utils.linalg import *
+from nimfa.models import mf_track
 
 class Nmf(object):
     """
@@ -467,7 +468,9 @@ class Nmf(object):
         is factorization rank. This method tries different values for ranks, performs factorizations, computes some quality 
         measures of the results and chooses the best value according to [Brunet2004]_ and [Hutchins2008]_.
         
-        .. note:: The process of rank estimation can be lengthy.     
+        .. note:: The process of rank estimation can be lengthy.   
+        
+        .. note:: Matrix factors are tracked during rank estimation. This is needed for computing cophenetic correlation coefficient.  
         
         Return a `dict` (keys are values of rank from range, values are `dict`s of measures) of quality measures for each value in 
         rank's range. This can be passed to the visualization model, from which estimated rank can be established. 
@@ -497,6 +500,8 @@ class Nmf(object):
         :type idx: `str` or `int`
         """
         self.n_run = n_run
+        self.track_factor = True
+        self.tracker = mf_track.Mf_track()
         def _measures(measure):
             return {
                 'sparseness': fctr.fit.sparseness,
