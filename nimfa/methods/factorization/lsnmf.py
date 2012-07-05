@@ -71,7 +71,7 @@ class Lsnmf(nmf_std.Nmf_std):
             self.iterW = 10
             self.iterH = 10
             c_obj = sys.float_info.max
-            best_obj = c_obj if run == 0 else best_obj 
+            best_obj = c_obj if run == 0 else best_obj
             iter = 0
             if self.callback_init:
                 self.final_obj = c_obj
@@ -233,17 +233,22 @@ class Lsnmf(nmf_std.Nmf_std):
         :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
         """
         if sp.isspmatrix(X):
-            X = X.tocsr()
-            R = []
-            now = 0
-            for row in range(X.shape[0]):
-                upto = X.indptr[row+1]
-                while now < upto:
-                    col = X.indices[now]
-                    if  X[row, col] < 0 or Y[row, col] > 0: 
-                        R.append(X[row, col])
-                    now += 1
-            return np.mat(R).T
+            xt = X.data < 0
+            r1, c1 = X.nonzero()
+            r1 = r1[xt]
+            c1 = c1[xt]
+            
+            yt = Y.data > 0
+            r2, c2 = Y.nonzero()
+            r2 = r2[yt]
+            c2 = c2[yt]
+            
+            idx1 = zip(r1,c1)
+            idx2 = zip(r2,c2)
+             
+            idxf = set(idx1).union(set(idx2))
+            rf, cf = zip(*idxf)
+            return X[rf,cf].T
         else:
             return X[np.logical_or(X<0, Y>0)].flatten().T
         

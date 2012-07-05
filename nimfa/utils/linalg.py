@@ -684,15 +684,10 @@ def max(X, s):
     :type s: `float`
     """
     if sp.isspmatrix(X):
-        R = X.copy().tocsr()
-        now = 0
-        for row in range(R.shape[0]):
-            upto = R.indptr[row+1]
-            while now < upto:
-                col = R.indices[now]
-                R.data[now] = max(R[row, col], s)
-                now += 1
-        return R
+        Y = X.tocsr()
+        DD = Y.data.copy()
+        DD = np.maximum(DD, s)
+        return sp.csr_matrix((DD, Y.indices, Y.indptr), Y.shape)
     else:
         return np.maximum(X, s)
     
@@ -706,15 +701,10 @@ def min(X, s):
     :type s: `float`
     """
     if sp.isspmatrix(X):
-        R = X.copy().tocsr()
-        now = 0
-        for row in range(R.shape[0]):
-            upto = R.indptr[row+1]
-            while now < upto:
-                col = R.indices[now]
-                R.data[now] = min(R[row, col], s)
-                now += 1
-        return R
+        Y = X.tocsr()
+        DD = Y.data.copy()
+        DD = np.minimum(DD, s)
+        return sp.csr_matrix((DD, Y.indices, Y.indptr), Y.shape)
     else:
         return np.minimum(X, s)
     
