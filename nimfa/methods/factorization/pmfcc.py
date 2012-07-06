@@ -151,7 +151,7 @@ class Pmfcc(smf.Smf):
     
     def objective(self):
         """Compute Frobenius distance cost function with penalization term."""
-        return (sop(self.V - dot(self.W, self.H), 2, pow)).sum() + trace(dot(self.H, dot(self.Theta, self.H.T)))
+        return power(self.V - dot(self.W, self.H), 2).sum() + trace(dot(self.H, dot(self.Theta, self.H.T)))
         
     def __str__(self):
         return self.name 

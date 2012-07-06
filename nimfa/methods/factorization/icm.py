@@ -188,7 +188,7 @@ class Icm(nmf_std.Nmf_std):
     
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
-        return (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
+        return power(self.V - dot(self.W, self.H), 2).sum()
   
     def __str__(self):
         return self.name  

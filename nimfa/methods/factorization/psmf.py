@@ -310,8 +310,9 @@ class Psmf(nmf_std.Nmf_std):
         self.r = np.argmax(self.rho, axis = 1)
     
     def objective(self):
-        """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
-        return (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
+        """Compute squared Frobenius norm of a target matrix and its NMF estimate."""
+        R = self.V - dot(self.W, self.H) 
+        return power(R, 2).sum()
     
     def __arr(self, X):
         """Return dense vector X."""

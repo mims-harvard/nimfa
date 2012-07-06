@@ -146,7 +146,7 @@ class Pmf(nmf_std.Nmf_std):
         # relative error
         self.error_v_n =  abs(self.V_n - dot(self.W, self.H)).mean() / self.V_n.mean()
         # Euclidean distance
-        return (sop(self.V - dot(dot(dot(self.W, self.sqrt_P) * self.v_factor, self.sqrt_P), self.H), 2, pow)).sum()
+        return power(self.V - dot(dot(dot(self.W, self.sqrt_P) * self.v_factor, self.sqrt_P), self.H), 2).sum()
         
     def __str__(self):
         return self.name

@@ -152,11 +152,11 @@ class Bmf(nmf_std.Nmf_std):
         """Update basis and mixture matrix."""
         #update mixture matrix
         H1 = dot(self.W.T, self.V) + 3. * self._lambda_h * multiply(self.H, self.H)
-        H2 = dot(dot(self.W.T, self.W), self.H) + 2. * self._lambda_h * sop(self.H, 3, pow) + self._lambda_h * self.H
+        H2 = dot(dot(self.W.T, self.W), self.H) + 2. * self._lambda_h * power(self.H, 3) + self._lambda_h * self.H
         self.H = multiply(self.H, elop(H1, H2, div))
         # update basis matrix, 
         W1 = dot(self.V, self.H.T) + 3. * self._lambda_w * multiply(self.W, self.W)
-        W2 = dot(self.W, dot(self.H, self.H.T)) + 2. * self._lambda_w * sop(self.W, 3, pow) + self._lambda_w * self.W
+        W2 = dot(self.W, dot(self.H, self.H.T)) + 2. * self._lambda_w * power(self.W, 3) + self._lambda_w * self.W
         self.W = multiply(self.W, elop(W1, W2, div))
         self._lambda_h = self.lambda_h * self._lambda_h
         self._lambda_w = self.lambda_w * self._lambda_w
@@ -178,8 +178,8 @@ class Bmf(nmf_std.Nmf_std):
             D_h = sp.spdiags(val_h, 0, self.H.shape[0], self.H.shape[0])
         else:
             D_h = np.diag(val_h)
-        self.W = dot(dot(self.W, sop(D_w, s = -0.5, op = pow)), sop(D_h, s = 0.5, op = pow))
-        self.H = dot(dot(sop(D_h, s = -0.5, op = pow), sop(D_w, s = 0.5, op = pow)), self.H)
+        self.W = dot(dot(self.W, power(D_w, -0.5)), power(D_h, 0.5))
+        self.H = dot(dot(power(D_h, -0.5), power(D_w, 0.5)), self.H)
         
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate."""

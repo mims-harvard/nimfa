@@ -16,7 +16,7 @@ import scipy.sparse.linalg as sla
 import numpy.linalg as nla
 from operator import mul, div, eq, ne, add, ge, le, itemgetter
 from itertools import izip
-from math import sqrt, log, pow, isnan, ceil
+from math import sqrt, log, isnan, ceil
 from scipy.cluster.hierarchy import linkage, cophenet
 from scipy.special import erfc, erfcinv
 import warnings
@@ -448,6 +448,21 @@ def multiply(X, Y):
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             return np.multiply(np.mat(X), np.mat(Y))
+        
+def power(X, s):
+    """
+    Compute matrix power of matrix :param:`X` for power :param:`s`.
+    
+    :param X: Input matrix.
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :param s: Power.
+    :type s: `int`
+    """
+    if sp.isspmatrix(X):
+        Y = X.tocsr()
+        return sp.csr_matrix((np.power(Y.data, s), Y.indices, Y.indptr), Y.shape)
+    else:
+        return np.power(X, s)
     
 def sop(X, s = None, op = None):
     """

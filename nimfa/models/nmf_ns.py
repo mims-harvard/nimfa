@@ -92,7 +92,8 @@ class Nmf_ns(Nmf):
         :type idx: None
         """
         if metric.lower() == 'euclidean':
-            return (sop(self.V - dot(dot(self.W, self.S), self.H), 2, pow)).sum()
+            R = self.V - dot(dot(self.W, self.S), self.H)
+            return power(R, 2).sum()
         elif metric.lower() == 'kl': 
             Va = dot(dot(self.W, self.S), self.H)
             return (multiply(self.V, sop(elop(self.V, Va, div), op = log)) - self.V + Va).sum()
