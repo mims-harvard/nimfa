@@ -168,7 +168,7 @@ class Nmf(nmf_std.Nmf_std):
     def euclidean_update(self):
         """Update basis and mixture matrix based on Euclidean distance multiplicative update rules."""
         self.H = multiply(self.H, elop(dot(self.W.T, self.V), dot(self.W.T, dot(self.W, self.H)), div))
-        self.W = multiply(self.W , elop(dot(self.V, self.H.T), dot(self.W, dot(self.H, self.H.T)), div))
+        self.W = multiply(self.W, elop(dot(self.V, self.H.T), dot(self.W, dot(self.H, self.H.T)), div))
         
     def divergence_update(self):
         """Update basis and mixture matrix based on divergence multiplicative update rules."""

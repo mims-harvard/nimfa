@@ -119,7 +119,7 @@ class Nmf_mm(Nmf):
         else:
             raise utils.MFError("Unknown specifier for the mixture matrix.")
         if metric.lower() == 'euclidean':
-            return (sop(V - dot(self.W, H), 2, pow)).sum()
+            return power(V - dot(self.W, H), 2).sum()
         elif metric.lower() == 'kl': 
             Va = dot(self.W, H)
             return (multiply(V, sop(elop(V, Va, div), op = log)) - V + Va).sum()
