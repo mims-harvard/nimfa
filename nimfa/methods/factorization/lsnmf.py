@@ -232,15 +232,22 @@ class Lsnmf(nmf_std.Nmf_std):
         """
         if sp.isspmatrix(X):
             X = X.tocsr()
-            xt = X.data < 0
             r1, c1 = X.nonzero()
-            r1 = r1[xt]
-            c1 = c1[xt]
+            if r1.size != 0:
+                xt = X[r1, c1] < 0
+                xt = np.array(xt)
+                xt = xt[0, :] if xt.shape[0] == 1 else xt[:, 0]
+                r1 = r1[xt]
+                c1 = c1[xt]
             
-            yt = Y.data > 0
+            Y = Y.tocsr()
             r2, c2 = Y.nonzero()
-            r2 = r2[yt]
-            c2 = c2[yt]
+            if r2.size != 0:
+                yt = Y[r2, c2] > 0
+                yt = np.array(yt)
+                yt = yt[0, :] if yt.shape[0] == 1 else yt[:, 0]
+                r2 = r2[yt]
+                c2 = c2[yt]
             
             idx1 = zip(r1,c1)
             idx2 = zip(r2,c2)

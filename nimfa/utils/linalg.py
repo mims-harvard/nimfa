@@ -539,9 +539,9 @@ def _op_spmatrix(X, Y, op):
     :type op: `func` 
     """
     # distinction as op is not necessarily commutative
-    return __op_spmatrixX(X, Y, op) if sp.isspmatrix(X) else __op_spmatrixY(X, Y, op)
+    return __op_spmatrix(X, Y, op) if sp.isspmatrix(X) else __op_spmatrix(Y, X, op)
 
-def __op_spmatrixX(X, Y, op):
+def __op_spmatrix(X, Y, op):
     """
     Compute sparse element-wise operation for operations preserving zeros.
     
@@ -553,40 +553,15 @@ def __op_spmatrixX(X, Y, op):
     :type op: `func` 
     """
     assert X.shape == Y.shape, "Matrices are not aligned."
-    R = X.copy().tocsr()
     eps = np.finfo(Y.dtype).eps if not 'int' in str(Y.dtype) else 0
-    now = 0
-    for row in xrange(R.shape[0]):
-        upto = R.indptr[row+1]
-        while now < upto:
-            col = R.indices[now]
-            R.data[now] = op(R.data[now], Y[row, col] + eps)
-            now += 1
-    return R
+    Xx = X.tocsr()
+    r, c = Xx.nonzero()
+    R = op(Xx[r,c], Y[r,c]+eps)
+    R = np.array(R)
+    assert 1 in R.shape, "Data matrix in sparse should be rank-1."
+    R = R[0, :] if R.shape[0] == 1 else R[:, 0]
+    return sp.csr_matrix((R, Xx.indices, Xx.indptr), Xx.shape)
     
-def __op_spmatrixY(X, Y, op):
-    """
-    Compute sparse element-wise operation for operations preserving zeros.
-    
-    :param X: First input matrix.
-    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
-    :param Y: Second input matrix.
-    :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
-    :param op: Operation to be performed. 
-    :type op: `func` 
-    """
-    assert X.shape == Y.shape, "Matrices are not aligned."
-    R = Y.copy().tocsr()
-    eps = np.finfo(R.dtype).eps if not 'int' in str(R.dtype) else 0
-    now = 0
-    for row in range(R.shape[0]):
-        upto = R.indptr[row+1]
-        while now < upto:
-            col = R.indices[now]
-            R.data[now] = op(X[row, col], R.data[now] + eps)
-            now += 1
-    return R
-
 def _op_matrix(X, Y, op):
     """
     Compute sparse element-wise operation for operations not preserving zeros.
