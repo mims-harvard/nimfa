@@ -182,8 +182,9 @@ class Bmf(nmf_std.Nmf_std):
         self.H = dot(dot(sop(D_h, s = -0.5, op = pow), sop(D_w, s = 0.5, op = pow)), self.H)
         
     def objective(self):
-        """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
-        return (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
+        """Compute squared Frobenius norm of a target matrix and its NMF estimate."""
+        R = self.V - dot(self.W, self.H) 
+        return (multiply(R, R)).sum()
     
     def _adjustment(self):
         """Adjust small values to factors to avoid numerical underflow."""

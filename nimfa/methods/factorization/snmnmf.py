@@ -192,12 +192,14 @@ class Snmnmf(nmf_mm.Nmf_mm):
         err_avg1 = abs(self.V - dot(self.W, self.H)).mean() / self.V.mean()
         err_avg2 = abs(self.V1 - dot(self.W, self.H1)).mean() / self.V1.mean()
         self.err_avg = err_avg1 + err_avg2
-        eucl1 = (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
-        eucl2 = (sop(self.V1 - dot(self.W, self.H1), 2, pow)).sum()
+        R1 = self.V - dot(self.W, self.H)
+        eucl1 = (multiply(R1, R1)).sum()
+        R2 = self.V1 - dot(self.W, self.H1)
+        eucl2 = (multiply(R2, R2)).sum()
         tr1 = trace(dot(dot(self.H1, self.A), self.H1.T))
         tr2 = trace(dot(dot(self.H, self.B), self.H1.T))
-        s1 = sop(self.W, 2, pow).sum()
-        s2 = sop(self.H, 2, pow).sum() + sop(self.H1, 2, pow).sum()
+        s1 = multiply(self.W, self.W).sum()
+        s2 = multiply(self.H, self.H).sum() + multiply(self.H1, self.H1).sum()
         return eucl1 + eucl2 - self.lamb * tr1 - self.lamb_1 * tr2 + self.gamma * s1 + self.gamma_1 * s2
     
     def __str__(self):

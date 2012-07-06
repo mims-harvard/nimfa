@@ -178,8 +178,9 @@ class Nmf(nmf_std.Nmf_std):
         self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, self.H), div), self.H.T), W1, div))
         
     def fro_objective(self):
-        """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
-        return (sop(self.V - dot(self.W, self.H), 2, pow)).sum()
+        """Compute squared Frobenius norm of a target matrix and its NMF estimate."""
+        R = self.V - dot(self.W, self.H) 
+        return multiply(R, R).sum()
     
     def div_objective(self):
         """Compute divergence of target matrix from its NMF estimate."""

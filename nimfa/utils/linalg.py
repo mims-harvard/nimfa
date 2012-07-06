@@ -14,7 +14,7 @@ import scipy
 import scipy.sparse as sp
 import scipy.sparse.linalg as sla
 import numpy.linalg as nla
-from operator import mul, div, eq, ne, pow, add, ge, le, itemgetter
+from operator import mul, div, eq, ne, add, ge, le, itemgetter
 from itertools import izip
 from math import sqrt, log, pow, isnan, ceil
 from scipy.cluster.hierarchy import linkage, cophenet
@@ -498,7 +498,7 @@ def _sop_matrix(X, s = None, op = None):
     :type op: `func` 
     """
     eps = np.finfo(X.dtype).eps if not 'int' in str(X.dtype) else 0
-    return np.mat([[op(X[i,j] + eps, s) if s != None else op(X[i,j] + eps) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    return op(X + eps, s) if s != None else op(X + eps) 
     
 def elop(X, Y, op):
     """
@@ -524,8 +524,8 @@ def elop(X, Y, op):
             X[X == 0] = np.finfo(X.dtype).eps
             Y[Y == 0] = np.finfo(Y.dtype).eps
         except ValueError:
-            return op(np.asmatrix(X), np.asmatrix(Y))
-        return op(np.asmatrix(X), np.asmatrix(Y))
+            return op(np.mat(X), np.mat(Y))
+        return op(np.mat(X), np.mat(Y))
 
 def _op_spmatrix(X, Y, op):
     """
