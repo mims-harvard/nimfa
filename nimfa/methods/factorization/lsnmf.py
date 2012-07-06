@@ -207,21 +207,19 @@ class Lsnmf(nmf_std.Nmf_std):
         :param Y: Second input matrix.
         :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
         """
-        if sp.isspmatrix(X) or sp.isspmatrix(Y):
-            X, Y = Y, X
-            if not sp.isspmatrix(X) and sp.isspmatrix(Y):
-                X, Y = Y, X
-            now = 0
-            for row in range(X.shape[0]):
-                upto = X.indptr[row+1]
-                while now < upto:
-                    col = X.indices[now]
-                    if  X[row, col] != Y[row, col]:
-                        return False
-                    now += 1
-            return True
+        if sp.isspmatrix(X) and sp.isspmatrix(Y):
+            X = X.tocsr()
+            Y = Y.tocsr()
+            if not np.all(X.data == Y.data):
+                return False
+            r1, c1 = X.nonzero()
+            r2, c2 = Y.nonzero()
+            if not np.all(r1 == r2) or not np.all(c1 == c2):
+                return False
+            else:
+                return True
         else:
-            return (X == Y).all()
+            return np.all(X == Y)
     
     def __extract(self, X, Y):
         """
@@ -233,6 +231,7 @@ class Lsnmf(nmf_std.Nmf_std):
         :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
         """
         if sp.isspmatrix(X):
+            X = X.tocsr()
             xt = X.data < 0
             r1, c1 = X.nonzero()
             r1 = r1[xt]
