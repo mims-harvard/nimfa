@@ -460,9 +460,11 @@ def power(X, s):
     """
     if sp.isspmatrix(X):
         Y = X.tocsr()
-        return sp.csr_matrix((np.power(Y.data, s), Y.indices, Y.indptr), Y.shape)
+        eps = np.finfo(Y.data.dtype).eps if not 'int' in str(Y.data.dtype) else 0
+        return sp.csr_matrix((np.power(Y.data + eps, s), Y.indices, Y.indptr), Y.shape)
     else:
-        return np.power(X, s)
+        eps = np.finfo(X.dtype).eps if not 'int' in str(X.dtype) else 0
+        return np.power(X + eps, s)
     
 def sop(X, s = None, op = None):
     """
