@@ -58,11 +58,13 @@ class Nndsvd(object):
         if negative(V):
             raise MFError("The input matrix contains negative elements.")
         U, S, E = svd(V)
+        E = E.T
         if sp.isspmatrix(U):
             return self.init_sparse(V, U, S, E)
         self.W = np.mat(np.zeros((V.shape[0], self.rank)))
         self.H = np.mat(np.zeros((self.rank, V.shape[1])))
         # choose the first singular triplet to be nonnegative
+        S = np.diagonal(S)
         self.W[:, 0] = sqrt(S[0]) * abs(U[:, 0])
         self.H[0, :] = sqrt(S[0]) * abs(E[:, 0].T)
         # second svd for the other factors
