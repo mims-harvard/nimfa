@@ -53,6 +53,7 @@ class Pmf(nmf_std.Nmf_std):
             self.sqrt_P = sop(self.P, s = None, op = sqrt) 
             p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
+            self.error_v_n = c_obj
             iter = 0
             if self.callback_init:
                 self.final_obj = c_obj

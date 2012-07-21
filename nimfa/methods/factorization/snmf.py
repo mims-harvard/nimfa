@@ -85,7 +85,7 @@ class Snmf(nmf_std.Nmf_std):
             # count the number of convergence checks that column clusters and row clusters have not changed.
             self.inc = 0
             # normalize W
-            self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = sqrt), self.V.shape[0], 1), div)
+            self.W = elop(self.W, repmat(sop(multiply(self.W, self.W).sum(axis = 0), op = np.sqrt), self.V.shape[0], 1), div)
             if sp.isspmatrix(self.V):
                 self.beta_vec = sqrt(self.beta) * sp.lil_matrix(np.ones((1, self.rank)) , dtype = self.V.dtype)
                 self.I_k = self.eta * sp.eye(self.rank, self.rank, format = 'lil')  
