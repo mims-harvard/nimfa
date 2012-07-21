@@ -94,6 +94,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
             self.options.pop('idx')
             p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
+            self.err_avg = 1
             iter = 0
             if self.callback_init:
                 self.final_obj = c_obj

@@ -82,7 +82,7 @@ class Nmf_std(Nmf):
             return (power(R, 2)).sum()
         elif metric.lower() == 'kl':
             Va = dot(self.W, self.H)
-            return (multiply(self.V, sop(elop(self.V, Va, div), op = log)) - self.V + Va).sum()
+            return (multiply(self.V, sop(elop(self.V, Va, div), op = np.log)) - self.V + Va).sum()
         else:
             raise utils.MFError("Unknown distance metric.")
     

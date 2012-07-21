@@ -185,7 +185,7 @@ class Nmf(nmf_std.Nmf_std):
     def div_objective(self):
         """Compute divergence of target matrix from its NMF estimate."""
         Va = dot(self.W, self.H)
-        return (multiply(self.V, sop(elop(self.V, Va, div), op = log)) - self.V + Va).sum()
+        return (multiply(self.V, sop(elop(self.V, Va, div), op = np.log)) - self.V + Va).sum()
     
     def conn_objective(self):
         """
