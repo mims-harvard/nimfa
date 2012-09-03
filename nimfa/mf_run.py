@@ -179,7 +179,7 @@ def _compatibility(mf_model):
     H1 = mf_model.coef(1) if mf_model.model_name == 'mm' else None
     if mf_model.seed == None and W == None and H == None and H1 == None: mf_model.seed = None if "none" in mf_model.aseeds else "random"
     if W != None and H != None:
-        if mf_model.seed != None:
+        if mf_model.seed != None and mf_model.seed != "fixed":
             raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
         else:
             mf_model.seed = methods.seeding.fixed.Fixed()
