@@ -154,7 +154,7 @@ For details and descriptions on algorithm specific options see specific algorith
 Usage
 #####
 
-Following are four basic usage examples that employ different implemented factorization algorithms. For examples with real world
+Following are basic usage examples that employ different implemented factorization algorithms. For examples with real world
 applications see Examples section and methods' documentation. 
 
 .. note:: Consider these examples as Hello World examples for the nimfa library.
@@ -187,6 +187,11 @@ BMF with default parameters, multiple runs and factor tracking for consensus mat
    
    	.. literalinclude:: /code/usage.py
    		:lines: 238-264
+   		
+Standard NMF - Euclidean update equations and fixed initialization (passed matrix factors).
+
+	.. literalinclude:: /code/usage.py
+		:lines: 272-299
 
 
 ##########
