@@ -323,7 +323,7 @@ def svd(X):
     :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
     """
     if sp.isspmatrix(X): 
-       if X.shape[0] >= X.shape[1]:
+       if X.shape[0] <= X.shape[1]:
            U, S, V = _svd_left(X)
        else:
            U, S, V = _svd_right(X)

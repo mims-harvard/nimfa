@@ -58,9 +58,9 @@ class Nndsvd(object):
         if negative(V):
             raise MFError("The input matrix contains negative elements.")
         U, S, E = svd(V)
+        E = E.T
         if sp.isspmatrix(U):
             return self.init_sparse(V, U, S, E)
-        E = E.T
         self.W = np.mat(np.zeros((V.shape[0], self.rank)))
         self.H = np.mat(np.zeros((self.rank, V.shape[1])))
         # choose the first singular triplet to be nonnegative
@@ -128,19 +128,18 @@ class Nndsvd(object):
         S += [prng.rand() for _ in xrange(self.rank - len(S))]
         U = U.tolil()
         E = E.tolil()
-        temp_U = sp.lil_matrix((V.shape[0], V.shape[0]))
-        temp_E = sp.lil_matrix((V.shape[1], V.shape[1]))
+        temp_U = sp.lil_matrix((V.shape[0], min(V.shape[0], V.shape[1])))
+        temp_E = sp.lil_matrix((V.shape[1], min(V.shape[0], V.shape[1])))
         if temp_U.shape != U.shape:
             temp_U[:, :U.shape[1]] = U
             temp_U[:, U.shape[1]:] = abs(sp.rand(U.shape[0], temp_U.shape[1] - U.shape[1], density = 0.8, format = 'lil'))
-        U = temp_U
         if temp_E.shape != E.shape:
             temp_E[:E.shape[0], :] = E
             temp_E[E.shape[0]:, :] = abs(sp.rand(temp_E.shape[0] - E.shape[0], E.shape[1], density = 0.8, format = 'lil'))
-        E = temp_E
         # choose the first singular triplet to be nonnegative
         self.W[:, 0] = sqrt(S[0]) * abs(U[:, 0])
         self.H[0, :] = sqrt(S[0]) * abs(E[:, 0].T)
+        eps = np.finfo(V.data.dtype).eps if not 'int' in str(V.data.dtype) else 0
         # second svd for the other factors
         for i in xrange(1, self.rank):
             uu = U[:, i]
@@ -149,10 +148,10 @@ class Nndsvd(object):
             uun = self._neg(uu)
             vvp = self._pos(vv)
             vvn = self._neg(vv)
-            n_uup = norm(uup, 2)
-            n_vvp = norm(vvp, 2)
-            n_uun = norm(uun, 2)
-            n_vvn = norm(vvn, 2)
+            n_uup = norm(uup, 2) + eps
+            n_vvp = norm(vvp, 2) + eps
+            n_uun = norm(uun, 2) + eps
+            n_vvn = norm(vvn, 2) + eps
             termp = n_uup * n_vvp; termn = n_uun * n_vvn
             if (termp >= termn):
                 self.W[:, i] = sqrt(S[i] * termp) / n_uup * uup 
