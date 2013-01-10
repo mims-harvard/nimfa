@@ -311,7 +311,10 @@ def inv_svd(X):
     :type X: :class:`scipy.sparse` or :class:`numpy.matrix`
     """
     U, S, V = svd(X)
-    S_inv = np.diag(1. / np.diagonal(S))
+    if sp.isspmatrix(S):
+        S_inv = _sop_spmatrix(S, op = lambda x: 1./x)
+    else:
+        S_inv = np.diag(1. / np.diagonal(S))
     X_inv = dot(dot(V.T, S_inv), U.T)
     return X_inv
     
@@ -443,7 +446,7 @@ def multiply(X, Y):
     if sp.isspmatrix(X) and sp.isspmatrix(Y):
         return X.multiply(Y)
     elif sp.isspmatrix(X) or sp.isspmatrix(Y):
-        return _op_spmatrix(X, Y, mul) 
+        return _op_spmatrix(X, Y, np.multiply) 
     else:
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
@@ -563,9 +566,9 @@ def __op_spmatrix(X, Y, op):
     Compute sparse element-wise operation for operations preserving zeros.
     
     :param X: First input matrix.
-    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia
     :param Y: Second input matrix.
-    :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+    :type Y: :class:`numpy.matrix`
     :param op: Operation to be performed. 
     :type op: `func` 
     """

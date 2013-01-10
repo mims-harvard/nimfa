@@ -123,17 +123,17 @@ class Pmfcc(smf.Smf):
         self.W = dot(self.V, dot(self.H.T, inv_svd(dot(self.H, self.H.T))))
         
         tmp1 = sop(self.Theta, 0, ge)
-        tmp2 = tmp1 - 1
+        tmp2 = tmp1.todense() - 1 if sp.isspmatrix(tmp1) else tmp1 - 1 
         Theta_p = multiply(self.Theta, tmp1)
         Theta_n = multiply(self.Theta, tmp2)
         FtF = dot(self.W.T, self.W)
         XtF = dot(self.V.T, self.W)
         tmp1 = sop(FtF, 0, ge)
-        tmp2 = tmp1 - 1
+        tmp2 = tmp1.todense() - 1 if sp.isspmatrix(tmp1) else tmp1 - 1
         FtF_p = multiply(FtF, tmp1)
         FtF_n = multiply(FtF, tmp2) 
         tmp1 = sop(XtF, 0, ge)
-        tmp2 = tmp1 - 1 
+        tmp2 = tmp1.todense() - 1 if sp.isspmatrix(tmp1) else tmp1 - 1 
         XtF_p = multiply(XtF, tmp1)
         XtF_n = multiply(XtF, tmp2)
         
@@ -146,7 +146,8 @@ class Pmfcc(smf.Smf):
         enum = XtF_p + GFtF_n + Theta_n_G
         denom = XtF_n + GFtF_p + Theta_p_G
         
-        Ht = multiply(self.H.T, sop(elop(enum, denom + np.finfo(float).eps, div), s = None, op = sqrt))
+        denom = denom.todense() + np.finfo(float).eps if sp.isspmatrix(denom) else denom + np.finfo(float).eps 
+        Ht = multiply(self.H.T, sop(elop(enum, denom, div), s = None, op = np.sqrt))
         self.H = Ht.T
     
     def objective(self):
