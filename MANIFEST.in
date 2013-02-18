@@ -1,10 +1,9 @@
-recursive-include _nmf *.png
-recursive-include tests *
-recursive-include docs/rst *
-recursive-include docs/canvas *
-include docs/Makefile
-include docs/README.txt
-include docs/Orange-NMF_add-on.pdf
-include COPYING
-include LICENSE
+recursive-include docs *
+recursive-include nimfa/datasets/ALL_AML *
+recursive-include nimfa/datasets/CBCL_faces/placeholder_CBCL_faces
+recursive-include nimfa/datasets/Medlars/placeholder_Medlars
+recursive-include nimfa/datasets/Medulloblastoma *
+recursive-include nimfa/datasets/MovieLens/placeholder_MovieLens
+recursive-include nimfa/datasets/ORL_faces *
+recursive-include nimfa/datasets/S_cerevisiae_FC/placeholder_S_cerevisiae_FC
 include *.py *.txt *.rst
