@@ -1,0 +1,10 @@
+recursive-include _nmf *.png
+recursive-include tests *
+recursive-include docs/rst *
+recursive-include docs/canvas *
+include docs/Makefile
+include docs/README.txt
+include docs/Orange-NMF_add-on.pdf
+include COPYING
+include LICENSE
+include *.py *.txt *.rst
