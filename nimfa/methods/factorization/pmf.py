@@ -50,7 +50,7 @@ class Pmf(nmf_std.Nmf_std):
             self.v_factor = self.V.sum()
             self.V_n = sop(self.V.copy(), self.v_factor, div)
             self.P = sp.spdiags([1. / self.rank for _ in xrange(self.rank)], 0, self.rank, self.rank, 'csr')
-            self.sqrt_P = sop(self.P, s = None, op = sqrt) 
+            self.sqrt_P = sop(self.P, s = None, op = np.sqrt)
             p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             self.error_v_n = c_obj

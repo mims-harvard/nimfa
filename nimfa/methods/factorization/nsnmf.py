@@ -139,7 +139,7 @@ class Nsnmf(nmf_ns.Nmf_ns):
     def objective(self):
         """Compute divergence of target matrix from its NMF estimate."""
         Va = dot(dot(self.W, self.S), self.H)
-        return (multiply(self.V, sop(elop(self.V, Va, div), op = log)) - self.V + Va).sum()
+        return (multiply(self.V, sop(elop(self.V, Va, div), op = np.log)) - self.V + Va).sum()
     
     def __str__(self):
         return self.name
