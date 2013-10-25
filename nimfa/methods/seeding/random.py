@@ -12,11 +12,12 @@ matrices with the default density parameter of 0.01.
 
 from nimfa.utils.linalg import *
 
+
 class Random(object):
-    
+
     def __init__(self):
         self.name = "random"
-       
+
     def initialize(self, V, rank, options):
         """
         Return initialized basis and mixture matrix (and additional factors if specified in :param:`Sn`, n = 1, 2, ..., k). 
@@ -60,7 +61,7 @@ class Random(object):
             if sn[0] is 'S' and sn[1:].isdigit():
                 mfs.append(gen(options[sn][0], options[sn][1]))
         return mfs
-    
+
     def gen_sparse(self, dim1, dim2):
         """
         Return randomly initialized sparse matrix of specified dimensions.
@@ -70,8 +71,8 @@ class Random(object):
         :param dim2: Dimension along second axis.
         :type dim2: `int`
         """
-        return abs(self.max * sp.rand(dim1, dim2, density = self.density, format = self._format))
-        
+        return abs(self.max * sp.rand(dim1, dim2, density=self.density, format=self._format))
+
     def gen_dense(self, dim1, dim2):
         """
         Return randomly initialized :class:`numpy.matrix` matrix of specified dimensions.
@@ -82,9 +83,9 @@ class Random(object):
         :type dim2: `int`
         """
         return np.mat(self.prng.uniform(0, self.max, (dim1, dim2)))
-    
+
     def __repr__(self):
         return "random.Random()"
-    
+
     def __str__(self):
         return self.name

@@ -31,10 +31,11 @@ import methods
 l_factorization = methods.list_mf_methods()
 l_seed = methods.list_seeding_methods()
 
-def mf(target, seed = None, W = None, H = None,  
-       rank = 30, method = "nmf",
-       max_iter = 30, min_residuals = None, test_conv = None,
-       n_run = 1, callback = None, callback_init = None, initialize_only = True, **options):
+
+def mf(target, seed=None, W=None, H=None,
+       rank=30, method="nmf",
+       max_iter=30, min_residuals=None, test_conv=None,
+       n_run=1, callback=None, callback_init=None, initialize_only=True, **options):
     """
     Run the specified MF algorithm.
     
@@ -130,30 +131,37 @@ def mf(target, seed = None, W = None, H = None,
     :type test_conv: `int`
     """
     if seed.__str__().lower() not in l_seed:
-        raise utils.MFError("Unrecognized seeding method. Choose from: %s" % ", ".join(l_seed))
-    if method.__str__().lower() not in l_factorization: 
-        raise utils.MFError("Unrecognized MF method. Choose from: %s" % ", ".join(l_factorization))
+        raise utils.MFError(
+            "Unrecognized seeding method. Choose from: %s" % ", ".join(l_seed))
+    if method.__str__().lower() not in l_factorization:
+        raise utils.MFError(
+            "Unrecognized MF method. Choose from: %s" % ", ".join(l_factorization))
     mf_model = None
     # Construct factorization model
     try:
         if isinstance(method, str):
-            mf_model = methods.factorization.methods[method.lower()](V = target, seed = seed, W = W, H = H, H1 = None, 
-                     rank = rank, max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
-                     n_run = n_run, callback = callback, callback_init = callback_init, options = options)
+            mf_model = methods.factorization.methods[method.lower(
+            )](V=target, seed=seed, W=W, H=H, H1=None,
+               rank=rank, max_iter=max_iter, min_residuals=min_residuals, test_conv=test_conv,
+               n_run=n_run, callback=callback, callback_init=callback_init, options=options)
         else:
-            mf_model = method(V = target, seed = seed, W = W, H = H, H1 = None, rank = rank,
-                     max_iter = max_iter, min_residuals = min_residuals, test_conv = test_conv,
-                     n_run = n_run, callback = callback, callback_init = callback_init, options = options)
+            mf_model = method(
+                V=target, seed=seed, W=W, H=H, H1=None, rank=rank,
+                max_iter=max_iter, min_residuals=min_residuals, test_conv=test_conv,
+                n_run=n_run, callback=callback, callback_init=callback_init, options=options)
     except Exception as str_error:
-        raise utils.MFError("Model initialization has been unsuccessful: " + str(str_error))
-    # Check if chosen seeding method is compatible with chosen factorization method or fixed initialization is passed
+        raise utils.MFError(
+            "Model initialization has been unsuccessful: " + str(str_error))
+    # Check if chosen seeding method is compatible with chosen factorization
+    # method or fixed initialization is passed
     _compatibility(mf_model)
     # return factorization model if only initialization was requested
     if not initialize_only:
         return mf_model.run()
     else:
         return mf_model
-    
+
+
 def mf_run(mf_model):
     """
     Run the specified MF algorithm.
@@ -167,6 +175,7 @@ def mf_run(mf_model):
         raise utils.MFError("Unrecognized MF method.")
     return mf_model.run()
 
+
 def _compatibility(mf_model):
     """
     Check if chosen seeding method is compatible with chosen factorization method or fixed initialization is passed.
@@ -177,27 +186,33 @@ def _compatibility(mf_model):
     W = mf_model.basis()
     H = mf_model.coef(0)
     H1 = mf_model.coef(1) if mf_model.model_name == 'mm' else None
-    if mf_model.seed == None and W == None and H == None and H1 == None: mf_model.seed = None if "none" in mf_model.aseeds else "random"
+    if mf_model.seed == None and W == None and H == None and H1 == None:
+        mf_model.seed = None if "none" in mf_model.aseeds else "random"
     if W != None and H != None:
         if mf_model.seed != None and mf_model.seed != "fixed":
-            raise utils.MFError("Initial factorization is fixed. Seeding method cannot be used.")
+            raise utils.MFError(
+                "Initial factorization is fixed. Seeding method cannot be used.")
         else:
             mf_model.seed = methods.seeding.fixed.Fixed()
-            mf_model.seed._set_fixed(W = W, H = H, H1 = H1)
+            mf_model.seed._set_fixed(W=W, H=H, H1=H1)
     __is_smdefined(mf_model)
     __compatibility(mf_model)
+
 
 def __is_smdefined(mf_model):
     """Check if MF and seeding methods are well defined."""
     if isinstance(mf_model.seed, str):
         if mf_model.seed in methods.seeding.methods:
             mf_model.seed = methods.seeding.methods[mf_model.seed]()
-        else: raise utils.MFError("Unrecognized seeding method.")
+        else:
+            raise utils.MFError("Unrecognized seeding method.")
     else:
         if not str(mf_model.seed).lower() in methods.seeding.methods:
             raise utils.MFError("Unrecognized seeding method.")
-         
+
+
 def __compatibility(mf_model):
     """Check if MF model is compatible with the seeding method."""
     if not str(mf_model.seed).lower() in mf_model.aseeds:
-        raise utils.MFError("MF model is incompatible with chosen seeding method.") 
+        raise utils.MFError(
+            "MF model is incompatible with chosen seeding method.")

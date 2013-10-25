@@ -24,7 +24,9 @@ from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
+
 class Pmfcc(smf.Smf):
+
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
@@ -40,16 +42,17 @@ class Pmfcc(smf.Smf):
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         smf.Smf.__init__(self, params)
         self.set_params()
-        
+
     def factorize(self):
         """
         Compute matrix factorization.
          
         Return fitted factorization model.
-        """     
+        """
         for run in xrange(self.n_run):
             # [FWang2008]_; H = G.T, W = F (Table 2)
-            self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
+            self.W, self.H = self.seed.initialize(
+                self.V, self.rank, self.options)
             p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
@@ -63,26 +66,29 @@ class Pmfcc(smf.Smf):
                 self.update()
                 self._adjustment()
                 iter += 1
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
+                c_obj = self.objective(
+                ) if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(run, c_obj)
             if self.callback:
                 self.final_obj = c_obj
                 self.n_iter = iter
-                mffit = mf_fit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self)
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(run, W = self.W, H = self.H, final_obj = c_obj, n_iter = iter)
-            # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
+                self.tracker.track_factor(
+                    run, W=self.W, H=self.H, final_obj=c_obj, n_iter=iter)
+            # if multiple runs are performed, fitted factorization model with
+            # the lowest objective function value is retained
             if c_obj <= best_obj or run == 0:
                 best_obj = c_obj
-                self.n_iter = iter 
+                self.n_iter = iter
                 self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(copy.deepcopy(self))
-        
+
         mffit.fit.tracker = self.tracker
         return mffit
-    
+
     def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
@@ -105,25 +111,27 @@ class Pmfcc(smf.Smf):
         if iter > 0 and c_obj > p_obj:
             return False
         return True
-    
+
     def _adjustment(self):
         """Adjust small values to factors to avoid numerical underflow."""
         self.H = max(self.H, np.finfo(self.H.dtype).eps)
         self.W = max(self.W, np.finfo(self.W.dtype).eps)
-        
+
     def set_params(self):
         """Set algorithm specific model options."""
-        self.Theta = self.options.get('Theta', np.mat(np.zeros((self.V.shape[1], self.V.shape[1]))))
+        self.Theta = self.options.get(
+            'Theta', np.mat(np.zeros((self.V.shape[1], self.V.shape[1]))))
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
-        
+        self.tracker = mf_track.Mf_track(
+        ) if self.track_factor and self.n_run > 1 or self.track_error else None
+
     def update(self):
         """Update basis and mixture matrix."""
         self.W = dot(self.V, dot(self.H.T, inv_svd(dot(self.H, self.H.T))))
-        
+
         tmp1 = sop(self.Theta, 0, ge)
-        tmp2 = tmp1.todense() - 1 if sp.isspmatrix(tmp1) else tmp1 - 1 
+        tmp2 = tmp1.todense() - 1 if sp.isspmatrix(tmp1) else tmp1 - 1
         Theta_p = multiply(self.Theta, tmp1)
         Theta_n = multiply(self.Theta, tmp2)
         FtF = dot(self.W.T, self.W)
@@ -131,31 +139,33 @@ class Pmfcc(smf.Smf):
         tmp1 = sop(FtF, 0, ge)
         tmp2 = tmp1.todense() - 1 if sp.isspmatrix(tmp1) else tmp1 - 1
         FtF_p = multiply(FtF, tmp1)
-        FtF_n = multiply(FtF, tmp2) 
+        FtF_n = multiply(FtF, tmp2)
         tmp1 = sop(XtF, 0, ge)
-        tmp2 = tmp1.todense() - 1 if sp.isspmatrix(tmp1) else tmp1 - 1 
+        tmp2 = tmp1.todense() - 1 if sp.isspmatrix(tmp1) else tmp1 - 1
         XtF_p = multiply(XtF, tmp1)
         XtF_n = multiply(XtF, tmp2)
-        
+
         Theta_n_G = dot(Theta_n, self.H.T)
         Theta_p_G = dot(Theta_p, self.H.T)
-        
+
         GFtF_p = dot(self.H.T, FtF_p)
-        GFtF_n = dot(self.H.T, FtF_n) 
-        
+        GFtF_n = dot(self.H.T, FtF_n)
+
         enum = XtF_p + GFtF_n + Theta_n_G
         denom = XtF_n + GFtF_p + Theta_p_G
-        
-        denom = denom.todense() + np.finfo(float).eps if sp.isspmatrix(denom) else denom + np.finfo(float).eps 
-        Ht = multiply(self.H.T, sop(elop(enum, denom, div), s = None, op = np.sqrt))
+
+        denom = denom.todense() + np.finfo(float).eps if sp.isspmatrix(
+            denom) else denom + np.finfo(float).eps
+        Ht = multiply(
+            self.H.T, sop(elop(enum, denom, div), s=None, op=np.sqrt))
         self.H = Ht.T
-    
+
     def objective(self):
         """Compute Frobenius distance cost function with penalization term."""
         return power(self.V - dot(self.W, self.H), 2).sum() + trace(dot(self.H, dot(self.Theta, self.H.T)))
-        
+
     def __str__(self):
-        return self.name 
-    
+        return self.name
+
     def __repr__(self):
         return self.name

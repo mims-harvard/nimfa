@@ -45,7 +45,9 @@ from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
+
 class Bmf(nmf_std.Nmf_std):
+
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
@@ -72,7 +74,7 @@ class Bmf(nmf_std.Nmf_std):
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
         self.set_params()
-        
+
     def factorize(self):
         """
         Compute matrix factorization.
@@ -80,9 +82,10 @@ class Bmf(nmf_std.Nmf_std):
         Return fitted factorization model.
         """
         self._lambda_w = 1. / self.max_iter if self.max_iter else 1. / 10
-        self._lambda_h = self._lambda_w         
+        self._lambda_h = self._lambda_w
         for run in xrange(self.n_run):
-            self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
+            self.W, self.H = self.seed.initialize(
+                self.V, self.rank, self.options)
             self.normalize()
             p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
@@ -97,26 +100,29 @@ class Bmf(nmf_std.Nmf_std):
                 self.update()
                 self._adjustment()
                 iter += 1
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
+                c_obj = self.objective(
+                ) if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(run, c_obj)
             if self.callback:
                 self.final_obj = c_obj
                 self.n_iter = iter
-                mffit = mf_fit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self)
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(run, W = self.W, H = self.H, final_obj = c_obj, n_iter = iter)
-            # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
+                self.tracker.track_factor(
+                    run, W=self.W, H=self.H, final_obj=c_obj, n_iter=iter)
+            # if multiple runs are performed, fitted factorization model with
+            # the lowest objective function value is retained
             if c_obj <= best_obj or run == 0:
                 best_obj = c_obj
-                self.n_iter = iter 
+                self.n_iter = iter
                 self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(copy.deepcopy(self))
-        
+
         mffit.fit.tracker = self.tracker
         return mffit
-    
+
     def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
@@ -139,28 +145,33 @@ class Bmf(nmf_std.Nmf_std):
         if iter > 0 and c_obj > p_obj:
             return False
         return True
-    
+
     def set_params(self):
         """Set algorithm specific model options."""
         self.lambda_w = self.options.get('lambda_w', 1.1)
         self.lambda_h = self.options.get('lambda_h', 1.1)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
-    
+        self.tracker = mf_track.Mf_track(
+        ) if self.track_factor and self.n_run > 1 or self.track_error else None
+
     def update(self):
         """Update basis and mixture matrix."""
-        #update mixture matrix
-        H1 = dot(self.W.T, self.V) + 3. * self._lambda_h * multiply(self.H, self.H)
-        H2 = dot(dot(self.W.T, self.W), self.H) + 2. * self._lambda_h * power(self.H, 3) + self._lambda_h * self.H
+        # update mixture matrix
+        H1 = dot(self.W.T, self.V) + 3. * \
+            self._lambda_h * multiply(self.H, self.H)
+        H2 = dot(dot(self.W.T, self.W), self.H) + 2. * \
+            self._lambda_h * power(self.H, 3) + self._lambda_h * self.H
         self.H = multiply(self.H, elop(H1, H2, div))
-        # update basis matrix, 
-        W1 = dot(self.V, self.H.T) + 3. * self._lambda_w * multiply(self.W, self.W)
-        W2 = dot(self.W, dot(self.H, self.H.T)) + 2. * self._lambda_w * power(self.W, 3) + self._lambda_w * self.W
+        # update basis matrix,
+        W1 = dot(self.V, self.H.T) + 3. * \
+            self._lambda_w * multiply(self.W, self.W)
+        W2 = dot(self.W, dot(self.H, self.H.T)) + 2. * \
+            self._lambda_w * power(self.W, 3) + self._lambda_w * self.W
         self.W = multiply(self.W, elop(W1, W2, div))
         self._lambda_h = self.lambda_h * self._lambda_h
         self._lambda_w = self.lambda_w * self._lambda_w
-        
+
     def normalize(self):
         """
         Normalize initialized basis and mixture matrix, using Boundedness Theorem in [Zhang2007]_. Normalization
@@ -168,8 +179,8 @@ class Bmf(nmf_std.Nmf_std):
         
         Normalization produces basis and mixture matrix with values in [0, 1]. 
         """
-        val_w, _ = argmax(self.W, axis = 0)
-        val_h, _ = argmax(self.H, axis = 1)
+        val_w, _ = argmax(self.W, axis=0)
+        val_h, _ = argmax(self.H, axis=1)
         if sp.isspmatrix(self.W):
             D_w = sp.spdiags(val_w, 0, self.W.shape[1], self.W.shape[1])
         else:
@@ -180,19 +191,19 @@ class Bmf(nmf_std.Nmf_std):
             D_h = np.diag(val_h)
         self.W = dot(dot(self.W, power(D_w, -0.5)), power(D_h, 0.5))
         self.H = dot(dot(power(D_h, -0.5), power(D_w, 0.5)), self.H)
-        
+
     def objective(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate."""
-        R = self.V - dot(self.W, self.H) 
+        R = self.V - dot(self.W, self.H)
         return (multiply(R, R)).sum()
-    
+
     def _adjustment(self):
         """Adjust small values to factors to avoid numerical underflow."""
         self.H = max(self.H, np.finfo(self.H.dtype).eps)
         self.W = max(self.W, np.finfo(self.W.dtype).eps)
 
     def __str__(self):
-        return self.name    
-        
+        return self.name
+
     def __repr__(self):
         return self.name

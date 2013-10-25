@@ -106,17 +106,19 @@ try:
 except ImportError, exc:
     raise SystemExit("PIL must be installed to run this example.")
 
+
 def run():
     """Run LSNMF on ORL faces data set."""
-    # read face image data from ORL database 
+    # read face image data from ORL database
     V = read()
     # preprocess ORL faces data matrix
     V = preprocess(V)
     # run factorization
     W, _ = factorize(V)
-    # plot parts-based representation 
+    # plot parts-based representation
     plot(W)
-    
+
+
 def factorize(V):
     """
     Perform LSNMF factorization on the ORL faces data matrix. 
@@ -126,25 +128,26 @@ def factorize(V):
     :param V: The ORL faces data matrix. 
     :type V: `numpy.matrix`
     """
-    model = nimfa.mf(V, 
-                  seed = "random_vcol",
-                  rank = 25, 
-                  method = "lsnmf", 
-                  max_iter = 50,
-                  initialize_only = True,
-                  sub_iter = 10,
-                  inner_sub_iter = 10, 
-                  beta = 0.1,
-                  min_residuals = 1e-8)
-    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
+    model = nimfa.mf(V,
+                     seed="random_vcol",
+                     rank=25,
+                     method="lsnmf",
+                     max_iter=50,
+                     initialize_only=True,
+                     sub_iter=10,
+                     inner_sub_iter=10,
+                     beta=0.1,
+                     min_residuals=1e-8)
+    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank)
     fit = nimfa.mf_run(model)
     print "... Finished"
     print """Stats:
             - iterations: %d
             - final projected gradients norm: %5.3f
-            - Euclidean distance: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric = 'euclidean'))
+            - Euclidean distance: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric='euclidean'))
     return fit.basis(), fit.coef()
-    
+
+
 def read():
     """
     Read face image data from the ORL database. The matrix's shape is 2576 (pixels) x 400 (faces). 
@@ -154,17 +157,19 @@ def read():
     Return the ORL faces data matrix. 
     """
     print "Reading ORL faces database ..."
-    dir = dirname(dirname(abspath(__file__)))+ sep + 'datasets' + sep + 'ORL_faces' + sep + 's'
+    dir = dirname(dirname(abspath(__file__))) + \
+        sep + 'datasets' + sep + 'ORL_faces' + sep + 's'
     V = np.matrix(np.zeros((46 * 56, 400)))
     for subject in xrange(40):
         for image in xrange(10):
             im = open(dir + str(subject + 1) + sep + str(image + 1) + ".pgm")
             # reduce the size of the image
             im = im.resize((46, 56))
-            V[:, image * subject + image] = np.mat(np.asarray(im).flatten()).T      
+            V[:, image * subject + image] = np.mat(np.asarray(im).flatten()).T
     print "... Finished."
     return V
-            
+
+
 def preprocess(V):
     """
     Preprocess ORL faces data matrix as Stan Li, et. al.
@@ -174,16 +179,17 @@ def preprocess(V):
     :param V: The ORL faces data matrix. 
     :type V: `numpy.matrix`
     """
-    print "Preprocessing data matrix ..." 
-    min_val = V.min(axis = 0)
+    print "Preprocessing data matrix ..."
+    min_val = V.min(axis=0)
     V = V - np.mat(np.ones((V.shape[0], 1))) * min_val
-    max_val = V.max(axis = 0) + 1e-4
+    max_val = V.max(axis=0) + 1e-4
     V = (255. * V) / (np.mat(np.ones((V.shape[0], 1))) * max_val)
-    # avoid too large values 
+    # avoid too large values
     V = V / 100.
     print "... Finished."
     return V
-            
+
+
 def plot(W):
     """
     Plot basis vectors.
@@ -199,7 +205,7 @@ def plot(W):
             basis = basis / np.max(basis) * 255
             basis = 255 - basis
             ima = fromarray(basis)
-            expand(ima, border = 1, fill = 'black')
+            expand(ima, border=1, fill='black')
             blank.paste(ima.copy(), (j * 46 + j, i * 56 + i))
     imshow(blank)
     savefig("orl_faces.png")
@@ -207,4 +213,3 @@ def plot(W):
 if __name__ == "__main__":
     """Run the ORL faces example."""
     run()
-    

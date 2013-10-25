@@ -15,11 +15,12 @@ of mixture matrix is similar except for row operations.
 
 from nimfa.utils.linalg import *
 
+
 class Random_c(object):
-    
+
     def __init__(self):
         self.name = "random_c"
-       
+
     def initialize(self, V, rank, options):
         """
         Return initialized basis and mixture matrix. Initialized matrices are of the same type as passed target matrix. 
@@ -57,27 +58,32 @@ class Random_c(object):
         if sp.isspmatrix(V):
             self.W = sp.lil_matrix((V.shape[0], self.rank))
             self.H = sp.lil_matrix((self.rank, V.shape[1]))
-            top_c = sorted(enumerate([norm(V[:, i], 2) for i in xrange(V.shape[1])]), key = itemgetter(1), reverse = True)[:self.l_c]
-            top_r = sorted(enumerate([norm(V[i, :], 2) for i in xrange(V.shape[0])]), key = itemgetter(1), reverse = True)[:self.l_r]
+            top_c = sorted(enumerate([norm(V[:, i], 2)
+                           for i in xrange(V.shape[1])]), key=itemgetter(1), reverse=True)[:self.l_c]
+            top_r = sorted(
+                enumerate([norm(V[i, :], 2) for i in xrange(V.shape[0])]), key=itemgetter(1), reverse=True)[:self.l_r]
         else:
             self.W = np.mat(np.zeros((V.shape[0], self.rank)))
             self.H = np.mat(np.zeros((self.rank, V.shape[1])))
-            top_c = sorted(enumerate([norm(V[:, i], 2) for i in xrange(V.shape[1])]), key = itemgetter(1), reverse = True)[:self.l_c]
-            top_r = sorted(enumerate([norm(V[i, :], 2) for i in xrange(V.shape[0])]), key = itemgetter(1), reverse = True)[:self.l_r]
+            top_c = sorted(enumerate([norm(V[:, i], 2)
+                           for i in xrange(V.shape[1])]), key=itemgetter(1), reverse=True)[:self.l_c]
+            top_r = sorted(
+                enumerate([norm(V[i, :], 2) for i in xrange(V.shape[0])]), key=itemgetter(1), reverse=True)[:self.l_r]
         top_c = np.mat(zip(*top_c)[0])
         top_r = np.mat(zip(*top_r)[0])
         for i in xrange(self.rank):
-            self.W[:, i] = V[:, top_c[0, self.prng.randint(low = 0, high = self.l_c, size = self.p_c)].tolist()[0]].mean(axis = 1)
-            self.H[i, :] = V[top_r[0, self.prng.randint(low = 0, high = self.l_r, size = self.p_r)].tolist()[0], :].mean(axis = 0)
+            self.W[:, i] = V[
+                :, top_c[0, self.prng.randint(low=0, high=self.l_c, size=self.p_c)].tolist()[0]].mean(axis=1)
+            self.H[i, :] = V[
+                top_r[0, self.prng.randint(low=0, high=self.l_r, size=self.p_r)].tolist()[0], :].mean(axis=0)
         # return sparse or dense initialization
         if sp.isspmatrix(V):
             return self.W.tocsr(), self.H.tocsr()
         else:
             return self.W, self.H
-    
+
     def __repr__(self):
         return "random_c.Random_c()"
-    
+
     def __str__(self):
         return self.name
-    

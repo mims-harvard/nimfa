@@ -95,17 +95,19 @@ try:
 except ImportError, exc:
     raise SystemExit("PIL must be installed to run this example.")
 
+
 def run():
     """Run LSNMF on CBCL faces data set."""
-    # read face image data from ORL database 
+    # read face image data from ORL database
     V = read()
     # preprocess ORL faces data matrix
     V = preprocess(V)
     # run factorization
     W, _ = factorize(V)
-    # plot parts-based representation 
+    # plot parts-based representation
     plot(W)
-    
+
+
 def factorize(V):
     """
     Perform LSNMF factorization on the CBCL faces data matrix. 
@@ -115,17 +117,17 @@ def factorize(V):
     :param V: The CBCL faces data matrix. 
     :type V: `numpy.matrix`
     """
-    model = nimfa.mf(V, 
-                  seed = "random_vcol",
-                  rank = 49, 
-                  method = "lsnmf", 
-                  max_iter = 50, 
-                  initialize_only = True,
-                  sub_iter = 10,
-                  inner_sub_iter = 10, 
-                  beta = 0.1,
-                  min_residuals = 1e-8)
-    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
+    model = nimfa.mf(V,
+                     seed="random_vcol",
+                     rank=49,
+                     method="lsnmf",
+                     max_iter=50,
+                     initialize_only=True,
+                     sub_iter=10,
+                     inner_sub_iter=10,
+                     beta=0.1,
+                     min_residuals=1e-8)
+    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank)
     fit = nimfa.mf_run(model)
     print "... Finished"
     sparse_w, sparse_h = fit.fit.sparseness()
@@ -133,9 +135,10 @@ def factorize(V):
             - iterations: %d
             - final projected gradients norm: %5.3f
             - Euclidean distance: %5.3f 
-            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric = 'euclidean'), sparse_w, sparse_h)
+            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric='euclidean'), sparse_w, sparse_h)
     return fit.basis(), fit.coef()
-    
+
+
 def read():
     """
     Read face image data from the CBCL database. The matrix's shape is 361 (pixels) x 2429 (faces). 
@@ -145,14 +148,16 @@ def read():
     Return the CBCL faces data matrix. 
     """
     print "Reading CBCL faces database ..."
-    dir = dirname(dirname(abspath(__file__)))+ sep + 'datasets' + sep + 'CBCL_faces' + sep + 'face'
+    dir = dirname(dirname(abspath(__file__))) + sep + \
+        'datasets' + sep + 'CBCL_faces' + sep + 'face'
     V = np.matrix(np.zeros((19 * 19, 2429)))
     for image in xrange(2429):
         im = open(dir + sep + "face0" + str(image + 1).zfill(4) + ".pgm")
-        V[:, image] = np.mat(np.asarray(im).flatten()).T      
+        V[:, image] = np.mat(np.asarray(im).flatten()).T
     print "... Finished."
     return V
-            
+
+
 def preprocess(V):
     """
     Preprocess CBCL faces data matrix as Lee and Seung.
@@ -171,7 +176,8 @@ def preprocess(V):
     V = np.maximum(V, 0)
     print "... Finished."
     return V
-            
+
+
 def plot(W):
     """
     Plot basis vectors.
@@ -188,7 +194,7 @@ def plot(W):
             basis = 255 - basis
             ima = fromarray(basis)
             ima = ima.rotate(180)
-            expand(ima, border = 1, fill = 'black')
+            expand(ima, border=1, fill='black')
             blank.paste(ima.copy(), (j * 19 + j, i * 19 + i))
     imshow(blank)
     savefig("cbcl_faces.png")
@@ -196,4 +202,3 @@ def plot(W):
 if __name__ == "__main__":
     """Run the CBCL faces example."""
     run()
-    

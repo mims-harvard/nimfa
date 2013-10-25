@@ -104,12 +104,14 @@ try:
 except ImportError, exc:
     warn("Matplotlib must be installed to run Medulloblastoma example.")
 
+
 def run():
-    """Run Standard NMF on medulloblastoma data set. For each rank 50 Standard NMF runs are performed. """    
+    """Run Standard NMF on medulloblastoma data set. For each rank 50 Standard NMF runs are performed. """
     # read gene expression data
     V = read()
     for rank in xrange(2, 4):
         run_one(V, rank)
+
 
 def run_one(V, rank):
     """
@@ -124,20 +126,21 @@ def run_one(V, rank):
     print "================= Rank = %d =================" % rank
     consensus = np.mat(np.zeros((V.shape[1], V.shape[1])))
     for i in xrange(50):
-        # Standard NMF with Euclidean update equations is used. For initialization random Vcol method is used. 
-        # Objective function is the number of consecutive iterations in which the connectivity matrix has not changed. 
+        # Standard NMF with Euclidean update equations is used. For initialization random Vcol method is used.
+        # Objective function is the number of consecutive iterations in which the connectivity matrix has not changed.
         # We demand that factorization does not terminate before 30 consecutive iterations in which connectivity matrix
         # does not change. For a backup we also specify the maximum number of iterations. Note that the satisfiability
-        # of one stopping criteria terminates the run (there is no chance for divergence). 
-        model = nimfa.mf(V, 
-                    method = "nmf", 
-                    rank = rank, 
-                    seed = "random_vcol", 
-                    max_iter = 200, 
-                    update = 'euclidean', 
-                    objective = 'conn',
-                    conn_change = 40,
-                    initialize_only = True)
+        # of one stopping criteria terminates the run (there is no chance for
+        # divergence).
+        model = nimfa.mf(V,
+                         method="nmf",
+                         rank=rank,
+                         seed="random_vcol",
+                         max_iter=200,
+                         update='euclidean',
+                         objective='conn',
+                         conn_change=40,
+                         initialize_only=True)
         fit = nimfa.mf_run(model)
         print "%2d / 50 :: %s - init: %s ran with  ... %3d / 200 iters ..." % (i + 1, fit.fit, fit.fit.seed, fit.fit.n_iter)
         # Compute connectivity matrix of factorization.
@@ -148,9 +151,10 @@ def run_one(V, rank):
     consensus /= 50.
     # reorder consensus matrix
     p_consensus = reorder(consensus)
-    # plot reordered consensus matrix 
+    # plot reordered consensus matrix
     plot(p_consensus, rank)
-    
+
+
 def plot(C, rank):
     """
     Plot reordered consensus matrix.
@@ -161,26 +165,30 @@ def plot(C, rank):
     :type rank: `int`
     """
     set_cmap("RdBu_r")
-    imshow(np.array(C)) 
+    imshow(np.array(C))
     savefig("medulloblastoma_consensus" + str(rank) + ".png")
-    
+
+
 def reorder(C):
     """
     Reorder consensus matrix.
     
     :param C: Consensus matrix.
     :type C: `numpy.matrix`
-    """    
-    c_vec = np.array([C[i,j] for i in xrange(C.shape[0] - 1) for j in xrange(i + 1, C.shape[1])])
+    """
+    c_vec = np.array([C[i, j] for i in xrange(C.shape[0] - 1)
+                     for j in xrange(i + 1, C.shape[1])])
     # convert similarities to distances
     Y = 1 - c_vec
-    Z = linkage(Y, method = 'average')
-    # get node ids as they appear in the tree from left to right(corresponding to observation vector idx)
+    Z = linkage(Y, method='average')
+    # get node ids as they appear in the tree from left to right(corresponding
+    # to observation vector idx)
     ivl = leaves_list(Z)
     ivl = ivl[::-1]
     return C[:, ivl][ivl, :]
-    
-def read(normalize = False):
+
+
+def read(normalize=False):
     """
     Read the medulloblastoma gene expression data. The matrix's shape is 5893 (genes) x 34 (samples). 
     It contains only positive data.
@@ -189,8 +197,8 @@ def read(normalize = False):
     """
     V = np.matrix(np.zeros((5893, 34)))
     i = 0
-    for line in open(dirname(dirname(abspath(__file__)))+ sep + 'datasets' + sep + 'Medulloblastoma' + sep + 'Medulloblastoma_data.txt'):
-        V[i, :] =  map(float, line.split('\t'))
+    for line in open(dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'Medulloblastoma' + sep + 'Medulloblastoma_data.txt'):
+        V[i, :] = map(float, line.split('\t'))
         i += 1
     if normalize:
         V -= V.min()
@@ -200,4 +208,3 @@ def read(normalize = False):
 if __name__ == "__main__":
     """Run the medulloblastoma example."""
     run()
-    

@@ -5,7 +5,9 @@
     ##########################
 """
 
+
 class Mf_fit():
+
     """
     Base class for storing MF results.
     
@@ -55,21 +57,21 @@ class Mf_fit():
         self.n_run = self.fit.n_run
         self.seeding = str(self.fit.seed)
         self.options = self.fit.options
-        
+
     def basis(self):
         """Return the matrix of basis vectors."""
         return self.fit.basis()
-    
-    def coef(self, idx = None):
+
+    def coef(self, idx=None):
         """
         Return the matrix of mixture coefficients.
         
         :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model.
         :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-        return self.fit.coef(idx)  
-    
-    def distance(self, metric = None, idx = None):
+        return self.fit.coef(idx)
+
+    def distance(self, metric=None, idx=None):
         """
         Return the loss function value. If metric is not supplied, final objective function value associated to the MF algorithm is returned.
         
@@ -83,8 +85,8 @@ class Mf_fit():
             return self.fit.final_obj
         else:
             return self.fit.distance(metric, idx)
-            
-    def fitted(self, idx = None):
+
+    def fitted(self, idx=None):
         """
         Compute the estimated target matrix according to the MF algorithm model.
         
@@ -92,12 +94,12 @@ class Mf_fit():
         :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         return self.fit.fitted(idx)
-    
+
     def fit(self):
         """Return the MF algorithm model."""
-        return self.fit 
-    
-    def summary(self, idx = None):
+        return self.fit
+
+    def summary(self, idx=None):
         """
         Return generic set of measures to evaluate the quality of the factorization.
         
@@ -112,12 +114,12 @@ class Mf_fit():
             if idx not in self.summary_data:
                 self.summary_data[idx] = self._compute_summary(idx)
             return self.summary_data[idx]
-        else: 
+        else:
             self.summary_data = {}
             self.summary_data[idx] = self._compute_summary(idx)
             return self.summary_data[idx]
-    
-    def _compute_summary(self, idx = None):
+
+    def _compute_summary(self, idx=None):
         """
         Compute generic set of measures to evaluate the quality of the factorization.
         
@@ -125,22 +127,21 @@ class Mf_fit():
         :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         return {
-                'rank': self.fit.rank,
-                'sparseness': self.fit.sparseness(idx = idx),
-                'rss': self.fit.rss(idx = idx),
-                'evar': self.fit.evar(idx = idx),
-                'residuals': self.fit.residuals(idx = idx),
-                'connectivity': self.fit.connectivity(idx = idx),
-                'predict_samples': self.fit.predict(what = 'samples', prob = True, idx = idx),
-                'predict_features': self.fit.predict(what = 'features', prob = True, idx = idx),
-                'score_features': self.fit.score_features(idx = idx),
-                'select_features': self.fit.select_features(idx = idx),
-                'dispersion': self.fit.dispersion(idx = idx),
-                'cophenetic': self.fit.coph_cor(idx = idx),
-                'consensus': self.fit.consensus(idx = idx),
-                'euclidean': self.fit.distance(metric = 'euclidean', idx = idx),
-                'kl': self.fit.distance(metric = 'kl', idx = idx), 
-                'n_iter': self.fit.n_iter,
-                'n_run': self.fit.n_run
-                }
-        
+            'rank': self.fit.rank,
+            'sparseness': self.fit.sparseness(idx=idx),
+            'rss': self.fit.rss(idx=idx),
+            'evar': self.fit.evar(idx=idx),
+            'residuals': self.fit.residuals(idx=idx),
+            'connectivity': self.fit.connectivity(idx=idx),
+            'predict_samples': self.fit.predict(what='samples', prob=True, idx=idx),
+            'predict_features': self.fit.predict(what='features', prob=True, idx=idx),
+            'score_features': self.fit.score_features(idx=idx),
+            'select_features': self.fit.select_features(idx=idx),
+            'dispersion': self.fit.dispersion(idx=idx),
+            'cophenetic': self.fit.coph_cor(idx=idx),
+            'consensus': self.fit.consensus(idx=idx),
+            'euclidean': self.fit.distance(metric='euclidean', idx=idx),
+            'kl': self.fit.distance(metric='kl', idx=idx),
+            'n_iter': self.fit.n_iter,
+            'n_run': self.fit.n_run
+        }

@@ -16,11 +16,12 @@ decomposition.
 
 from nimfa.utils.linalg import *
 
+
 class Random_vcol(object):
-    
+
     def __init__(self):
         self.name = "random_vcol"
-       
+
     def initialize(self, V, rank, options):
         """
         Return initialized basis and mixture matrix. Initialized matrices are of the same type as passed target matrix. 
@@ -54,17 +55,18 @@ class Random_vcol(object):
             self.W = np.mat(np.zeros((V.shape[0], self.rank)))
             self.H = np.mat(np.zeros((self.rank, V.shape[1])))
         for i in xrange(self.rank):
-            self.W[:, i] = V[:, self.prng.randint(low = 0, high = V.shape[1], size = self.p_c)].mean(axis = 1)
-            self.H[i, :] = V[self.prng.randint(low = 0, high = V.shape[0], size = self.p_r), :].mean(axis = 0)
+            self.W[:, i] = V[:, self.prng.randint(
+                low=0, high=V.shape[1], size=self.p_c)].mean(axis=1)
+            self.H[i, :] = V[
+                self.prng.randint(low=0, high=V.shape[0], size=self.p_r), :].mean(axis=0)
         # return sparse or dense initialization
         if sp.isspmatrix(V):
             return self.W.tocsr(), self.H.tocsr()
         else:
             return self.W, self.H
-    
+
     def __repr__(self):
         return "random_vcol.Random_vcol()"
-    
+
     def __str__(self):
         return self.name
-    

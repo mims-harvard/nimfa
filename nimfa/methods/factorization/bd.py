@@ -38,7 +38,9 @@ from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
+
 class Bd(nmf_std.Nmf_std):
+
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
@@ -77,7 +79,7 @@ class Bd(nmf_std.Nmf_std):
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
         self.set_params()
-        
+
     def factorize(self):
         """
         Compute matrix factorization.
@@ -85,41 +87,45 @@ class Bd(nmf_std.Nmf_std):
         Return fitted factorization model.
         """
         self.v = multiply(self.V, self.V).sum() / 2.
-        
+
         for run in xrange(self.n_run):
-            self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
+            self.W, self.H = self.seed.initialize(
+                self.V, self.rank, self.options)
             p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
             if self.callback_init:
                 self.final_obj = c_obj
-                self.n_iter = iter 
+                self.n_iter = iter
                 mffit = mf_fit.Mf_fit(self)
                 self.callback_init(mffit)
             while self.is_satisfied(p_obj, c_obj, iter):
                 p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update(iter)
                 iter += 1
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
+                c_obj = self.objective(
+                ) if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(run, c_obj)
             if self.callback:
                 self.final_obj = c_obj
                 self.n_iter = iter
-                mffit = mf_fit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self)
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(run, W = self.W, H = self.H, sigma = self.sigma, final_obj = c_obj, n_iter = iter)
-            # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
+                self.tracker.track_factor(
+                    run, W=self.W, H=self.H, sigma=self.sigma, final_obj=c_obj, n_iter=iter)
+            # if multiple runs are performed, fitted factorization model with
+            # the lowest objective function value is retained
             if c_obj <= best_obj or run == 0:
                 best_obj = c_obj
-                self.n_iter = iter 
+                self.n_iter = iter
                 self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(copy.deepcopy(self))
-        
+
         mffit.fit.tracker = self.tracker
         return mffit
-        
+
     def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
@@ -142,32 +148,36 @@ class Bd(nmf_std.Nmf_std):
         if iter > 0 and c_obj > p_obj:
             return False
         return True
-    
+
     def set_params(self):
         """Set algorithm specific model options."""
-        if not self.max_iter: self.max_iter = 30
-        self.alpha = self.options.get('alpha', sp.csr_matrix((self.V.shape[0], self.rank)))
+        if not self.max_iter:
+            self.max_iter = 30
+        self.alpha = self.options.get(
+            'alpha', sp.csr_matrix((self.V.shape[0], self.rank)))
         if sp.isspmatrix(self.alpha):
             self.alpha = self.alpha.tocsr()
         else:
             self.alpha = np.mat(self.alpha)
-        self.beta = self.options.get('beta', sp.csr_matrix((self.rank, self.V.shape[1])))
+        self.beta = self.options.get(
+            'beta', sp.csr_matrix((self.rank, self.V.shape[1])))
         if sp.isspmatrix(self.beta):
             self.beta = self.beta.tocsr()
         else:
             self.beta = np.mat(self.beta)
         self.theta = self.options.get('theta', .0)
         self.k = self.options.get('k', .0)
-        self.sigma = self.options.get('sigma', 1.) 
-        self.skip = self.options.get('skip', 100) 
-        self.stride = self.options.get('stride', 1)  
+        self.sigma = self.options.get('sigma', 1.)
+        self.skip = self.options.get('skip', 100)
+        self.stride = self.options.get('stride', 1)
         self.n_w = self.options.get('n_w', np.zeros((self.rank, 1)))
         self.n_h = self.options.get('n_h', np.zeros((self.rank, 1)))
         self.n_sigma = self.options.get('n_sigma', False)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
-        
+        self.tracker = mf_track.Mf_track(
+        ) if self.track_factor and self.n_run > 1 or self.track_error else None
+
     def update(self, iter):
         """Update basis and mixture matrix."""
         for _ in xrange(self.skip * (iter == 0) + self.stride * (iter > 0)):
@@ -177,8 +187,10 @@ class Bd(nmf_std.Nmf_std):
             for n in xrange(self.rank):
                 if not self.n_w[n]:
                     nn = list(xrange(n)) + list(xrange(n + 1, self.rank))
-                    temp = self._randr(sop(D[:, n] - dot(self.W[:, nn], C[nn, n]), C[n, n] + np.finfo(C.dtype).eps, div), 
-                           self.sigma / (C[n, n] + np.finfo(C.dtype).eps), self.alpha[:, n])
+                    temp = self._randr(
+                        sop(D[:, n] - dot(self.W[:, nn], C[nn, n]), C[
+                            n, n] + np.finfo(C.dtype).eps, div),
+                        self.sigma / (C[n, n] + np.finfo(C.dtype).eps), self.alpha[:, n])
                     if not sp.isspmatrix(self.W):
                         self.W[:, n] = temp
                     else:
@@ -186,23 +198,29 @@ class Bd(nmf_std.Nmf_std):
                             self.W[j, n] = temp[j]
             # update sigma
             if self.n_sigma == False:
-                scale = 1. / (self.theta + self.v + multiply(self.W, dot(self.W, C) - 2 * D).sum() / 2.)
-                self.sigma = 1. / np.random.gamma(shape = (self.V.shape[0] * self.V.shape[1]) / 2. + 1. + self.k, scale = scale)
+                scale = 1. / \
+                    (self.theta + self.v + multiply(
+                        self.W, dot(self.W, C) - 2 * D).sum() / 2.)
+                self.sigma = 1. / \
+                    np.random.gamma(
+                        shape=(self.V.shape[0] * self.V.shape[1]) / 2. + 1. + self.k, scale = scale)
             # update mixture matrix
             E = dot(self.W.T, self.W)
             F = dot(self.W.T, self.V)
             for n in xrange(self.rank):
                 if not self.n_h[n]:
                     nn = list(xrange(n)) + list(xrange(n + 1, self.rank))
-                    temp = self._randr(sop((F[n, :] - dot(E[n, nn], self.H[nn, :])).T, E[n, n] + np.finfo(E.dtype).eps, div),
-                           self.sigma / (E[n, n] + np.finfo(E.dtype).eps), self.beta[n, :].T)
+                    temp = self._randr(
+                        sop((F[n, :] - dot(E[n, nn], self.H[nn, :])).T, E[
+                            n, n] + np.finfo(E.dtype).eps, div),
+                        self.sigma / (E[n, n] + np.finfo(E.dtype).eps), self.beta[n, :].T)
                     if not sp.isspmatrix(self.H):
                         self.H[n, :] = temp.T
                     else:
                         for j in xrange(self.H.shape[1]):
                             self.H[n, j] = temp[j]
-                    
-    def _randr(self, m, s, l):    
+
+    def _randr(self, m, s, l):
         """Return random number from distribution with density p(x)=K*exp(-(x-m)^2/s-l'x), x>=0."""
         # m and l are vectors and s is scalar
         m = m.toarray() if sp.isspmatrix(m) else np.array(m)
@@ -212,20 +230,21 @@ class Bd(nmf_std.Nmf_std):
         x = np.zeros(m.shape)
         y = np.random.rand(m.shape[0], m.shape[1])
         x[a] = - np.log(y[a]) / ((l[a] * s - m[a]) / s)
-        a = np.array(1 - a, dtype = bool)
+        a = np.array(1 - a, dtype=bool)
         R = erfc(abs(A[a]))
-        x[a] = erfcinv(y[a] * R - (A[a] < 0) * (2 * y[a] + R - 2)) * sqrt(2 * s) + m[a] - l[a] * s
+        x[a] = erfcinv(y[a] * R - (A[a] < 0) * (2 * y[a] + R - 2)) * \
+            sqrt(2 * s) + m[a] - l[a] * s
         x[np.isnan(x)] = 0
         x[x < 0] = 0
         x[np.isinf(x)] = 0
         return x.real
-    
+
     def objective(self):
-        """Compute squared Frobenius norm of a target matrix and its NMF estimate.""" 
+        """Compute squared Frobenius norm of a target matrix and its NMF estimate."""
         return power(self.V - dot(self.W, self.H), 2).sum()
-    
+
     def __str__(self):
         return self.name
-    
+
     def __repr__(self):
         return self.name

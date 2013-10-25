@@ -5,7 +5,9 @@
     ##############################
 """
 
+
 class Mf_track():
+
     """
     Base class for tracking MF fitted model across multiple runs of the factorizations or tracking
     the residuals error across iterations of single/multiple runs. 
@@ -32,7 +34,7 @@ class Mf_track():
         """
         self._factors = {}
         self._residuals = {}
-        
+
     def track_error(self, run, residuals):
         """
         Add residuals error after one iteration. 
@@ -44,7 +46,7 @@ class Mf_track():
         """
         self._residuals.setdefault(run, [])
         self._residuals[run].append(residuals)
-        
+
     def track_factor(self, run, **track_model):
         """
         Add matrix factorization factors (and method specific model data) after one factorization run.
@@ -55,8 +57,8 @@ class Mf_track():
         :type track_model:  algorithm specific
         """
         self._factors[run] = t_model(track_model)
-        
-    def get_factor(self, run = 0):
+
+    def get_factor(self, run=0):
         """
         Return matrix factorization factors from run :param:`run`.
         
@@ -64,8 +66,8 @@ class Mf_track():
         :type run: `int`
         """
         return self._factors[run]
-    
-    def get_error(self, run = 0):
+
+    def get_error(self, run=0):
         """
         Return residuals track from one run of the factorization.
         
@@ -73,11 +75,13 @@ class Mf_track():
         :type run: `int`
         """
         return self._residuals[run]
-    
+
+
 class t_model:
+
     """
     Tracking factors model.
     """
+
     def __init__(self, td):
         self.__dict__.update(td)
-    

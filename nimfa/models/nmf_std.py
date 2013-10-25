@@ -7,7 +7,9 @@
 
 from nmf import *
 
+
 class Nmf_std(Nmf):
+
     """
     Implementation of the standard model to manage factorizations that follow standard NMF model.
      
@@ -21,7 +23,7 @@ class Nmf_std(Nmf):
     
         Mixture matrix -- the second matrix factor in standard factorization
     """
-    
+
     def __init__(self, params):
         """
         Construct factorization model that manages standard NMF models.
@@ -34,13 +36,13 @@ class Nmf_std(Nmf):
         Nmf.__init__(self, params)
         self.model_name = "std"
         if sp.isspmatrix(self.V) and (self.V.data < 0).any() or not sp.isspmatrix(self.V) and (self.V < 0).any():
-            raise utils.MFError("The input matrix contains negative elements.")    
-            
+            raise utils.MFError("The input matrix contains negative elements.")
+
     def basis(self):
         """Return the matrix of basis vectors."""
         return self.W
-    
-    def target(self, idx = None):
+
+    def target(self, idx=None):
         """
         Return the target matrix to estimate.
         
@@ -48,8 +50,8 @@ class Nmf_std(Nmf):
         :type idx: None
         """
         return self.V
-    
-    def coef(self, idx = None):
+
+    def coef(self, idx=None):
         """
         Return the matrix of mixture coefficients.
         
@@ -57,8 +59,8 @@ class Nmf_std(Nmf):
         :type idx: None
         """
         return self.H
-    
-    def fitted(self, idx = None):
+
+    def fitted(self, idx=None):
         """
         Compute the estimated target matrix according to the NMF algorithm model.
         
@@ -66,8 +68,8 @@ class Nmf_std(Nmf):
         :type idx: None
         """
         return dot(self.W, self.H)
-    
-    def distance(self, metric = 'euclidean', idx = None):
+
+    def distance(self, metric='euclidean', idx=None):
         """
         Return the loss function value.
         
@@ -82,11 +84,11 @@ class Nmf_std(Nmf):
             return (power(R, 2)).sum()
         elif metric.lower() == 'kl':
             Va = dot(self.W, self.H)
-            return (multiply(self.V, sop(elop(self.V, Va, div), op = np.log)) - self.V + Va).sum()
+            return (multiply(self.V, sop(elop(self.V, Va, div), op=np.log)) - self.V + Va).sum()
         else:
             raise utils.MFError("Unknown distance metric.")
-    
-    def residuals(self, idx = None):
+
+    def residuals(self, idx=None):
         """
         Return residuals matrix between the target matrix and its NMF estimate.
         
@@ -94,4 +96,3 @@ class Nmf_std(Nmf):
         :type idx: None
         """
         return self.V - dot(self.W, self.H)
-        

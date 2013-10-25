@@ -4,7 +4,9 @@ Utils (``utils.utils``)
 #########################
 """
 
+
 class MFError(Exception):
+
     """
     Generic Python exception derived object raised by nimfa library. 
     
@@ -17,6 +19,6 @@ class MFError(Exception):
 
     def __init__(self, msg):
         self.msg = msg
-        
+
     def __str__(self):
         return repr(self.msg)

@@ -9,7 +9,9 @@ import nimfa.utils.utils as utils
 from nimfa.utils.linalg import *
 from nimfa.models import mf_track
 
+
 class Nmf(object):
+
     """
     This class defines a common interface / model to handle NMF models in a generic way.
     
@@ -99,39 +101,44 @@ class Nmf(object):
         if sp.isspmatrix(self.V):
             self.V = self.V.tocsr().astype('d')
         else:
-            self.V = np.asmatrix(self.V) if self.V.dtype == np.dtype(float) else np.asmatrix(self.V, dtype = 'd')
+            self.V = np.asmatrix(self.V) if self.V.dtype == np.dtype(
+                float) else np.asmatrix(self.V, dtype='d')
         if hasattr(self, "V1"):
             if sp.isspmatrix(self.V1):
                 self.V1 = self.V1.tocsr().astype('d')
             else:
-                self.V1 = np.asmatrix(self.V1) if self.V1.dtype == np.dtype(float) else np.asmatrix(self.V1, dtype = 'd')
+                self.V1 = np.asmatrix(self.V1) if self.V1.dtype == np.dtype(
+                    float) else np.asmatrix(self.V1, dtype='d')
         if self.W != None:
             if sp.isspmatrix(self.W):
                 self.W = self.W.tocsr().astype('d')
             else:
-                self.W = np.asmatrix(self.W) if self.W.dtype == np.dtype(float) else np.asmatrix(self.W, dtype = 'd')
+                self.W = np.asmatrix(self.W) if self.W.dtype == np.dtype(
+                    float) else np.asmatrix(self.W, dtype='d')
         if self.H != None:
             if sp.isspmatrix(self.H):
                 self.H = self.H.tocsr().astype('d')
             else:
-                self.H = np.asmatrix(self.H) if self.H.dtype == np.dtype(float) else np.asmatrix(self.H, dtype = 'd')
+                self.H = np.asmatrix(self.H) if self.H.dtype == np.dtype(
+                    float) else np.asmatrix(self.H, dtype='d')
         if self.H1 != None:
             if sp.isspmatrix(self.H1):
                 self.H1 = self.H1.tocsr().astype('d')
             else:
-                self.H1 = np.asmatrix(self.H1) if self.H1.dtype == np.dtype(float) else np.asmatrix(self.H1, dtype = 'd')
-    
+                self.H1 = np.asmatrix(self.H1) if self.H1.dtype == np.dtype(
+                    float) else np.asmatrix(self.H1, dtype='d')
+
     def run(self):
         """Run the specified MF algorithm."""
         return self.factorize()
-            
+
     def basis(self):
         """Return the matrix of basis vectors. See NMF specific model."""
-        
-    def target(self, idx = None):
+
+    def target(self, idx=None):
         """Return the target matrix. See NMF specific model."""
-        
-    def coef(self, idx = None):
+
+    def coef(self, idx=None):
         """
         Return the matrix of mixture coefficients. See NMF specific model.
         
@@ -139,8 +146,8 @@ class Nmf(object):
                     :param:`idx` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-    
-    def fitted(self, idx = None):
+
+    def fitted(self, idx=None):
         """
         Compute the estimated target matrix according to the NMF model. See NMF specific model.
 
@@ -148,8 +155,8 @@ class Nmf(object):
                     :param:`idx` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-    
-    def distance(self, metric = 'euclidean', idx = None):
+
+    def distance(self, metric='euclidean', idx=None):
         """
         Return the loss function value. See NMF specific model.
         
@@ -160,8 +167,8 @@ class Nmf(object):
                     :param:`idx` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-        
-    def residuals(self, idx = None):
+
+    def residuals(self, idx=None):
         """
         Compute residuals between the target matrix and its NMF estimate. See NMF specific model.
         
@@ -169,8 +176,8 @@ class Nmf(object):
                     :param:`idx` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-        
-    def connectivity(self, H = None, idx = None):
+
+    def connectivity(self, H=None, idx=None):
         """
         Compute the connectivity matrix for the samples based on their mixture coefficients. 
         
@@ -185,16 +192,16 @@ class Nmf(object):
         """
         V = self.target(idx)
         H = self.coef(idx) if H == None else H
-        _, idx = argmax(H, axis = 0)
+        _, idx = argmax(H, axis=0)
         mat1 = repmat(idx, V.shape[1], 1)
         mat2 = repmat(idx.T, 1, V.shape[1])
         conn = elop(mat1, mat2, eq)
         if sp.isspmatrix(conn):
-            return conn.__class__(conn, dtype = 'd')
+            return conn.__class__(conn, dtype='d')
         else:
-            return np.mat(conn, dtype = 'd')
-    
-    def consensus(self, idx = None):
+            return np.mat(conn, dtype='d')
+
+    def consensus(self, idx=None):
         """
         Compute consensus matrix as the mean connectivity matrix across multiple runs of the factorization. It has been
         proposed by [Brunet2004]_ to help visualize and measure the stability of the clusters obtained by NMF.
@@ -209,16 +216,17 @@ class Nmf(object):
         V = self.target(idx)
         if self.track_factor:
             if sp.isspmatrix(V):
-                cons = V.__class__((V.shape[1], V.shape[1]), dtype = V.dtype)
+                cons = V.__class__((V.shape[1], V.shape[1]), dtype=V.dtype)
             else:
                 cons = np.mat(np.zeros((V.shape[1], V.shape[1])))
             for i in xrange(self.n_run):
-                cons += self.connectivity(H = self.tracker.get_factor(i).H, idx = idx)
+                cons += self.connectivity(
+                    H=self.tracker.get_factor(i).H, idx=idx)
             return sop(cons, self.n_run, div)
         else:
-            return self.connectivity(H = self.coef(idx), idx = idx) 
-        
-    def dim(self, idx = None):
+            return self.connectivity(H=self.coef(idx), idx=idx)
+
+    def dim(self, idx=None):
         """
         Return triple containing the dimension of the target matrix and matrix factorization rank.
         
@@ -228,8 +236,8 @@ class Nmf(object):
         """
         V = self.target(idx)
         return (V.shape[0], V.shape[1], self.rank)
-    
-    def entropy(self, membership = None, idx = None):
+
+    def entropy(self, membership=None, idx=None):
         """
         Compute the entropy of the NMF model given a priori known groups of samples [Park2007]_.
         
@@ -246,16 +254,18 @@ class Nmf(object):
         """
         V = self.target(idx)
         if not membership:
-            raise utils.MFError("Known class membership for each sample is not specified.")
+            raise utils.MFError(
+                "Known class membership for each sample is not specified.")
         n = V.shape[1]
-        mbs = self.predict(what = "samples", prob = False, idx = idx)
+        mbs = self.predict(what="samples", prob=False, idx=idx)
         dmbs, dmembership = {}, {}
         [dmbs.setdefault(mbs[i], set()).add(i) for i in xrange(len(mbs))]
-        [dmembership.setdefault(membership[i], set()).add(i) for i in xrange(len(membership))]
-        return -1. / (n * log(len(dmembership), 2)) * sum(sum( len(dmbs[k].intersection(dmembership[j])) * 
-               log(len(dmbs[k].intersection(dmembership[j])) / float(len(dmbs[k])), 2) for j in dmembership) for k in dmbs)
-        
-    def predict(self, what = 'samples', prob = False, idx = None):
+        [dmembership.setdefault(membership[i], set()).add(i)
+         for i in xrange(len(membership))]
+        return -1. / (n * log(len(dmembership), 2)) * sum(sum(len(dmbs[k].intersection(dmembership[j])) *
+                                                              log(len(dmbs[k].intersection(dmembership[j])) / float(len(dmbs[k])), 2) for j in dmembership) for k in dmbs)
+
+    def predict(self, what='samples', prob=False, idx=None):
         """
         Compute the dominant basis components. The dominant basis component is computed as the row index for which
         the entry is the maximum within the column. 
@@ -275,17 +285,19 @@ class Nmf(object):
                     :param:`idx` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-        X = self.coef(idx) if what == "samples" else self.basis().T if what == "features" else None
+        X = self.coef(idx) if what == "samples" else self.basis(
+        ).T if what == "features" else None
         if X == None:
-            raise utils.MFError("Dominant basis components can be computed for samples or features.")
-        eX, idxX = argmax(X, axis = 0)
+            raise utils.MFError(
+                "Dominant basis components can be computed for samples or features.")
+        eX, idxX = argmax(X, axis=0)
         if not prob:
             return idxX
-        sums = X.sum(axis = 0)
+        sums = X.sum(axis=0)
         prob = [e / sums[0, s] for e, s in zip(eX, list(xrange(X.shape[1])))]
         return idxX, prob
-    
-    def evar(self, idx = None):
+
+    def evar(self, idx=None):
         """
         Compute the explained variance of the NMF estimate of the target matrix.
         
@@ -298,9 +310,9 @@ class Nmf(object):
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
-        return 1. - self.rss(idx = idx) / multiply(V, V).sum()
-        
-    def score_features(self, idx = None):
+        return 1. - self.rss(idx=idx) / multiply(V, V).sum()
+
+    def score_features(self, idx=None):
         """
         Compute the score for each feature that represents its specificity to one of the basis vector [Park2007]_.
         
@@ -316,15 +328,17 @@ class Nmf(object):
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         W = self.basis()
+
         def prob(i, q):
             """Return probability that the i-th feature contributes to the basis q."""
             return W[i, q] / (W[i, :].sum() + np.finfo(W.dtype).eps)
         res = []
         for f in xrange(W.shape[0]):
-            res.append(1. + 1. / log(W.shape[1], 2) * sum(prob(f, q) * log(prob(f,q) + np.finfo(W.dtype).eps, 2) for q in xrange(W.shape[1])))
+            res.append(1. + 1. / log(W.shape[1], 2) * sum(
+                prob(f, q) * log(prob(f, q) + np.finfo(W.dtype).eps, 2) for q in xrange(W.shape[1])))
         return res
-    
-    def select_features(self, idx = None):
+
+    def select_features(self, idx=None):
         """
         Compute the most basis-specific features for each basis vector [Park2007]_.
         
@@ -340,15 +354,15 @@ class Nmf(object):
                     :param:`idx` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-        scores = self.score_features(idx = idx)
+        scores = self.score_features(idx=idx)
         u = np.median(scores)
         s = np.median(abs(scores - u))
         res = [i for i in xrange(len(scores)) if scores[i] > u + 3. * s]
         W = self.basis()
         m = np.median(W.toarray() if sp.isspmatrix(W) else W.tolist())
-        return [i for i in res if np.max(W[i, :].toarray() if sp.isspmatrix(W) else W[i, :]) > m]
-    
-    def purity(self, membership = None, idx = None):
+        return [i for i in res if np.max(W[i, :].toarray() if sp.isspmatrix(W) else W[i,:]) > m]
+
+    def purity(self, membership=None, idx=None):
         """
         Compute the purity given a priori known groups of samples [Park2007]_.
         
@@ -365,15 +379,17 @@ class Nmf(object):
         """
         V = self.target(idx)
         if not membership:
-            raise utils.MFError("Known class membership for each sample is not specified.")
+            raise utils.MFError(
+                "Known class membership for each sample is not specified.")
         n = V.shape[1]
-        mbs = self.predict(what = "samples", prob = False, idx = idx)
+        mbs = self.predict(what="samples", prob=False, idx=idx)
         dmbs, dmembership = {}, {}
         [dmbs.setdefault(mbs[i], set()).add(i) for i in xrange(len(mbs))]
-        [dmembership.setdefault(membership[i], set()).add(i) for i in xrange(len(membership))]
-        return 1. / n * sum(max( len(dmbs[k].intersection(dmembership[j])) for j in dmembership) for k in dmbs)
-    
-    def rss(self, idx = None):
+        [dmembership.setdefault(membership[i], set()).add(i)
+         for i in xrange(len(membership))]
+        return 1. / n * sum(max(len(dmbs[k].intersection(dmembership[j])) for j in dmembership) for k in dmbs)
+
+    def rss(self, idx=None):
         """
         Compute Residual Sum of Squares (RSS) between NMF estimate and target matrix [Hutchins2008]_.
         
@@ -389,10 +405,10 @@ class Nmf(object):
                     :param:`idx` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-        X = self.residuals(idx = idx)
+        X = self.residuals(idx=idx)
         return multiply(X, X).sum()
-    
-    def sparseness(self, idx = None):
+
+    def sparseness(self, idx=None):
         """
         Compute sparseness of matrix (basis vectors matrix, mixture coefficients) [Hoyer2004]_. This sparseness 
         measure quantifies how much energy of a vector is packed into only few components. The sparseness of a vector
@@ -409,14 +425,15 @@ class Nmf(object):
         """
         def sparseness(x):
             eps = np.finfo(x.dtype).eps if 'int' not in str(x.dtype) else 1e-9
-            x1 = sqrt(x.shape[0]) - (abs(x).sum() + eps) / (sqrt(multiply(x, x).sum()) + eps)
+            x1 = sqrt(x.shape[0]) - (abs(x).sum() + eps) / \
+                (sqrt(multiply(x, x).sum()) + eps)
             x2 = sqrt(x.shape[0]) - 1
-            return x1 / x2 
+            return x1 / x2
         W = self.basis()
         H = self.coef(idx)
         return np.mean([sparseness(W[:, i]) for i in xrange(W.shape[1])]), np.mean([sparseness(H[:, i]) for i in xrange(H.shape[1])])
-        
-    def coph_cor(self, idx = None):
+
+    def coph_cor(self, idx=None):
         """
         Compute cophenetic correlation coefficient of consensus matrix, generally obtained from multiple NMF runs. 
         
@@ -434,16 +451,19 @@ class Nmf(object):
                     :param:`idx` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-        A = self.consensus(idx = idx)
+        A = self.consensus(idx=idx)
         # upper diagonal elements of consensus
-        avec = np.array([A[i,j] for i in xrange(A.shape[0] - 1) for j in xrange(i + 1, A.shape[1])])
+        avec = np.array([A[i, j] for i in xrange(A.shape[0] - 1)
+                        for j in xrange(i + 1, A.shape[1])])
         # consensus entries are similarities, conversion to distances
         Y = 1 - avec
-        Z = linkage(Y, method = 'average')
-        # cophenetic correlation coefficient of a hierarchical clustering defined by the linkage matrix Z and matrix Y from which Z was generated
+        Z = linkage(Y, method='average')
+        # cophenetic correlation coefficient of a hierarchical clustering
+        # defined by the linkage matrix Z and matrix Y from which Z was
+        # generated
         return cophenet(Z, Y)[0]
-    
-    def dispersion(self, idx = None):
+
+    def dispersion(self, idx=None):
         """
         Compute the dispersion coefficient of consensus matrix, generally obtained from multiple
         NMF runs.
@@ -459,10 +479,10 @@ class Nmf(object):
                     :param:`idx` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
-        C = self.consensus(idx = idx)
-        return sum(sum(4 * (C[i,j] - 0.5)**2 for j in xrange(C.shape[1])) for i in xrange(C.shape[0]))
-    
-    def estimate_rank(self, range = xrange(30, 51), n_run = 10, idx = 0, what = 'all'):
+        C = self.consensus(idx=idx)
+        return sum(sum(4 * (C[i, j] - 0.5) ** 2 for j in xrange(C.shape[1])) for i in xrange(C.shape[0]))
+
+    def estimate_rank(self, range=xrange(30, 51), n_run=10, idx=0, what='all'):
         """
         Choosing factorization parameters carefully is vital for success of a factorization. However, the most critical parameter 
         is factorization rank. This method tries different values for ranks, performs factorizations, computes some quality 
@@ -502,6 +522,7 @@ class Nmf(object):
         self.n_run = n_run
         self.track_factor = True
         self.tracker = mf_track.Mf_track()
+
         def _measures(measure):
             return {
                 'sparseness': fctr.fit.sparseness,
@@ -513,23 +534,24 @@ class Nmf(object):
                 'cophenetic': fctr.fit.coph_cor,
                 'consensus': fctr.fit.consensus}[measure]
         summaries = {}
-        for rank in range: 
+        for rank in range:
             self.rank = rank
             fctr = self.run()
             if what == 'all':
                 summaries[rank] = fctr.summary(idx)
             else:
                 summaries[rank] = {
-                'rank': fctr.fit.rank,
-                'n_iter': fctr.fit.n_iter,
-                'n_run': fctr.fit.n_run }
+                    'rank': fctr.fit.rank,
+                    'n_iter': fctr.fit.n_iter,
+                    'n_run': fctr.fit.n_run}
                 for measure in what:
                     if measure == 'euclidean':
-                        summaries[rank][measure] = fctr.distance(metric = 'euclidean', idx = idx)
+                        summaries[rank][measure] = fctr.distance(
+                            metric='euclidean', idx=idx)
                     elif measure == 'kl':
-                        summaries[rank][measure] = fctr.distance(metric = 'kl', idx = idx)
+                        summaries[rank][measure] = fctr.distance(
+                            metric='kl', idx=idx)
                     else:
-                        summaries[rank][measure] = _measures(measure)(idx = idx)
+                        summaries[rank][measure] = _measures(
+                            measure)(idx=idx)
         return summaries
-    
-    

@@ -17,11 +17,12 @@ generated.
 from nimfa.utils.utils import *
 from nimfa.utils.linalg import *
 
+
 class Nndsvd(object):
 
     def __init__(self):
         self.name = "nndsvd"
-        
+
     def initialize(self, V, rank, options):
         """
         Return initialized basis and mixture matrix. 
@@ -79,16 +80,17 @@ class Nndsvd(object):
             n_vvp = norm(vvp, 2)
             n_uun = norm(uun, 2)
             n_vvn = norm(vvn, 2)
-            termp = n_uup * n_vvp; termn = n_uun * n_vvn
+            termp = n_uup * n_vvp
+            termn = n_uun * n_vvn
             if (termp >= termn):
-                self.W[:, i] = sqrt(S[i] * termp) / n_uup * uup 
-                self.H[i, :] = sqrt(S[i] * termp) / n_vvp * vvp.T 
+                self.W[:, i] = sqrt(S[i] * termp) / n_uup * uup
+                self.H[i, :] = sqrt(S[i] * termp) / n_vvp * vvp.T
             else:
                 self.W[:, i] = sqrt(S[i] * termn) / n_uun * uun
                 self.H[i, :] = sqrt(S[i] * termn) / n_vvn * vvn.T
         self.W[self.W < 1e-11] = 0
         self.H[self.H < 1e-11] = 0
-        # NNDSVD 
+        # NNDSVD
         if self.flag == 0:
             return (sp.lil_matrix(self.W).tocsr(), sp.lil_matrix(self.H).tocsr()) if sp.isspmatrix(V) else self.W, self.H
         # NNDSVDa
@@ -104,7 +106,7 @@ class Nndsvd(object):
             self.W[self.W == 0] = avg * np.random.uniform(n1, 1) / 100
             self.H[self.H == 0] = avg * np.random.uniform(n2, 1) / 100
         return self.W, self.H
-    
+
     def init_sparse(self, V, U, S, E):
         """
         Continue the NNDSVD initialization of sparse target matrix.
@@ -124,7 +126,7 @@ class Nndsvd(object):
         # scipy.sparse.linalg ARPACK does not allow computation of rank(V) eigenvectors
         # fill the missing columns/rows with random values
         prng = np.random.RandomState()
-        S = [S[i, i] for i in xrange(np.min([S.shape[0], S.shape[1]]))] 
+        S = [S[i, i] for i in xrange(np.min([S.shape[0], S.shape[1]]))]
         S += [prng.rand() for _ in xrange(self.rank - len(S))]
         U = U.tolil()
         E = E.tolil()
@@ -132,14 +134,17 @@ class Nndsvd(object):
         temp_E = sp.lil_matrix((V.shape[1], min(V.shape[0], V.shape[1])))
         if temp_U.shape != U.shape:
             temp_U[:, :U.shape[1]] = U
-            temp_U[:, U.shape[1]:] = abs(sp.rand(U.shape[0], temp_U.shape[1] - U.shape[1], density = 0.8, format = 'lil'))
+            temp_U[:, U.shape[1]:] = abs(
+                sp.rand(U.shape[0], temp_U.shape[1] - U.shape[1], density=0.8, format='lil'))
         if temp_E.shape != E.shape:
             temp_E[:E.shape[0], :] = E
-            temp_E[E.shape[0]:, :] = abs(sp.rand(temp_E.shape[0] - E.shape[0], E.shape[1], density = 0.8, format = 'lil'))
+            temp_E[E.shape[0]:, :] = abs(
+                sp.rand(temp_E.shape[0] - E.shape[0], E.shape[1], density=0.8, format='lil'))
         # choose the first singular triplet to be nonnegative
         self.W[:, 0] = sqrt(S[0]) * abs(U[:, 0])
         self.H[0, :] = sqrt(S[0]) * abs(E[:, 0].T)
-        eps = np.finfo(V.data.dtype).eps if not 'int' in str(V.data.dtype) else 0
+        eps = np.finfo(V.data.dtype).eps if not 'int' in str(
+            V.data.dtype) else 0
         # second svd for the other factors
         for i in xrange(1, self.rank):
             uu = U[:, i]
@@ -152,36 +157,34 @@ class Nndsvd(object):
             n_vvp = norm(vvp, 2) + eps
             n_uun = norm(uun, 2) + eps
             n_vvn = norm(vvn, 2) + eps
-            termp = n_uup * n_vvp; termn = n_uun * n_vvn
+            termp = n_uup * n_vvp
+            termn = n_uun * n_vvn
             if (termp >= termn):
-                self.W[:, i] = sqrt(S[i] * termp) / n_uup * uup 
-                self.H[i, :] = sqrt(S[i] * termp) / n_vvp * vvp.T 
+                self.W[:, i] = sqrt(S[i] * termp) / n_uup * uup
+                self.H[i, :] = sqrt(S[i] * termp) / n_vvp * vvp.T
             else:
                 self.W[:, i] = sqrt(S[i] * termn) / n_uun * uun
                 self.H[i, :] = sqrt(S[i] * termn) / n_vvn * vvn.T
-        # CSR sparse format is convenient for fast arithmetic and matrix vector operations
+        # CSR sparse format is convenient for fast arithmetic and matrix vector
+        # operations
         return self.W, self.H
-            
+
     def _pos(self, X):
         """Return positive section of matrix or vector."""
         if sp.isspmatrix(X):
             return multiply(sop(X, 0, ge), X)
         else:
             return multiply(X >= 0, X)
-    
+
     def _neg(self, X):
         """Return negative section of matrix or vector."""
         if sp.isspmatrix(X):
             return multiply(sop(X, 0, le), - X)
         else:
             return multiply(X < 0, -X)
-    
+
     def __repr__(self):
         return "nndsvd.Nndsvd()"
-    
+
     def __str__(self):
         return self.name
-            
-            
-            
-        

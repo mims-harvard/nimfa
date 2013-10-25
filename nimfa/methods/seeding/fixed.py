@@ -10,20 +10,22 @@ matrix factors.
 
 from nimfa.utils.linalg import *
 
+
 class Fixed(object):
 
     def __init__(self):
         self.name = "fixed"
-        
+
     def _set_fixed(self, **factors):
         """Set initial factorization."""
         for k in factors.keys():
-            if factors[k] != None: 
-                factors[k] = np.matrix(factors[k]) if not sp.isspmatrix(factors[k]) else factors[k].copy()
+            if factors[k] != None:
+                factors[k] = np.matrix(factors[k]) if not sp.isspmatrix(
+                    factors[k]) else factors[k].copy()
             else:
                 factors.pop(k)
-        self.__dict__.update(factors) 
-        
+        self.__dict__.update(factors)
+
     def initialize(self, V, rank, options):
         """
         Return fixed initialized matrix factors.
@@ -45,9 +47,9 @@ class Fixed(object):
         """
         self.idx = options.get('idx', 0)
         return (self.W, self.H) if self.idx == 0 else (self.W, getattr(self, 'H' + str(self.idx)))
-    
+
     def __repr__(self):
         return "fixed.Fixed()"
-    
+
     def __str__(self):
         return self.name

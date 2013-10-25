@@ -108,17 +108,19 @@ try:
 except ImportError, exc:
     warn("Matplotlib must be installed to run Documents example.")
 
+
 def run():
     """Run NMF - Divergence on the Medlars data set."""
-    # read medical abstracts from Medlars data set 
+    # read medical abstracts from Medlars data set
     V, term2idx, idx2term = read()
     # preprocess Medlars data matrix
     V, term2idx, idx2term = preprocess(V, term2idx, idx2term)
     # run factorization
     W, _ = factorize(V)
-    # plot interpretation of NMF basis vectors on Medlars data set. 
+    # plot interpretation of NMF basis vectors on Medlars data set.
     plot(W, idx2term)
-    
+
+
 def factorize(V):
     """
     Perform NMF - Divergence factorization on the sparse Medlars data matrix. 
@@ -128,15 +130,15 @@ def factorize(V):
     :param V: The Medlars data matrix. 
     :type V: `scipy.sparse.csr_matrix`
     """
-    model = nimfa.mf(V, 
-                  seed = "random_vcol", 
-                  rank = 12, 
-                  method = "nmf", 
-                  max_iter = 15, 
-                  initialize_only = True,
-                  update = 'divergence',
-                  objective = 'div')
-    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
+    model = nimfa.mf(V,
+                     seed="random_vcol",
+                     rank=12,
+                     method="nmf",
+                     max_iter=15,
+                     initialize_only=True,
+                     update='divergence',
+                     objective='div')
+    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank)
     fit = nimfa.mf_run(model)
     print "... Finished"
     sparse_w, sparse_h = fit.fit.sparseness()
@@ -144,9 +146,10 @@ def factorize(V):
             - iterations: %d
             - KL Divergence: %5.3f
             - Euclidean distance: %5.3f
-            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric = 'euclidean'), sparse_w, sparse_h)
+            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric='euclidean'), sparse_w, sparse_h)
     return fit.basis(), fit.coef()
-    
+
+
 def read():
     """
     Read medical abstracts data from Medlars data set. 
@@ -158,7 +161,8 @@ def read():
     `dict` translator. 
     """
     print "Reading Medlars medical abstracts data set ..."
-    dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'Medlars' + sep + 'med.all'
+    dir = dirname(dirname(abspath(__file__))) + sep + \
+        'datasets' + sep + 'Medlars' + sep + 'med.all'
     doc = open(dir)
     V = sp.lil_matrix((16017, 1033))
     term2idx = {}
@@ -177,11 +181,12 @@ def read():
                     term2idx[term] = n_free
                     idx2term[n_free] = term
                     n_free += 1
-                V[term2idx[term], ii - 1] += 1 
+                V[term2idx[term], ii - 1] += 1
             line = doc.readline().strip()
     print "... Finished."
     return V, term2idx, idx2term
-            
+
+
 def preprocess(V, term2idx, idx2term):
     """
     Preprocess Medlars data matrix. Remove stop words, digits, too short words, words that appear 2 times or less 
@@ -198,16 +203,16 @@ def preprocess(V, term2idx, idx2term):
     :param idx2term: Index-to-term translator.
     :type idx2term: `dict`
     """
-    print "Preprocessing data matrix ..." 
+    print "Preprocessing data matrix ..."
     # remove stop words, digits, too short words
     rem = set()
     for term in term2idx:
         if term in stop_words or len(term) <= 2 or str.isdigit(term):
             rem.add(term2idx[term])
-    # remove words that appear two times or less in corpus 
+    # remove words that appear two times or less in corpus
     V = V.tocsr()
     for r in xrange(V.shape[0]):
-        if V[r, :].sum() <= 2 or V[r, :].sum() >= 50:
+        if V[r, :].sum() <= 2 or V[r,:].sum() >= 50:
             rem.add(r)
     retain = set(xrange(V.shape[0])).difference(rem)
     n_free = 0
@@ -215,11 +220,12 @@ def preprocess(V, term2idx, idx2term):
     for r in retain:
         term2idx[idx2term[r]] = n_free
         idx2term[n_free] = idx2term[r]
-        V1[n_free, :] = V[r, :] 
+        V1[n_free, :] = V[r,:] 
         n_free += 1
-    print "... Finished."    
+    print "... Finished."
     return V1.tocsr(), term2idx, idx2term
-            
+
+
 def plot(W, idx2term):
     """
     Plot the interpretation of NMF basis vectors on Medlars data set. 
@@ -232,30 +238,33 @@ def plot(W, idx2term):
     print "Plotting highest weighted terms in basis vectors ..."
     for c in xrange(W.shape[1]):
         if sp.isspmatrix(W):
-            top10 = sorted(enumerate(W[:, c].todense().ravel().tolist()[0]), key = itemgetter(1), reverse = True)[:10]
+            top10 = sorted(
+                enumerate(W[:, c].todense().ravel().tolist()[0]), key=itemgetter(1), reverse=True)[:10]
         else:
-            top10 = sorted(enumerate(W[:, c].ravel().tolist()[0]), key = itemgetter(1), reverse = True)[:10]
+            top10 = sorted(
+                enumerate(W[:, c].ravel().tolist()[0]), key=itemgetter(1), reverse=True)[:10]
         pos = np.arange(10) + .5
         val = zip(*top10)[1][::-1]
         plb.figure(c + 1)
-        plb.barh(pos, val, color = "yellow", align = "center")
+        plb.barh(pos, val, color="yellow", align="center")
         plb.yticks(pos, [idx2term[idx] for idx in zip(*top10)[0]][::-1])
         plb.xlabel("Weight")
         plb.ylabel("Term")
         plb.title("Highest Weighted Terms in Basis Vector W%d" % (c + 1))
         plb.grid(True)
-        plb.savefig("documents_basisW%d.png" % (c + 1), bbox_inches = "tight")
+        plb.savefig("documents_basisW%d.png" % (c + 1), bbox_inches="tight")
     print "... Finished."
 
-stop_words = ["a","able","about","across","after","all","almost","also","am","among","an","and","any","are","as","at","be",
-              "because","been","but","by","can","cannot","could","dear","did","do","does","either","else","ever","every",
-              "for","from","get","got","had","has","have","he","her","hers","him","his","how","however","i","if","in",
-              "into","is","it","its","just","least","let","like","likely","may","me","might","most","must","my","neither",
-              "no","nor","not","of","off","often","on","only","or","other","our","own","rather","said","say","says","she",
-              "should","since","so","some","than","that","the","their","them","then","there","these","they","this","tis",
-              "to","too","twas","us","wants","was","we","were","what","when","where","which","while","who","whom","why",
-              "will","with","would","yet","you","your","."," ","1","2","3","4","5","6","7","8","9","0", "during", "changes",
-              "(1)","(2)","(3)","(4)","(5)","(6)","(7)","(8)","(9)","usually","involved","labeled"]
+stop_words = [
+    "a", "able", "about", "across", "after", "all", "almost", "also", "am", "among", "an", "and", "any", "are", "as", "at", "be",
+    "because", "been", "but", "by", "can", "cannot", "could", "dear", "did", "do", "does", "either", "else", "ever", "every",
+    "for", "from", "get", "got", "had", "has", "have", "he", "her", "hers", "him", "his", "how", "however", "i", "if", "in",
+    "into", "is", "it", "its", "just", "least", "let", "like", "likely", "may", "me", "might", "most", "must", "my", "neither",
+    "no", "nor", "not", "of", "off", "often", "on", "only", "or", "other", "our", "own", "rather", "said", "say", "says", "she",
+    "should", "since", "so", "some", "than", "that", "the", "their", "them", "then", "there", "these", "they", "this", "tis",
+    "to", "too", "twas", "us", "wants", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why",
+    "will", "with", "would", "yet", "you", "your", ".", " ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "during", "changes",
+    "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)", "usually", "involved", "labeled"]
 
 if __name__ == "__main__":
     """Run the Medlars example."""

@@ -36,6 +36,7 @@ import nimfa
 import numpy as np
 import scipy.sparse as sp
 
+
 def __fact_factor(X):
     """
     Return dense factorization factor, so that output is printed nice if factor is sparse.
@@ -45,7 +46,8 @@ def __fact_factor(X):
     """
     return X.todense() if sp.isspmatrix(X) else X
 
-def print_info(fit, idx = None):
+
+def print_info(fit, idx=None):
     """
     Print to stdout info about the factorization.
     
@@ -63,8 +65,8 @@ def print_info(fit, idx = None):
     print __fact_factor(fit.basis())
     print "Mixture (Coefficient) matrix H%d: " % (idx if idx != None else 0)
     print __fact_factor(fit.coef(idx))
-    print "Distance (Euclidean): ", fit.distance(metric = 'euclidean', idx = idx)
-    # We can access actual number of iteration directly through fitted model. 
+    print "Distance (Euclidean): ", fit.distance(metric='euclidean', idx=idx)
+    # We can access actual number of iteration directly through fitted model.
     # fit.fit.n_iter
     print "Actual number of iterations: ", fit.summary(idx)['n_iter']
     # We can access sparseness measure directly through fitted model.
@@ -77,8 +79,9 @@ def print_info(fit, idx = None):
     # fit.fit.rss()
     print "Residual sum of squares: ", fit.summary(idx)['rss']
     # There are many more ... but just cannot print out everything =] and some measures need additional data or more runs
-    # e.g. entropy, predict, purity, coph_cor, consensus, select_features, score_features, connectivity  
+    # e.g. entropy, predict, purity, coph_cor, consensus, select_features, score_features, connectivity
     print "================================================================================================="
+
 
 def run_snmnmf(V, V1):
     """
@@ -90,23 +93,33 @@ def run_snmnmf(V, V1):
     :type V1: :class:`numpy.matrix`
     """
     rank = 10
-    model = nimfa.mf(target = (V, V1), 
-                  seed = "random_c", 
-                  rank = rank, 
-                  method = "snmnmf", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  A = abs(sp.rand(V1.shape[1], V1.shape[1], density = 0.7, format = 'csr')),
-                  B = abs(sp.rand(V.shape[1], V1.shape[1], density = 0.7, format = 'csr')), 
-                  gamma = 0.01,
-                  gamma_1 = 0.01,
-                  lamb = 0.01,
-                  lamb_1 = 0.01)
+    model = nimfa.mf(target=(V, V1),
+                     seed = "random_c",
+                     rank = rank,
+                     method = "snmnmf",
+                     max_iter = 12,
+                     initialize_only = True,
+                     A = abs(
+                         sp.rand(
+                             V1.shape[
+                              1], V1.shape[1], density=0.7, format='csr')),
+                     B = abs(
+                         sp.rand(
+                             V.shape[
+                                 1], V1.shape[
+                                 1], density=0.7, format='csr')),
+                     gamma = 0.01,
+                     gamma_1 = 0.01,
+                     lamb = 0.01,
+                     lamb_1 = 0.01)
     fit = nimfa.mf_run(model)
-    # print all quality measures concerning first target and mixture matrix in multiple NMF
-    print_info(fit, idx = 0)
-    # print all quality measures concerning second target and mixture matrix in multiple NMF
-    print_info(fit, idx = 1)
+    # print all quality measures concerning first target and mixture matrix in
+    # multiple NMF
+    print_info(fit, idx=0)
+    # print all quality measures concerning second target and mixture matrix
+    # in multiple NMF
+    print_info(fit, idx=1)
+
 
 def run_bd(V):
     """
@@ -116,24 +129,25 @@ def run_bd(V):
     :type V: :class:`numpy.matrix`
     """
     rank = 10
-    model = nimfa.mf(V, 
-                  seed = "random_c", 
-                  rank = rank, 
-                  method = "bd", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  alpha = np.mat(np.zeros((V.shape[0], rank))),
-                  beta = np.mat(np.zeros((rank, V.shape[1]))),
-                  theta = .0,
-                  k = .0,
-                  sigma = 1., 
-                  skip = 100,
-                  stride = 1,
-                  n_w = np.mat(np.zeros((rank, 1))),
-                  n_h = np.mat(np.zeros((rank, 1))),
-                  n_sigma = False)
+    model = nimfa.mf(V,
+                     seed="random_c",
+                     rank=rank,
+                     method="bd",
+                     max_iter=12,
+                     initialize_only=True,
+                     alpha=np.mat(np.zeros((V.shape[0], rank))),
+                     beta=np.mat(np.zeros((rank, V.shape[1]))),
+                     theta=.0,
+                     k=.0,
+                     sigma=1.,
+                     skip=100,
+                     stride=1,
+                     n_w=np.mat(np.zeros((rank, 1))),
+                     n_h=np.mat(np.zeros((rank, 1))),
+                     n_sigma=False)
     fit = nimfa.mf_run(model)
     print_info(fit)
+
 
 def run_bmf(V):
     """
@@ -143,17 +157,18 @@ def run_bmf(V):
     :type V: :class:`numpy.matrix`
     """
     rank = 10
-    model = nimfa.mf(V, 
-                  seed = "random_vcol", 
-                  rank = rank, 
-                  method = "bmf", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  lambda_w = 1.1,
-                  lambda_h = 1.1)
+    model = nimfa.mf(V,
+                     seed="random_vcol",
+                     rank=rank,
+                     method="bmf",
+                     max_iter=12,
+                     initialize_only=True,
+                     lambda_w=1.1,
+                     lambda_h=1.1)
     fit = nimfa.mf_run(model)
     print_info(fit)
-    
+
+
 def run_icm(V):
     """
     Run iterated conditional modes.
@@ -163,21 +178,22 @@ def run_icm(V):
     """
     rank = 10
     pnrg = np.random.RandomState()
-    model = nimfa.mf(V, 
-                  seed = "nndsvd", 
-                  rank = rank, 
-                  method = "icm", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  iiter = 20,
-                  alpha = pnrg.randn(V.shape[0], rank),
-                  beta = pnrg.randn(rank, V.shape[1]), 
-                  theta = 0.,
-                  k = 0.,
-                  sigma = 1.)
+    model = nimfa.mf(V,
+                     seed="nndsvd",
+                     rank=rank,
+                     method="icm",
+                     max_iter=12,
+                     initialize_only=True,
+                     iiter=20,
+                     alpha=pnrg.randn(V.shape[0], rank),
+                     beta=pnrg.randn(rank, V.shape[1]),
+                     theta=0.,
+                     k=0.,
+                     sigma=1.)
     fit = nimfa.mf_run(model)
     print_info(fit)
-    
+
+
 def run_lfnmf(V):
     """
     Run local fisher nonnegative matrix factorization.
@@ -187,18 +203,19 @@ def run_lfnmf(V):
     """
     rank = 10
     pnrg = np.random.RandomState()
-    model = nimfa.mf(V, 
-                  seed = None,
-                  W = abs(pnrg.randn(V.shape[0], rank)), 
-                  H = abs(pnrg.randn(rank, V.shape[1])),
-                  rank = rank, 
-                  method = "lfnmf", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  alpha = 0.01)
+    model = nimfa.mf(V,
+                     seed=None,
+                     W=abs(pnrg.randn(V.shape[0], rank)),
+                     H=abs(pnrg.randn(rank, V.shape[1])),
+                     rank=rank,
+                     method="lfnmf",
+                     max_iter=12,
+                     initialize_only=True,
+                     alpha=0.01)
     fit = nimfa.mf_run(model)
     print_info(fit)
-    
+
+
 def run_lsnmf(V):
     """
     Run least squares nonnegative matrix factorization.
@@ -207,18 +224,19 @@ def run_lsnmf(V):
     :type V: :class:`numpy.matrix`
     """
     rank = 10
-    model = nimfa.mf(V, 
-                  seed = "random_vcol", 
-                  rank = rank, 
-                  method = "lsnmf", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  sub_iter = 10,
-                  inner_sub_iter = 10, 
-                  beta = 0.1, 
-                  min_residuals = 1e-5)
+    model = nimfa.mf(V,
+                     seed="random_vcol",
+                     rank=rank,
+                     method="lsnmf",
+                     max_iter=12,
+                     initialize_only=True,
+                     sub_iter=10,
+                     inner_sub_iter=10,
+                     beta=0.1,
+                     min_residuals=1e-5)
     fit = nimfa.mf_run(model)
     print_info(fit)
+
 
 def run_nmf(V):
     """
@@ -229,28 +247,29 @@ def run_nmf(V):
     """
     # Euclidean
     rank = 10
-    model = nimfa.mf(V, 
-                  seed = "random_vcol", 
-                  rank = rank, 
-                  method = "nmf", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  update = 'euclidean',
-                  objective = 'fro')
+    model = nimfa.mf(V,
+                     seed="random_vcol",
+                     rank=rank,
+                     method="nmf",
+                     max_iter=12,
+                     initialize_only=True,
+                     update='euclidean',
+                     objective='fro')
     fit = nimfa.mf_run(model)
     print_info(fit)
     # divergence
-    model = nimfa.mf(V, 
-                  seed = "random_vcol", 
-                  rank = rank, 
-                  method = "nmf", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  update = 'divergence',
-                  objective = 'div')
+    model = nimfa.mf(V,
+                     seed="random_vcol",
+                     rank=rank,
+                     method="nmf",
+                     max_iter=12,
+                     initialize_only=True,
+                     update='divergence',
+                     objective='div')
     fit = nimfa.mf_run(model)
     print_info(fit)
-    
+
+
 def run_nsnmf(V):
     """
     Run nonsmooth nonnegative matrix factorization.
@@ -259,16 +278,17 @@ def run_nsnmf(V):
     :type V: :class:`numpy.matrix`
     """
     rank = 10
-    model = nimfa.mf(V, 
-                  seed = "random", 
-                  rank = rank, 
-                  method = "nsnmf", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  theta = 0.5)
+    model = nimfa.mf(V,
+                     seed="random",
+                     rank=rank,
+                     method="nsnmf",
+                     max_iter=12,
+                     initialize_only=True,
+                     theta=0.5)
     fit = nimfa.mf_run(model)
     print_info(fit)
-    
+
+
 def run_pmf(V):
     """
     Run probabilistic matrix factorization.
@@ -277,16 +297,17 @@ def run_pmf(V):
     :type V: :class:`numpy.matrix`
     """
     rank = 10
-    model = nimfa.mf(V, 
-                  seed = "random_vcol", 
-                  rank = rank, 
-                  method = "pmf", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  rel_error = 1e-5)
+    model = nimfa.mf(V,
+                     seed="random_vcol",
+                     rank=rank,
+                     method="pmf",
+                     max_iter=12,
+                     initialize_only=True,
+                     rel_error=1e-5)
     fit = nimfa.mf_run(model)
     print_info(fit)
-    
+
+
 def run_psmf(V):
     """
     Run probabilistic sparse matrix factorization.
@@ -296,15 +317,16 @@ def run_psmf(V):
     """
     rank = 10
     prng = np.random.RandomState()
-    model = nimfa.mf(V, 
-                  seed = None,
-                  rank = rank, 
-                  method = "psmf", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  prior = prng.uniform(low = 0., high = 1., size = 10))
+    model = nimfa.mf(V,
+                     seed=None,
+                     rank=rank,
+                     method="psmf",
+                     max_iter=12,
+                     initialize_only=True,
+                     prior=prng.uniform(low=0., high=1., size=10))
     fit = nimfa.mf_run(model)
     print_info(fit)
+
 
 def run_snmf(V):
     """
@@ -315,35 +337,36 @@ def run_snmf(V):
     """
     # SNMF/R
     rank = 10
-    model = nimfa.mf(V, 
-                  seed = "random_c", 
-                  rank = rank, 
-                  method = "snmf", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  version = 'r',
-                  eta = 1.,
-                  beta = 1e-4, 
-                  i_conv = 10,
-                  w_min_change = 0)
+    model = nimfa.mf(V,
+                     seed="random_c",
+                     rank=rank,
+                     method="snmf",
+                     max_iter=12,
+                     initialize_only=True,
+                     version='r',
+                     eta=1.,
+                     beta=1e-4,
+                     i_conv=10,
+                     w_min_change=0)
     fit = nimfa.mf_run(model)
     print_info(fit)
     # SNMF/L
-    model = nimfa.mf(V, 
-                  seed = "random_vcol", 
-                  rank = rank, 
-                  method = "snmf", 
-                  max_iter = 12, 
-                  initialize_only = True,
-                  version = 'l',
-                  eta = 1.,
-                  beta = 1e-4, 
-                  i_conv = 10,
-                  w_min_change = 0)
+    model = nimfa.mf(V,
+                     seed="random_vcol",
+                     rank=rank,
+                     method="snmf",
+                     max_iter=12,
+                     initialize_only=True,
+                     version='l',
+                     eta=1.,
+                     beta=1e-4,
+                     i_conv=10,
+                     w_min_change=0)
     fit = nimfa.mf_run(model)
     print_info(fit)
 
-def run(V = None, V1 = None):
+
+def run(V=None, V1=None):
     """
     Run examples.
     
@@ -354,9 +377,9 @@ def run(V = None, V1 = None):
     """
     if V == None or V1 == None:
         prng = np.random.RandomState(42)
-        # construct target matrix 
-        V = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 30))))
-        V1 = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 25))))
+        # construct target matrix
+        V = abs(np.mat(prng.normal(loc=0.0, scale=1.0, size=(20, 30))))
+        V1 = abs(np.mat(prng.normal(loc=0.0, scale=1.0, size=(20, 25))))
     run_snmnmf(V, V1)
     run_bd(V)
     run_bmf(V)
@@ -371,10 +394,8 @@ def run(V = None, V1 = None):
 
 if __name__ == "__main__":
     prng = np.random.RandomState(42)
-    # construct target matrix 
-    V = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 30))))
-    V1 = abs(np.mat(prng.normal(loc = 0.0, scale = 1.0, size = (20, 25))))
+    # construct target matrix
+    V = abs(np.mat(prng.normal(loc=0.0, scale=1.0, size=(20, 30))))
+    V1 = abs(np.mat(prng.normal(loc=0.0, scale=1.0, size=(20, 25))))
     # run examples
     run(V, V1)
-    
-    

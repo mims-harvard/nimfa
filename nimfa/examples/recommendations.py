@@ -51,6 +51,7 @@ try:
 except ImportError, exc:
     warn("Matplotlib must be installed to run Recommendations example.")
 
+
 def run():
     """
     Run SNMF/R on the MovieLens data set.
@@ -60,15 +61,16 @@ def run():
     in the test set. 
     """
     for data_set in ['ua', 'ub']:
-        # read ratings from MovieLens data set 
+        # read ratings from MovieLens data set
         V = read(data_set)
         # preprocess MovieLens data matrix
         V, maxs = preprocess(V)
         # run factorization
         W, H = factorize(V.todense())
-        # plot RMSE rate on MovieLens data set. 
+        # plot RMSE rate on MovieLens data set.
         plot(W, H, data_set, maxs)
-        
+
+
 def factorize(V):
     """
     Perform SNMF/R factorization on the sparse MovieLens data matrix. 
@@ -78,27 +80,28 @@ def factorize(V):
     :param V: The MovieLens data matrix. 
     :type V: `scipy.sparse.csr_matrix`
     """
-    model = nimfa.mf(V, 
-                  seed = "random_vcol", 
-                  rank = 12, 
-                  method = "snmf", 
-                  max_iter = 15, 
-                  initialize_only = True,
-                  version = 'r',
-                  eta = 1.,
-                  beta = 1e-4, 
-                  i_conv = 10,
-                  w_min_change = 0)
-    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
+    model = nimfa.mf(V,
+                     seed="random_vcol",
+                     rank=12,
+                     method="snmf",
+                     max_iter=15,
+                     initialize_only=True,
+                     version='r',
+                     eta=1.,
+                     beta=1e-4,
+                     i_conv=10,
+                     w_min_change=0)
+    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank)
     fit = nimfa.mf_run(model)
     print "... Finished"
     sparse_w, sparse_h = fit.fit.sparseness()
     print """Stats:
             - iterations: %d
             - Euclidean distance: %5.3f
-            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(metric = 'euclidean'), sparse_w, sparse_h)
+            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(metric='euclidean'), sparse_w, sparse_h)
     return fit.basis(), fit.coef()
-    
+
+
 def read(data_set):
     """
     Read movies' ratings data from MovieLens data set. 
@@ -112,14 +115,16 @@ def read(data_set):
     :type data_set: `str`
     """
     print "Reading MovieLens ratings data set ..."
-    dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'MovieLens' + sep + data_set + '.base'
+    dir = dirname(dirname(abspath(__file__))) + sep + \
+        'datasets' + sep + 'MovieLens' + sep + data_set + '.base'
     V = sp.lil_matrix((943, 1682))
-    for line in open(dir): 
+    for line in open(dir):
         u, i, r, _ = map(int, line.split())
         V[u - 1, i - 1] = r
     print "... Finished."
-    return V 
-            
+    return V
+
+
 def preprocess(V):
     """
     Preprocess MovieLens data matrix. Normalize data.
@@ -135,14 +140,15 @@ def preprocess(V):
     maxs = [np.max(V[i, :].todense()) for i in xrange(V.shape[0])]
     now = 0
     for row in xrange(V.shape[0]):
-        upto = V.indptr[row+1]
+        upto = V.indptr[row + 1]
         while now < upto:
             col = V.indices[now]
             V.data[now] /= maxs[row]
             now += 1
-    print "... Finished." 
+    print "... Finished."
     return V, maxs
-            
+
+
 def plot(W, H, data_set, maxs):
     """
     Plot the RMSE error rate on MovieLens data set. 
@@ -157,12 +163,13 @@ def plot(W, H, data_set, maxs):
     :type maxs: `list`
     """
     print "Plotting RMSE rates ..."
-    dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'MovieLens' + sep + data_set + '.test'
+    dir = dirname(dirname(abspath(__file__))) + sep + \
+        'datasets' + sep + 'MovieLens' + sep + data_set + '.test'
     rmse = 0
     n = 0
-    for line in open(dir): 
+    for line in open(dir):
         u, i, r, _ = map(int, line.split())
-        rmse += ((W[u - 1, :] * H[:, i - 1])[0, 0] + maxs[u - 1] - r)** 2
+        rmse += ((W[u - 1, :] * H[:, i - 1])[0, 0] + maxs[u - 1] - r) ** 2
         n += 1
     rmse /= n
     print rmse

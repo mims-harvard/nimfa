@@ -64,7 +64,8 @@ try:
     import matplotlib.pylab as plb
 except ImportError, exc:
     warn("Matplotlib must be installed to run Gene Function prediction example.")
-    
+
+
 def run():
     """
     Run the gene function prediction example on the S. cerevisiae sequence data set (D1 FC seq).
@@ -82,7 +83,7 @@ def run():
            Catalogue. 
         #. PR evaluation measures. 
     """
-    # reading data set, attributes' labels and class labels 
+    # reading data set, attributes' labels and class labels
     tv_data, test_data, idx2attr, idx2class = read()
     # normalization of train data set
     tv_data = preprocess(tv_data)
@@ -92,15 +93,16 @@ def run():
     tv_data = factorize(tv_data)
     # factorization of test data matrix
     test_data = factorize(test_data)
-    # correlation computation 
+    # correlation computation
     corrs = compute_correlations(tv_data, test_data)
-    for method in 0.5 * np.random.random_sample(50) + 1.: 
+    for method in 0.5 * np.random.random_sample(50) + 1.:
         print method
         # class assignments
-        func2gene = assign_labels(corrs, tv_data, idx2class, method = method)
+        func2gene = assign_labels(corrs, tv_data, idx2class, method=method)
         # precision and recall measurements
-        plot(func2gene, test_data, idx2class)    
-    
+        plot(func2gene, test_data, idx2class)
+
+
 def read():
     """
     Read S. cerevisiae FunCat annotated sequence data set (D1 FC seq).
@@ -109,26 +111,29 @@ def read():
     are returned mapping attributes' names and classes' names to indices. 
     """
     print "Reading S. cerevisiae FunCat annotated sequence data set (D1 FC seq) ..."
-    dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'S_cerevisiae_FC' + sep + 'seq_yeast_FUN' + sep
+    dir = dirname(dirname(abspath(__file__))) + sep + 'datasets' + \
+        sep + 'S_cerevisiae_FC' + sep + 'seq_yeast_FUN' + sep
     train_data = dir + 'seq_yeast_FUN.train.arff'
     valid_data = dir + 'seq_yeast_FUN.valid.arff'
     test_data = dir + 'seq_yeast_FUN.test.arff'
     print " Reading S. cerevisiae FunCat annotated sequence (D1 FC seq) TRAIN set ..."
-    train, idx2attr, idx2class = transform_data(train_data, include_meta = True)
-    print " ... Finished."  
+    train, idx2attr, idx2class = transform_data(
+        train_data, include_meta=True)
+    print " ... Finished."
     print " Reading S. cerevisiae FunCat annotated sequence (D1 FC seq) VALIDATION set ..."
     valid = transform_data(valid_data)
-    print " ... Finished."  
+    print " ... Finished."
     print " Reading S. cerevisiae FunCat annotated sequence (D1 FC seq) TEST set ..."
     test = transform_data(test_data)
     print " ... Finished."
     print " Joining S. cerevisiae FunCat annotated sequence (D1 FC seq) TEST and VALIDATION set ..."
     tv_data = _join(train, valid)
-    print " ... Finished."    
+    print " ... Finished."
     print "... Finished"
     return tv_data, test, idx2attr, idx2class
 
-def transform_data(path, include_meta = False):
+
+def transform_data(path, include_meta=False):
     """
     Read data in the ARFF format and transform it to suitable matrix for factorization process. For each feature update direct and indirect 
     class information exploiting properties of Functional Catalogue hierarchy. 
@@ -145,7 +150,7 @@ def transform_data(path, include_meta = False):
     """
     class2idx = {}
     attr2idx = {}
-    
+
     idx_attr = 0
     idx_class = 0
     idx = 0
@@ -154,7 +159,7 @@ def transform_data(path, include_meta = False):
     section = 'h'
 
     for line in open(path):
-        if section == 'h': 
+        if section == 'h':
             tokens = line.strip().split()
             line_type = tokens[0] if tokens else None
             if line_type == "@ATTRIBUTE":
@@ -163,7 +168,8 @@ def transform_data(path, include_meta = False):
                     idx_attr += 1
                     used_idx.add(idx)
                 if tokens[1] in ["class"] and tokens[2] in ["hierarchical", "classes"]:
-                    class2idx = _reverse(dict(list(enumerate((tokens[3] if tokens[3] != '%' else tokens[5]).split(",")))))
+                    class2idx = _reverse(
+                        dict(list(enumerate((tokens[3] if tokens[3] != '%' else tokens[5]).split(",")))))
                     idx_class = idx
                 idx += 1
             if line_type == "@DATA":
@@ -190,13 +196,15 @@ def transform_data(path, include_meta = False):
                 cl = "/".join(cl_a[:1] + ['0', '0', '0'])
                 if cl in class2idx:
                     class_data[feature, class2idx[cl]] += 1.
-            # update attribute values information for current feature 
-            i = 0 
+            # update attribute values information for current feature
+            i = 0
             for idx in idxs:
-                attr_data[feature, i] = abs(float(values[idx] if values[idx] != '?' else 0.))
+                attr_data[feature, i] = abs(
+                    float(values[idx] if values[idx] != '?' else 0.))
                 i += 1
             feature += 1
     return ({'feat': feature, 'attr': attr_data[:feature, :], 'class': class_data[:feature, :]}, _reverse(attr2idx), _reverse(class2idx)) if include_meta else {'feat': feature, 'attr': attr_data[:feature, :], 'class': class_data[:feature, :]}
+
 
 def _join(train, valid):
     """
@@ -209,11 +217,12 @@ def _join(train, valid):
     :param valid: Attributes' values and class information of the validation data set.
     :type valid: `numpy.matrix`
     """
-    n_train =  train['feat']
-    n_valid =  valid['feat']
-    return {'feat': n_train + n_valid, 
+    n_train = train['feat']
+    n_valid = valid['feat']
+    return {'feat': n_train + n_valid,
             'attr': np.vstack((train['attr'][:n_train, :], valid['attr'][:n_valid, :])),
             'class': np.vstack((train['class'][:n_train, :], valid['class'][:n_valid, :]))}
+
 
 def _reverse(object2idx):
     """
@@ -227,6 +236,7 @@ def _reverse(object2idx):
     """
     return dict(zip(object2idx.values(), object2idx.keys()))
 
+
 def preprocess(data):
     """
     Preprocess S.cerevisiae FunCat annotated sequence data set (D1 FC seq). Preprocessing step includes data 
@@ -238,9 +248,11 @@ def preprocess(data):
     :type data: `tuple`
     """
     print "Preprocessing data matrix ..."
-    data['attr'] = (data['attr'] - data['attr'].min() + np.finfo(data['attr'].dtype).eps) / (data['attr'].max() - data['attr'].min())
+    data['attr'] = (data['attr'] - data['attr'].min() + np.finfo(
+        data['attr'].dtype).eps) / (data['attr'].max() - data['attr'].min())
     print "... Finished."
     return data
+
 
 def factorize(data):
     """
@@ -260,18 +272,18 @@ def factorize(data):
                   initialize_only = True,
                   update = 'euclidean',
                   objective = 'fro')"""
-    model = nimfa.mf(V, 
-                  seed = "random_vcol", 
-                  rank = 40, 
-                  method = "snmf", 
-                  max_iter = 5, 
-                  initialize_only = True,
-                  version = 'l',
-                  eta = 1.,
-                  beta = 1e-4, 
-                  i_conv = 10,
-                  w_min_change = 0)
-    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank) 
+    model = nimfa.mf(V,
+                     seed="random_vcol",
+                     rank=40,
+                     method="snmf",
+                     max_iter=5,
+                     initialize_only=True,
+                     version='l',
+                     eta=1.,
+                     beta=1e-4,
+                     i_conv=10,
+                     w_min_change=0)
+    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank)
     fit = nimfa.mf_run(model)
     print "... Finished"
     sparse_w, sparse_h = fit.fit.sparseness()
@@ -279,11 +291,12 @@ def factorize(data):
             - iterations: %d
             - KL Divergence: %5.3f
             - Euclidean distance: %5.3f
-            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric = 'euclidean'), sparse_w, sparse_h)
+            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric='euclidean'), sparse_w, sparse_h)
     data['W'] = fit.basis()
     data['H'] = fit.coef()
     return data
-    
+
+
 def compute_correlations(train, test):
     """
     Estimate correlation coefficients between profiles of train basis matrix and profiles of test basis matrix. 
@@ -307,6 +320,7 @@ def compute_correlations(train, test):
     print "... Finished."
     return np.mat(corrs)
 
+
 def _corr(x, y):
     """
     Compute Pearson's correlation coefficient of x and y. Numerically stable algebraically equivalent equation for 
@@ -323,11 +337,12 @@ def _corr(x, y):
     n1 = x.size - 1
     xm = x.mean()
     ym = y.mean()
-    sx = x.std(ddof = 1)
-    sy = y.std(ddof = 1)
+    sx = x.std(ddof=1)
+    sy = y.std(ddof=1)
     return 1. / n1 * np.multiply((x - xm) / sx, (y - ym) / sy).sum()
 
-def assign_labels(corrs, train, idx2class, method = 0.):
+
+def assign_labels(corrs, train, idx2class, method=0.):
     """
     Apply rules for class assignments. In [Schachtner2008]_ two rules are proposed, average correlation and maximal 
     correlation. Here, both the rules are implemented and can be specified through :param:`method``parameter. In addition to 
@@ -375,7 +390,7 @@ def assign_labels(corrs, train, idx2class, method = 0.):
     :rtype: `dict`
     """
     print "Assigning class labels - gene functions to genes ..."
-    func2gene = {}    
+    func2gene = {}
     n_train = train['feat']
     n_cl = len(idx2class)
     for cl_idx in xrange(n_cl):
@@ -384,21 +399,26 @@ def assign_labels(corrs, train, idx2class, method = 0.):
     for test_idx in xrange(n_train, corrs.shape[0]):
         if method == "average":
             # weighted summation of correlations over respective index sets
-            avg_corr_A = np.sum(np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class']), 0)
-            avg_corr_B = np.sum(np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class'] != 0), 0) 
+            avg_corr_A = np.sum(
+                np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class']), 0)
+            avg_corr_B = np.sum(
+                np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class'] != 0), 0)
             avg_corr_A = avg_corr_A / (np.sum(train['class'] != 0, 0) + 1)
             avg_corr_B = avg_corr_B / (np.sum(train['class'] == 0, 0) + 1)
             for cl_idx in xrange(n_cl):
                 if (avg_corr_A[0, cl_idx] > avg_corr_B[0, cl_idx]):
                     func2gene[cl_idx].append(key)
-        elif method == "maximal": 
-            max_corr_A = np.amax(np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class']), 0)
-            max_corr_B = np.amax(np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class'] != 0), 0)
+        elif method == "maximal":
+            max_corr_A = np.amax(
+                np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class']), 0)
+            max_corr_B = np.amax(
+                np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class'] != 0), 0)
             for cl_idx in xrange(n_cl):
                 if (max_corr_A[0, cl_idx] > max_corr_B[0, cl_idx]):
                     func2gene[cl_idx].append(key)
         elif isinstance(method, float):
-            max_corr = np.amax(np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class']), 0)
+            max_corr = np.amax(
+                np.multiply(np.tile(corrs[:n_train, test_idx], (1, n_cl)), train['class']), 0)
             for cl_idx in xrange(n_cl):
                 if (max_corr[0, cl_idx] >= method):
                     func2gene[cl_idx].append(key)
@@ -409,6 +429,7 @@ def assign_labels(corrs, train, idx2class, method = 0.):
             print " %d/%d" % (key, corrs.shape[0] - n_train)
     print "... Finished."
     return func2gene
+
 
 def plot(func2gene, test, idx2class):
     """
@@ -432,30 +453,37 @@ def plot(func2gene, test, idx2class):
     :rtype: `tuple`
     """
     print "Computing PR evaluations measures ..."
+
     def tp(g_function):
-        # number of true positives for g_function (correctly predicted positive instances) 
+        # number of true positives for g_function (correctly predicted positive
+        # instances)
         return (test['class'][func2gene[g_function], g_function] != 0).sum()
+
     def fp(g_function):
-        # number of false positives for g_function (positive predictions that are incorrect)
+        # number of false positives for g_function (positive predictions that
+        # are incorrect)
         return (test['class'][func2gene[g_function], g_function] == 0).sum()
+
     def fn(g_function):
-        # number of false negatives for g_function (positive instances that are incorrectly predicted negative)
-        n_pred = list(set(xrange(len(idx2class))).difference(func2gene[g_function]))
+        # number of false negatives for g_function (positive instances that are
+        # incorrectly predicted negative)
+        n_pred = list(
+            set(xrange(len(idx2class))).difference(func2gene[g_function]))
         return (test['class'][n_pred, g_function] != 0).sum()
     tp_sum = 0.
     fp_sum = 0.
     fn_sum = 0.
-    for g_function in idx2class: 
+    for g_function in idx2class:
         tp_sum += tp(g_function)
         fp_sum += fp(g_function)
         fn_sum += fn(g_function)
-    avg_precision = tp_sum / (tp_sum + fp_sum) 
+    avg_precision = tp_sum / (tp_sum + fp_sum)
     avg_recall = tp_sum / (tp_sum + fn_sum)
     print "Average precision over all gene functions: %5.3f" % avg_precision
     print "Average recall over all gene functions: %5.3f" % avg_recall
     print "... Finished."
     return avg_precision, avg_recall
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     """Run the gene function prediction example."""
     run()

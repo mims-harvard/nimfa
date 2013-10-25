@@ -32,7 +32,9 @@ from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
+
 class Nsnmf(nmf_ns.Nmf_ns):
+
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
@@ -49,17 +51,21 @@ class Nsnmf(nmf_ns.Nmf_ns):
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_ns.Nmf_ns.__init__(self, params)
         self.set_params()
-        
+
     def factorize(self):
         """
         Compute matrix factorization.
          
         Return fitted factorization model.
-        """     
+        """
         for run in xrange(self.n_run):
-            self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
-            self.S = sop((1 - self.theta) * sp.spdiags([1 for _ in xrange(self.rank)], 0, self.rank, self.rank, 'csr'), 
-                         self.theta / self.rank, add)
+            self.W, self.H = self.seed.initialize(
+                self.V, self.rank, self.options)
+            self.S = sop(
+                (1 - self.theta) * sp.spdiags(
+                    [1 for _ in xrange(
+                        self.rank)], 0, self.rank, self.rank, 'csr'),
+                self.theta / self.rank, add)
             p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
@@ -72,26 +78,29 @@ class Nsnmf(nmf_ns.Nmf_ns):
                 p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update()
                 iter += 1
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
+                c_obj = self.objective(
+                ) if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(run, c_obj)
             if self.callback:
                 self.final_obj = c_obj
                 self.n_iter = iter
-                mffit = mf_fit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self)
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(run, W = self.W, H = self.H, final_obj = c_obj, n_iter = iter)
-            # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
+                self.tracker.track_factor(
+                    run, W=self.W, H=self.H, final_obj=c_obj, n_iter=iter)
+            # if multiple runs are performed, fitted factorization model with
+            # the lowest objective function value is retained
             if c_obj <= best_obj or run == 0:
                 best_obj = c_obj
-                self.n_iter = iter 
+                self.n_iter = iter
                 self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(copy.deepcopy(self))
-        
+
         mffit.fit.tracker = self.tracker
         return mffit
-    
+
     def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
@@ -114,35 +123,38 @@ class Nsnmf(nmf_ns.Nmf_ns):
         if iter > 0 and c_obj > p_obj:
             return False
         return True
-    
+
     def set_params(self):
         """Set algorithm specific model options."""
         self.theta = self.options.get('theta', .5)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
-            
+        self.tracker = mf_track.Mf_track(
+        ) if self.track_factor and self.n_run > 1 or self.track_error else None
+
     def update(self):
         """Update basis and mixture matrix based on modified divergence multiplicative update rules."""
         # update mixture matrix H
         W = dot(self.W, self.S)
         H1 = repmat(W.sum(0).T, 1, self.V.shape[1])
-        self.H = multiply(self.H, elop(dot(W.T, elop(self.V, dot(W, self.H), div)), H1, div))
+        self.H = multiply(
+            self.H, elop(dot(W.T, elop(self.V, dot(W, self.H), div)), H1, div))
         # update basis matrix W
         H = dot(self.S, self.H)
         W1 = repmat(H.sum(1).T, self.V.shape[0], 1)
-        self.W = multiply(self.W, elop(dot(elop(self.V, dot(self.W, H), div), H.T), W1, div))
+        self.W = multiply(
+            self.W, elop(dot(elop(self.V, dot(self.W, H), div), H.T), W1, div))
         # normalize basis matrix W
         W2 = repmat(self.W.sum(0), self.V.shape[0], 1)
         self.W = elop(self.W, W2, div)
-    
+
     def objective(self):
         """Compute divergence of target matrix from its NMF estimate."""
         Va = dot(dot(self.W, self.S), self.H)
-        return (multiply(self.V, sop(elop(self.V, Va, div), op = np.log)) - self.V + Va).sum()
-    
+        return (multiply(self.V, sop(elop(self.V, Va, div), op=np.log)) - self.V + Va).sum()
+
     def __str__(self):
         return self.name
-    
+
     def __repr__(self):
         return self.name

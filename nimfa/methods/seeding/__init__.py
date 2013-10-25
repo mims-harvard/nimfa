@@ -15,4 +15,4 @@ methods = {"random": random.Random,
            "nndsvd": nndsvd.Nndsvd,
            "random_c": random_c.Random_c,
            "random_vcol": random_vcol.Random_vcol,
-           "none": None }
+           "none": None}

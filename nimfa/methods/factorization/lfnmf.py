@@ -31,7 +31,9 @@ from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
+
 class Lfnmf(nmf_std.Nmf_std):
+
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
@@ -49,7 +51,7 @@ class Lfnmf(nmf_std.Nmf_std):
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_std.Nmf_std.__init__(self, params)
         self.set_params()
-        
+
     def factorize(self):
         """
         Compute matrix factorization. 
@@ -57,8 +59,10 @@ class Lfnmf(nmf_std.Nmf_std):
         Return fitted factorization model.
         """
         for run in xrange(self.n_run):
-            self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
-            self.Sw, self.Sb = np.mat(np.zeros((1, 1))), np.mat(np.zeros((1, 1)))
+            self.W, self.H = self.seed.initialize(
+                self.V, self.rank, self.options)
+            self.Sw, self.Sb = np.mat(
+                np.zeros((1, 1))), np.mat(np.zeros((1, 1)))
             p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
@@ -71,26 +75,29 @@ class Lfnmf(nmf_std.Nmf_std):
                 p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update()
                 iter += 1
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
+                c_obj = self.objective(
+                ) if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(run, c_obj)
             if self.callback:
                 self.final_obj = c_obj
                 self.n_iter = iter
-                mffit = mf_fit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self)
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(run, W = self.W, H = self.H, final_obj = c_obj, n_iter = iter)
-            # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
+                self.tracker.track_factor(
+                    run, W=self.W, H=self.H, final_obj=c_obj, n_iter=iter)
+            # if multiple runs are performed, fitted factorization model with
+            # the lowest objective function value is retained
             if c_obj <= best_obj or run == 0:
                 best_obj = c_obj
-                self.n_iter = iter 
+                self.n_iter = iter
                 self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(copy.deepcopy(self))
-        
+
         mffit.fit.tracker = self.tracker
         return mffit
-     
+
     def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
@@ -113,17 +120,18 @@ class Lfnmf(nmf_std.Nmf_std):
         if iter > 0 and c_obj > p_obj:
             return False
         return True
-    
+
     def set_params(self):
         """Set algorithm specific model options."""
-        self.alpha = self.options.get('alpha', 0.01) 
+        self.alpha = self.options.get('alpha', 0.01)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
-    
+        self.tracker = mf_track.Mf_track(
+        ) if self.track_factor and self.n_run > 1 or self.track_error else None
+
     def update(self):
         """Update basis and mixture matrix."""
-        _, idxH = argmax(self.H, axis = 0)
+        _, idxH = argmax(self.H, axis=0)
         c2m, avgs = self._encoding(idxH)
         C = len(c2m)
         ksi = 1.
@@ -133,25 +141,26 @@ class Lfnmf(nmf_std.Nmf_std):
                 n_r = len(c2m[idxH[0, l]])
                 u_c = avgs[idxH[0, l]][k, 0]
                 t_1 = (2 * u_c - 1.) / (4 * ksi)
-                t_2 = (1. - 2 * u_c)**2 + 8 * ksi * self.H[k, l] * sum(self.W[i, k] * self.V[i, l] / 
+                t_2 = (1. - 2 * u_c) ** 2 + 8 * ksi * self.H[k, l] * sum(self.W[i, k] * self.V[i, l] /
                       (dot(self.W[i, :], self.H[:, l])[0, 0] + 1e-5) for i in xrange(self.W.shape[0]))
                 self.H[k, l] = t_1 + sqrt(t_2) / (4 * ksi)
         # update basis matrix W
         for i in xrange(self.W.shape[0]):
             for k in xrange(self.W.shape[1]):
-                w_1 = sum(self.H[k, j] * self.V[i, j] / (dot(self.W[i, :], self.H[:, j])[0, 0] + 1e-5) for j in xrange(self.V.shape[0]))
-                self.W[i, k] = self.W[i, k] *  w_1 / self.H[k, :].sum() 
-        W2 = repmat(self.W.sum(axis = 0), self.V.shape[0], 1)
+                w_1 = sum(self.H[k, j] * self.V[i, j] / (dot(self.W[i, :], self.H[:, j])[0, 0] + 1e-5)
+                          for j in xrange(self.V.shape[0]))
+                self.W[i, k] = self.W[i, k] * w_1 / self.H[k, :].sum()
+        W2 = repmat(self.W.sum(axis=0), self.V.shape[0], 1)
         self.W = elop(self.W, W2, div)
         # update within class scatter and between class
-        self.Sw = sum(sum(dot(self.H[:, c2m[i][j]] - avgs[i], (self.H[:, c2m[i][j]] - avgs[i]).T) 
-                  for j in xrange(len(c2m[i]))) for i in c2m)
+        self.Sw = sum(sum(dot(self.H[:, c2m[i][j]] - avgs[i], (self.H[:, c2m[i][j]] - avgs[i]).T)
+                          for j in xrange(len(c2m[i]))) for i in c2m)
         avgs_t = np.mat(np.zeros((self.rank, 1)))
         for k in avgs:
             avgs_t += avgs[k]
         avgs_t /= len(avgs)
         self.Sb = sum(dot(avgs[i] - avgs_t, (avgs[i] - avgs_t).T) for i in c2m)
-         
+
     def _encoding(self, idxH):
         """Compute class membership and mean class value of encoding (mixture) matrix H."""
         c2m = {}
@@ -164,19 +173,19 @@ class Lfnmf(nmf_std.Nmf_std):
             avgs.setdefault(idxH[0, i], np.mat(np.zeros((self.rank, 1))))
             avgs[idxH[0, i]] += self.H[:, i]
         for k in avgs:
-            avgs[k] /= len(c2m[k]) 
+            avgs[k] /= len(c2m[k])
         return c2m, avgs
-    
+
     def objective(self):
         """
         Compute constrained divergence of target matrix from its NMF estimate with additional factors of between
         class scatter and within class scatter of the mixture matrix (H).
-        """ 
+        """
         Va = dot(self.W, self.H)
         return (multiply(self.V, elop(self.V, Va, np.log)) - self.V + Va).sum() + self.alpha * np.trace(self.Sw) - self.alpha * np.trace(self.Sb)
 
     def __str__(self):
         return self.name
-        
+
     def __repr__(self):
         return self.name

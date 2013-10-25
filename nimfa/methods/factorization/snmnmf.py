@@ -48,7 +48,9 @@ from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
+
 class Snmnmf(nmf_mm.Nmf_mm):
+
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
@@ -76,7 +78,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         nmf_mm.Nmf_mm.__init__(self, params)
         self.set_params()
-        
+
     def factorize(self):
         """
         Compute matrix factorization.
@@ -84,12 +86,14 @@ class Snmnmf(nmf_mm.Nmf_mm):
         Return fitted factorization model.
         """
         if self.V.shape[0] != self.V1.shape[0]:
-            raise utils.MFError("Input matrices should have the same number of rows.")
-                
+            raise utils.MFError(
+                "Input matrices should have the same number of rows.")
+
         for run in xrange(self.n_run):
-            self.options.update({'idx' : 0})
-            self.W, self.H = self.seed.initialize(self.V, self.rank, self.options)
-            self.options.update({'idx' : 1})
+            self.options.update({'idx': 0})
+            self.W, self.H = self.seed.initialize(
+                self.V, self.rank, self.options)
+            self.options.update({'idx': 1})
             _, self.H1 = self.seed.initialize(self.V1, self.rank, self.options)
             self.options.pop('idx')
             p_obj = c_obj = sys.float_info.max
@@ -105,27 +109,30 @@ class Snmnmf(nmf_mm.Nmf_mm):
                 p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update(iter)
                 iter += 1
-                c_obj = self.objective() if not self.test_conv or iter % self.test_conv == 0 else c_obj
+                c_obj = self.objective(
+                ) if not self.test_conv or iter % self.test_conv == 0 else c_obj
                 if self.track_error:
                     self.tracker.track_error(run, c_obj)
             if self.callback:
                 self.final_obj = c_obj
                 self.n_iter = iter
-                mffit = mf_fit.Mf_fit(self) 
+                mffit = mf_fit.Mf_fit(self)
                 self.callback(mffit)
             if self.track_factor:
-                self.tracker.track_factor(run, W = self.W, H = self.H, H1 = self.H1.copy(), 
-                                          final_obj = c_obj, n_iter = iter)
-            # if multiple runs are performed, fitted factorization model with the lowest objective function value is retained 
+                self.tracker.track_factor(
+                    run, W=self.W, H=self.H, H1=self.H1.copy(),
+                    final_obj=c_obj, n_iter=iter)
+            # if multiple runs are performed, fitted factorization model with
+            # the lowest objective function value is retained
             if c_obj <= best_obj or run == 0:
                 best_obj = c_obj
-                self.n_iter = iter 
+                self.n_iter = iter
                 self.final_obj = c_obj
                 mffit = mf_fit.Mf_fit(copy.deepcopy(self))
-                
+
         mffit.fit.tracker = self.tracker
         return mffit
-        
+
     def is_satisfied(self, p_obj, c_obj, iter):
         """
         Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
@@ -150,15 +157,17 @@ class Snmnmf(nmf_mm.Nmf_mm):
         if iter > 0 and c_obj > p_obj:
             return False
         return True
-    
+
     def set_params(self):
         """Set algorithm specific model options."""
-        self.A = self.options.get('A', abs(sp.rand(self.V1.shape[1], self.V1.shape[1], density = 0.7, format = 'csr')))
+        self.A = self.options.get(
+            'A', abs(sp.rand(self.V1.shape[1], self.V1.shape[1], density=0.7, format='csr')))
         if sp.isspmatrix(self.A):
             self.A = self.A.tocsr()
         else:
             self.A = np.mat(self.A)
-        self.B = self.options.get('B', abs(sp.rand(self.V.shape[1], self.V1.shape[1], density = 0.7, format = 'csr')))
+        self.B = self.options.get(
+            'B', abs(sp.rand(self.V.shape[1], self.V1.shape[1], density=0.7, format='csr')))
         if sp.isspmatrix(self.B):
             self.B = self.B.tocsr()
         else:
@@ -169,27 +178,31 @@ class Snmnmf(nmf_mm.Nmf_mm):
         self.lamb_1 = self.options.get('lamb_1', 0.01)
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
-        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 or self.track_error else None
-        
+        self.tracker = mf_track.Mf_track(
+        ) if self.track_factor and self.n_run > 1 or self.track_error else None
+
     def update(self, iter):
         """Update basis and mixture matrix."""
         # update basis matrix
         temp_w1 = dot(self.V, self.H.T) + dot(self.V1, self.H1.T)
-        temp_w2 = dot(self.W, dot(self.H, self.H.T) + dot(self.H1, self.H1.T)) + self.gamma / 2. * self.W
+        temp_w2 = dot(self.W, dot(self.H, self.H.T) + dot(
+            self.H1, self.H1.T)) + self.gamma / 2. * self.W
         self.W = multiply(self.W, elop(temp_w1, temp_w2, div))
         # update mixture matrices
         # update H1
-        temp = sop(dot(self.W.T, self.W), s = self.gamma_1, op = add)
-        temp_h1 = dot(self.W.T, self.V) + self.lamb_1 / 2. * dot(self.H1, self.B.T)
+        temp = sop(dot(self.W.T, self.W), s=self.gamma_1, op=add)
+        temp_h1 = dot(self.W.T, self.V) + \
+            self.lamb_1 / 2. * dot(self.H1, self.B.T)
         HH1 = multiply(self.H, elop(temp_h1, dot(temp, self.H), div))
-        temp_h3 = dot(self.W.T, self.V1) + self.lamb * dot(self.H1, self.A) + self.lamb_1 / 2. * dot(self.H, self.B)
+        temp_h3 = dot(self.W.T, self.V1) + self.lamb * dot(
+            self.H1, self.A) + self.lamb_1 / 2. * dot(self.H, self.B)
         temp_h4 = dot(temp, self.H1)
         self.H1 = multiply(self.H1, elop(temp_h3, temp_h4, div))
-        #update H
+        # update H
         self.H = HH1
-                    
+
     def objective(self):
-        """Compute three component objective function as defined in [Zhang2011]_.""" 
+        """Compute three component objective function as defined in [Zhang2011]_."""
         err_avg1 = abs(self.V - dot(self.W, self.H)).mean() / self.V.mean()
         err_avg2 = abs(self.V1 - dot(self.W, self.H1)).mean() / self.V1.mean()
         self.err_avg = err_avg1 + err_avg2
@@ -202,9 +215,9 @@ class Snmnmf(nmf_mm.Nmf_mm):
         s1 = multiply(self.W, self.W).sum()
         s2 = multiply(self.H, self.H).sum() + multiply(self.H1, self.H1).sum()
         return eucl1 + eucl2 - self.lamb * tr1 - self.lamb_1 * tr2 + self.gamma * s1 + self.gamma_1 * s2
-    
+
     def __str__(self):
         return self.name
-    
+
     def __repr__(self):
-        return self.name 
+        return self.name

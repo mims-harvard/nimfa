@@ -7,7 +7,9 @@
 import nimfa.utils.utils as utils
 from nimfa.utils.linalg import *
 
+
 class Smf(object):
+
     """
     This class defines a common interface / model to handle standard MF models in a generic way.
     
@@ -15,27 +17,29 @@ class Smf(object):
     common computations and matrix factorizations. Besides it contains some quality and performance measures 
     about factorizations. 
     """
-    
+
     def __init__(self, params):
         self.__dict__.update(params)
         # do not copy target and factor matrices into the program
         if sp.isspmatrix(self.V):
             self.V = self.V.tocsr().astype('d')
         else:
-            self.V = np.asmatrix(self.V) if self.V.dtype == np.dtype(float) else np.asmatrix(self.V, dtype = 'd')
-        if self.W != None or self.H != None or self.H1 != None: 
-            raise MFError("Passing fixed initialized factors is not supported in SMF model.")
+            self.V = np.asmatrix(self.V) if self.V.dtype == np.dtype(
+                float) else np.asmatrix(self.V, dtype='d')
+        if self.W != None or self.H != None or self.H1 != None:
+            raise MFError(
+                "Passing fixed initialized factors is not supported in SMF model.")
         self.model_name = "smf"
-        
+
     def run(self):
         """Run the specified MF algorithm."""
         return self.factorize()
-            
+
     def basis(self):
         """Return the matrix of basis vectors (factor 1 matrix)."""
         return self.W
-    
-    def target(self, idx = None):
+
+    def target(self, idx=None):
         """
         Return the target matrix to estimate.
         
@@ -43,8 +47,8 @@ class Smf(object):
         :type idx: None
         """
         return self.V
-    
-    def coef(self, idx = None):
+
+    def coef(self, idx=None):
         """
         Return the matrix of mixture coefficients (factor 2 matrix).
         
@@ -52,8 +56,8 @@ class Smf(object):
         :type idx: None
         """
         return self.H
-    
-    def fitted(self, idx = None):
+
+    def fitted(self, idx=None):
         """
         Compute the estimated target matrix according to the MF algorithm model.
         
@@ -61,8 +65,8 @@ class Smf(object):
         :type idx: None
         """
         return dot(self.W, self.H)
-    
-    def distance(self, metric = 'euclidean', idx = None):
+
+    def distance(self, metric='euclidean', idx=None):
         """
         Return the loss function value.
         
@@ -77,11 +81,11 @@ class Smf(object):
             return power(R, 2).sum()
         elif metric.lower() == 'kl':
             Va = dot(self.W, self.H)
-            return (multiply(self.V, sop(elop(self.V, Va, div), op = log)) - self.V + Va).sum()
+            return (multiply(self.V, sop(elop(self.V, Va, div), op=log)) - self.V + Va).sum()
         else:
             raise utils.MFError("Unknown distance metric.")
-    
-    def residuals(self, idx = None):
+
+    def residuals(self, idx=None):
         """
         Return residuals matrix between the target matrix and its MF estimate.
         
@@ -89,4 +93,3 @@ class Smf(object):
         :type idx: None
         """
         return self.V - dot(self.W, self.H)
-        
