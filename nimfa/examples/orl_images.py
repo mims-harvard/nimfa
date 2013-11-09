@@ -104,7 +104,7 @@ try:
     from PIL.Image import open, fromarray, new
     from PIL.ImageOps import expand
 except ImportError, exc:
-    raise SystemExit("PIL must be installed to run this example.")
+    warn("PIL must be installed to run ORL images example.")
 
 
 def run():
