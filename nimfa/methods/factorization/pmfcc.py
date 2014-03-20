@@ -24,6 +24,7 @@ from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
+import operator
 
 class Pmfcc(smf.Smf):
 
@@ -49,6 +50,9 @@ class Pmfcc(smf.Smf):
          
         Return fitted factorization model.
         """
+        self._Theta_p = multiply(self.Theta, sop(self.Theta, 0, operator.gt))
+        self._Theta_n = multiply(self.Theta, sop(self.Theta, 0, operator.lt)*(-1))
+
         for run in xrange(self.n_run):
             # [FWang2008]_; H = G.T, W = F (Table 2)
             self.W, self.H = self.seed.initialize(
@@ -130,10 +134,6 @@ class Pmfcc(smf.Smf):
         """Update basis and mixture matrix."""
         self.W = dot(self.V, dot(self.H.T, inv_svd(dot(self.H, self.H.T))))
 
-        tmp1 = sop(self.Theta, 0, ge)
-        tmp2 = tmp1.todense() - 1 if sp.isspmatrix(tmp1) else tmp1 - 1
-        Theta_p = multiply(self.Theta, tmp1)
-        Theta_n = multiply(self.Theta, tmp2)
         FtF = dot(self.W.T, self.W)
         XtF = dot(self.V.T, self.W)
         tmp1 = sop(FtF, 0, ge)
@@ -145,8 +145,8 @@ class Pmfcc(smf.Smf):
         XtF_p = multiply(XtF, tmp1)
         XtF_n = multiply(XtF, tmp2)
 
-        Theta_n_G = dot(Theta_n, self.H.T)
-        Theta_p_G = dot(Theta_p, self.H.T)
+        Theta_n_G = dot(self._Theta_n, self.H.T)
+        Theta_p_G = dot(self._Theta_p, self.H.T)
 
         GFtF_p = dot(self.H.T, FtF_p)
         GFtF_n = dot(self.H.T, FtF_n)
