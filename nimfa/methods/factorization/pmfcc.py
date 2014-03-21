@@ -68,7 +68,6 @@ class Pmfcc(smf.Smf):
             while self.is_satisfied(p_obj, c_obj, iter):
                 p_obj = c_obj if not self.test_conv or iter % self.test_conv == 0 else p_obj
                 self.update()
-                self._adjustment()
                 iter += 1
                 c_obj = self.objective(
                 ) if not self.test_conv or iter % self.test_conv == 0 else c_obj
@@ -115,11 +114,6 @@ class Pmfcc(smf.Smf):
         if iter > 0 and c_obj > p_obj:
             return False
         return True
-
-    def _adjustment(self):
-        """Adjust small values to factors to avoid numerical underflow."""
-        self.H = max(self.H, np.finfo(self.H.dtype).eps)
-        self.W = max(self.W, np.finfo(self.W.dtype).eps)
 
     def set_params(self):
         """Set algorithm specific model options."""
