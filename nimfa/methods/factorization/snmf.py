@@ -250,10 +250,13 @@ class Snmf(nmf_std.Nmf_std):
             self.inc += 1
         else:
             self.inc = 0
-        resmat = elop(self.H, dot(dot(self.W.T, self.W), self.H) - dot(
-            self.W.T, self.V) + dot(self.beta * np.ones((self.rank, self.rank)), self.H), min)
-        resmat1 = elop(self.W, dot(self.W, dot(self.H, self.H.T))
-                       - dot(self.V, self.H.T) + self.eta ** 2 * self.W, min)
+        WtWH = dot(dot(self.W.T, self.W), self.H)
+        WtV = dot(self.W.T, self.V)
+        bRH = dot(self.beta * np.ones((self.rank, self.rank)), self.H)
+        resmat = elop(self.H, WtWH - WtV + bRH, min)
+        WHHt = dot(self.W, dot(self.H, self.H.T))
+        VHt = dot(self.V, self.H.T)
+        resmat1 = elop(self.W, WHHt - VHt + self.eta ** 2 * self.W, min)
         res_vec = nz_data(resmat) + nz_data(resmat1)
         # L1 norm
         self.conv = norm(np.mat(res_vec), 1)
@@ -368,8 +371,7 @@ class Snmf(nmf_std.Nmf_std):
                     for j in f_set:
                         if not p_set[i, j]:
                             tmp[i, j] = True
-                _, mxidx = argmax(
-                    multiply(tmp[:, f_set], W[:, f_set]), axis=0)
+                _, mxidx = argmax(multiply(tmp[:, f_set], W[:, f_set]), axis=0)
                 mxidx = mxidx.tolist()[0]
                 p_set[mxidx, f_set] = 1
                 D[:, f_set] = K[:, f_set]
