@@ -101,8 +101,8 @@ class Snmf(nmf_std.Nmf_std):
             # row clusters have not changed.
             self.inc = 0
             # normalize W
-            self.W = elop(
-                self.W, repmat(sop(multiply(self.W, self.W).sum(axis=0), op=np.sqrt), self.V.shape[0], 1), div)
+            w_c = sop(multiply(self.W, self.W).sum(axis=0), op=np.sqrt)
+            self.W = elop(self.W, repmat(w_c, self.V.shape[0], 1), div)
             if sp.isspmatrix(self.V):
                 self.beta_vec = sqrt(self.beta) * sp.lil_matrix(
                     np.ones((1, self.rank)), dtype=self.V.dtype)
@@ -218,12 +218,11 @@ class Snmf(nmf_std.Nmf_std):
             self.inc = 0
             self.W, _ = self.seed.initialize(self.V, self.rank, self.options)
             # normalize W and convert to lil
-            if (sp.issparse(self.W)):
-                self.W = elop(
-                    self.W, repmat(sop(multiply(self.W, self.W).sum(axis=0), op=np.sqrt), self.V.shape[0], 1), div).tolil()
+            w_c = sop(multiply(self.W, self.W).sum(axis=0), op=np.sqrt)
+            if sp.issparse(self.W):
+                self.W = elop(self.W, repmat(w_c, self.V.shape[0], 1), div).tolil()
             else:
-                self.W = elop(
-                    self.W, repmat(sop(multiply(self.W, self.W).sum(axis=0), op=np.sqrt), self.V.shape[0], 1), div)
+                self.W = elop(self.W, repmat(w_c, self.V.shape[0], 1), div)
             return
         # min_w ||[H'; I_k]*W' - [A'; 0]||, s.t. W>=0, for given A and H.
         if sp.isspmatrix(self.V):
@@ -357,8 +356,9 @@ class Snmf(nmf_std.Nmf_std):
                 for j in f_set:
                     if not p_set[i, j]:
                         tmp[i, j] = True
-            j_set = find(
-                all(sop(multiply(tmp[:, f_set], W[:, f_set]), 0, le), axis=0))
+            p_set_not = np.logical_not(p_set[:, f_set].todense())
+            w = W[:, f_set].todense()
+            j_set = find(all(multiply(p_set_not, w) <= 0, axis=0))
             f_j = f_set[j_set] if j_set != [] else []
             f_set = np.setdiff1d(np.asarray(f_set), np.asarray(f_j))
             # for non-optimal solutions, add the appropriate variable to Pset
@@ -415,7 +415,8 @@ class Snmf(nmf_std.Nmf_std):
                         K[v, c] = sol[j, i]
                         j += 1
                     i += 1
-                # K[vars, cols2solve] = dot(np.linalg.pinv(CtC[vars, vars]), CtA[vars, cols2solve])
+                # K[vars, cols2solve] = dot(np.linalg.pinv(CtC[vars, vars]),
+                # CtA[vars, cols2solve])
         return K.tolil()
 
     def _fcnnls(self, C, A):
@@ -500,8 +501,8 @@ class Snmf(nmf_std.Nmf_std):
             # make sure the solution has converged and check solution for
             # optimality
             W[:, f_set] = CtA[:, f_set] - dot(CtC, K[:, f_set])
-            j_set = find(
-                all(multiply(np.logical_not(p_set[:, f_set]), W[:, f_set]) <= 0, axis=0))
+            npw = multiply(np.logical_not(p_set[:, f_set]), W[:, f_set])
+            j_set = find(all(npw <= 0, axis=0))
             f_j = f_set[j_set] if j_set != [] else []
             f_set = np.setdiff1d(np.asarray(f_set), np.asarray(f_j))
             # for non-optimal solutions, add the appropriate variable to Pset
@@ -538,7 +539,9 @@ class Snmf(nmf_std.Nmf_std):
                 vars = p_set[:, sorted_idx_set[break_idx[k] + 1]]
                 vars = [i for i in xrange(vars.shape[0]) if vars[i, 0]]
                 if vars != [] and cols2solve != []:
-                    sol = np.linalg.lstsq(CtC[:, vars][vars, :], CtA[:, cols2solve][vars,:])[0]
+                    A = CtC[:, vars][vars, :]
+                    B = CtA[:, cols2solve][vars,:]
+                    sol = np.linalg.lstsq(A, B)[0]
                     i = 0
                     for c in cols2solve:
                         j = 0
@@ -546,7 +549,8 @@ class Snmf(nmf_std.Nmf_std):
                             K[v, c] = sol[j, i]
                             j += 1
                         i += 1
-                    # K[vars, cols2solve] = dot(np.linalg.pinv(CtC[vars, vars]), CtA[vars, cols2solve])
+                    # K[vars, cols2solve] = dot(np.linalg.pinv(CtC[vars, vars]),
+                    # CtA[vars, cols2solve])
         return K
 
     def __str__(self):
