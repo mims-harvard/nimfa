@@ -6,8 +6,9 @@ Pmf (``methods.factorization.pmf``)
 
 **Probabilistic Nonnegative Matrix Factorization (PMF).** 
 
-PMF interprets target matrix (V) as samples from a multinomial [Laurberg2008]_, [Hansen2008]_ and uses Euclidean distance for 
-convergence test. Factorization is guided by an expectation maximization algorithm. 
+PMF interprets target matrix (V) as samples from a multinomial [Laurberg2008]_,
+[Hansen2008]_ and uses Euclidean distance for convergence test. Factorization
+is guided by an expectation maximization algorithm.
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 141-149
@@ -24,12 +25,14 @@ class Pmf(nmf_std.Nmf_std):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    The following are algorithm specific model options which can be passed with
+    values as keyword arguments.
     
-    :param rel_error: In PMF only Euclidean distance cost function is used for convergence test by default. By specifying the value for 
-                      minimum relative error, the relative error measure can be used as stopping criteria as well. In this case of 
-                      multiple passed criteria, the satisfiability of one terminates the factorization run. Suggested value for
-                      :param:`rel_error` is 1e-5.
+    :param rel_error: In PMF only Euclidean distance cost function is used for
+    convergence test by default. By specifying the value for minimum relative
+    error, the relative error measure can be used as stopping criteria as well.
+    In this case of multiple passed criteria, the satisfiability of one terminates
+    the factorization run. Suggested value for :param:`rel_error` is 1e-5.
     :type rel_error: `float`
     """
 
@@ -98,7 +101,8 @@ class Pmf(nmf_std.Nmf_std):
 
     def is_satisfied(self, p_obj, c_obj, iter):
         """
-        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        Compute the satisfiability of the stopping criteria based on stopping
+        parameters and objective function value.
         
         Return logical value denoting factorization continuation. 
         
@@ -135,7 +139,8 @@ class Pmf(nmf_std.Nmf_std):
         ) if self.track_factor and self.n_run > 1 or self.track_error else None
 
     def update(self):
-        """Update basis and mixture matrix. It is expectation maximization algorithm. """
+        """Update basis and mixture matrix. It is expectation maximization
+        algorithm. """
         # E step
         Qnorm = dot(dot(self.W, self.P), self.H)
         for k in xrange(self.rank):

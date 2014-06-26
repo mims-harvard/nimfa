@@ -4,13 +4,16 @@
 Snmnmf (``methods.factorization.snmnmf``)
 #########################################
 
-**Sparse Network-Regularized Multiple Nonnegative Matrix Factorization (SNMNMF)** [Zhang2011]_.
+**Sparse Network-Regularized Multiple Nonnegative Matrix Factorization
+(SNMNMF)** [Zhang2011]_.
 
-It is semi-supervised learning method with constraints (e. g. in comodule identification, any variables linked in 
-A or B, are more likely placed in the same comodule) to improve relevance and narrow down the search space.
+It is semi-supervised learning method with constraints (e. g. in comodule
+identification, any variables linked in A or B, are more likely placed in the
+same comodule) to improve relevance and narrow down the search space.
 
-The advantage of this method is the integration of multiple matrices for multiple types of variables (standard NMF
-methods can be applied to a target matrix containing just one type of variable) together with prior knowledge 
+The advantage of this method is the integration of multiple matrices for
+multiple types of variables (standard NMF methods can be applied to a target
+matrix containing just one type of variable) together with prior knowledge
 (e. g. network representing relationship among variables). 
 
 The objective function in [Zhang2011]_ has three components:
@@ -19,25 +22,34 @@ The objective function in [Zhang2011]_ has three components:
     #. third component models predicted miRNA-gene interactions.
  
 The inputs for the SNMNMF are:
-    #. two sets of expression profiles (represented by the matrices V and V1 of shape s x m, s x n, respectively) for 
-       miRNA and genes measured on the same set of samples;
-    #. (PRIOR KNOWLEDGE) a gene-gene interaction network (represented by the matrix A of shape n x n), including protein-protein interactions
-       and DNA-protein interactions; the network is presented in the form of the adjacency matrix of gene network; 
-    #. (PRIOR KNOWLEDGE) a list of predicted miRNA-gene regulatory interactions (represented by the matrix B of shape m x n) based on
-       sequence data; the network is presented in the form of the adjacency matrix of a bipartite miRNA-gene network. 
-       Network regularized constraints are used to enforce "must-link" constraints and to ensure that genes with known 
-       interactions have similar coefficient profiles. 
+    #. two sets of expression profiles (represented by the matrices V and V1 of
+    shape s x m, s x n, respectively) for miRNA and genes measured on the same
+    set of samples;
+    #. (PRIOR KNOWLEDGE) a gene-gene interaction network (represented by the
+    matrix A of shape n x n), including protein-protein interactions and
+    DNA-protein interactions; the network is presented in the form of the
+    adjacency matrix of gene network;
+    #. (PRIOR KNOWLEDGE) a list of predicted miRNA-gene regulatory interactions
+    (represented by the matrix B of shape m x n) based on sequence data; the
+    network is presented in the form of the adjacency matrix of a bipartite
+    miRNA-gene network. Network regularized constraints are used to enforce
+    "must-link" constraints and to ensure that genes with known interactions
+    have similar coefficient profiles.
        
-Gene and miRNA expression matrices are simultaneously factored into a common basis matrix (W) and two
-coefficients matrices (H and H1). Additional knowledge is incorporated into this framework with network 
-regularized constraints. Because of the imposed sparsity constraints easily interpretable solution is obtained. In 
-[Zhang2011]_ decomposed matrix componentsare used to provide information about miRNA-gene regulatory comodules. They
-identified the comodules based on shared components (a column in basis matrix W) with significant association values in 
-the corresponding rows of coefficients matrices, H1 and H2. 
+Gene and miRNA expression matrices are simultaneously factored into a common
+basis matrix (W) and two coefficients matrices (H and H1). Additional knowledge
+is incorporated into this framework with network regularized constraints.
+Because of the imposed sparsity constraints easily interpretable solution is
+obtained. In [Zhang2011]_ decomposed matrix componentsare used to provide
+information about miRNA-gene regulatory comodules. They identified the comodules
+based on shared components (a column in basis matrix W) with significant
+association values in the corresponding rows of coefficients matrices, H1 and H2.
 
-In SNMNMF a strategy suggested by Kim and Park (2007) is adopted to make the coefficient matrices sparse. 
+In SNMNMF a strategy suggested by Kim and Park (2007) is adopted to make the
+coefficient matrices sparse.
 
-.. note:: In [Zhang2011]_ ``H1`` and ``H2`` notation corresponds to the ``H`` and ``H1`` here, respectively. 
+.. note:: In [Zhang2011]_ ``H1`` and ``H2`` notation corresponds to the ``H``
+and ``H1`` here, respectively.
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 2-15
@@ -54,22 +66,29 @@ class Snmnmf(nmf_mm.Nmf_mm):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    The following are algorithm specific model options which can be passed with
+    values as keyword arguments.
     
-    :param A: Adjacency matrix of gene-gene interaction network (dimension: V1.shape[1] x V1.shape[1]). It should be 
-              nonnegative. Default is scipy.sparse CSR matrix of density 0.7.
-    :type A: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix` 
-    :param B: Adjacency matrix of a bipartite miRNA-gene network, predicted miRNA-target interactions 
-              (dimension: V.shape[1] x V1.shape[1]). It should be nonnegative. Default is scipy.sparse 
-              CSR matrix of density 0.7.
-    :type B: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix` 
+    :param A: Adjacency matrix of gene-gene interaction network (dimension:
+    V1.shape[1] x V1.shape[1]). It should be nonnegative. Default is scipy.sparse
+    CSR matrix of density 0.7.
+    :type A: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia
+    or :class:`numpy.matrix`
+    :param B: Adjacency matrix of a bipartite miRNA-gene network, predicted
+    miRNA-target interactions (dimension: V.shape[1] x V1.shape[1]). It should be
+    nonnegative. Default is scipy.sparse CSR matrix of density 0.7.
+    :type B: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or
+    :class:`numpy.matrix`
     :param gamma: Limit the growth of the basis matrix (W). Default is 0.01.
     :type gamma: `float`
-    :param gamma_1: Encourage sparsity of the mixture (coefficient) matrices (H and H1). Default is 0.01.
+    :param gamma_1: Encourage sparsity of the mixture (coefficient) matrices (H
+    and H1). Default is 0.01.
     :type gamma_1: `float`
-    :param lamb: Weight for the must-link constraints defined in :param:`A`. Default is 0.01.
+    :param lamb: Weight for the must-link constraints defined in :param:`A`.
+    Default is 0.01.
     :type lamb: `float`
-    :param lamb_1: Weight for the must-link constraints define in :param:`B`. Default is 0.01.
+    :param lamb_1: Weight for the must-link constraints define in :param:`B`.
+    Default is 0.01.
     :type lamb_1: `float`
     """
 
@@ -135,7 +154,8 @@ class Snmnmf(nmf_mm.Nmf_mm):
 
     def is_satisfied(self, p_obj, c_obj, iter):
         """
-        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        Compute the satisfiability of the stopping criteria based on stopping
+        parameters and objective function value.
         
         Return logical value denoting factorization continuation. 
         

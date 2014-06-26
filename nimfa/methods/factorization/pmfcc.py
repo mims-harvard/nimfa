@@ -4,16 +4,21 @@
 Pmfcc (``methods.factorization.pmfcc``)
 #######################################
 
-**Penalized Matrix Factorization for Constrained Clustering (PMFCC)** [FWang2008]_. 
+**Penalized Matrix Factorization for Constrained Clustering
+(PMFCC)** [FWang2008]_.
 
-PMFCC is used for semi-supervised co-clustering. Intra-type information is represented as constraints to guide the factorization process. 
-The constraints are of two types: (i) must-link: two data points belong to the same class, (ii) cannot-link: two data points cannot belong to the same class.
+PMFCC is used for semi-supervised co-clustering. Intra-type information is
+represented as constraints to guide the factorization process. The constraints
+are of two types: (i) must-link: two data points belong to the same class,
+(ii) cannot-link: two data points cannot belong to the same class.
 
-PMFCC solves the following problem. Given a target matrix V = [v_1, v_2, ..., v_n], it produces W = [f_1, f_2, ... f_rank], containing
+PMFCC solves the following problem. Given a target matrix
+V = [v_1, v_2, ..., v_n], it produces W = [f_1, f_2, ... f_rank], containing
 cluster centers and matrix H of data point cluster membership values.    
 
-Cost function includes centroid distortions and any associated constraint violations. Compared to the traditional NMF cost function, the only 
-difference is the inclusion of the penalty term.  
+Cost function includes centroid distortions and any associated constraint
+violations. Compared to the traditional NMF cost function, the only difference
+is the inclusion of the penalty term.
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 192-200
@@ -31,10 +36,11 @@ class Pmfcc(smf.Smf):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    The following are algorithm specific model options which can be passed with
+    values as keyword arguments.
     
-    :param Theta: Constraint matrix (dimension: V.shape[1] x X.shape[1]). It contains known must-link (negative) and cannot-link 
-                  (positive) constraints.
+    :param Theta: Constraint matrix (dimension: V.shape[1] x X.shape[1]). It
+    contains known must-link (negative) and cannot-link (positive) constraints.
     :type Theta: `numpy.matrix`
     """
 
@@ -94,7 +100,8 @@ class Pmfcc(smf.Smf):
 
     def is_satisfied(self, p_obj, c_obj, iter):
         """
-        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        Compute the satisfiability of the stopping criteria based on stopping
+        parameters and objective function value.
         
         Return logical value denoting factorization continuation. 
         

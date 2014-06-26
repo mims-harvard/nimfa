@@ -6,22 +6,31 @@ Nsnmf (``methods.factorization.nsnmf``)
 
 **Nonsmooth Nonnegative Matrix Factorization (NSNMF)** [Montano2006]_. 
 
-NSNMF aims at finding localized, part-based representations of nonnegative multivariate data items. Generally this method
-produces a set of basis and encoding vectors representing not only the original data but also extracting highly localized 
-patterns. Because of the multiplicative nature of the standard model, sparseness in one of the factors almost certainly
-forces nonsparseness (or smoothness) in the other in order to compensate for the final product to reproduce the data as best
-as possible. With the modified standard model in NSNMF global sparseness is achieved. 
+NSNMF aims at finding localized, part-based representations of nonnegative
+multivariate data items. Generally this method produces a set of basis and
+encoding vectors representing not only the original data but also extracting
+highly localized patterns. Because of the multiplicative nature of the
+standard model, sparseness in one of the factors almost certainly forces
+nonsparseness (or smoothness) in the other in order to compensate for the final
+product to reproduce the data as best as possible. With the modified standard
+model in NSNMF global sparseness is achieved.
 
-In the new model the target matrix is estimated as the product V = WSH, where V, W and H are the same as in the original NMF
-model. The positive symmetric square matrix S is a smoothing matrix defined as S = (1 - theta)I + (theta/rank)11', where
-I is an identity matrix, 1 is a vector of ones, rank is factorization rank and theta is a smoothing parameter (0<=theta<=1). 
+In the new model the target matrix is estimated as the product V = WSH, where
+V, W and H are the same as in the original NMF model. The positive symmetric
+square matrix S is a smoothing matrix defined as
+S = (1 - theta)I + (theta/rank)11', where I is an identity matrix, 1 is a vector
+of ones, rank is factorization rank and theta is a smoothing parameter
+(0<=theta<=1).
 
-The interpretation of S as a smoothing matrix can be explained as follows: Let X be a positive, nonzero, vector.
-Consider the transformed vector Y = SX. As theta --> 1, the vector Y tends to the constant vector with all elements almost
-equal to the average of the elements of X. This is the smoothest possible vector in the sense of nonsparseness because 
-all entries are equal to the same nonzero value. The parameter theta controls the extent of smoothness of the matrix 
-operator S. Due to the multiplicative nature of the model, strong smoothing in S forces strong sparseness in
-both the basis and the encoding vectors. Therefore, the parameter theta controls the sparseness of the model.  
+The interpretation of S as a smoothing matrix can be explained as follows: Let X
+be a positive, nonzero, vector. Consider the transformed vector Y = SX. As
+theta --> 1, the vector Y tends to the constant vector with all elements almost
+equal to the average of the elements of X. This is the smoothest possible vector
+in the sense of nonsparseness because all entries are equal to the same nonzero
+value. The parameter theta controls the extent of smoothness of the matrix
+operator S. Due to the multiplicative nature of the model, strong smoothing in
+S forces strong sparseness in both the basis and the encoding vectors. Therefore,
+the parameter theta controls the sparseness of the model.
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 130-138
@@ -38,11 +47,13 @@ class Nsnmf(nmf_ns.Nmf_ns):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    The following are algorithm specific model options which can be passed with
+    values as keyword arguments.
     
-    :param theta: The smoothing parameter. Its value should be 0<=:param:`theta`<=1. With :param:`theta` 0 the model 
-                  corresponds to the basic divergence NMF. Strong smoothing forces strong sparseness in both the basis and
-                  the mixture matrices. If not specified, default value :param:`theta` of 0.5 is used.  
+    :param theta: The smoothing parameter. Its value should be 0<=:param:`theta`<=1.
+    With :param:`theta` 0 the model corresponds to the basic divergence NMF.
+    Strong smoothing forces strong sparseness in both the basis and the mixture
+    matrices. If not specified, default value :param:`theta` of 0.5 is used.
     :type theta: `float`
     """
 
@@ -103,7 +114,8 @@ class Nsnmf(nmf_ns.Nmf_ns):
 
     def is_satisfied(self, p_obj, c_obj, iter):
         """
-        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        Compute the satisfiability of the stopping criteria based on stopping
+        parameters and objective function value.
         
         Return logical value denoting factorization continuation. 
         
@@ -133,7 +145,8 @@ class Nsnmf(nmf_ns.Nmf_ns):
         ) if self.track_factor and self.n_run > 1 or self.track_error else None
 
     def update(self):
-        """Update basis and mixture matrix based on modified divergence multiplicative update rules."""
+        """Update basis and mixture matrix based on modified divergence
+        multiplicative update rules."""
         # update mixture matrix H
         W = dot(self.W, self.S)
         H1 = repmat(W.sum(0).T, 1, self.V.shape[1])

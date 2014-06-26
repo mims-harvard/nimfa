@@ -7,29 +7,39 @@ Psmf (``methods.factorization.psmf``)
 **Probabilistic Sparse Matrix Factorization (PSMF)** [Dueck2005]_, [Dueck2004]_. 
 
 PSMF allows for varying levels of sensor noise in the
-data, uncertainty in the hidden prototypes used to explain the data and uncertainty as to the prototypes selected
-to explain each data vector stacked in target matrix (V). 
+data, uncertainty in the hidden prototypes used to explain the data and
+uncertainty as to the prototypes selected to explain each data vector stacked in
+target matrix (V).
 
-This technique explicitly maximizes a lower bound on the log-likelihood of the data under a probability model. Found
-sparse encoding can be used for a variety of tasks, such as functional prediction, capturing functionally relevant
-hidden factors that explain gene expression data and visualization. As this algorithm computes probabilities 
-rather than making hard decisions, it can be shown that a higher data log-likelihood is obtained than from the 
+This technique explicitly maximizes a lower bound on the log-likelihood of the
+data under a probability model. Found sparse encoding can be used for a variety
+of tasks, such as functional prediction, capturing functionally relevant
+hidden factors that explain gene expression data and visualization. As this
+algorithm computes probabilities rather than making hard decisions, it can be
+shown that a higher data log-likelihood is obtained than from the
 versions (iterated conditional modes) that make hard decisions [Srebro2001]_.
 
-Given a target matrix (V [n, m]), containing n m-dimensional data points, basis matrix (factor loading matrix) (W) 
-and mixture matrix (matrix of hidden factors) (H) are found under a structural sparseness constraint that each row 
-of W contains at most N (of possible factorization rank number) non-zero entries. Intuitively, this corresponds to 
-explaining each row vector of V as a linear combination (weighted by the corresponding row in W) of a small subset 
-of factors given by rows of H. This framework includes simple clustering by setting N = 1 and ordinary low-rank 
-approximation N = factorization rank as special cases. 
+Given a target matrix (V [n, m]), containing n m-dimensional data points, basis
+matrix (factor loading matrix) (W) and mixture matrix (matrix of hidden factors)
+(H) are found under a structural sparseness constraint that each row of W
+contains at most N (of possible factorization rank number) non-zero entries.
+Intuitively, this corresponds to explaining each row vector of V as a linear
+combination (weighted by the corresponding row in W) of a small subset
+of factors given by rows of H. This framework includes simple clustering by
+setting N = 1 and ordinary low-rank approximation N = factorization rank as
+special cases.
 
-A probability model presuming Gaussian sensor noise in V (V = WH + noise) and uniformly distributed factor 
-assignments is constructed. Factorized variational inference method is used to perform tractable inference on the 
-latent variables and account for noise and uncertainty. The number of factors, r_g, contributing to each data point is
-multinomially distributed such that P(r_g = n) = v_n, where v is a user specified N-vector. PSMF model estimation using  
-factorized variational inference has greater computational complexity than basic NMF methods [Dueck2004]_. 
+A probability model presuming Gaussian sensor noise in V (V = WH + noise) and
+uniformly distributed factor assignments is constructed. Factorized variational
+inference method is used to perform tractable inference on the latent variables
+and account for noise and uncertainty. The number of factors, r_g, contributing
+to each data point is multinomially distributed such that P(r_g = n) = v_n,
+where v is a user specified N-vector. PSMF model estimation using factorized
+variational inference has greater computational complexity than basic NMF
+methods [Dueck2004]_.
 
-Example of usage of PSMF for identifying gene transcriptional modules from gene expression data is described in [Li2007]_.     
+Example of usage of PSMF for identifying gene transcriptional modules from gene
+expression data is described in [Li2007]_.
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 152-160
@@ -46,16 +56,20 @@ class Psmf(nmf_std.Nmf_std):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    The following are algorithm specific model options which can be passed with
+    values as keyword arguments.
     
-    PSMF overrides default frequency of convergence tests. By default convergence is tested every 5th iteration. This 
-    behavior can be changed by setting :param:`test_conv`. See :mod:`mf_run` Stopping criteria section.   
+    PSMF overrides default frequency of convergence tests. By default convergence
+    is tested every 5th iteration. This behavior can be changed by setting
+    :param:`test_conv`. See :mod:`mf_run` Stopping criteria section.
     
-    :param prior: The prior on the number of factors explaining each vector and should be a positive row vector. 
-                  The :param:`prior` can be passed as a list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or 
-                  as a scalar N, in which case uniform prior is taken, prior = 1. / (1:N), reflecting no knowledge about the 
-                  distribution and giving equal preference to all values of a particular r_g. Default value for :param:`prior` is  
-                  factorization rank, e. g. ordinary low-rank approximations is performed. 
+    :param prior: The prior on the number of factors explaining each vector and
+    should be a positive row vector. The :param:`prior` can be passed as a
+    list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or as a
+    scalar N, in which case uniform prior is taken, prior = 1. / (1:N),
+    reflecting no knowledge about the distribution and giving equal preference to
+    all values of a particular r_g. Default value for :param:`prior` is
+    factorization rank, e. g. ordinary low-rank approximations is performed.
     :type prior: `list` or `float`
     """
 
@@ -145,13 +159,15 @@ class Psmf(nmf_std.Nmf_std):
             for n2 in xrange(n1 + 1, self.N):
                 self.cross_terms[n1, n2] = np.zeros((self.V.shape[0], 1))
                 for c in xrange(self.rank):
+                    sigmat = np.tile((self.sigma[:, c, n2] * self.lamb[:, c]).reshape((self.lamb.shape[0], 1)), (1, self.zeta.shape[0]))
+                    outer_zetat = np.tile(outer_zeta[c, :], (self.rho.shape[0], 1))
                     self.cross_terms[n1, n2] += (self.sigma[:, :, n1] * self.lamb * 
-                                                 np.tile((self.sigma[:, c, n2] * self.lamb[:, c]).reshape((self.lamb.shape[0], 1)), (1, self.zeta.shape[0])) *
-                                            np.tile(outer_zeta[c, :], (self.rho.shape[0], 1))).sum(axis = 1).reshape(self.rho.shape[0], 1)
+                                                 sigmat * outer_zetat).sum(axis = 1).reshape(self.rho.shape[0], 1)
 
     def is_satisfied(self, p_obj, c_obj, iter):
         """
-        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        Compute the satisfiability of the stopping criteria based on stopping
+        parameters and objective function value.
         
         Return logical value denoting factorization continuation. 
         
@@ -318,7 +334,8 @@ class Psmf(nmf_std.Nmf_std):
         """Compute E-step and update phi."""
         self.phi = np.ones(self.phi.shape)
         for n in xrange(self.N):
-            t_phi = np.tile(self.psi, (1, self.rank)) * self.sigma[:, :, n] * np.tile(self.rho[:, n:self.N].sum(axis = 1).reshape(self.rho.shape[0], 1), (1, self.rank)) 
+            rho_tmp = np.tile(self.rho[:, n:self.N].sum(axis = 1).reshape(self.rho.shape[0], 1), (1, self.rank))
+            t_phi = np.tile(self.psi, (1, self.rank)) * self.sigma[:, :, n] * rho_tmp
             self.phi += (self.lamb ** 2 / (t_phi + np.finfo(t_phi.dtype).eps)).sum(
                 axis=0).reshape((self.phi.shape[0], 1))
         self.phi = 1. / self.phi

@@ -4,25 +4,31 @@
 Icm (``methods.factorization.icm``)
 ###################################
 
-**Iterated Conditional Modes nonnegative matrix factorization (ICM)** [Schmidt2009]_. 
+**Iterated Conditional Modes nonnegative matrix factorization (ICM)**
+[Schmidt2009]_.
 
-Iterated conditional modes algorithm is a deterministic algorithm for obtaining the configuration that maximizes the 
-joint probability of a Markov random field. This is done iteratively by maximizing the probability of each variable 
+Iterated conditional modes algorithm is a deterministic algorithm for obtaining
+the configuration that maximizes the joint probability of a Markov random field.
+This is done iteratively by maximizing the probability of each variable
 conditioned on the rest.
 
-Most NMF algorithms can be seen as computing a maximum likelihood or maximum a posteriori (MAP) estimate of the 
-nonnegative factor matrices under some assumptions on the distribution of the data and factors. ICM algorithm computes
-the MAP estimate. In this approach, iterations over the parameters of the model set each parameter equal to the conditional
-mode and after a number of iterations the algorithm converges to a local maximum of the joint posterior density. This is a
-block coordinate ascent algorithm with the benefit that the optimum is computed for each block of parameters in each 
-iteration. 
+Most NMF algorithms can be seen as computing a maximum likelihood or maximum a
+posteriori (MAP) estimate of the nonnegative factor matrices under some
+assumptions on the distribution of the data and factors. ICM algorithm computes
+the MAP estimate. In this approach, iterations over the parameters of the model
+set each parameter equal to the conditional mode and after a number of
+iterations the algorithm converges to a local maximum of the joint posterior
+density. This is a block coordinate ascent algorithm with the benefit that the
+optimum is computed for each block of parameters in each iteration.
 
-ICM has low computational cost per iteration as the modes of conditional densities have closed form expressions.   
+ICM has low computational cost per iteration as the modes of conditional
+densities have closed form expressions.
 
-In [Schmidt2009]_ ICM is compared to the popular Lee and Seung's multiplicative update algorithm and fast Newton algorithm on image
-feature extraction test. ICM converges much faster than multiplicative update algorithm and with approximately the same
-rate per iteration as fast Newton algorithm. All three algorithms have approximately the same computational cost per
-iteration.  
+In [Schmidt2009]_ ICM is compared to the popular Lee and Seung's multiplicative
+update algorithm and fast Newton algorithm on image feature extraction test.
+ICM converges much faster than multiplicative update algorithm and with
+approximately the same rate per iteration as fast Newton algorithm. All three
+algorithms have approximately the same computational cost per iteration.
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 50-63
@@ -39,15 +45,18 @@ class Icm(nmf_std.Nmf_std):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    The following are algorithm specific model options which can be passed with
+    values as keyword arguments.
     
     :param iiter: Number of inner iterations. Default is 20. 
     :type iiter: `int`
-    :param alpha: The prior for basis matrix (W) of proper dimensions. Default is uniformly distributed random sparse matrix prior with
-                  0.8 density parameter.
+    :param alpha: The prior for basis matrix (W) of proper dimensions. Default
+    is uniformly distributed random sparse matrix prior with 0.8 density
+    parameter.
     :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
-    :param beta: The prior for mixture matrix (H) of proper dimensions. Default is uniformly distributed random sparse matrix prior with
-                 0.8 density parameter.
+    :param beta: The prior for mixture matrix (H) of proper dimensions.
+    Default is uniformly distributed random sparse matrix prior with 0.8 density
+    parameter.
     :type beta: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
     :param theta: The prior for :param:`sigma`. Default is 0.
     :type theta: `float`
@@ -111,7 +120,8 @@ class Icm(nmf_std.Nmf_std):
 
     def is_satisfied(self, p_obj, c_obj, iter):
         """
-        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        Compute the satisfiability of the stopping criteria based on stopping
+        parameters and objective function value.
         
         Return logical value denoting factorization continuation. 
         

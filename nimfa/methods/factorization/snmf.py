@@ -4,17 +4,21 @@
 Snmf (``methods.factorization.snmf``)
 #####################################
 
-**Sparse Nonnegative Matrix Factorization (SNMF)** based on alternating nonnegativity constrained least squares [Park2007]_.
+**Sparse Nonnegative Matrix Factorization (SNMF)** based on alternating
+nonnegativity constrained least squares [Park2007]_.
 
-In order to enforce sparseness on basis or mixture matrix, SNMF can be used, namely two formulations: SNMF/L for 
-sparse W (sparseness is imposed on the left factor) and SNMF/R for sparse H (sparseness imposed on the right factor).
-These formulations utilize L1-norm minimization. Each subproblem is solved by a fast nonnegativity constrained
-least squares (FCNNLS) algorithm (van Benthem and Keenan, 2004) that is improved upon the active set based NLS method. 
+In order to enforce sparseness on basis or mixture matrix, SNMF can be used,
+namely two formulations: SNMF/L for sparse W (sparseness is imposed on the left
+factor) and SNMF/R for sparse H (sparseness imposed on the right factor). These
+formulations utilize L1-norm minimization. Each subproblem is solved by a fast
+nonnegativity constrained least squares (FCNNLS) algorithm (van Benthem and
+Keenan, 2004) that is improved upon the active set based NLS method.
 
-SNMF/R contains two subproblems for two-block minimization scheme. The objective function is coercive on the 
-feasible set. It can be shown (Grippo and Sciandrome, 2000) that two-block minimization process is convergent, 
-every accumulation point is a critical point of the corresponding problem. Similarly, the algorithm SNMF/L converges
-to a stationary point. 
+SNMF/R contains two subproblems for two-block minimization scheme. The objective
+function is coercive on the feasible set. It can be shown (Grippo and Sciandrome,
+2000) that two-block minimization process is convergent, every accumulation point
+is a critical point of the corresponding problem. Similarly, the algorithm SNMF/L
+converges to a stationary point.
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 163-175
@@ -34,26 +38,33 @@ class Snmf(nmf_std.Nmf_std):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    The parameter :param:`min_residuals` of the underlying model is used as KKT convergence test and should have 
-    positive value. If not specified, value 1e-4 is used. 
+    The parameter :param:`min_residuals` of the underlying model is used as KKT
+    convergence test and should have positive value. If not specified, value
+    1e-4 is used.
     
-    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    The following are algorithm specific model options which can be passed with
+    values as keyword arguments.
     
-    :param version: Specifiy version of the SNMF algorithm. it has two accepting values, 'r' and 'l' for SNMF/R and 
-                    SNMF/L, respectively. Default choice is SNMF/R.
+    :param version: Specifiy version of the SNMF algorithm. it has two accepting
+    values, 'r' and 'l' for SNMF/R and SNMF/L, respectively. Default choice is
+    SNMF/R.
     :type version: `str`
-    :param eta: Used for suppressing Frobenius norm on the basis matrix (W). Default value is maximum value of the target 
-                matrix (V). If :param:`eta` is negative, maximum value of target matrix is used for it. 
+    :param eta: Used for suppressing Frobenius norm on the basis matrix (W).
+    Default value is maximum value of the target matrix (V). If :param:`eta` is
+    negative, maximum value of target matrix is used for it.
     :type eta: `float`
-    :param beta: It controls sparseness. Larger :param:`beta` generates higher sparseness on H. Too large :param:`beta` 
-                 is not recommended. It should have positive value. Default value is 1e-4.
+    :param beta: It controls sparseness. Larger :param:`beta` generates higher
+    sparseness on H. Too large :param:`beta` is not recommended. It should have
+    positive value. Default value is 1e-4.
     :type beta: `float`
-    :param i_conv: Part of the biclustering convergence test. It decides convergence if row clusters and column clusters have 
-                   not changed for :param:`i_conv` convergence tests. It should have nonnegative value.
-                   Default value is 10.
+    :param i_conv: Part of the biclustering convergence test. It decides
+    convergence if row clusters and column clusters have not changed for
+    :param:`i_conv` convergence tests. It should have nonnegative value. Default
+    value is 10.
     :type i_conv: `int`
-    :param w_min_change: Part of the biclustering convergence test. It specifies the minimal allowance of the change of 
-                         row clusters. It should have nonnegative value. Default value is 0.
+    :param w_min_change: Part of the biclustering convergence test. It specifies
+    the minimal allowance of the change of row clusters. It should have
+    nonnegative value. Default value is 0.
     :type w_min_change: `int`
     """
 
@@ -160,7 +171,8 @@ class Snmf(nmf_std.Nmf_std):
 
     def is_satisfied(self, c_obj, iter):
         """
-        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        Compute the satisfiability of the stopping criteria based on stopping
+        parameters and objective function value.
         
         Return logical value denoting factorization continuation. 
         
@@ -224,7 +236,10 @@ class Snmf(nmf_std.Nmf_std):
 
     def fro_error(self):
         """Compute NMF objective value with additional sparsity constraints."""
-        return 0.5 * norm(self.V - dot(self.W, self.H), "fro") ** 2 + self.eta * norm(self.W, "fro") ** 2 + self.beta * sum(norm(self.H[:, j], 1) ** 2 for j in self.H.shape[1])
+        rec_err = norm(self.V - dot(self.W, self.H), "fro")
+        w_norm = norm(self.W, "fro")
+        hc_norm = sum(norm(self.H[:, j], 1) ** 2 for j in self.H.shape[1])
+        return 0.5 * rec_err ** 2 + self.eta * w_norm ** 2 + self.beta * hc_norm
 
     def objective(self):
         """Compute convergence test."""
@@ -252,10 +267,12 @@ class Snmf(nmf_std.Nmf_std):
         """
         NNLS for sparse matrices.
         
-        Nonnegative least squares solver (NNLS) using normal equations and fast combinatorial strategy (van Benthem and Keenan, 2004). 
+        Nonnegative least squares solver (NNLS) using normal equations and fast
+        combinatorial strategy (van Benthem and Keenan, 2004).
         
-        Given A and C this algorithm solves for the optimal K in a least squares sense, using that A = C*K in the problem
-        ||A - C*K||, s.t. K>=0 for given A and C. 
+        Given A and C this algorithm solves for the optimal K in a least squares
+        sense, using that A = C*K in the problem ||A - C*K||, s.t.
+        K>=0 for given A and C.
         
         C is the n_obs x l_var coefficient matrix
         A is the n_obs x p_rhs matrix of observations
@@ -405,9 +422,11 @@ class Snmf(nmf_std.Nmf_std):
         """
         NNLS for dense matrices.
         
-        Nonnegative least squares solver (NNLS) using normal equations and fast combinatorial strategy (van Benthem and Keenan, 2004). 
+        Nonnegative least squares solver (NNLS) using normal equations and fast
+        combinatorial strategy (van Benthem and Keenan, 2004).
         
-        Given A and C this algorithm solves for the optimal K in a least squares sense, using that A = C*K in the problem
+        Given A and C this algorithm solves for the optimal K in a least squares
+        sense, using that A = C*K in the problem
         ||A - C*K||, s.t. K>=0 for given A and C. 
         
         C is the n_obs x l_var coefficient matrix

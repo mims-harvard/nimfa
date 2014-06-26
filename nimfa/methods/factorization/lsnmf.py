@@ -4,20 +4,24 @@
 Lsnmf (``methods.factorization.lsnmf``)
 #######################################
 
-**Alternating Nonnegative Least Squares Matrix Factorization Using Projected Gradient (bound constrained optimization)
-method for each subproblem (LSNMF)** [Lin2007]_. 
+**Alternating Nonnegative Least Squares Matrix Factorization Using Projected
+Gradient (bound constrained optimization) method for each subproblem
+(LSNMF)** [Lin2007]_.
 
 It converges faster than the popular multiplicative update approach. 
 
-Algorithm relies on efficiently solving bound constrained subproblems. They are solved using the projected gradient 
-method. Each subproblem contains some (m) independent nonnegative least squares problems. Not solving these separately
-but treating them together is better because of: problems are closely related, sharing the same constant matrices;
-all operations are matrix based, which saves computational time. 
+Algorithm relies on efficiently solving bound constrained subproblems. They are
+solved using the projected gradient method. Each subproblem contains some (m)
+independent nonnegative least squares problems. Not solving these separately but
+treating them together is better because of: problems are closely related,
+sharing the same constant matrices; all operations are matrix based, which
+saves computational time.
 
-The main task per iteration of the subproblem is to find a step size alpha such that a sufficient decrease condition
-of bound constrained problem is satisfied. In alternating least squares, each subproblem involves an optimization 
-procedure and requires a stopping condition. A common way to check whether current solution is close to a 
-stationary point is the form of the projected gradient [Lin2007]_.   
+The main task per iteration of the subproblem is to find a step size alpha such
+that a sufficient decrease condition of bound constrained problem is satisfied.
+In alternating least squares, each subproblem involves an optimization procedure
+and requires a stopping condition. A common way to check whether current solution
+is close to a stationary point is the form of the projected gradient [Lin2007]_.
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 79-89
@@ -34,19 +38,24 @@ class Lsnmf(nmf_std.Nmf_std):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    If :param:`min_residuals` of the underlying model is not specified, default value of :param:`min_residuals` 1e-5 is set.
-    In LSNMF :param:`min_residuals` is used as an upper bound of quotient of projected gradients norm and initial gradient
-    (initial gradient of basis and mixture matrix). It is a tolerance for a stopping condition. 
+    If :param:`min_residuals` of the underlying model is not specified, default
+    value of :param:`min_residuals` 1e-5 is set. In LSNMF :param:`min_residuals`
+    is used as an upper bound of quotient of projected gradients norm and initial
+    gradient (initial gradient of basis and mixture matrix). It is a tolerance
+    for a stopping condition.
     
-    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    The following are algorithm specific model options which can be passed with
+    values as keyword arguments.
     
     :param sub_iter: Maximum number of subproblem iterations. Default value is 10. 
     :type sub_iter: `int`
-    :param inner_sub_iter: Number of inner iterations when solving subproblems. Default value is 10. 
+    :param inner_sub_iter: Number of inner iterations when solving subproblems.
+    Default value is 10.
     :type inner_sub_iter: `int`
-    :param beta: The rate of reducing the step size to satisfy the sufficient decrease condition when solving subproblems.
-                 Smaller beta more aggressively reduces the step size, but may cause the step size being too small. Default
-                 value is 0.1.
+    :param beta: The rate of reducing the step size to satisfy the sufficient
+    decrease condition when solving subproblems. Smaller beta more aggressively
+    reduces the step size, but may cause the step size being too small. Default
+    value is 0.1.
     :type beta: `float`
     """
 
@@ -112,7 +121,8 @@ class Lsnmf(nmf_std.Nmf_std):
 
     def is_satisfied(self, c_obj, iter):
         """
-        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        Compute the satisfiability of the stopping criteria based on stopping
+        parameters and objective function value.
         
         Return logical value denoting factorization continuation. 
         
@@ -157,16 +167,20 @@ class Lsnmf(nmf_std.Nmf_std):
 
     def _subproblem(self, V, W, Hinit, epsH):
         """
-        Optimization procedure for solving subproblem (bound-constrained optimization).
+        Optimization procedure for solving subproblem (bound-constrained
+        optimization).
         
         Return output solution, gradient and number of used iterations.
         
         :param V: Constant matrix.
-        :type V: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+        :type V: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil,
+        dia or :class:`numpy.matrix`
         :param W: Constant matrix.
-        :type W: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+        :type W: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil,
+        dia or :class:`numpy.matrix`
         :param Hinit: Initial solution to the subproblem.
-        :type Hinit: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+        :type Hinit: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok,
+        lil, dia or :class:`numpy.matrix`
         :param epsH: Tolerance for termination.
         :type epsH: `float`
         """
@@ -174,9 +188,9 @@ class Lsnmf(nmf_std.Nmf_std):
         WtV = dot(W.T, V)
         WtW = dot(W.T, W)
         # alpha is step size regulated by beta
-        # beta is the rate of reducing the step size to satisfy the sufficient decrease condition
-        # smaller beta more aggressively reduces the step size, but may cause
-        # the step size alpha being too small
+        # beta is the rate of reducing the step size to satisfy the sufficient
+        # decrease condition smaller beta more aggressively reduces the step
+        # size, but may cause the step size alpha being too small
         alpha = 1.
         for iter in xrange(self.sub_iter):
             grad = dot(WtW, H) - WtV
@@ -217,9 +231,11 @@ class Lsnmf(nmf_std.Nmf_std):
         Check element wise comparison for dense, sparse, mixed matrices.
         
         :param X: First input matrix.
-        :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+        :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil,
+        dia or :class:`numpy.matrix`
         :param Y: Second input matrix.
-        :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+        :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil,
+        dia or :class:`numpy.matrix`
         """
         if sp.isspmatrix(X) and sp.isspmatrix(Y):
             X = X.tocsr()
@@ -240,9 +256,11 @@ class Lsnmf(nmf_std.Nmf_std):
         Extract elements for projected gradient norm.
         
         :param X: Gradient matrix.
-        :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+        :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok,
+        lil, dia or :class:`numpy.matrix`
         :param Y: Input matrix. 
-        :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or :class:`numpy.matrix`
+        :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil,
+        dia or :class:`numpy.matrix`
         """
         if sp.isspmatrix(X):
             X = X.tocsr()

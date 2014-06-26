@@ -6,35 +6,45 @@ Bmf (``methods.factorization.bmf``)
 
 **Binary Matrix Factorization (BMF)** [Zhang2007]_.
 
-BMF extends standard NMF to binary matrices. Given a binary target matrix (V), we want to factorize it into binary 
-basis and mixture matrices, thus conserving the most important integer property of the target matrix. Common methodologies 
+BMF extends standard NMF to binary matrices. Given a binary target matrix (V),
+we want to factorize it into binary basis and mixture matrices, thus conserving
+the most important integer property of the target matrix. Common methodologies
 include penalty function algorithm and thresholding algorithm. 
 
-BMF can be derived based on variant of Standard NMF, but some problems need to be resolved:
+BMF can be derived based on variant of Standard NMF, but some problems need to
+be resolved:
     
-    #. Uniqueness. Solution for basis and mixture matrix is not unique as it is always possible to find
-       a diagonal matrix and incorporate it current solution to get a new. 
-    #. Scale. Scale problem arises when discretizing basis and mixture matrix into binary matrices. This problem
-       can be resolved by using rescaling proposed in Boundedness Theorem in [Zhang2007]_. Therefore,
-       discretization works properly because basis and mixture matrix are in the same scales. The factorization
-       method is more robust in this way. It has been shown that the percentage of nonzero elements in normalized
-       case is lower than in nonnormalized case. Without normalization the mixture matrix is often very sparse
-       and the basis matrix very dense - much information, given via mixture matrix is lost and cannot be 
-       compensated with basis matrix.  
+    #. Uniqueness. Solution for basis and mixture matrix is not unique as it is
+    always possible to find a diagonal matrix and incorporate it current solution
+    to get a new.
+    #. Scale. Scale problem arises when discretizing basis and mixture matrix into
+    binary matrices. This problem can be resolved by using rescaling proposed in
+    Boundedness Theorem in [Zhang2007]_. Therefore, discretization works properly
+    because basis and mixture matrix are in the same scales. The factorization
+    method is more robust in this way. It has been shown that the percentage of
+    nonzero elements in normalized case is lower than in nonnormalized case.
+    Without normalization the mixture matrix is often very sparse and the basis
+    matrix very dense - much information, given via mixture matrix is lost and
+    cannot be compensated with basis matrix.
 
-This method implements penalty function algorithm. The problem of BMF can be represented in terms of nonlinear 
-programming and then solved by a penalty function algorithm. The algorithm is described as follows:
+This method implements penalty function algorithm. The problem of BMF can be
+represented in terms of nonlinear programming and then solved by a penalty
+function algorithm. The algorithm is described as follows:
 
     1. Initialize basis, mixture matrix and parameters. 
     2. Normalize basis and mixture using Boundedness Theorem in [Zhang2007]_.
-    3. For basis and mixture, alternately solve nonlinear optimization problem with the objective function 
-       composed of three components: Euclidean distance of BMF estimate from target matrix; mixture penalty term
-       and  basis penalty term. 
-    4. Update parameters based on the level of the binarization of the basis and mixture matrix. 
+    3. For basis and mixture, alternately solve nonlinear optimization problem
+    with the objective function composed of three components: Euclidean distance
+    of BMF estimate from target matrix; mixture penalty term and  basis penalty
+    term.
+    4. Update parameters based on the level of the binarization of the basis and
+    mixture matrix.
     
-In step 1, basis and mixture matrix can be initialized with common initialization methods or with the result of the Standard 
-NMF by passing fixed factors to the factorization model. In step 3, the update rule is derived by taking the longest
-step that can maintain the nonnegativity of the basis, mixture matrix during the iterative process. 
+In step 1, basis and mixture matrix can be initialized with common initialization
+methods or with the result of the Standard NMF by passing fixed factors to the
+factorization model. In step 3, the update rule is derived by taking the longest
+step that can maintain the nonnegativity of the basis, mixture matrix during the
+iterative process.
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 38-47
@@ -51,21 +61,26 @@ class Bmf(nmf_std.Nmf_std):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    The following are algorithm specific model options which can be passed with
+    values as keyword arguments.
     
-    :param lambda_w: It controls how fast lambda should increase and influences the convergence of the basis matrix (W)
-                     to binary values during the update. 
-                         #. :param:`lambda_w` < 1 will result in a nonbinary decompositions as the update rule effectively
-                            is a conventional NMF update rule. 
-                         #. :param:`lambda_w` > 1 give more weight to make the factorization binary with increasing iterations.
-                     Default value is 1.1.
+    :param lambda_w: It controls how fast lambda should increase and influences
+    the convergence of the basis matrix (W) to binary values during the update.
+                         #. :param:`lambda_w` < 1 will result in a nonbinary
+                         decompositions as the update rule effectively is a
+                         conventional NMF update rule.
+                         #. :param:`lambda_w` > 1 give more weight to make the
+                         factorization binary with increasing iterations.
+    Default value is 1.1.
     :type lambda_w: `float`
-    :param lambda_h: It controls how fast lambda should increase and influences the convergence of the mixture matrix (H)
-                     to binary values during the update. 
-                         #. :param:`lambda_h` < 1 will result in a nonbinary decompositions as the update rule effectively
-                            is a conventional NMF update rule. 
-                         #. :param:`lambda_h` > 1 give more weight to make the factorization binary with increasing iterations.
-                     Default value is 1.1.
+    :param lambda_h: It controls how fast lambda should increase and influences
+    the convergence of the mixture matrix (H) to binary values during the update.
+                         #. :param:`lambda_h` < 1 will result in a nonbinary
+                         decompositions as the update rule effectively is a
+                         conventional NMF update rule.
+                         #. :param:`lambda_h` > 1 give more weight to make the
+                         factorization binary with increasing iterations.
+    Default value is 1.1.
     :type lambda_h: `float`
     """
 
@@ -125,7 +140,8 @@ class Bmf(nmf_std.Nmf_std):
 
     def is_satisfied(self, p_obj, c_obj, iter):
         """
-        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        Compute the satisfiability of the stopping criteria based on stopping
+        parameters and objective function value.
         
         Return logical value denoting factorization continuation. 
         
@@ -174,8 +190,9 @@ class Bmf(nmf_std.Nmf_std):
 
     def normalize(self):
         """
-        Normalize initialized basis and mixture matrix, using Boundedness Theorem in [Zhang2007]_. Normalization
-        makes the BMF factorization more robust.
+        Normalize initialized basis and mixture matrix, using Boundedness
+        Theorem in [Zhang2007]_. Normalization makes the BMF factorization more
+        robust.
         
         Normalization produces basis and mixture matrix with values in [0, 1]. 
         """

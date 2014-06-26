@@ -6,17 +6,21 @@ Nmf (``methods.factorization.nmf``)
 
 **Standard Nonnegative Matrix Factorization (NMF)** [Lee2001]_, [Lee1999]. 
 
-Based on Kullback-Leibler divergence, it uses simple multiplicative updates [Lee2001]_, [Lee1999], enhanced to avoid numerical 
-underflow [Brunet2004]_. Based on Euclidean distance, it uses simple multiplicative updates [Lee2001]_. Different objective 
-functions can be used, namely Euclidean distance, divergence or connectivity matrix convergence. 
+Based on Kullback-Leibler divergence, it uses simple multiplicative updates
+[Lee2001]_, [Lee1999], enhanced to avoid numerical underflow [Brunet2004]_.
+Based on Euclidean distance, it uses simple multiplicative updates [Lee2001]_.
+Different objective functions can be used, namely Euclidean distance, divergence
+or connectivity matrix convergence.
 
-Together with a novel model selection mechanism, NMF is an efficient method for identification of distinct molecular
-patterns and provides a powerful method for class discovery. It appears to have higher resolution such as HC or 
-SOM and to be less sensitive to a priori selection of genes. Rather than separating gene clusters based on distance
-computation, NMF detects context-dependent patterns of gene expression in complex biological systems. 
+Together with a novel model selection mechanism, NMF is an efficient method for
+identification of distinct molecular patterns and provides a powerful method for
+class discovery. It appears to have higher resolution such as HC or SOM and to
+be less sensitive to a priori selection of genes. Rather than separating gene
+clusters based on distance computation, NMF detects context-dependent patterns
+of gene expression in complex biological systems.
 
-Besides usages in bioinformatics NMF can be applied to text analysis, image processing, multiway clustering,
-environmetrics etc.     
+Besides usages in bioinformatics NMF can be applied to text analysis,
+image processing, multiway clustering, environmetrics etc.
 
 .. literalinclude:: /code/methods_snippets.py
     :lines: 93-102
@@ -39,25 +43,30 @@ class Nmf(nmf_std.Nmf_std):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    The following are algorithm specific model options which can be passed with values as keyword arguments.
+    The following are algorithm specific model options which can be passed with
+    values as keyword arguments.
     
-    :param update: Type of update equations used in factorization. When specifying model parameter :param:`update` 
-                   can be assigned to:
-                       #. 'Euclidean' for classic Euclidean distance update equations, 
+    :param update: Type of update equations used in factorization. When specifying
+    model parameter :param:`update` can be assigned to:
+                       #. 'Euclidean' for classic Euclidean distance update
+                       equations,
                        #. 'divergence' for divergence update equations.
-                   By default Euclidean update equations are used. 
+    By default Euclidean update equations are used.
     :type update: `str`
-    :param objective: Type of objective function used in factorization. When specifying model parameter :param:`objective`
-                      can be assigned to:
+    :param objective: Type of objective function used in factorization. When
+    specifying model parameter :param:`objective` can be assigned to:
                           #. 'fro' for standard Frobenius distance cost function,
-                          #. 'div' for divergence of target matrix from NMF estimate cost function (KL),
-                          #. 'conn' for measuring the number of consecutive iterations in which the 
-                              connectivity matrix has not changed. 
-                      By default the standard Frobenius distance cost function is used.  
+                          #. 'div' for divergence of target matrix from NMF
+                          estimate cost function (KL),
+                          #. 'conn' for measuring the number of consecutive
+                          iterations in which the connectivity matrix has not
+                          changed.
+    By default the standard Frobenius distance cost function is used.
     :type objective: `str` 
-    :param conn_change: Stopping criteria used only if for :param:`objective` function connectivity matrix
-                        measure is selected. It specifies the minimum required of consecutive iterations in which the
-                        connectivity matrix has not changed. Default value is 30. 
+    :param conn_change: Stopping criteria used only if for :param:`objective`
+    function connectivity matrix measure is selected. It specifies the minimum
+    required of consecutive iterations in which the connectivity matrix has not
+    changed. Default value is 30.
     :type conn_change: `int`
     """
 
@@ -114,7 +123,8 @@ class Nmf(nmf_std.Nmf_std):
 
     def is_satisfied(self, p_obj, c_obj, iter):
         """
-        Compute the satisfiability of the stopping criteria based on stopping parameters and objective function value.
+        Compute the satisfiability of the stopping criteria based on stopping
+        parameters and objective function value.
         
         Return logical value denoting factorization continuation. 
         
@@ -139,8 +149,8 @@ class Nmf(nmf_std.Nmf_std):
 
     def __is_satisfied(self, p_obj, c_obj, iter):
         """
-        Compute the satisfiability of the stopping criteria if change of connectivity matrices is used for
-        objective function. 
+        Compute the satisfiability of the stopping criteria if change of
+        connectivity matrices is used for objective function.
         
         Return logical value denoting factorization continuation.   
         
@@ -203,9 +213,11 @@ class Nmf(nmf_std.Nmf_std):
 
     def conn_objective(self):
         """
-        Compute connectivity matrix and compare it to connectivity matrix from previous iteration. 
+        Compute connectivity matrix and compare it to connectivity matrix
+        from previous iteration.
 
-        Return logical value denoting whether connectivity matrix has changed from previous iteration.   
+        Return logical value denoting whether connectivity matrix has changed
+        from previous iteration.
         """
         _, idx = argmax(self.H, axis=0)
         mat1 = repmat(idx, self.V.shape[1], 1)
