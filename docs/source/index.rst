@@ -16,7 +16,7 @@ factorization with projected gradient method for subproblems [Lin2007]_ and Rand
 fitted factorization model through which user can access matrix factors and estimate quality measures.
     
    	.. literalinclude:: /code/usage.py
-   		:lines: 220-230
+   		:lines: 1-11
 
 Running this script produces the following output, where slight differences in reported scores across different 
 runs can be attributed to randomness of the Random Vcol initialization method::
@@ -161,37 +161,32 @@ applications see Examples section and methods' documentation.
 
 Standard NMF - Divergence on ``scipy.sparse`` matrix with matrix factors estimation. 
 
-	.. literalinclude:: /code/usage.py
-   		:lines: 7-51
+	.. literalinclude:: /code/usage1.py
 
 
 LSNMF on ``numpy`` dense matrix with quality and performance measures.
 
-	.. literalinclude:: /code/usage.py
-   		:lines: 59-102
+	.. literalinclude:: /code/usage2.py
 
 
 LSNMF with Random VCol initialization and error tracking.
 
-	.. literalinclude:: /code/usage.py
-   		:lines: 110-155
+    .. literalinclude:: /code/usage3.py
 
    		
 ICM with Random C initialization and passed callback initialization function.
    
-   	.. literalinclude:: /code/usage.py
-   		:lines: 163-212
-   		
+    .. literalinclude:: /code/usage4.py
+
    		
 BMF with default parameters, multiple runs and factor tracking for consensus matrix computation.
    
-   	.. literalinclude:: /code/usage.py
-   		:lines: 238-264
-   		
+    .. literalinclude:: /code/usage5.py
+
+
 Standard NMF - Euclidean update equations and fixed initialization (passed matrix factors).
 
-	.. literalinclude:: /code/usage.py
-		:lines: 272-299
+	.. literalinclude:: /code/usag6.py
 
 
 ##########

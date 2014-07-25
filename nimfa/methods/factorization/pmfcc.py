@@ -125,7 +125,7 @@ class Pmfcc(smf.Smf):
     def set_params(self):
         """Set algorithm specific model options."""
         self.Theta = self.options.get(
-            'Theta', np.mat(np.zeros((self.V.shape[1], self.V.shape[1]))))
+            'theta', np.mat(np.zeros((self.V.shape[1], self.V.shape[1]))))
         self.track_factor = self.options.get('track_factor', False)
         self.track_error = self.options.get('track_error', False)
         self.tracker = mf_track.Mf_track(
@@ -163,7 +163,8 @@ class Pmfcc(smf.Smf):
 
     def objective(self):
         """Compute Frobenius distance cost function with penalization term."""
-        return power(self.V - dot(self.W, self.H), 2).sum() + trace(dot(self.H, dot(self.Theta, self.H.T)))
+        return power(self.V - dot(self.W, self.H), 2).sum() + \
+               trace(dot(self.H, dot(self.Theta, self.H.T)))
 
     def __str__(self):
         return self.name
