@@ -33,7 +33,7 @@ S forces strong sparseness in both the basis and the encoding vectors. Therefore
 the parameter theta controls the sparseness of the model.
 
 .. literalinclude:: /code/methods_snippets.py
-    :lines: 130-138
+    :lines: 129-137
        
 """
 

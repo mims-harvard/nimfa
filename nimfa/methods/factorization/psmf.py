@@ -42,7 +42,7 @@ Example of usage of PSMF for identifying gene transcriptional modules from gene
 expression data is described in [Li2007]_.
 
 .. literalinclude:: /code/methods_snippets.py
-    :lines: 152-160
+    :lines: 151-159
 
 """
 

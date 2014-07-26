@@ -249,12 +249,11 @@ Acknowledgements
 ################
 
 We would like to acknowledge support for this project from the Google Summer of Code 2011 program and 
-from the Slovenian Research Agency grants P2-0209, J2-9699, and L2- 1112.
+from the Slovenian Research Agency grants P2-0209, J2-9699, and L2-1112.
 
-The nimfa - A Python Library for Nonnegative Matrix Factorization Techniques is part of the Google Summer of Code 2011 program by `Marinka Zitnik`_
-under supervision of the `Orange`_ organization and mentor `Prof. Blaz Zupan, PhD`_. 
+The nimfa - A Python Library for Nonnegative Matrix Factorization Techniques was part of the Google Summer of Code 2011 (`Orange`_). It is authored by `Marinka Zitnik`_, advised by `Blaz Zupan, Ph.D.`_.
 
-.. _Prof. Blaz Zupan, PhD: http://www.biolab.si/en/blaz/
+.. _Blaz Zupan, Ph.D.: http://www.biolab.si/en/blaz/
 .. _Marinka Zitnik: http://helikoid.si
 
 .. image:: /images/base/orange-logo.png
@@ -294,7 +293,7 @@ License
 #######
 
 nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
-Copyright (C) 2011-2012 Marinka Zitnik and Blaz Zupan 
+Copyright (C) 2011-2014 Marinka Zitnik and Blaz Zupan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

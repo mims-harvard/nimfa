@@ -21,10 +21,10 @@ is a critical point of the corresponding problem. Similarly, the algorithm SNMF/
 converges to a stationary point.
 
 .. literalinclude:: /code/methods_snippets.py
-    :lines: 163-175
+    :lines: 162-174
     
 .. literalinclude:: /code/methods_snippets.py
-    :lines: 178-190
+    :lines: 177-189
     
 """
 

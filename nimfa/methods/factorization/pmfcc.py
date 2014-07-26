@@ -21,7 +21,7 @@ violations. Compared to the traditional NMF cost function, the only difference
 is the inclusion of the penalty term.
 
 .. literalinclude:: /code/methods_snippets.py
-    :lines: 192-200
+    :lines: 191-199
     
 """
 

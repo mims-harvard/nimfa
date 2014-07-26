@@ -23,13 +23,13 @@ Besides usages in bioinformatics NMF can be applied to text analysis,
 image processing, multiway clustering, environmetrics etc.
 
 .. literalinclude:: /code/methods_snippets.py
-    :lines: 93-102
+    :lines: 92-101
     
 .. literalinclude:: /code/methods_snippets.py
-    :lines: 105-114
+    :lines: 104-113
     
 .. literalinclude:: /code/methods_snippets.py
-    :lines: 117-127
+    :lines: 116-126
     
 """
 
