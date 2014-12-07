@@ -39,8 +39,10 @@ class Mf_track():
         """
         Add residuals error after one iteration. 
         
-        :param run: Specify the run to which :param:`residuals` belongs. Error tracking can be also used if multiple runs are enabled. 
+        :param run: Specify the run to which ``residuals`` belongs. Error tracking can be
+           also used if multiple runs are enabled.
         :type run: `int`
+
         :param residuals: Residuals between the target matrix and its MF estimate.
         :type residuals: `float`
         """
@@ -51,7 +53,7 @@ class Mf_track():
         """
         Add matrix factorization factors (and method specific model data) after one factorization run.
         
-        :param run: Specify the run to which :param:`track_model` belongs. 
+        :param run: Specify the run to which ``track_model`` belongs.
         :type run: 'int'
         :param track_model: Matrix factorization factors.
         :type track_model:  algorithm specific
@@ -62,7 +64,8 @@ class Mf_track():
         """
         Return matrix factorization factors from run :param:`run`.
         
-        :param run: Saved factorization factors (and method specific model data) of :param:`run`'th run are returned. 
+        :param run: Saved factorization factors (and method specific model data) of
+           ``run``'th run are returned.
         :type run: `int`
         """
         return self._factors[run]
@@ -71,7 +74,7 @@ class Mf_track():
         """
         Return residuals track from one run of the factorization.
         
-        :param run: Specify the run of which error track is desired. By default :param:`run` is 1. 
+        :param run: Specify the run of which error track is desired. By default ``run`` is 1.
         :type run: `int`
         """
         return self._residuals[run]

@@ -31,32 +31,26 @@ class Random_c(object):
         
         :param V: Target matrix, the matrix for MF method to estimate. 
         :type V: One of the :class:`scipy.sparse` sparse matrices types or or
-        :class:`numpy.matrix`
+                :class:`numpy.matrix`
         :param rank: Factorization rank. 
         :type rank: `int`
-        :param options: Specify:
-                            #. algorithm;
-                            #. model specific options (e.g. initialization of
-                            extra matrix factor, seeding parameters).
-                    
-                        The following are Random C options.
-                        
-                         :param p_c: The number of columns of target matrix
-                         used to average the column of basis matrix. Default
-                         value for :param:`p_c` is 1/5 * (target.shape[1]).
-                         :type p_c: `int`
-                         :param p_r: The number of rows of target matrix used
-                         to average the row of basis matrix. Default value for
-                         :param:`p_r` is 1/5 * (target.shape[0]).
-                         :type p_r: `int`
-                         :param l_c: First l_c columns of target matrix sorted
-                         descending by length (2-norm). Default value for
-                         :param:`l_c` is  1/2 * (target.shape[1]).
-                         :type l_c: `int`
-                         :param l_r: First l_r rows of target matrix sorted
-                         descending by length (2-norm). Default value for
-                         :param:`l_r` is 1/2 * (target.shape[0]).
-                         :type l_r: `int`
+        :param options: Specify the algorithm and model specific options (e.g. initialization of
+                extra matrix factor, seeding parameters).
+
+                Option ``p_c`` represents the number of columns of target matrix
+                used to average the column of basis matrix. Default
+                value for ``p_c`` is 1/5 * (target.shape[1]).
+
+                Option ``p_r`` represents the number of rows of target matrix used
+                to average the row of basis matrix. Default value for
+                ``p_r`` is 1/5 * (target.shape[0]).
+
+                Option ``l_c`` represents the first l_c columns of target matrix sorted
+                descending by length (2-norm). Default value for ``l_c`` is  1/2 * (target.shape[1]).
+
+                Option ``l_r`` represent first l_r rows of target matrix sorted
+                descending by length (2-norm). Default value for
+                ``l_r`` is 1/2 * (target.shape[0]).
         :type options: `dict`
         """
         self.rank = rank

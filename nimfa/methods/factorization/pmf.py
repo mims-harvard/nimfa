@@ -29,10 +29,10 @@ class Pmf(nmf_std.Nmf_std):
     values as keyword arguments.
     
     :param rel_error: In PMF only Euclidean distance cost function is used for
-    convergence test by default. By specifying the value for minimum relative
-    error, the relative error measure can be used as stopping criteria as well.
-    In this case of multiple passed criteria, the satisfiability of one terminates
-    the factorization run. Suggested value for :param:`rel_error` is 1e-5.
+       convergence test by default. By specifying the value for minimum relative
+       error, the relative error measure can be used as stopping criteria as well.
+       In this case of multiple passed criteria, the satisfiability of one terminates
+       the factorization run. Suggested value for ``rel_error`` is 1e-5.
     :type rel_error: `float`
     """
 

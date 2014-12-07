@@ -76,8 +76,9 @@ class Mf_fit():
         Return the loss function value. If metric is not supplied, final objective function value associated to the MF algorithm is returned.
         
         :param metric: Measure of distance between a target matrix and a MF estimate. Metric 'kl' and 'euclidean' 
-                       are defined.  
+           are defined.
         :type metric: 'str'
+
         :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model.
         :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """

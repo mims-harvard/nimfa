@@ -11,11 +11,14 @@ from nmf import *
 class Nmf_ns(Nmf):
 
     """
-    Implementation of the alternative model to manage factorizations that follow nonstandard NMF model. This modification is 
-    required by the Nonsmooth NMF algorithm (NSNMF) [Montano2006]_. The Nonsmooth NMF algorithm is a modification of the standard divergence
-    based NMF methods. By introducing a smoothing matrix it is aimed to achieve global sparseness. 
+    Implementation of the alternative model to manage factorizations that follow
+    nonstandard NMF model. This modification is required by the Nonsmooth NMF
+    algorithm (NSNMF) [Montano2006]_. The Nonsmooth NMF algorithm is a modification
+    of the standard divergence based NMF methods. By introducing a smoothing matrix
+    it is aimed to achieve global sparseness.
      
-    It is the underlying model of matrix factorization and provides structure of modified standard NMF model. 
+    It is the underlying model of matrix factorization and provides structure of
+    modified standard NMF model.
     
     .. attribute:: W
         
@@ -29,18 +32,20 @@ class Nmf_ns(Nmf):
     
         Smoothing matrix -- the middle matrix factor (V = WSH) in the nonsmooth NMF model
         
-    The interpretation of the basis and mixture matrix is such as in the standard NMF model. The smoothing matrix is an
-    extra square matrix whose entries depends on smoothing parameter theta which can be specified as algorithm specific model 
-    option. For detailed explanation of the NSNMF algorithm see :mod:`methods.factorization.nsnmf`.    
+    The interpretation of the basis and mixture matrix is such as in the standard NMF model.
+    The smoothing matrix is an extra square matrix whose entries depends on smoothing
+    parameter theta which can be specified as algorithm specific model option. For detailed
+    explanation of the NSNMF algorithm see :mod:`methods.factorization.nsnmf`.
     """
 
     def __init__(self, params):
         """
         Construct factorization model that manages nonsmooth NMF models.
         
-        :param params: MF runtime and algorithm parameters and options. For detailed explanation of the general model 
-                       parameters see :mod:`mf_run`. For algorithm specific model options see documentation of chosen
-                       factorization method. 
+        :param params: MF runtime and algorithm parameters and options. For detailed
+           explanation of the general model parameters see :mod:`mf_run`. For
+           algorithm specific model options see documentation of chosen
+           factorization method.
         :type params: `dict`
         """
         Nmf.__init__(self, params)
@@ -56,7 +61,7 @@ class Nmf_ns(Nmf):
         """
         Return the target matrix to estimate.
         
-        :param idx: Used in the multiple NMF model. In nonsmooth NMF :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In nonsmooth NMF ``idx`` is always None.
         :type idx: None
         """
         return self.V
@@ -65,7 +70,7 @@ class Nmf_ns(Nmf):
         """
         Return the matrix of mixture coefficients.
         
-        :param idx: Used in the multiple NMF model. In nonsmooth NMF :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In nonsmooth NMF ``idx`` is always None.
         :type idx: None
         """
         return self.H
@@ -78,7 +83,7 @@ class Nmf_ns(Nmf):
         """
         Compute the estimated target matrix according to the nonsmooth NMF algorithm model.
         
-        :param idx: Used in the multiple NMF model. In nonsmooth NMF :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In nonsmooth NMF ``idx`` is always None.
         :type idx: None
         """
         return dot(dot(self.W, self.S), self.H)
@@ -87,10 +92,11 @@ class Nmf_ns(Nmf):
         """
         Return the loss function value.
         
-        :param distance: Specify distance metric to be used. Possible are Euclidean and Kullback-Leibler (KL) divergence. Strictly,
-                        KL is not a metric. 
+        :param distance: Specify distance metric to be used. Possible are Euclidean and
+           Kullback-Leibler (KL) divergence. Strictly, KL is not a metric.
         :type distance: `str` with values 'euclidean' or 'kl'
-        :param idx: Used in the multiple NMF model. In nonsmooth NMF :param:`idx` is always None.
+
+        :param idx: Used in the multiple NMF model. In nonsmooth NMF ``idx`` is always None.
         :type idx: None
         """
         if metric.lower() == 'euclidean':
@@ -106,7 +112,7 @@ class Nmf_ns(Nmf):
         """
         Return residuals matrix between the target matrix and its nonsmooth NMF estimate.
         
-        :param idx: Used in the multiple NMF model. In nonsmooth NMF :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In nonsmooth NMF ``idx`` is always None.
         :type idx: None
         """
         return self.V - dot(dot(self.W, self.S), self.H)

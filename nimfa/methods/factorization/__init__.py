@@ -1,7 +1,6 @@
 
 """    
     This package contains implementations of matrix factorization algorithms. 
-
 """
 
 import bd

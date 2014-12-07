@@ -1,7 +1,6 @@
 
 """    
     This package contains implementations of initialization methods for matrix factorization.
-    
 """
 
 import nndsvd

@@ -1,7 +1,6 @@
 
 """
     This package contains implementations of the MF algorithms and seeding methods.
-    
 """
 
 import factorization

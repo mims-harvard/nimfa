@@ -15,17 +15,17 @@ BMF can be derived based on variant of Standard NMF, but some problems need to
 be resolved:
     
     #. Uniqueness. Solution for basis and mixture matrix is not unique as it is
-    always possible to find a diagonal matrix and incorporate it current solution
-    to get a new.
+       always possible to find a diagonal matrix and incorporate it current solution
+       to get a new.
     #. Scale. Scale problem arises when discretizing basis and mixture matrix into
-    binary matrices. This problem can be resolved by using rescaling proposed in
-    Boundedness Theorem in [Zhang2007]_. Therefore, discretization works properly
-    because basis and mixture matrix are in the same scales. The factorization
-    method is more robust in this way. It has been shown that the percentage of
-    nonzero elements in normalized case is lower than in nonnormalized case.
-    Without normalization the mixture matrix is often very sparse and the basis
-    matrix very dense - much information, given via mixture matrix is lost and
-    cannot be compensated with basis matrix.
+       binary matrices. This problem can be resolved by using rescaling proposed in
+       Boundedness Theorem in [Zhang2007]_. Therefore, discretization works properly
+       because basis and mixture matrix are in the same scales. The factorization
+       method is more robust in this way. It has been shown that the percentage of
+       nonzero elements in normalized case is lower than in nonnormalized case.
+       Without normalization the mixture matrix is often very sparse and the basis
+       matrix very dense - much information, given via mixture matrix is lost and
+       cannot be compensated with basis matrix.
 
 This method implements penalty function algorithm. The problem of BMF can be
 represented in terms of nonlinear programming and then solved by a penalty
@@ -34,11 +34,11 @@ function algorithm. The algorithm is described as follows:
     1. Initialize basis, mixture matrix and parameters. 
     2. Normalize basis and mixture using Boundedness Theorem in [Zhang2007]_.
     3. For basis and mixture, alternately solve nonlinear optimization problem
-    with the objective function composed of three components: Euclidean distance
-    of BMF estimate from target matrix; mixture penalty term and  basis penalty
-    term.
+       with the objective function composed of three components: Euclidean distance
+       of BMF estimate from target matrix; mixture penalty term and  basis penalty
+       term.
     4. Update parameters based on the level of the binarization of the basis and
-    mixture matrix.
+       mixture matrix.
     
 In step 1, basis and mixture matrix can be initialized with common initialization
 methods or with the result of the Standard NMF by passing fixed factors to the
@@ -65,22 +65,25 @@ class Bmf(nmf_std.Nmf_std):
     values as keyword arguments.
     
     :param lambda_w: It controls how fast lambda should increase and influences
-    the convergence of the basis matrix (W) to binary values during the update.
-                         #. :param:`lambda_w` < 1 will result in a nonbinary
-                         decompositions as the update rule effectively is a
-                         conventional NMF update rule.
-                         #. :param:`lambda_w` > 1 give more weight to make the
-                         factorization binary with increasing iterations.
-    Default value is 1.1.
+       the convergence of the basis matrix (W) to binary values during the update.
+
+             #. ``lambda_w`` < 1 will result in a nonbinary
+                decompositions as the update rule effectively is a
+                conventional NMF update rule.
+             #. ``lambda_w`` > 1 give more weight to make the
+                factorization binary with increasing iterations.
+       Default value is 1.1.
     :type lambda_w: `float`
+
     :param lambda_h: It controls how fast lambda should increase and influences
-    the convergence of the mixture matrix (H) to binary values during the update.
-                         #. :param:`lambda_h` < 1 will result in a nonbinary
-                         decompositions as the update rule effectively is a
-                         conventional NMF update rule.
-                         #. :param:`lambda_h` > 1 give more weight to make the
-                         factorization binary with increasing iterations.
-    Default value is 1.1.
+       the convergence of the mixture matrix (H) to binary values during the update.
+
+             #. ``lambda_h`` < 1 will result in a nonbinary
+                decompositions as the update rule effectively is a
+                conventional NMF update rule.
+             #. ``lambda_h`` > 1 give more weight to make the
+                factorization binary with increasing iterations.
+       Default value is 1.1.
     :type lambda_h: `float`
     """
 

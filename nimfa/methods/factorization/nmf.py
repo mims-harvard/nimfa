@@ -47,26 +47,30 @@ class Nmf(nmf_std.Nmf_std):
     values as keyword arguments.
     
     :param update: Type of update equations used in factorization. When specifying
-    model parameter :param:`update` can be assigned to:
-                       #. 'Euclidean' for classic Euclidean distance update
-                       equations,
-                       #. 'divergence' for divergence update equations.
-    By default Euclidean update equations are used.
+       model parameter ``update`` can be assigned to:
+
+           #. 'Euclidean' for classic Euclidean distance update
+              equations,
+           #. 'divergence' for divergence update equations.
+       By default Euclidean update equations are used.
     :type update: `str`
+
     :param objective: Type of objective function used in factorization. When
-    specifying model parameter :param:`objective` can be assigned to:
-                          #. 'fro' for standard Frobenius distance cost function,
-                          #. 'div' for divergence of target matrix from NMF
-                          estimate cost function (KL),
-                          #. 'conn' for measuring the number of consecutive
-                          iterations in which the connectivity matrix has not
-                          changed.
-    By default the standard Frobenius distance cost function is used.
-    :type objective: `str` 
+       specifying model parameter :param:`objective` can be assigned to:
+
+            #. 'fro' for standard Frobenius distance cost function,
+            #. 'div' for divergence of target matrix from NMF
+               estimate cost function (KL),
+            #. 'conn' for measuring the number of consecutive
+               iterations in which the connectivity matrix has not
+               changed.
+       By default the standard Frobenius distance cost function is used.
+    :type objective: `str`
+
     :param conn_change: Stopping criteria used only if for :param:`objective`
-    function connectivity matrix measure is selected. It specifies the minimum
-    required of consecutive iterations in which the connectivity matrix has not
-    changed. Default value is 30.
+       function connectivity matrix measure is selected. It specifies the minimum
+       required of consecutive iterations in which the connectivity matrix has not
+       changed. Default value is 30.
     :type conn_change: `int`
     """
 

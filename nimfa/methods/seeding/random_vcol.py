@@ -32,24 +32,18 @@ class Random_vcol(object):
         
         :param V: Target matrix, the matrix for MF method to estimate. 
         :type V: One of the :class:`scipy.sparse` sparse matrices types or or
-        :class:`numpy.matrix`
+                :class:`numpy.matrix`
         :param rank: Factorization rank. 
         :type rank: `int`
-        :param options: Specify:
-                            #. algorithm;
-                            #. model specific options (e.g. initialization of
-                            extra matrix factor, seeding parameters).
+        :param options: Specify the algorithm and model specific options (e.g. initialization of
+                extra matrix factor, seeding parameters).
                     
-                        The following are Random Vcol options.
-                         
-                         :param p_c: The number of columns of target matrix used
-                         to average the column of basis matrix. Default value
-                         for :param:`p_c` is 1/5 * (target.shape[1]).
-                         :type p_c: `int`
-                         :param p_r: The number of rows of target matrix used to
-                         average the row of basis matrix. Default value for
-                         :param:`p_r` is 1/5 * (target.shape[0]).
-                         :type p_r: `int`
+                Option ``p_c`` represents the number of columns of target matrix used
+                to average the column of basis matrix. Default value for ``p_c`` is
+                1/5 * (target.shape[1]).
+
+                Option ``p_r`` represent the number of rows of target matrix used to
+                average the row of basis matrix. Default value for ``p_r`` is 1/5 * (target.shape[0]).
         :type options: `dict`
         """
         self.rank = rank

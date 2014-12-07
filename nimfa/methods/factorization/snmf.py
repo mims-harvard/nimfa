@@ -38,7 +38,7 @@ class Snmf(nmf_std.Nmf_std):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    The parameter :param:`min_residuals` of the underlying model is used as KKT
+    The parameter ``min_residuals`` of the underlying model is used as KKT
     convergence test and should have positive value. If not specified, value
     1e-4 is used.
     
@@ -46,25 +46,29 @@ class Snmf(nmf_std.Nmf_std):
     values as keyword arguments.
     
     :param version: Specifiy version of the SNMF algorithm. it has two accepting
-    values, 'r' and 'l' for SNMF/R and SNMF/L, respectively. Default choice is
-    SNMF/R.
+       values, 'r' and 'l' for SNMF/R and SNMF/L, respectively. Default choice is
+       SNMF/R.
     :type version: `str`
+
     :param eta: Used for suppressing Frobenius norm on the basis matrix (W).
-    Default value is maximum value of the target matrix (V). If :param:`eta` is
-    negative, maximum value of target matrix is used for it.
+       Default value is maximum value of the target matrix (V). If ``eta`` is
+       negative, maximum value of target matrix is used for it.
     :type eta: `float`
-    :param beta: It controls sparseness. Larger :param:`beta` generates higher
-    sparseness on H. Too large :param:`beta` is not recommended. It should have
-    positive value. Default value is 1e-4.
+
+    :param beta: It controls sparseness. Larger ``beta`` generates higher
+       sparseness on H. Too large :param:`beta` is not recommended. It should have
+       positive value. Default value is 1e-4.
     :type beta: `float`
+
     :param i_conv: Part of the biclustering convergence test. It decides
-    convergence if row clusters and column clusters have not changed for
-    :param:`i_conv` convergence tests. It should have nonnegative value. Default
-    value is 10.
+       convergence if row clusters and column clusters have not changed for
+       ``i_conv`` convergence tests. It should have nonnegative value. Default
+       value is 10.
     :type i_conv: `int`
+
     :param w_min_change: Part of the biclustering convergence test. It specifies
-    the minimal allowance of the change of row clusters. It should have
-    nonnegative value. Default value is 0.
+       the minimal allowance of the change of row clusters. It should have
+       nonnegative value. Default value is 0.
     :type w_min_change: `int`
     """
 

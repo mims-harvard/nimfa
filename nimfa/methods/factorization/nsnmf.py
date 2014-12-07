@@ -50,10 +50,10 @@ class Nsnmf(nmf_ns.Nmf_ns):
     The following are algorithm specific model options which can be passed with
     values as keyword arguments.
     
-    :param theta: The smoothing parameter. Its value should be 0<=:param:`theta`<=1.
-    With :param:`theta` 0 the model corresponds to the basic divergence NMF.
-    Strong smoothing forces strong sparseness in both the basis and the mixture
-    matrices. If not specified, default value :param:`theta` of 0.5 is used.
+    :param theta: The smoothing parameter. Its value should be 0<=``theta``<=1.
+       With ``theta`` 0 the model corresponds to the basic divergence NMF.
+       Strong smoothing forces strong sparseness in both the basis and the mixture
+       matrices. If not specified, default value ``theta`` of 0.5 is used.
     :type theta: `float`
     """
 

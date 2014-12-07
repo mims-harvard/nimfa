@@ -13,7 +13,8 @@ class Nmf_std(Nmf):
     """
     Implementation of the standard model to manage factorizations that follow standard NMF model.
      
-    It is the underlying model of matrix factorization and provides a general structure of standard NMF model.
+    It is the underlying model of matrix factorization and provides a general structure
+    of standard NMF model.
     
     .. attribute:: W
         
@@ -28,9 +29,9 @@ class Nmf_std(Nmf):
         """
         Construct factorization model that manages standard NMF models.
         
-        :param params: MF runtime and algorithm parameters and options. For detailed explanation of the general model 
-                       parameters see :mod:`mf_run`. For algorithm specific model options see documentation of chosen
-                       factorization method. 
+        :param params: MF runtime and algorithm parameters and options. For detailed
+           explanation of the general model parameters see :mod:`mf_run`. For
+           algorithm specific model options see documentation of chosen factorization method.
         :type params: `dict`
         """
         Nmf.__init__(self, params)
@@ -46,7 +47,7 @@ class Nmf_std(Nmf):
         """
         Return the target matrix to estimate.
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In standard NMF ``idx`` is always None.
         :type idx: None
         """
         return self.V
@@ -55,7 +56,7 @@ class Nmf_std(Nmf):
         """
         Return the matrix of mixture coefficients.
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In standard NMF ``idx`` is always None.
         :type idx: None
         """
         return self.H
@@ -64,7 +65,7 @@ class Nmf_std(Nmf):
         """
         Compute the estimated target matrix according to the NMF algorithm model.
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In standard NMF ``idx`` is always None.
         :type idx: None
         """
         return dot(self.W, self.H)
@@ -73,10 +74,11 @@ class Nmf_std(Nmf):
         """
         Return the loss function value.
         
-        :param distance: Specify distance metric to be used. Possible are Euclidean and Kullback-Leibler (KL) divergence. Strictly,
-                        KL is not a metric. 
+        :param distance: Specify distance metric to be used. Possible are Euclidean and
+           Kullback-Leibler (KL) divergence. Strictly, KL is not a metric.
         :type distance: `str` with values 'euclidean' or 'kl'
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+
+        :param idx: Used in the multiple NMF model. In standard NMF ``idx`` is always None.
         :type idx: None
         """
         if metric.lower() == 'euclidean':
@@ -92,7 +94,7 @@ class Nmf_std(Nmf):
         """
         Return residuals matrix between the target matrix and its NMF estimate.
         
-        :param idx: Used in the multiple NMF model. In standard NMF :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In standard NMF ``idx`` is always None.
         :type idx: None
         """
         return self.V - dot(self.W, self.H)

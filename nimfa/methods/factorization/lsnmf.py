@@ -38,8 +38,8 @@ class Lsnmf(nmf_std.Nmf_std):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    If :param:`min_residuals` of the underlying model is not specified, default
-    value of :param:`min_residuals` 1e-5 is set. In LSNMF :param:`min_residuals`
+    If ``min_residuals`` of the underlying model is not specified, default
+    value of ``min_residuals`` 1e-5 is set. In LSNMF ``min_residuals``
     is used as an upper bound of quotient of projected gradients norm and initial
     gradient (initial gradient of basis and mixture matrix). It is a tolerance
     for a stopping condition.
@@ -49,13 +49,15 @@ class Lsnmf(nmf_std.Nmf_std):
     
     :param sub_iter: Maximum number of subproblem iterations. Default value is 10. 
     :type sub_iter: `int`
+
     :param inner_sub_iter: Number of inner iterations when solving subproblems.
-    Default value is 10.
+       Default value is 10.
     :type inner_sub_iter: `int`
+
     :param beta: The rate of reducing the step size to satisfy the sufficient
-    decrease condition when solving subproblems. Smaller beta more aggressively
-    reduces the step size, but may cause the step size being too small. Default
-    value is 0.1.
+       decrease condition when solving subproblems. Smaller beta more aggressively
+       reduces the step size, but may cause the step size being too small. Default
+       value is 0.1.
     :type beta: `float`
     """
 
@@ -174,13 +176,16 @@ class Lsnmf(nmf_std.Nmf_std):
         
         :param V: Constant matrix.
         :type V: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil,
-        dia or :class:`numpy.matrix`
+           dia or :class:`numpy.matrix`
+
         :param W: Constant matrix.
         :type W: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil,
-        dia or :class:`numpy.matrix`
+           dia or :class:`numpy.matrix`
+
         :param Hinit: Initial solution to the subproblem.
         :type Hinit: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok,
-        lil, dia or :class:`numpy.matrix`
+           lil, dia or :class:`numpy.matrix`
+
         :param epsH: Tolerance for termination.
         :type epsH: `float`
         """
@@ -232,10 +237,11 @@ class Lsnmf(nmf_std.Nmf_std):
         
         :param X: First input matrix.
         :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil,
-        dia or :class:`numpy.matrix`
+           dia or :class:`numpy.matrix`
+
         :param Y: Second input matrix.
         :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil,
-        dia or :class:`numpy.matrix`
+           dia or :class:`numpy.matrix`
         """
         if sp.isspmatrix(X) and sp.isspmatrix(Y):
             X = X.tocsr()
@@ -257,10 +263,11 @@ class Lsnmf(nmf_std.Nmf_std):
         
         :param X: Gradient matrix.
         :type X: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok,
-        lil, dia or :class:`numpy.matrix`
+           lil, dia or :class:`numpy.matrix`
+
         :param Y: Input matrix. 
         :type Y: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil,
-        dia or :class:`numpy.matrix`
+           dia or :class:`numpy.matrix`
         """
         if sp.isspmatrix(X):
             X = X.tocsr()

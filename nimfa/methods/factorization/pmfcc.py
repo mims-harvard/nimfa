@@ -40,7 +40,7 @@ class Pmfcc(smf.Smf):
     values as keyword arguments.
     
     :param Theta: Constraint matrix (dimension: V.shape[1] x X.shape[1]). It
-    contains known must-link (negative) and cannot-link (positive) constraints.
+       contains known must-link (negative) and cannot-link (positive) constraints.
     :type Theta: `numpy.matrix`
     """
 

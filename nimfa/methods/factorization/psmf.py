@@ -61,15 +61,15 @@ class Psmf(nmf_std.Nmf_std):
     
     PSMF overrides default frequency of convergence tests. By default convergence
     is tested every 5th iteration. This behavior can be changed by setting
-    :param:`test_conv`. See :mod:`mf_run` Stopping criteria section.
+    ``test_conv``. See :mod:`mf_run` Stopping criteria section.
     
     :param prior: The prior on the number of factors explaining each vector and
-    should be a positive row vector. The :param:`prior` can be passed as a
-    list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or as a
-    scalar N, in which case uniform prior is taken, prior = 1. / (1:N),
-    reflecting no knowledge about the distribution and giving equal preference to
-    all values of a particular r_g. Default value for :param:`prior` is
-    factorization rank, e. g. ordinary low-rank approximations is performed.
+       should be a positive row vector. The ``prior`` can be passed as a
+       list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or as a
+       scalar N, in which case uniform prior is taken, prior = 1. / (1:N),
+       reflecting no knowledge about the distribution and giving equal preference to
+       all values of a particular r_g. Default value for :param:`prior` is
+       factorization rank, e. g. ordinary low-rank approximations is performed.
     :type prior: `list` or `float`
     """
 

@@ -34,38 +34,25 @@ class Nndsvd(object):
         NNDSVD variant is specified by the :param:`flag` option,
         else matrices are :class:`numpy.matrix`.
         
-        :param V: Target matrix, the matrix for MF method to estimate. Data
-        instances to be clustered.
+        :param V: Target matrix, the matrix for MF method to estimate.
+                Data instances to be clustered.
         :type V: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil,
-        dia or :class:`numpy.matrix`
-        :param rank: Factorization rank. 
+                dia or :class:`numpy.matrix`
+        :param rank: Factorization rank.
         :type rank: `int`
-        :param options: Specify: 
-                            #. algorithm; 
-                            #. model specific options (e.g. initialization of
-                            extra matrix factor, seeding parameters).
-                        
-                        The following are NNDSVD options.
-                        
-                         :param flag: Indicate the variant of the NNDSVD
-                         algorithm.
-                                      
-                                      Possible values are:
-                                          * 0 -- NNDSVD,
-                                          * 1 -- NNDSVDa (fill in the zero
-                                          elements with the average),
-                                          * 2 -- NNDSVDar (fill in the zero
-                                          elements with random values in the
-                                          space [0:average/100]).
-                                      Default is NNDSVD.
-                                      
-                                      Because of the nature of NNDSVDa and
-                                      NNDSVDar, when the target matrix is sparse,
-                                      only NNDSVD is possible and :param:`flag`
-                                      is ignored (NNDSVDa and NNDSVDar eliminate
-                                      zero elements, therefore the matrix is
-                                      not sparse anymore). 
-                         :type flag: `int`
+        :param options: Specify the algorithm and model specific options (e.g. initialization of
+                extra matrix factor, seeding parameters).
+
+                Option ``flag`` indicates the variant of the NNDSVD algorithm. It can take value from:
+
+                    * 0 -- NNDSVD,
+                    * 1 -- NNDSVDa (fill in the zero elements with the average),
+                    * 2 -- NNDSVDar (fill in the zero elements with random values in the space [0:average/100]).
+
+                Default is NNDSVD. Because of the nature of NNDSVDa and NNDSVDar, when the
+                target matrix is sparse, only NNDSVD is possible and `flag` is ignored
+                (NNDSVDa and NNDSVDar eliminate zero elements, therefore the matrix is
+                not sparse anymore).
         :type options: `dict`
         """
         self.rank = rank

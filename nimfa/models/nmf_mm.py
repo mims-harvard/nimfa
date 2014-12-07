@@ -11,11 +11,14 @@ from nmf import *
 class Nmf_mm(Nmf):
 
     """
-    Implementation of the alternative model to manage factorizations that follow NMF nonstandard model. This modification is 
-    required by the Multiple NMF algorithms (e. g. SNMNMF [Zhang2011]_). The Multiple NMF algorithms modify the standard divergence
-    or Euclidean based NMF methods by introducing multiple mixture (coefficients) matrices and target matrices.  
+    Implementation of the alternative model to manage factorizations that follow N
+    MF nonstandard model. This modification is required by the Multiple NMF
+    algorithms (e. g. SNMNMF [Zhang2011]_). The Multiple NMF algorithms modify the
+    standard divergence or Euclidean based NMF methods by introducing multiple
+    mixture (coefficients) matrices and target matrices.
      
-    It is the underlying model of matrix factorization and provides structure of modified standard NMF model. 
+    It is the underlying model of matrix factorization and provides structure of
+    modified standard NMF model.
     
     .. attribute:: W
         
@@ -35,20 +38,23 @@ class Nmf_mm(Nmf):
         
     The interpretation of the basis and mixture matrix is such as in the standard NMF model. 
     
-    Multiple NMF specify more than one target matrix. In that case target matrices are passed as tuples. Internally, 
-    additional attributes with names following Vn pattern are created, where n is the consecutive index of target matrix. 
-    Zero index is omitted (there are V, V1, V2, V3, etc. matrices and then H, H1, H2, etc. and W, W1, W2, etc. respectively). 
+    Multiple NMF specify more than one target matrix. In that case target matrices are
+    passed as tuples. Internally, additional attributes with names following Vn pattern
+    are created, where n is the consecutive index of target matrix. Zero index is omitted
+    (there are V, V1, V2, V3, etc. matrices and then H, H1, H2, etc. and W, W1, W2, etc.
+    respectively).
     
-    Currently, in implemented multiple NMF method V, V1 and H, H1 are needed. There is only one basis matrix (W).
+    Currently, in implemented multiple NMF method V, V1 and H, H1 are needed. There is only
+    one basis matrix (W).
     """
 
     def __init__(self, params):
         """
         Construct factorization model that manages multiple NMF models.
         
-        :param params: MF runtime and algorithm parameters and options. For detailed explanation of the general model 
-                       parameters see :mod:`mf_run`. For algorithm specific model options see documentation of chosen
-                       factorization method. 
+        :param params: MF runtime and algorithm parameters and options. For detailed
+           explanation of the general model parameters see :mod:`mf_run`. For algorithm
+           specific model options see documentation of chosen factorization method.
         :type params: `dict`
         """
         Nmf.__init__(self, params)
@@ -105,9 +111,10 @@ class Nmf_mm(Nmf):
         """
         Return the loss function value.
 
-        :param distance: Specify distance metric to be used. Possible are Euclidean and Kullback-Leibler (KL) divergence. Strictly,
-                        KL is not a metric. 
+        :param distance: Specify distance metric to be used. Possible are Euclidean
+           and Kullback-Leibler (KL) divergence. Strictly, KL is not a metric.
         :type distance: `str` with values 'euclidean' or 'kl'
+
         :param idx: Name of the matrix (coefficient) matrix.
         :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1 respectively) 
         """

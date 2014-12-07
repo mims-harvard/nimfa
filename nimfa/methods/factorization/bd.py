@@ -52,8 +52,8 @@ class Bd(nmf_std.Nmf_std):
     """
     For detailed explanation of the general model parameters see :mod:`mf_run`.
     
-    If :param:`max_iter` of the underlying model is not specified, default
-    value of :param:`max_iter` 30 is set. The meaning of :param:`max_iter` for
+    If ``max_iter`` of the underlying model is not specified, default
+    value of ``max_iter`` 30 is set. The meaning of ``max_iter`` for
     BD is the number of Gibbs samples to compute. Sequence of Gibbs samples
     converges to a sample from the joint posterior.
     
@@ -61,33 +61,42 @@ class Bd(nmf_std.Nmf_std):
     values as keyword arguments.
     
     :param alpha: The prior for basis matrix (W) of proper dimensions. Default
-    is zeros matrix prior.
+       is zeros matrix prior.
     :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
+
     :param beta: The prior for mixture matrix (H) of proper dimensions. Default
-    is zeros matrix prior.
+       is zeros matrix prior.
     :type beta: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
-    :param theta: The prior for :param:`sigma`. Default is 0.
+
+    :param theta: The prior for ``sigma``. Default is 0.
     :type theta: `float`
-    :param k: The prior for :param:`sigma`. Default is 0. 
+
+    :param k: The prior for ``sigma``. Default is 0.
     :type k: `float`
-    :param sigma: Initial value for noise variance (sigma**2). Default is 1. 
+
+    :param sigma: Initial value for noise variance (sigma**2). Default is 1.
     :type sigma: `float`  
+
     :param skip: Number of initial samples to skip. Default is 100.
     :type skip: `int`
-    :param stride: Return every :param:`stride`'th sample. Default is 1. 
+
+    :param stride: Return every ``stride``'th sample. Default is 1.
     :type stride: `int`
+
     :param n_w: Method does not sample from these columns of basis matrix.
-    Column i is not sampled if :param:`n_w`[i] is True. Default is sampling
-    from all columns.
+       Column i is not sampled if ``n_w``[i] is True. Default is sampling
+       from all columns.
     :type n_w: :class:`numpy.ndarray` or list with shape (factorization rank,
-    1) with logical values
+       1) with logical values
+
     :param n_h: Method does not sample from these rows of mixture matrix. Row
-    i is not sampled if :param:`n_h`[i] is True. Default is sampling from all
-    rows.
+       i is not sampled if ``n_h``[i] is True. Default is sampling from all
+       rows.
     :type n_h: :class:`numpy.ndarray` or list with shape (factorization rank, 1)
-    with logical values
-    :param n_sigma: Method does not sample from :param:`sigma`. By default
-    sampling is done.
+       with logical values
+
+    :param n_sigma: Method does not sample from ``sigma``. By default
+       sampling is done.
     :type n_sigma: `bool`    
     """
 

@@ -76,9 +76,9 @@ class Nmf(object):
         """
         Construct generic factorization model.
         
-        :param params: MF runtime and algorithm parameters and options. For detailed explanation of the general model 
-                       parameters see :mod:`mf_run`. For algorithm specific model options see documentation of chosen
-                       factorization method. 
+        :param params: MF runtime and algorithm parameters and options. For detailed explanation
+           of the general model parameters see :mod:`mf_run`. For algorithm specific
+           model options see documentation of chosen factorization method.
         :type params: `dict`
         """
         self.__dict__.update(params)
@@ -142,8 +142,8 @@ class Nmf(object):
         """
         Return the matrix of mixture coefficients. See NMF specific model.
         
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following standard
+            NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
 
@@ -151,8 +151,8 @@ class Nmf(object):
         """
         Compute the estimated target matrix according to the NMF model. See NMF specific model.
 
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following standard
+            NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
 
@@ -160,11 +160,12 @@ class Nmf(object):
         """
         Return the loss function value. See NMF specific model.
         
-        :param distance: Specify distance metric to be used. Possible are Euclidean and Kullback-Leibler (KL) divergence. Strictly,
-                        KL is not a metric. 
+        :param distance: Specify distance metric to be used. Possible are Euclidean
+            and Kullback-Leibler (KL) divergence. Strictly, KL is not a metric.
         :type distance: `str` with values 'euclidean' or 'kl'
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+
+        :param idx: Used in the multiple NMF model. In factorizations following
+            standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
 
@@ -172,8 +173,8 @@ class Nmf(object):
         """
         Compute residuals between the target matrix and its NMF estimate. See NMF specific model.
         
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following standard
+            NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
 
@@ -186,8 +187,8 @@ class Nmf(object):
         
         Return connectivity matrix.
         
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following
+            standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
@@ -209,8 +210,8 @@ class Nmf(object):
         Tracking of matrix factors across multiple runs must be enabled for computing consensus matrix. For results
         of a single NMF run, the consensus matrix reduces to the connectivity matrix.
         
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following
+            standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
@@ -230,8 +231,8 @@ class Nmf(object):
         """
         Return triple containing the dimension of the target matrix and matrix factorization rank.
         
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following
+            standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
@@ -239,17 +240,20 @@ class Nmf(object):
 
     def entropy(self, membership=None, idx=None):
         """
-        Compute the entropy of the NMF model given a priori known groups of samples [Park2007]_.
+        Compute the entropy of the NMF model given a priori known groups of
+        samples [Park2007]_.
         
-        The entropy is a measure of performance of a clustering method in recovering classes defined by a list a priori known (true class
-        labels). 
+        The entropy is a measure of performance of a clustering method in
+        recovering classes defined by a list a priori known (true class labels).
         
-        Return the real number. The smaller the entropy, the better the clustering performance.
+        Return the real number. The smaller the entropy, the better the
+        clustering performance.
         
         :param membership: Specify known class membership for each sample. 
         :type membership: `list`
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+
+        :param idx: Used in the multiple NMF model. In factorizations following
+           standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
@@ -267,22 +271,26 @@ class Nmf(object):
 
     def predict(self, what='samples', prob=False, idx=None):
         """
-        Compute the dominant basis components. The dominant basis component is computed as the row index for which
-        the entry is the maximum within the column. 
+        Compute the dominant basis components. The dominant basis component is
+        computed as the row index for which the entry is the maximum within the column.
         
-        If :param:`prob` is not specified, list is returned which contains computed index for each sample (feature). Otherwise
-        tuple is returned where first element is a list as specified before and second element is a list of associated
+        If ``prob`` is not specified, list is returned which contains computed index
+        for each sample (feature). Otherwise tuple is returned where first element
+        is a list as specified before and second element is a list of associated
         probabilities, relative contribution of the maximum entry within each column. 
         
-        :param what: Specify target for dominant basis components computation. Two values are possible, 'samples' or
-                     'features'. When what='samples' is specified, dominant basis component for each sample is determined based
-                     on its associated entries in the mixture coefficient matrix (H). When what='features' computation is performed
-                     on the transposed basis matrix (W.T). 
+        :param what: Specify target for dominant basis components computation. Two values
+           are possible, 'samples' or 'features'. When what='samples' is specified,
+           dominant basis component for each sample is determined based on its associated
+           entries in the mixture coefficient matrix (H). When what='features' computation
+           is performed on the transposed basis matrix (W.T).
         :type what: `str`
-        :param prob: Specify dominant basis components probability inclusion. 
+
+        :param prob: Specify dominant basis components probability inclusion.
         :type prob: `bool` equivalent
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+
+        :param idx: Used in the multiple NMF model. In factorizations following
+           standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         X = self.coef(idx) if what == "samples" else self.basis(
@@ -301,12 +309,13 @@ class Nmf(object):
         """
         Compute the explained variance of the NMF estimate of the target matrix.
         
-        This measure can be used for comparing the ability of models for accurately reproducing the original target matrix. 
-        Some methods specifically aim at minimizing the RSS and maximizing the explained variance while others not, which 
+        This measure can be used for comparing the ability of models for accurately
+        reproducing the original target matrix. Some methods specifically aim at
+        minimizing the RSS and maximizing the explained variance while others not, which
         one should note when using this measure. 
         
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following
+           standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
@@ -314,17 +323,21 @@ class Nmf(object):
 
     def score_features(self, idx=None):
         """
-        Compute the score for each feature that represents its specificity to one of the basis vector [Park2007]_.
+        Compute the score for each feature that represents its specificity to one of the
+        basis vector [Park2007]_.
         
-        A row vector of the basis matrix (W) indicates the contributions of a gene to the r (i.e. columns of W) biological pathways or
-        processes. As genes can participate in more than one biological process, it is beneficial to investigate genes that have relatively 
-        large coefficient in each biological process. 
+        A row vector of the basis matrix (W) indicates the contributions of a gene
+        to the r (i.e. columns of W) biological pathways or processes. As genes can
+        participate in more than one biological process, it is beneficial to
+        investigate genes that have relatively large coefficient in each
+        biological process.
         
-        Return the list containing score for each feature. The feature scores are real values in [0,1]. The higher the feature score the more 
+        Return the list containing score for each feature. The feature scores
+        are real values in [0,1]. The higher the feature score the more
         basis-specific the corresponding feature.  
 
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following
+           standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         W = self.basis()
@@ -342,16 +355,20 @@ class Nmf(object):
         """
         Compute the most basis-specific features for each basis vector [Park2007]_.
         
-        [Park2007]_ scoring schema and feature selection method is used. The features are first scored using the :func:`score_features`.
-        Then only the features that fulfill both the following criteria are retained:
-        #. score greater than u + 3s, where u and s are the median and the median absolute deviation (MAD) of the scores, resp.,
-        #. the maximum contribution to a basis component (i.e the maximal value in the corresponding row of the basis matrix (W)) is larger 
+        [Park2007]_ scoring schema and feature selection method is used. The features are
+        first scored using the :func:`score_features`. Then only the features that fulfill
+        both the following criteria are retained:
+
+        #. score greater than u + 3s, where u and s are the median and the median
+           absolute deviation (MAD) of the scores, resp.,
+        #. the maximum contribution to a basis component (i.e the maximal value in
+           the corresponding row of the basis matrix (W)) is larger
            than the median of all contributions (i.e. of all elements of basis matrix (W)).
         
         Return list of retained features' indices.  
         
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following
+           standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         scores = self.score_features(idx=idx)
@@ -366,15 +383,17 @@ class Nmf(object):
         """
         Compute the purity given a priori known groups of samples [Park2007]_.
         
-        The purity is a measure of performance of a clustering method in recovering classes defined by a list a priori known (true class
-        labels). 
+        The purity is a measure of performance of a clustering method in recovering
+        classes defined by a list a priori known (true class labels).
         
-        Return the real number in [0,1]. The larger the purity, the better the clustering performance. 
+        Return the real number in [0,1]. The larger the purity, the better the
+        clustering performance.
         
         :param membership: Specify known class membership for each sample. 
         :type membership: `list`
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+
+        :param idx: Used in the multiple NMF model. In factorizations following
+           standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
@@ -391,18 +410,22 @@ class Nmf(object):
 
     def rss(self, idx=None):
         """
-        Compute Residual Sum of Squares (RSS) between NMF estimate and target matrix [Hutchins2008]_.
+        Compute Residual Sum of Squares (RSS) between NMF estimate and
+        target matrix [Hutchins2008]_.
         
-        This measure can be used to estimate optimal factorization rank. [Hutchins2008]_ suggested to choose
-        the first value where the RSS curve presents an inflection point. [Frigyesi2008]_ suggested to use the 
-        smallest value at which the decrease in the RSS is lower than the decrease of the RSS obtained from random data. 
+        This measure can be used to estimate optimal factorization rank.
+        [Hutchins2008]_ suggested to choose the first value where the RSS curve
+        presents an inflection point. [Frigyesi2008]_ suggested to use the
+        smallest value at which the decrease in the RSS is lower than the
+        decrease of the RSS obtained from random data.
         
-        RSS tells us how much of the variation in the dependent variables our model did not explain. 
+        RSS tells us how much of the variation in the dependent variables our
+        model did not explain.
         
         Return real value.
         
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following
+           standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         X = self.residuals(idx=idx)
@@ -410,17 +433,18 @@ class Nmf(object):
 
     def sparseness(self, idx=None):
         """
-        Compute sparseness of matrix (basis vectors matrix, mixture coefficients) [Hoyer2004]_. This sparseness 
-        measure quantifies how much energy of a vector is packed into only few components. The sparseness of a vector
-        is a real number in [0, 1]. Sparser vector has value closer to 1. The measure is 1 iff vector contains single
+        Compute sparseness of matrix (basis vectors matrix, mixture coefficients) [Hoyer2004]_.
+        This sparseness measure quantifies how much energy of a vector is packed into only
+        few components. The sparseness of a vector is a real number in [0, 1]. Sparser vector
+        has value closer to 1. The measure is 1 iff vector contains single
         nonzero component and the measure is equal to 0 iff all components are equal. 
         
         Sparseness of a matrix is the mean sparseness of its column vectors. 
         
         Return tuple that contains sparseness of the basis and mixture coefficients matrices. 
         
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following
+           standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         def sparseness(x):
@@ -468,15 +492,16 @@ class Nmf(object):
         Compute the dispersion coefficient of consensus matrix, generally obtained from multiple
         NMF runs.
         
-        The dispersion coefficient is based on the average of connectivity matrices [Park2007]_. It 
-        measures the reproducibility of the clusters obtained from multiple NMF runs.
+        The dispersion coefficient is based on the average of connectivity matrices [Park2007]_.
+        It measures the reproducibility of the clusters obtained from multiple NMF runs.
         
-        Return the real value in [0,1]. Dispersion is 1 iff for a perfect consensus matrix, where all entries are 0 or 1.
-        A perfect consensus matrix is obtained only when all the connectivity matrices are the same, meaning that
-        the algorithm gave the same clusters at each run.  
+        Return the real value in [0,1]. Dispersion is 1 iff for a perfect consensus matrix,
+        where all entries are 0 or 1. A perfect consensus matrix is obtained only when all
+        the connectivity matrices are the same, meaning that the algorithm gave the same
+        clusters at each run.
         
-        :param idx: Used in the multiple NMF model. In factorizations following standard NMF model or nonsmooth NMF model
-                    :param:`idx` is always None.
+        :param idx: Used in the multiple NMF model. In factorizations following
+           standard NMF model or nonsmooth NMF model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         C = self.consensus(idx=idx)
@@ -484,39 +509,45 @@ class Nmf(object):
 
     def estimate_rank(self, range=xrange(30, 51), n_run=10, idx=0, what='all'):
         """
-        Choosing factorization parameters carefully is vital for success of a factorization. However, the most critical parameter 
-        is factorization rank. This method tries different values for ranks, performs factorizations, computes some quality 
-        measures of the results and chooses the best value according to [Brunet2004]_ and [Hutchins2008]_.
+        Choosing factorization parameters carefully is vital for success of a factorization.
+        However, the most critical parameter is factorization rank. This method tries
+        different values for ranks, performs factorizations, computes some quality
+        measures of the results and chooses the best value according to [Brunet2004]_
+        and [Hutchins2008]_.
         
         .. note:: The process of rank estimation can be lengthy.   
         
-        .. note:: Matrix factors are tracked during rank estimation. This is needed for computing cophenetic correlation coefficient.  
+        .. note:: Matrix factors are tracked during rank estimation. This is needed
+           for computing cophenetic correlation coefficient.
         
-        Return a `dict` (keys are values of rank from range, values are `dict`s of measures) of quality measures for each value in 
-        rank's range. This can be passed to the visualization model, from which estimated rank can be established. 
+        Return a `dict` (keys are values of rank from range, values are `dict`s of measures)
+        of quality measures for each value in rank's range. This can be passed to the
+        visualization model, from which estimated rank can be established.
         
         :param range: Range of factorization ranks to try. Default is ``xrange(30, 51)``.
         :type range: list or tuple like range of `int`
+
         :param n_run: The number of runs to be performed for each value in range. Default is 10.  
         :type n_run: `int`
-        :param what: Specify quality measures of the results computed for each rank. By default, summary of the fitted factorization 
-                     model is computed. Instead, user can supply list of strings that matches some of the following 
-                     quality measures: 
+
+        :param what: Specify quality measures of the results computed for each rank.
+           By default, summary of the fitted factorization model is computed. Instead,
+           user can supply list of strings that matches some of the following quality measures:
                      
-                         * `sparseness`
-                         * `rss`
-                         * `evar`
-                         * `residuals`
-                         * `connectivity`
-                         * `dispersion`
-                         * `cophenetic`
-                         * `consensus`
-                         * `euclidean`
-                         * `kl`
-                         
+             * `sparseness`
+             * `rss`
+             * `evar`
+             * `residuals`
+             * `connectivity`
+             * `dispersion`
+             * `cophenetic`
+             * `consensus`
+             * `euclidean`
+             * `kl`
         :type what: list or tuple like of `str`
-        :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple NMF model. Default is 0 (first coefficient 
-                    matrix).
+
+        :param idx: Name of the matrix (coefficient) matrix. Used only in the multiple
+           NMF model. Default is 0 (first coefficient matrix).
         :type idx: `str` or `int`
         """
         self.n_run = n_run

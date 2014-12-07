@@ -23,18 +23,18 @@ The objective function in [Zhang2011]_ has three components:
  
 The inputs for the SNMNMF are:
     #. two sets of expression profiles (represented by the matrices V and V1 of
-    shape s x m, s x n, respectively) for miRNA and genes measured on the same
-    set of samples;
+       shape s x m, s x n, respectively) for miRNA and genes measured on the same
+       set of samples;
     #. (PRIOR KNOWLEDGE) a gene-gene interaction network (represented by the
-    matrix A of shape n x n), including protein-protein interactions and
-    DNA-protein interactions; the network is presented in the form of the
-    adjacency matrix of gene network;
+       matrix A of shape n x n), including protein-protein interactions and
+       DNA-protein interactions; the network is presented in the form of the
+       adjacency matrix of gene network;
     #. (PRIOR KNOWLEDGE) a list of predicted miRNA-gene regulatory interactions
-    (represented by the matrix B of shape m x n) based on sequence data; the
-    network is presented in the form of the adjacency matrix of a bipartite
-    miRNA-gene network. Network regularized constraints are used to enforce
-    "must-link" constraints and to ensure that genes with known interactions
-    have similar coefficient profiles.
+       (represented by the matrix B of shape m x n) based on sequence data; the
+       network is presented in the form of the adjacency matrix of a bipartite
+       miRNA-gene network. Network regularized constraints are used to enforce
+       "must-link" constraints and to ensure that genes with known interactions
+       have similar coefficient profiles.
        
 Gene and miRNA expression matrices are simultaneously factored into a common
 basis matrix (W) and two coefficients matrices (H and H1). Additional knowledge
@@ -70,25 +70,30 @@ class Snmnmf(nmf_mm.Nmf_mm):
     values as keyword arguments.
     
     :param A: Adjacency matrix of gene-gene interaction network (dimension:
-    V1.shape[1] x V1.shape[1]). It should be nonnegative. Default is scipy.sparse
-    CSR matrix of density 0.7.
+       V1.shape[1] x V1.shape[1]). It should be nonnegative. Default is scipy.sparse
+       CSR matrix of density 0.7.
     :type A: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia
-    or :class:`numpy.matrix`
+       or :class:`numpy.matrix`
+
     :param B: Adjacency matrix of a bipartite miRNA-gene network, predicted
-    miRNA-target interactions (dimension: V.shape[1] x V1.shape[1]). It should be
-    nonnegative. Default is scipy.sparse CSR matrix of density 0.7.
+       miRNA-target interactions (dimension: V.shape[1] x V1.shape[1]). It should be
+       nonnegative. Default is scipy.sparse CSR matrix of density 0.7.
     :type B: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or
-    :class:`numpy.matrix`
+       :class:`numpy.matrix`
+
     :param gamma: Limit the growth of the basis matrix (W). Default is 0.01.
     :type gamma: `float`
+
     :param gamma_1: Encourage sparsity of the mixture (coefficient) matrices (H
-    and H1). Default is 0.01.
+       and H1). Default is 0.01.
     :type gamma_1: `float`
-    :param lamb: Weight for the must-link constraints defined in :param:`A`.
-    Default is 0.01.
+
+    :param lamb: Weight for the must-link constraints defined in ``A``.
+       Default is 0.01.
     :type lamb: `float`
-    :param lamb_1: Weight for the must-link constraints define in :param:`B`.
-    Default is 0.01.
+
+    :param lamb_1: Weight for the must-link constraints define in ``B``.
+       Default is 0.01.
     :type lamb_1: `float`
     """
 

@@ -11,11 +11,12 @@ from nimfa.utils.linalg import *
 class Smf(object):
 
     """
-    This class defines a common interface / model to handle standard MF models in a generic way.
+    This class defines a common interface / model to handle standard MF models in
+    a generic way.
     
     It contains definitions of the minimum set of generic methods that are used in 
-    common computations and matrix factorizations. Besides it contains some quality and performance measures 
-    about factorizations. 
+    common computations and matrix factorizations. Besides it contains some quality
+    and performance measures about factorizations.
     """
 
     def __init__(self, params):
@@ -43,7 +44,7 @@ class Smf(object):
         """
         Return the target matrix to estimate.
         
-        :param idx: Used in the multiple MF model. In standard MF :param:`idx` is always None.
+        :param idx: Used in the multiple MF model. In standard MF ``idx`` is always None.
         :type idx: None
         """
         return self.V
@@ -52,7 +53,7 @@ class Smf(object):
         """
         Return the matrix of mixture coefficients (factor 2 matrix).
         
-        :param idx: Used in the multiple MF model. In standard MF :param:`idx` is always None.
+        :param idx: Used in the multiple MF model. In standard MF ``idx`` is always None.
         :type idx: None
         """
         return self.H
@@ -61,7 +62,7 @@ class Smf(object):
         """
         Compute the estimated target matrix according to the MF algorithm model.
         
-        :param idx: Used in the multiple MF model. In standard MF :param:`idx` is always None.
+        :param idx: Used in the multiple MF model. In standard MF ``idx`` is always None.
         :type idx: None
         """
         return dot(self.W, self.H)
@@ -70,10 +71,11 @@ class Smf(object):
         """
         Return the loss function value.
         
-        :param distance: Specify distance metric to be used. Possible are Euclidean and Kullback-Leibler (KL) divergence. Strictly,
-                        KL is not a metric. 
+        :param distance: Specify distance metric to be used. Possible are Euclidean and
+           Kullback-Leibler (KL) divergence. Strictly, KL is not a metric.
         :type distance: `str` with values 'euclidean' or 'kl'
-        :param idx: Used in the multiple MF model. In standard MF :param:`idx` is always None.
+
+        :param idx: Used in the multiple MF model. In standard MF ``idx`` is always None.
         :type idx: None
         """
         if metric.lower() == 'euclidean':
@@ -89,7 +91,7 @@ class Smf(object):
         """
         Return residuals matrix between the target matrix and its MF estimate.
         
-        :param idx: Used in the multiple MF model. In standard MF :param:`idx` is always None.
+        :param idx: Used in the multiple MF model. In standard MF ``idx`` is always None.
         :type idx: None
         """
         return self.V - dot(self.W, self.H)

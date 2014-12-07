@@ -32,20 +32,15 @@ class Fixed(object):
         
         :param V: Target matrix, the matrix for MF method to estimate. 
         :type V: One of the :class:`scipy.sparse` sparse matrices types or
-        :class:`numpy.matrix`
+                :class:`numpy.matrix`
         :param rank: Factorization rank. 
         :type rank: `int`
-        :param options: Specify:
-                            #. algorithm;
-                            #. model specific options (e.g. initialization of
-                            extra matrix factor, seeding parameters).
+        :param options: Specify the algorithm and model specific options (e.g. initialization of
+                extra matrix factor, seeding parameters).
                     
-                        The following are Fixed options.
-                        
-                         :param idx: Name of the matrix (coefficient) matrix.
-                         Default is 0, corresponding to factorization models
-                         with one mixture matrix (e.g. standard, nonsmooth model).
-                         :type idx: `int`
+                Option ``idx`` represents the index of the coefficient matrix. The index is by default 0
+                and corresponds to a factorization model with one mixture matrix (e.g. standard, nonsmooth
+                model).
         :type options: `dict`
         """
         self.idx = options.get('idx', 0)
