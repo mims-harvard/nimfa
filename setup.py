@@ -27,9 +27,9 @@ def get_data_files(dest, source):
 
 setup(
     name = NAME,
-    version = "1.0",
+    version = "1.1",
     author = "Marinka Zitnik",
-    author_email = "marinka.zitnik@student.uni-lj.si", 
+    author_email = "marinka.zitnik@fri.uni-lj.si",
     description = "A Python Library for Nonnegative Matrix Factorization Techniques",
     url = "http://nimfa.biolab.si",
     download_url = "https://github.com/marinkaz/MF",
