@@ -1,8 +1,8 @@
 
 """
-    ########################################################
-    Gene_func_prediction (``examples.gene_func_prediction``)
-    ########################################################
+    ############################################################
+    Gene Function Prediction (``examples.gene_func_prediction``)
+    ############################################################
     
     As a background reading before this example, we recommend user to read [Schietgat2010]_ and [Schachtner2008]_ where
     the authors study the use of decision tree based models for predicting the multiple gene functions and unsupervised 

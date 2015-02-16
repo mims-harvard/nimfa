@@ -1,8 +1,8 @@
 
 """
-    ##################################
-    Synthetic (``examples.synthetic``)
-    ##################################
+    ##########################################
+    Simulated studies (``examples.synthetic``)
+    ##########################################
     
     This module contains examples of factorization runs. Since the data is artificially generated, 
     this is not a valid test of models applicability to real world situations. It can however

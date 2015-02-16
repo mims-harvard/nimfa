@@ -1,7 +1,7 @@
 
 """
     ######################################
-    Cbcl_images (``examples.cbcl_images``)
+    CBCL Images (``examples.cbcl_images``)
     ######################################
     
     In this example of image processing we consider the problem demonstrated in [Lee1999]_.

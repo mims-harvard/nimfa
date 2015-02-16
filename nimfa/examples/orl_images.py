@@ -1,7 +1,7 @@
 
 """
     ####################################
-    Orl_images (``examples.orl_images``)
+    ORL Images (``examples.orl_images``)
     ####################################
     
     In this example of image processing we consider the image problem presented in [Hoyer2004]_. 

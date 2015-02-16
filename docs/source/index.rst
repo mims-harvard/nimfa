@@ -102,7 +102,7 @@ Source
 
 No special installation procedure is specified. However, the nimfa library makes extensive use of `SciPy`_ and `NumPy`_ 
 libraries for fast and convenient dense and sparse matrix manipulation and some linear
-algebra operations. There are not any additional prerequisites. 
+algebra operations. There are not any additional prerequisites. Nimfa is compatible with Python 2 and Python 3 versions.
 
 .. _SciPy: http://www.scipy.org/
 .. _NumPy: http://numpy.scipy.org/
