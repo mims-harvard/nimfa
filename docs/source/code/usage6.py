@@ -13,10 +13,10 @@ init_H = np.random.rand(4, 20)
 fctr = nimfa.mf(V, method="nmf", seed="fixed", W=init_W, H=init_H, rank=4)
 fctr_res = nimfa.mf_run(fctr)
 
-print "Euclidean distance: %5.3e" % fctr_res.distance(metric="euclidean")
+print("Euclidean distance: %5.3e" % fctr_res.distance(metric="euclidean"))
 
 # It should print 'fixed'.
-print fctr_res.seeding
+print(fctr_res.seeding)
 
 # By default, max 30 iterations are performed.
-print fctr_res.n_iter
+print(fctr_res.n_iter)

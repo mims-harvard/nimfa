@@ -93,15 +93,18 @@
     .. note:: This example uses ``matplotlib`` library for producing a heatmap of a consensus matrix.
 """
 
-import nimfa
-import numpy as np
-from scipy.cluster.hierarchy import linkage, leaves_list
-from os.path import dirname, abspath, sep
+from os.path import dirname, abspath
+from os.path import join as pjoin
 from warnings import warn
+
+from scipy.cluster.hierarchy import linkage, leaves_list
+import numpy as np
+
+import nimfa
 
 try:
     from matplotlib.pyplot import savefig, imshow, set_cmap
-except ImportError, exc:
+except ImportError as exc:
     warn("Matplotlib must be installed to run Medulloblastoma example.")
 
 
@@ -109,7 +112,7 @@ def run():
     """Run Standard NMF on medulloblastoma data set. For each rank 50 Standard NMF runs are performed. """
     # read gene expression data
     V = read()
-    for rank in xrange(2, 4):
+    for rank in range(2, 4):
         run_one(V, rank)
 
 
@@ -123,9 +126,9 @@ def run_one(V, rank):
     :param rank: Factorization rank.
     :type rank: `int`
     """
-    print "================= Rank = %d =================" % rank
+    print("================= Rank = %d =================" % rank)
     consensus = np.mat(np.zeros((V.shape[1], V.shape[1])))
-    for i in xrange(50):
+    for i in range(50):
         # Standard NMF with Euclidean update equations is used. For initialization random Vcol method is used.
         # Objective function is the number of consecutive iterations in which the connectivity matrix has not changed.
         # We demand that factorization does not terminate before 30 consecutive iterations in which connectivity matrix
@@ -142,7 +145,7 @@ def run_one(V, rank):
                          conn_change=40,
                          initialize_only=True)
         fit = nimfa.mf_run(model)
-        print "%2d / 50 :: %s - init: %s ran with  ... %3d / 200 iters ..." % (i + 1, fit.fit, fit.fit.seed, fit.fit.n_iter)
+        print("%2d / 50 :: %s - init: %s ran with  ... %3d / 200 iters ..." % (i + 1, fit.fit, fit.fit.seed, fit.fit.n_iter))
         # Compute connectivity matrix of factorization.
         # Again, we could use multiple runs support of the nimfa library, track factorization model across 50 runs and then
         # just call fit.consensus()
@@ -176,8 +179,8 @@ def reorder(C):
     :param C: Consensus matrix.
     :type C: `numpy.matrix`
     """
-    c_vec = np.array([C[i, j] for i in xrange(C.shape[0] - 1)
-                     for j in xrange(i + 1, C.shape[1])])
+    c_vec = np.array([C[i, j] for i in range(C.shape[0] - 1)
+                     for j in range(i + 1, C.shape[1])])
     # convert similarities to distances
     Y = 1 - c_vec
     Z = linkage(Y, method='average')
@@ -197,8 +200,9 @@ def read(normalize=False):
     """
     V = np.matrix(np.zeros((5893, 34)))
     i = 0
-    for line in open(dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'Medulloblastoma' + sep + 'Medulloblastoma_data.txt'):
-        V[i, :] = map(float, line.split('\t'))
+    path = pjoin(dirname(dirname(abspath(__file__))), 'datasets', 'Medulloblastoma',  'Medulloblastoma_data.txt')
+    for line in open(path):
+        V[i, :] = list(map(float, line.split('\t')))
         i += 1
     if normalize:
         V -= V.min()

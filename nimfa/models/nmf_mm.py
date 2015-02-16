@@ -5,7 +5,7 @@
     ##########################
 """
 
-from nmf import *
+from .nmf import *
 
 
 class Nmf_mm(Nmf):

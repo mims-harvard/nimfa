@@ -96,16 +96,19 @@
               data set.
 """
 
-import nimfa
-import numpy as np
-import scipy.sparse as sp
-from os.path import dirname, abspath, sep
+from os.path import dirname, abspath
+from os.path import join as pjoin
 from operator import itemgetter
 from warnings import warn
 
+import scipy.sparse as sp
+import numpy as np
+
+import nimfa
+
 try:
     import matplotlib.pylab as plb
-except ImportError, exc:
+except ImportError as exc:
     warn("Matplotlib must be installed to run Documents example.")
 
 
@@ -138,15 +141,15 @@ def factorize(V):
                      initialize_only=True,
                      update='divergence',
                      objective='div')
-    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank)
+    print("Performing %s %s %d factorization ..." % (model, model.seed, model.rank))
     fit = nimfa.mf_run(model)
-    print "... Finished"
+    print("... Finished")
     sparse_w, sparse_h = fit.fit.sparseness()
-    print """Stats:
+    print("""Stats:
             - iterations: %d
             - KL Divergence: %5.3f
             - Euclidean distance: %5.3f
-            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric='euclidean'), sparse_w, sparse_h)
+            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric='euclidean'), sparse_w, sparse_h))
     return fit.basis(), fit.coef()
 
 
@@ -160,16 +163,15 @@ def read():
     Return the Medlars sparse data matrix in LIL format, term-to-index `dict` translator and index-to-term 
     `dict` translator. 
     """
-    print "Reading Medlars medical abstracts data set ..."
-    dir = dirname(dirname(abspath(__file__))) + sep + \
-        'datasets' + sep + 'Medlars' + sep + 'med.all'
+    print("Reading Medlars medical abstracts data set ...")
+    dir = pjoin(dirname(dirname(abspath(__file__))), 'datasets', 'Medlars', 'med.all')
     doc = open(dir)
     V = sp.lil_matrix((16017, 1033))
     term2idx = {}
     idx2term = {}
     n_free = 0
     line = doc.readline()
-    for abstract in xrange(1033):
+    for abstract in range(1033):
         ii = int(line.split()[1])
         # omit .W char
         doc.readline()
@@ -183,7 +185,7 @@ def read():
                     n_free += 1
                 V[term2idx[term], ii - 1] += 1
             line = doc.readline().strip()
-    print "... Finished."
+    print("... Finished.")
     return V, term2idx, idx2term
 
 
@@ -203,7 +205,7 @@ def preprocess(V, term2idx, idx2term):
     :param idx2term: Index-to-term translator.
     :type idx2term: `dict`
     """
-    print "Preprocessing data matrix ..."
+    print("Preprocessing data matrix ...")
     # remove stop words, digits, too short words
     rem = set()
     for term in term2idx:
@@ -211,10 +213,10 @@ def preprocess(V, term2idx, idx2term):
             rem.add(term2idx[term])
     # remove words that appear two times or less in corpus
     V = V.tocsr()
-    for r in xrange(V.shape[0]):
+    for r in range(V.shape[0]):
         if V[r, :].sum() <= 2 or V[r,:].sum() >= 50:
             rem.add(r)
-    retain = set(xrange(V.shape[0])).difference(rem)
+    retain = set(range(V.shape[0])).difference(rem)
     n_free = 0
     V1 = sp.lil_matrix((V.shape[0] - len(rem), 1033))
     for r in retain:
@@ -222,7 +224,7 @@ def preprocess(V, term2idx, idx2term):
         idx2term[n_free] = idx2term[r]
         V1[n_free, :] = V[r,:] 
         n_free += 1
-    print "... Finished."
+    print("... Finished.")
     return V1.tocsr(), term2idx, idx2term
 
 
@@ -235,8 +237,8 @@ def plot(W, idx2term):
     :param idx2term: Index-to-term translator.
     :type idx2term: `dict`
     """
-    print "Plotting highest weighted terms in basis vectors ..."
-    for c in xrange(W.shape[1]):
+    print("Plotting highest weighted terms in basis vectors ...")
+    for c in range(W.shape[1]):
         if sp.isspmatrix(W):
             top10 = sorted(
                 enumerate(W[:, c].todense().ravel().tolist()[0]), key=itemgetter(1), reverse=True)[:10]
@@ -244,16 +246,16 @@ def plot(W, idx2term):
             top10 = sorted(
                 enumerate(W[:, c].ravel().tolist()[0]), key=itemgetter(1), reverse=True)[:10]
         pos = np.arange(10) + .5
-        val = zip(*top10)[1][::-1]
+        val = list(zip(*top10))[1][::-1]
         plb.figure(c + 1)
         plb.barh(pos, val, color="yellow", align="center")
-        plb.yticks(pos, [idx2term[idx] for idx in zip(*top10)[0]][::-1])
+        plb.yticks(pos, [idx2term[idx] for idx in list(zip(*top10))[0]][::-1])
         plb.xlabel("Weight")
         plb.ylabel("Term")
         plb.title("Highest Weighted Terms in Basis Vector W%d" % (c + 1))
         plb.grid(True)
         plb.savefig("documents_basisW%d.png" % (c + 1), bbox_inches="tight")
-    print "... Finished."
+    print("... Finished.")
 
 stop_words = [
     "a", "able", "about", "across", "after", "all", "almost", "also", "am", "among", "an", "and", "any", "are", "as", "at", "be",

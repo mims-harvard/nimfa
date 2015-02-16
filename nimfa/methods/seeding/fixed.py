@@ -18,7 +18,7 @@ class Fixed(object):
 
     def _set_fixed(self, **factors):
         """Set initial factorization."""
-        for k in factors.keys():
+        for k in list(factors.keys()):
             if factors[k] != None:
                 factors[k] = np.matrix(factors[k]) if not sp.isspmatrix(
                     factors[k]) else factors[k].copy()

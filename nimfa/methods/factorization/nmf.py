@@ -86,7 +86,7 @@ class Nmf(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        for run in xrange(self.n_run):
+        for run in range(self.n_run):
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)
             p_obj = c_obj = sys.float_info.max

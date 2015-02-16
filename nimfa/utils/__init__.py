@@ -4,5 +4,5 @@
     utils for convenient operation of nimfa library.
 """
 
-import linalg
-import utils
+from . import linalg
+from . import utils

@@ -14,8 +14,9 @@ import scipy
 import scipy.sparse as sp
 import scipy.sparse.linalg as sla
 import numpy.linalg as nla
-from operator import mul, div, eq, ne, add, ge, le, itemgetter
-from itertools import izip
+from operator import mul, eq, ne, add, ge, le, itemgetter
+from operator import truediv as div
+
 from math import sqrt, log, isnan, ceil
 from scipy.cluster.hierarchy import linkage, cophenet
 from scipy.special import erfc, erfcinv
@@ -37,7 +38,7 @@ def diff(X):
     assert 1 in X.shape, "sX should be a vector."
     assert not sp.isspmatrix(X), "X is sparse matrix."
     X = X.flatten()
-    return [X[0, j + 1] - X[0, j] for j in xrange(X.shape[1] - 1)]
+    return [X[0, j + 1] - X[0, j] for j in range(X.shape[1] - 1)]
 
 
 def sub2ind(shape, row_sub, col_sub):
@@ -68,7 +69,7 @@ def trace(X):
     """
     assert X.shape[0] == X.shape[1], "X should be square matrix."
     if sp.isspmatrix(X):
-        return sum(X[i, i] for i in xrange(X.shape[0]))
+        return sum(X[i, i] for i in range(X.shape[0]))
     else:
         return np.trace(np.mat(X))
 
@@ -89,7 +90,7 @@ def any(X, axis=None):
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
         if axis is None:
             return len(X.data) != X.shape[0] * X.shape[1]
-        res = [0 for _ in xrange(X.shape[1 - axis])]
+        res = [0 for _ in range(X.shape[1 - axis])]
 
         def _caxis(now, row, col):
             res[col] += 1
@@ -127,7 +128,7 @@ def all(X, axis=None):
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
         if axis is None:
             return len(X.data) == X.shape[0] * X.shape[1]
-        res = [0 for _ in xrange(X.shape[1 - axis])]
+        res = [0 for _ in range(X.shape[1 - axis])]
 
         def _caxis(now, row, col):
             res[col] += 1
@@ -170,7 +171,7 @@ def find(X):
                 now += 1
         return res
     else:
-        return [j * X.shape[0] + i for i in xrange(X.shape[0]) for j in xrange(X.shape[1]) if X[i, j]]
+        return [j * X.shape[0] + i for i in range(X.shape[0]) for j in range(X.shape[1]) if X[i, j]]
 
 
 def negative(X):
@@ -200,7 +201,7 @@ def sort(X):
     """
     assert 1 in X.shape, "X should be vector."
     X = X.flatten().tolist()[0]
-    return sorted(X), sorted(range(len(X)), key=X.__getitem__)
+    return sorted(X), sorted(list(range(len(X))), key=X.__getitem__)
 
 
 def std(X, axis=None, ddof=0):
@@ -227,9 +228,9 @@ def std(X, axis=None, ddof=0):
             no = X.shape[0] * X.shape[1]
             return sqrt(1. / (no - ddof) * sum((x - mean) ** 2 for x in X.data) + (no - len(X.data) * mean ** 2))
         if axis == 0:
-            return np.mat([np.std(X[:, i].toarray(), axis, ddof) for i in xrange(X.shape[1])])
+            return np.mat([np.std(X[:, i].toarray(), axis, ddof) for i in range(X.shape[1])])
         if axis == 1:
-            return np.mat([np.std(X[i, :].toarray(), axis, ddof) for i in xrange(X.shape[0])]).T
+            return np.mat([np.std(X[i, :].toarray(), axis, ddof) for i in range(X.shape[0])]).T
     else:
         return np.std(X, axis=axis, ddof=ddof)
 
@@ -250,7 +251,7 @@ def argmax(X, axis=None):
         X = X.tocsr()
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
         res = [[float('-inf'), 0]
-               for _ in xrange(X.shape[1 - axis])] if axis is not None else [float('-inf'), 0]
+               for _ in range(X.shape[1 - axis])] if axis is not None else [float('-inf'), 0]
 
         def _caxis(row, col):
             if X[row, col] > res[col][0]:
@@ -265,15 +266,15 @@ def argmax(X, axis=None):
                 res[0] = X[row, col]
                 res[1] = row * X.shape[0] + col
         check = _caxis if axis == 0 else _raxis if axis == 1 else _naxis
-        [check(row, col) for row in xrange(X.shape[0])
-         for col in xrange(X.shape[1])]
+        [check(row, col) for row in range(X.shape[0])
+         for col in range(X.shape[1])]
         if axis == None:
             return res
         elif axis == 0:
-            t = zip(*res)
+            t = list(zip(*res))
             return list(t[0]), np.mat(t[1])
         else:
-            t = zip(*res)
+            t = list(zip(*res))
             return list(t[0]), np.mat(t[1]).T
     else:
         idxX = np.asmatrix(X).argmax(axis)
@@ -281,10 +282,10 @@ def argmax(X, axis=None):
             eX = X[idxX / X.shape[1], idxX % X.shape[1]]
         elif axis == 0:
             eX = [X[idxX[0, idx], col]
-                  for idx, col in izip(xrange(X.shape[1]), xrange(X.shape[1]))]
+                  for idx, col in zip(range(X.shape[1]), range(X.shape[1]))]
         else:
             eX = [X[row, idxX[idx, 0]]
-                  for row, idx in izip(xrange(X.shape[0]), xrange(X.shape[0]))]
+                  for row, idx in zip(range(X.shape[0]), range(X.shape[0]))]
         return eX, idxX
 
 
@@ -304,7 +305,7 @@ def argmin(X, axis=None):
         X = X.tocsr()
         assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
         res = [[float('inf'), 0]
-               for _ in xrange(X.shape[1 - axis])] if axis is not None else [float('inf'), 0]
+               for _ in range(X.shape[1 - axis])] if axis is not None else [float('inf'), 0]
 
         def _caxis(row, col):
             if X[row, col] < res[col][0]:
@@ -319,15 +320,15 @@ def argmin(X, axis=None):
                 res[0] = X[row, col]
                 res[1] = row * X.shape[0] + col
         check = _caxis if axis == 0 else _raxis if axis == 1 else _naxis
-        [check(row, col) for row in xrange(X.shape[0])
-         for col in xrange(X.shape[1])]
+        [check(row, col) for row in range(X.shape[0])
+         for col in range(X.shape[1])]
         if axis == None:
             return res
         elif axis == 0:
-            t = zip(*res)
+            t = list(zip(*res))
             return list(t[0]), np.mat(t[1])
         else:
-            t = zip(*res)
+            t = list(zip(*res))
             return list(t[0]), np.mat(t[1]).T
     else:
         idxX = np.asmatrix(X).argmin(axis)
@@ -335,10 +336,10 @@ def argmin(X, axis=None):
             eX = X[idxX / X.shape[1], idxX % X.shape[1]]
         elif axis == 0:
             eX = [X[idxX[0, idx], col]
-                  for idx, col in izip(xrange(X.shape[1]), xrange(X.shape[1]))]
+                  for idx, col in zip(range(X.shape[1]), range(X.shape[1]))]
         else:
             eX = [X[row, idxX[idx, 0]]
-                  for row, idx in izip(xrange(X.shape[0]), xrange(X.shape[0]))]
+                  for row, idx in zip(range(X.shape[0]), range(X.shape[0]))]
         return eX, idxX
 
 
@@ -353,7 +354,7 @@ def repmat(X, m, n):
     :type m,n: `int`
     """
     if sp.isspmatrix(X):
-        return sp.hstack([sp.vstack([X for _ in xrange(m)], format=X.format) for _ in xrange(n)], format=X.format)
+        return sp.hstack([sp.vstack([X for _ in range(m)], format=X.format) for _ in range(n)], format=X.format)
     else:
         return np.tile(np.asmatrix(X), (m, n))
 
@@ -411,7 +412,7 @@ def _svd_right(X):
             # http://docs.scipy.org/doc/scipy/reference/release.0.9.0.html#scipy-sparse
             try:
                 val, u_vec = sla.eigsh(XXt, k=X.shape[0] - 1)
-            except sla.ArpackNoConvergence, err:
+            except sla.ArpackNoConvergence as err:
                 # If eigenvalue iteration fails to converge, partially
                 # converged results can be accessed
                 val = err.eigenvalues
@@ -454,7 +455,7 @@ def _svd_left(X):
             # http://docs.scipy.org/doc/scipy/reference/release.0.9.0.html#scipy-sparse
             try:
                 val, v_vec = sla.eigsh(XtX, k=X.shape[1] - 1)
-            except sla.ArpackNoConvergence, err:
+            except sla.ArpackNoConvergence as err:
                 # If eigenvalue iteration fails to converge, partially
                 # converged results can be accessed
                 val = err.eigenvalues
@@ -689,7 +690,7 @@ def _op_matrix(X, Y, op):
     # operation is not necessarily commutative
     assert X.shape == Y.shape, "Matrices are not aligned."
     eps = np.finfo(Y.dtype).eps if not 'int' in str(Y.dtype) else 0
-    return np.mat([[op(X[i, j], Y[i, j] + eps) for j in xrange(X.shape[1])] for i in xrange(X.shape[0])])
+    return np.mat([[op(X[i, j], Y[i, j] + eps) for j in range(X.shape[1])] for i in range(X.shape[0])])
 
 
 def inf_norm(X):
@@ -860,7 +861,7 @@ def choose(n, k):
     if 0 <= k <= n:
         ntok = 1
         ktok = 1
-        for t in xrange(1, min(k, n - k) + 1):
+        for t in range(1, min(k, n - k) + 1):
             ntok *= n
             ktok *= t
             n -= 1

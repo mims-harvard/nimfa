@@ -15,10 +15,10 @@ This package contains factorization models used in the library nimfa. Specifical
     #. Implementation for storing MF fitted model and MF results.
 """
 
-import nmf
-import nmf_std
-import nmf_ns
-import nmf_mm
-import smf
-import mf_track
-import mf_fit
+from . import nmf
+from . import nmf_std
+from . import nmf_ns
+from . import nmf_mm
+from . import smf
+from . import mf_track
+from . import mf_fit

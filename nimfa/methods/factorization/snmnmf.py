@@ -113,7 +113,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
             raise utils.MFError(
                 "Input matrices should have the same number of rows.")
 
-        for run in xrange(self.n_run):
+        for run in range(self.n_run):
             self.options.update({'idx': 0})
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)

@@ -220,7 +220,7 @@ class Nmf(object):
                 cons = V.__class__((V.shape[1], V.shape[1]), dtype=V.dtype)
             else:
                 cons = np.mat(np.zeros((V.shape[1], V.shape[1])))
-            for i in xrange(self.n_run):
+            for i in range(self.n_run):
                 cons += self.connectivity(
                     H=self.tracker.get_factor(i).H, idx=idx)
             return sop(cons, self.n_run, div)
@@ -263,9 +263,9 @@ class Nmf(object):
         n = V.shape[1]
         mbs = self.predict(what="samples", prob=False, idx=idx)
         dmbs, dmembership = {}, {}
-        [dmbs.setdefault(mbs[i], set()).add(i) for i in xrange(len(mbs))]
+        [dmbs.setdefault(mbs[i], set()).add(i) for i in range(len(mbs))]
         [dmembership.setdefault(membership[i], set()).add(i)
-         for i in xrange(len(membership))]
+         for i in range(len(membership))]
         return -1. / (n * log(len(dmembership), 2)) * sum(sum(len(dmbs[k].intersection(dmembership[j])) *
                                                               log(len(dmbs[k].intersection(dmembership[j])) / float(len(dmbs[k])), 2) for j in dmembership) for k in dmbs)
 
@@ -302,7 +302,7 @@ class Nmf(object):
         if not prob:
             return idxX
         sums = X.sum(axis=0)
-        prob = [e / sums[0, s] for e, s in zip(eX, list(xrange(X.shape[1])))]
+        prob = [e / sums[0, s] for e, s in zip(eX, list(range(X.shape[1])))]
         return idxX, prob
 
     def evar(self, idx=None):
@@ -346,9 +346,9 @@ class Nmf(object):
             """Return probability that the i-th feature contributes to the basis q."""
             return W[i, q] / (W[i, :].sum() + np.finfo(W.dtype).eps)
         res = []
-        for f in xrange(W.shape[0]):
+        for f in range(W.shape[0]):
             res.append(1. + 1. / log(W.shape[1], 2) * sum(
-                prob(f, q) * log(prob(f, q) + np.finfo(W.dtype).eps, 2) for q in xrange(W.shape[1])))
+                prob(f, q) * log(prob(f, q) + np.finfo(W.dtype).eps, 2) for q in range(W.shape[1])))
         return res
 
     def select_features(self, idx=None):
@@ -374,7 +374,7 @@ class Nmf(object):
         scores = self.score_features(idx=idx)
         u = np.median(scores)
         s = np.median(abs(scores - u))
-        res = [i for i in xrange(len(scores)) if scores[i] > u + 3. * s]
+        res = [i for i in range(len(scores)) if scores[i] > u + 3. * s]
         W = self.basis()
         m = np.median(W.toarray() if sp.isspmatrix(W) else W.tolist())
         return [i for i in res if np.max(W[i, :].toarray() if sp.isspmatrix(W) else W[i,:]) > m]
@@ -403,9 +403,9 @@ class Nmf(object):
         n = V.shape[1]
         mbs = self.predict(what="samples", prob=False, idx=idx)
         dmbs, dmembership = {}, {}
-        [dmbs.setdefault(mbs[i], set()).add(i) for i in xrange(len(mbs))]
+        [dmbs.setdefault(mbs[i], set()).add(i) for i in range(len(mbs))]
         [dmembership.setdefault(membership[i], set()).add(i)
-         for i in xrange(len(membership))]
+         for i in range(len(membership))]
         return 1. / n * sum(max(len(dmbs[k].intersection(dmembership[j])) for j in dmembership) for k in dmbs)
 
     def rss(self, idx=None):
@@ -455,7 +455,7 @@ class Nmf(object):
             return x1 / x2
         W = self.basis()
         H = self.coef(idx)
-        return np.mean([sparseness(W[:, i]) for i in xrange(W.shape[1])]), np.mean([sparseness(H[:, i]) for i in xrange(H.shape[1])])
+        return np.mean([sparseness(W[:, i]) for i in range(W.shape[1])]), np.mean([sparseness(H[:, i]) for i in range(H.shape[1])])
 
     def coph_cor(self, idx=None):
         """
@@ -477,8 +477,8 @@ class Nmf(object):
         """
         A = self.consensus(idx=idx)
         # upper diagonal elements of consensus
-        avec = np.array([A[i, j] for i in xrange(A.shape[0] - 1)
-                        for j in xrange(i + 1, A.shape[1])])
+        avec = np.array([A[i, j] for i in range(A.shape[0] - 1)
+                        for j in range(i + 1, A.shape[1])])
         # consensus entries are similarities, conversion to distances
         Y = 1 - avec
         Z = linkage(Y, method='average')
@@ -505,9 +505,9 @@ class Nmf(object):
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         C = self.consensus(idx=idx)
-        return sum(sum(4 * (C[i, j] - 0.5) ** 2 for j in xrange(C.shape[1])) for i in xrange(C.shape[0]))
+        return sum(sum(4 * (C[i, j] - 0.5) ** 2 for j in range(C.shape[1])) for i in range(C.shape[0]))
 
-    def estimate_rank(self, range=xrange(30, 51), n_run=10, idx=0, what='all'):
+    def estimate_rank(self, range=range(30, 51), n_run=10, idx=0, what='all'):
         """
         Choosing factorization parameters carefully is vital for success of a factorization.
         However, the most critical parameter is factorization rank. This method tries

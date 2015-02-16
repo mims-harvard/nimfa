@@ -69,12 +69,12 @@ class Nsnmf(nmf_ns.Nmf_ns):
          
         Return fitted factorization model.
         """
-        for run in xrange(self.n_run):
+        for run in range(self.n_run):
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)
             self.S = sop(
                 (1 - self.theta) * sp.spdiags(
-                    [1 for _ in xrange(
+                    [1 for _ in range(
                         self.rank)], 0, self.rank, self.rank, 'csr'),
                 self.theta / self.rank, add)
             p_obj = c_obj = sys.float_info.max

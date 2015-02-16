@@ -10,10 +10,10 @@ V = np.random.rand(23, 200)
 fctr = nimfa.mf(V, method="bmf", max_iter=10, rank=30, n_run=3, track_factor=True)
 fctr_res = nimfa.mf_run(fctr)
 
-print "Distance Kullback-Leibler: %5.3e" % fctr_res.distance(metric="kl")
+print("Distance Kullback-Leibler: %5.3e" % fctr_res.distance(metric="kl"))
 
 sm = fctr_res.summary()
-print "Rss: %8.3f" % sm['rss']
-print "Evar: %8.3f" % sm['evar']
-print "Iterations: %d" % sm['n_iter']
-print "cophenetic: %8.3f" % sm['cophenetic']
+print("Rss: %8.3f" % sm['rss'])
+print("Evar: %8.3f" % sm['evar'])
+print("Iterations: %d" % sm['n_iter'])
+print("cophenetic: %8.3f" % sm['cophenetic'])

@@ -21,11 +21,11 @@
         * recommendation systems.
 """
 
-import synthetic
-import all_aml
-import medulloblastoma
-import cbcl_images
-import documents
-import orl_images
-import recommendations
-import gene_func_prediction
+from . import synthetic
+from . import all_aml
+from . import medulloblastoma
+from . import cbcl_images
+from . import documents
+from . import orl_images
+from . import recommendations
+from . import gene_func_prediction

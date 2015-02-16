@@ -85,7 +85,7 @@ class Icm(nmf_std.Nmf_std):
         """
         self.v = multiply(self.V, self.V).sum() / 2.
 
-        for run in xrange(self.n_run):
+        for run in range(self.n_run):
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)
             p_obj = c_obj = sys.float_info.max
@@ -177,15 +177,15 @@ class Icm(nmf_std.Nmf_std):
         # update basis matrix
         C = dot(self.H, self.H.T)
         D = dot(self.V, self.H.T)
-        for _ in xrange(self.iiter):
-            for n in xrange(self.rank):
-                nn = list(xrange(n)) + list(xrange(n + 1, self.rank))
+        for _ in range(self.iiter):
+            for n in range(self.rank):
+                nn = list(range(n)) + list(range(n + 1, self.rank))
                 temp = max(
                     sop(D[:, n] - dot(self.W[:, nn], C[nn, n]) - self.sigma * self.alpha[:, n], C[n, n] + np.finfo(C.dtype).eps, div), 0.)
                 if not sp.isspmatrix(self.W):
                     self.W[:, n] = temp
                 else:
-                    for i in xrange(self.W.shape[0]):
+                    for i in range(self.W.shape[0]):
                         self.W[i, n] = temp[i, 0]
         # 0/1 values special handling
         #l = np.logical_or((self.W == 0).all(0), (self.W == 1).all(0))
@@ -198,15 +198,15 @@ class Icm(nmf_std.Nmf_std):
         # update mixture matrix
         E = dot(self.W.T, self.W)
         F = dot(self.W.T, self.V)
-        for _ in xrange(self.iiter):
-            for n in xrange(self.rank):
-                nn = list(xrange(n)) + list(xrange(n + 1, self.rank))
+        for _ in range(self.iiter):
+            for n in range(self.rank):
+                nn = list(range(n)) + list(range(n + 1, self.rank))
                 temp = max(
                     sop(F[n, :] - dot(E[n, nn], self.H[nn, :]) - self.sigma * self.beta[n, :], E[n, n] + np.finfo(E.dtype).eps, div), 0.)
                 if not sp.isspmatrix(self.H):
                     self.H[n, :] = temp
                 else:
-                    for i in xrange(self.H.shape[1]):
+                    for i in range(self.H.shape[1]):
                         self.H[n, i] = temp[0, i]
         # 0/1 values special handling
         #l = np.logical_or((self.H == 0).all(1), (self.H == 1).all(1))

@@ -26,10 +26,10 @@ utilities or as initialization to another factorization method.
     
 """
 
-from utils import *
+from .utils import *
 
-import examples
-import methods
+from . import examples
+from . import methods
 
 l_factorization = methods.list_mf_methods()
 l_seed = methods.list_seeding_methods()

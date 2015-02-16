@@ -92,7 +92,7 @@ class Psmf(nmf_std.Nmf_std):
         if sp.isspmatrix(self.V):
             self.V = self.V.todense()
 
-        for run in xrange(self.n_run):
+        for run in range(self.n_run):
             # initialize P and Q distributions
             # internal computation is done with numpy arrays as n-(n >
             # 2)dimensionality is needed
@@ -155,10 +155,10 @@ class Psmf(nmf_std.Nmf_std):
         """Initialize the major cached parameter."""
         outer_zeta = np.dot(self.zeta, self.zeta.T)
         self.cross_terms = {}
-        for n1 in xrange(self.N):
-            for n2 in xrange(n1 + 1, self.N):
+        for n1 in range(self.N):
+            for n2 in range(n1 + 1, self.N):
                 self.cross_terms[n1, n2] = np.zeros((self.V.shape[0], 1))
-                for c in xrange(self.rank):
+                for c in range(self.rank):
                     sigmat = np.tile((self.sigma[:, c, n2] * self.lamb[:, c]).reshape((self.lamb.shape[0], 1)), (1, self.zeta.shape[0]))
                     outer_zetat = np.tile(outer_zeta[c, :], (self.rho.shape[0], 1))
                     self.cross_terms[n1, n2] += (self.sigma[:, :, n1] * self.lamb * 
@@ -195,7 +195,7 @@ class Psmf(nmf_std.Nmf_std):
         self.prior = self.options.get('prior', self.rank)
         try:
             self.prior = [
-                1. / self.prior for _ in xrange(int(round(self.prior)))]
+                1. / self.prior for _ in range(int(round(self.prior)))]
         except TypeError:
             self.prior = self.options['prior']
         self.track_factor = self.options.get('track_factor', False)
@@ -216,17 +216,17 @@ class Psmf(nmf_std.Nmf_std):
         """Compute M-step and update psi."""
         t_p1 = np.array(multiply(self.V, self.V).sum(axis=1))
         self.psi = - \
-            (np.tile(list(xrange(1, self.N)), (self.V.shape[0], 1)) * self.rho[:, 1:self.N]).sum(
+            (np.tile(list(range(1, self.N)), (self.V.shape[0], 1)) * self.rho[:, 1:self.N]).sum(
                 axis=1) * t_p1[:, 0]
         self.psi = self.psi.reshape((self.V.shape[0], 1))
         temp = np.zeros((self.V.shape[0], self.rank))
-        for t in xrange(self.V.shape[1]):
+        for t in range(self.V.shape[1]):
             temp += (np.tile(self.__arr(self.V[:, t]), (1, self.rank)) - self.lamb * np.tile(
                 self.zeta[:, t].T, (self.V.shape[0], 1))) ** 2 + self.lamb ** 2 * np.tile(self.phi.T, (self.V.shape[0], 1))
-        for n in xrange(self.N):
+        for n in range(self.N):
             self.psi += (self.rho[:, n:self.N].sum(axis = 1) * (self.sigma[:, :, n] * temp).sum(axis = 1)).reshape(self.psi.shape)
-        for n in xrange(self.N):
-            for nn in xrange(n + 1, self.N):
+        for n in range(self.N):
+            for nn in range(n + 1, self.N):
                 self.psi += (2 * self.rho[:, nn:self.N].sum(
                     axis=1) * self.cross_terms[n, nn].T[0]).reshape((self.V.shape[0], 1))
         self.psi /= self.V.shape[1]
@@ -237,29 +237,29 @@ class Psmf(nmf_std.Nmf_std):
         """Compute M-step and update lambda."""
         D = np.zeros((self.rank, 1))
         V = np.zeros((self.V.shape[0], self.rank))
-        for t in xrange(self.V.shape[1]):
+        for t in range(self.V.shape[1]):
             D += self.zeta[:, t].reshape(
                 (self.zeta.shape[0], 1)) ** 2 + self.phi
             V += dot(self.V[:, t], self.zeta[:, t].T)
         temp = np.zeros((self.V.shape[0], self.rank))
-        for n in xrange(self.N):
+        for n in range(self.N):
             temp += np.tile((self.rho[:, n:self.N]).sum(axis = 1).reshape((self.rho.shape[0], 1)), (1, self.rank)) * self.sigma[:, :, n]
         V *= temp
         D = np.tile(D.T, (self.V.shape[0], 1)) * temp
         # heuristic: weak Gaussian prior on lambda for ill-conditioning
         # prevention
         D += self.eps
-        for g in xrange(self.V.shape[0]):
+        for g in range(self.V.shape[0]):
             M = np.zeros((self.rank, self.rank))
-            for n in xrange(self.N):
-                for nn in xrange(n + 1, self.N):
+            for n in range(self.N):
+                for nn in range(n + 1, self.N):
                     M += np.dot(self.rho[g, nn:self.N].sum(axis = 0), np.dot(self.sigma[g, :, n].T, self.sigma[g,:, nn]))
             M = (M + M.T) * np.dot(self.zeta, self.zeta.T)
             self.lamb[g, :] = np.dot(V[g,:], np.linalg.inv(M + np.diag(D[g,:])))
         # heuristic:  negative mixing proportions not allowed
         self.lamb[self.lamb < 0] = 0
         self.W = sp.lil_matrix((self.V.shape[0], self.rank))
-        for n in xrange(self.N):
+        for n in range(self.N):
             locs = (self.r >= n).ravel().nonzero()[0]
             if len(locs):
                 locs = sub2ind(
@@ -273,14 +273,14 @@ class Psmf(nmf_std.Nmf_std):
     def _update_sigma(self):
         """Compute E-step and update sigma."""
         self.cross_terms = np.zeros((self.V.shape[0], self.rank, self.N))
-        for cc in xrange(self.rank):
+        for cc in range(self.rank):
             t_c1 = np.tile(self.sigma[:, cc, :].reshape((self.sigma.shape[0], 1, self.sigma.shape[2])), (1, self.rank, 1))
             t_c2 = np.tile(np.dot(self.zeta[cc, :], self.zeta.T), (self.V.shape[0], 1))
             t_c3 = np.tile((self.lamb * np.tile(self.lamb[:, cc].reshape((self.lamb.shape[0], 1)), (1, self.rank)) * t_c2).reshape(
                 t_c2.shape[0], t_c2.shape[1], 1), (1, 1, self.N))
             self.cross_terms += t_c1 * t_c3
         self.sigma = np.zeros(self.sigma.shape)
-        for t in xrange(self.V.shape[1]):
+        for t in range(self.V.shape[1]):
             t_s1 = np.tile(self.__arr(self.V[:, t]), (1, self.rank)) - self.lamb * np.tile(
                 self.zeta[:, t].T, (self.V.shape[0], 1))
             t_s2 = t_s1 ** 2 + self.lamb ** 2 * \
@@ -288,8 +288,8 @@ class Psmf(nmf_std.Nmf_std):
             self.sigma -= 0.5 * \
                 np.tile((t_s2 / np.tile(self.psi, (1, self.rank))).reshape(
                     t_s2.shape[0], t_s2.shape[1], 1), (1, 1, self.N))
-        for n in xrange(self.N):
-            for nn in xrange(self.N):
+        for n in range(self.N):
+            for nn in range(self.N):
                 if nn != n:
                     t_s1 = (1e-50 + self.rho[:, max(n, nn):self.N]).sum(
                         axis=1) / (1e-50 + self.rho[:, n:self.N]).sum(axis=1)
@@ -306,9 +306,9 @@ class Psmf(nmf_std.Nmf_std):
         """Compute E-step and update zeta."""
         M = np.zeros((self.rank, self.rank))
         V = np.zeros((self.rank, self.V.shape[1]))
-        for cc in xrange(self.rank):
-            for n in xrange(self.N):
-                for nn in xrange(n + 1, self.N):
+        for cc in range(self.rank):
+            for n in range(self.N):
+                for nn in range(n + 1, self.N):
                     t_m1 = np.tile(self.rho[:, nn:self.N].sum(axis=1).reshape(
                         (self.psi.shape[0], 1)) / self.psi, (1, self.rank))
                     t_m2 = np.tile((self.lamb[:, cc] * self.sigma[:, cc, nn]).reshape(
@@ -317,11 +317,11 @@ class Psmf(nmf_std.Nmf_std):
                     M[cc, :] += t_m.sum(axis = 0)
         M += M.T
         temp = np.zeros((self.V.shape[0], self.rank))
-        for n in xrange(self.N):
+        for n in range(self.N):
             temp += np.tile(self.rho[:, n:self.N].sum(axis = 1).reshape((self.rho.shape[0], 1)), (1, self.rank)) * self.sigma[:, :, n]
         M += np.diag(
             (self.lamb ** 2 / np.tile(self.psi, (1, self.rank)) * temp).sum(axis=0))
-        for t in xrange(self.V.shape[1]):
+        for t in range(self.V.shape[1]):
             t_v = np.tile(
                 self.__arr(self.V[:, t]) / self.psi, (1, self.rank)) * self.lamb * temp
             V[:, t] = t_v.sum(axis=0)
@@ -333,7 +333,7 @@ class Psmf(nmf_std.Nmf_std):
     def _update_phi(self):
         """Compute E-step and update phi."""
         self.phi = np.ones(self.phi.shape)
-        for n in xrange(self.N):
+        for n in range(self.N):
             rho_tmp = np.tile(self.rho[:, n:self.N].sum(axis = 1).reshape(self.rho.shape[0], 1), (1, self.rank))
             t_phi = np.tile(self.psi, (1, self.rank)) * self.sigma[:, :, n] * rho_tmp
             self.phi += (self.lamb ** 2 / (t_phi + np.finfo(t_phi.dtype).eps)).sum(
@@ -348,22 +348,22 @@ class Psmf(nmf_std.Nmf_std):
             self.sigma.shape[0], 1, self.sigma.shape[2]).cumsum(axis=2).transpose([0, 2, 1])
         self.rho = self.rho.reshape((self.rho.shape[0], self.rho.shape[1]))
         temp = np.zeros((self.V.shape[0], self.rank))
-        for t in xrange(self.V.shape[1]):
+        for t in range(self.V.shape[1]):
             t_dot = np.array(
                 np.dot(self.__arr(self.V[:, t]).reshape((self.V.shape[0], 1)), self.zeta[:, t].T.reshape((1, self.zeta.shape[0]))))
             temp -= 2 * self.lamb * t_dot + self.lamb ** 2 * \
                 np.tile(
                     self.zeta[:, t].T ** 2 + self.phi.T, (self.V.shape[0], 1))
-        for n in xrange(1, self.N):
+        for n in range(1, self.N):
             self.rho[:, n] -= 0.5 / self.psi[:, 0] * (self.sigma[:, :, 1:n].sum(axis = 2) * temp).sum(axis = 1)
-            for n1 in xrange(n + 1):
-                for n2 in xrange(n1 + 1, n + 1):
+            for n1 in range(n + 1):
+                for n2 in range(n1 + 1, n + 1):
                     self.rho[:, n] -= (
                         1. / self.psi * self.cross_terms[n1, n2])[:, 0]
         t_rho = np.exp(
             self.rho - np.tile(np.amax(self.rho, 1).reshape((self.rho.shape[0], 1)), (1, self.N)))
         self.rho = np.tile((self.prior / self.rank) ** list(
-            xrange(1, self.N + 1)), (self.V.shape[0], 1)) * t_rho
+            range(1, self.N + 1)), (self.V.shape[0], 1)) * t_rho
         self.rho = self.rho / \
             np.tile(self.rho.sum(axis=1).reshape(
                 (self.rho.shape[0], 1)), (1, self.N))

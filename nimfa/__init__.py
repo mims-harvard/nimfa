@@ -17,4 +17,4 @@ __version__ = "3.0"
 __maintainer__ = "Marinka Zitnik"
 __email__ = "marinka.zitnik@fri.uni-lj.si"
 
-from mf_run import *
+from .mf_run import *

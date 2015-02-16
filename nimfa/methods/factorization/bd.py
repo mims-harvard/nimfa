@@ -114,7 +114,7 @@ class Bd(nmf_std.Nmf_std):
         """
         self.v = multiply(self.V, self.V).sum() / 2.
 
-        for run in xrange(self.n_run):
+        for run in range(self.n_run):
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)
             p_obj = c_obj = sys.float_info.max
@@ -207,13 +207,13 @@ class Bd(nmf_std.Nmf_std):
 
     def update(self, iter):
         """Update basis and mixture matrix."""
-        for _ in xrange(self.skip * (iter == 0) + self.stride * (iter > 0)):
+        for _ in range(self.skip * (iter == 0) + self.stride * (iter > 0)):
             # update basis matrix
             C = dot(self.H, self.H.T)
             D = dot(self.V, self.H.T)
-            for n in xrange(self.rank):
+            for n in range(self.rank):
                 if not self.n_w[n]:
-                    nn = list(xrange(n)) + list(xrange(n + 1, self.rank))
+                    nn = list(range(n)) + list(range(n + 1, self.rank))
                     temp = self._randr(
                         sop(D[:, n] - dot(self.W[:, nn], C[nn, n]), C[
                             n, n] + np.finfo(C.dtype).eps, div),
@@ -221,7 +221,7 @@ class Bd(nmf_std.Nmf_std):
                     if not sp.isspmatrix(self.W):
                         self.W[:, n] = temp
                     else:
-                        for j in xrange(self.W.shape[0]):
+                        for j in range(self.W.shape[0]):
                             self.W[j, n] = temp[j]
             # update sigma
             if self.n_sigma == False:
@@ -234,9 +234,9 @@ class Bd(nmf_std.Nmf_std):
             # update mixture matrix
             E = dot(self.W.T, self.W)
             F = dot(self.W.T, self.V)
-            for n in xrange(self.rank):
+            for n in range(self.rank):
                 if not self.n_h[n]:
-                    nn = list(xrange(n)) + list(xrange(n + 1, self.rank))
+                    nn = list(range(n)) + list(range(n + 1, self.rank))
                     temp = self._randr(
                         sop((F[n, :] - dot(E[n, nn], self.H[nn, :])).T, E[
                             n, n] + np.finfo(E.dtype).eps, div),
@@ -244,7 +244,7 @@ class Bd(nmf_std.Nmf_std):
                     if not sp.isspmatrix(self.H):
                         self.H[n, :] = temp.T
                     else:
-                        for j in xrange(self.H.shape[1]):
+                        for j in range(self.H.shape[1]):
                             self.H[n, j] = temp[j]
 
     def _randr(self, m, s, l):

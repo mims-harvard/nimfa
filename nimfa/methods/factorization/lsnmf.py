@@ -73,7 +73,7 @@ class Lsnmf(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        for run in xrange(self.n_run):
+        for run in range(self.n_run):
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)
             self.gW = dot(self.W, dot(self.H, self.H.T)) - dot(
@@ -197,13 +197,13 @@ class Lsnmf(nmf_std.Nmf_std):
         # decrease condition smaller beta more aggressively reduces the step
         # size, but may cause the step size alpha being too small
         alpha = 1.
-        for iter in xrange(self.sub_iter):
+        for iter in range(self.sub_iter):
             grad = dot(WtW, H) - WtV
             projgrad = norm(self.__extract(grad, H))
             if projgrad < epsH:
                 break
             # search for step size alpha
-            for n_iter in xrange(self.inner_sub_iter):
+            for n_iter in range(self.inner_sub_iter):
                 Hn = max(H - alpha * grad, 0)
                 d = Hn - H
                 gradd = multiply(grad, d).sum()
@@ -288,11 +288,11 @@ class Lsnmf(nmf_std.Nmf_std):
                 r2 = r2[yt]
                 c2 = c2[yt]
 
-            idx1 = zip(r1, c1)
-            idx2 = zip(r2, c2)
+            idx1 = list(zip(r1, c1))
+            idx2 = list(zip(r2, c2))
 
             idxf = set(idx1).union(set(idx2))
-            rf, cf = zip(*idxf)
+            rf, cf = list(zip(*idxf))
             return X[rf, cf].T
         else:
             return X[np.logical_or(X < 0, Y > 0)].flatten().T

@@ -78,21 +78,23 @@
               library for displaying face images. 
     
 """
+from os.path import dirname, abspath
+from os.path import join as pjoin
+from warnings import warn
+
+import numpy as np
 
 import nimfa
-import numpy as np
-from os.path import dirname, abspath, sep
-from warnings import warn
 
 try:
     from matplotlib.pyplot import savefig, imshow, set_cmap
-except ImportError, exc:
+except ImportError as exc:
     warn("Matplotlib must be installed to run CBCL images example.")
 
 try:
     from PIL.Image import open, fromarray, new
     from PIL.ImageOps import expand
-except ImportError, exc:
+except ImportError as exc:
     warn("PIL must be installed to run CBCL images example.")
 
 
@@ -127,15 +129,18 @@ def factorize(V):
                      inner_sub_iter=10,
                      beta=0.1,
                      min_residuals=1e-8)
-    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank)
+    print("Performing %s %s %d factorization ..." % (model, model.seed, model.rank))
     fit = nimfa.mf_run(model)
-    print "... Finished"
+    print("... Finished")
     sparse_w, sparse_h = fit.fit.sparseness()
-    print """Stats:
+    print("""Stats:
             - iterations: %d
             - final projected gradients norm: %5.3f
             - Euclidean distance: %5.3f 
-            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric='euclidean'), sparse_w, sparse_h)
+            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter,
+                                                            fit.distance(),
+                                                            fit.distance(metric='euclidean'),
+                                                            sparse_w, sparse_h))
     return fit.basis(), fit.coef()
 
 
@@ -147,14 +152,13 @@ def read():
     
     Return the CBCL faces data matrix. 
     """
-    print "Reading CBCL faces database ..."
-    dir = dirname(dirname(abspath(__file__))) + sep + \
-        'datasets' + sep + 'CBCL_faces' + sep + 'face'
+    print("Reading CBCL faces database ...")
+    dir = pjoin(dirname(dirname(abspath(__file__))), 'datasets', 'CBCL_faces', 'face')
     V = np.matrix(np.zeros((19 * 19, 2429)))
-    for image in xrange(2429):
-        im = open(dir + sep + "face0" + str(image + 1).zfill(4) + ".pgm")
+    for image in range(2429):
+        im = open(pjoin(dir, "face0" + str(image + 1).zfill(4) + ".pgm"))
         V[:, image] = np.mat(np.asarray(im).flatten()).T
-    print "... Finished."
+    print("... Finished.")
     return V
 
 
@@ -167,14 +171,14 @@ def preprocess(V):
     :param V: The CBCL faces data matrix. 
     :type V: `numpy.matrix`
     """
-    print "Preprocessing data matrix ..."
+    print("Preprocessing data matrix ...")
     V = V - V.mean()
     V = V / np.sqrt(np.multiply(V, V).mean())
     V = V + 0.25
     V = V * 0.25
     V = np.minimum(V, 1)
     V = np.maximum(V, 0)
-    print "... Finished."
+    print("... Finished.")
     return V
 
 
@@ -187,8 +191,8 @@ def plot(W):
     """
     set_cmap('gray')
     blank = new("L", (133 + 6, 133 + 6))
-    for i in xrange(7):
-        for j in xrange(7):
+    for i in range(7):
+        for j in range(7):
             basis = np.array(W[:, 7 * i + j])[:, 0].reshape((19, 19))
             basis = basis / np.max(basis) * 255
             basis = 255 - basis

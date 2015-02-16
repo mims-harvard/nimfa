@@ -40,15 +40,19 @@
     
 """
 
-import nimfa
-import numpy as np
-import scipy.sparse as sp
-from os.path import dirname, abspath, sep
+from os.path import dirname, abspath
+from os.path import join as pjoin
 from warnings import warn
+
+import scipy.sparse as sp
+import numpy as np
+
+import nimfa
+
 
 try:
     import matplotlib.pylab as plb
-except ImportError, exc:
+except ImportError as exc:
     warn("Matplotlib must be installed to run Recommendations example.")
 
 
@@ -91,14 +95,14 @@ def factorize(V):
                      beta=1e-4,
                      i_conv=10,
                      w_min_change=0)
-    print "Performing %s %s %d factorization ..." % (model, model.seed, model.rank)
+    print("Performing %s %s %d factorization ..." % (model, model.seed, model.rank))
     fit = nimfa.mf_run(model)
-    print "... Finished"
+    print("... Finished")
     sparse_w, sparse_h = fit.fit.sparseness()
-    print """Stats:
+    print("""Stats:
             - iterations: %d
             - Euclidean distance: %5.3f
-            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(metric='euclidean'), sparse_w, sparse_h)
+            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(metric='euclidean'), sparse_w, sparse_h))
     return fit.basis(), fit.coef()
 
 
@@ -114,14 +118,13 @@ def read(data_set):
     :param data_set: Name of the split data set to be read. 
     :type data_set: `str`
     """
-    print "Reading MovieLens ratings data set ..."
-    dir = dirname(dirname(abspath(__file__))) + sep + \
-        'datasets' + sep + 'MovieLens' + sep + data_set + '.base'
+    print("Reading MovieLens ratings data set ...")
+    dir = pjoin(dirname(dirname(abspath(__file__))), 'datasets', 'MovieLens', data_set + '.base')
     V = sp.lil_matrix((943, 1682))
     for line in open(dir):
-        u, i, r, _ = map(int, line.split())
+        u, i, r, _ = list(map(int, line.split()))
         V[u - 1, i - 1] = r
-    print "... Finished."
+    print("... Finished.")
     return V
 
 
@@ -135,17 +138,17 @@ def preprocess(V):
     :param V: The MovieLens data matrix. 
     :type V: `scipy.sparse.lil_matrix`
     """
-    print "Preprocessing data matrix ..."
+    print("Preprocessing data matrix ...")
     V = V.tocsr()
-    maxs = [np.max(V[i, :].todense()) for i in xrange(V.shape[0])]
+    maxs = [np.max(V[i, :].todense()) for i in range(V.shape[0])]
     now = 0
-    for row in xrange(V.shape[0]):
+    for row in range(V.shape[0]):
         upto = V.indptr[row + 1]
         while now < upto:
             col = V.indices[now]
             V.data[now] /= maxs[row]
             now += 1
-    print "... Finished."
+    print("... Finished.")
     return V, maxs
 
 
@@ -162,18 +165,18 @@ def plot(W, H, data_set, maxs):
     :param maxs: Users' maximum ratings (used in normalization). 
     :type maxs: `list`
     """
-    print "Plotting RMSE rates ..."
+    print("Plotting RMSE rates ...")
     dir = dirname(dirname(abspath(__file__))) + sep + \
         'datasets' + sep + 'MovieLens' + sep + data_set + '.test'
     rmse = 0
     n = 0
     for line in open(dir):
-        u, i, r, _ = map(int, line.split())
+        u, i, r, _ = list(map(int, line.split()))
         rmse += ((W[u - 1, :] * H[:, i - 1])[0, 0] + maxs[u - 1] - r) ** 2
         n += 1
     rmse /= n
-    print rmse
-    print "... Finished."
+    print(rmse)
+    print("... Finished.")
 
 if __name__ == "__main__":
     """Run the Recommendations example."""

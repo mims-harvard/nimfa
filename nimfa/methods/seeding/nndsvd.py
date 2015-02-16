@@ -70,7 +70,7 @@ class Nndsvd(object):
         self.W[:, 0] = sqrt(S[0]) * abs(U[:, 0])
         self.H[0, :] = sqrt(S[0]) * abs(E[:, 0].T)
         # second svd for the other factors
-        for i in xrange(1, self.rank):
+        for i in range(1, self.rank):
             uu = U[:, i]
             vv = E[:, i]
             uup = self._pos(uu)
@@ -130,8 +130,8 @@ class Nndsvd(object):
         # scipy.sparse.linalg ARPACK does not allow computation of rank(V) eigenvectors
         # fill the missing columns/rows with random values
         prng = np.random.RandomState()
-        S = [S[i, i] for i in xrange(np.min([S.shape[0], S.shape[1]]))]
-        S += [prng.rand() for _ in xrange(self.rank - len(S))]
+        S = [S[i, i] for i in range(np.min([S.shape[0], S.shape[1]]))]
+        S += [prng.rand() for _ in range(self.rank - len(S))]
         U = U.tolil()
         E = E.tolil()
         temp_U = sp.lil_matrix((V.shape[0], min(V.shape[0], V.shape[1])))
@@ -150,7 +150,7 @@ class Nndsvd(object):
         eps = np.finfo(V.data.dtype).eps if not 'int' in str(
             V.data.dtype) else 0
         # second svd for the other factors
-        for i in xrange(1, self.rank):
+        for i in range(1, self.rank):
             uu = U[:, i]
             vv = E[:, i]
             uup = self._pos(uu)

@@ -59,7 +59,7 @@ class Pmfcc(smf.Smf):
         self._Theta_p = multiply(self.Theta, sop(self.Theta, 0, operator.gt))
         self._Theta_n = multiply(self.Theta, sop(self.Theta, 0, operator.lt)*(-1))
 
-        for run in xrange(self.n_run):
+        for run in range(self.n_run):
             # [FWang2008]_; H = G.T, W = F (Table 2)
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)

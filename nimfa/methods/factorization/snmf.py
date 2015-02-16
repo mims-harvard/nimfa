@@ -89,7 +89,7 @@ class Snmf(nmf_std.Nmf_std):
         if self.version == 'l':
             self.V = self.V.T
 
-        for run in xrange(self.n_run):
+        for run in range(self.n_run):
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)
             if sp.isspmatrix(self.W):
@@ -302,8 +302,8 @@ class Snmf(nmf_std.Nmf_std):
         # obtain the initial feasible solution and corresponding passive set
         K = self.__spcssls(CtC, CtA)
         p_set = sop(K, 0, ge).tolil()
-        for i in xrange(K.shape[0]):
-            for j in xrange(K.shape[1]):
+        for i in range(K.shape[0]):
+            for j in range(K.shape[1]):
                 if not p_set[i, j]:
                     K[i, j] = 0.
         D = K.copy()
@@ -325,8 +325,8 @@ class Snmf(nmf_std.Nmf_std):
                     # find indices of negative variables in passive set
                     tmp = sop(K[:, h_set], 0, le).tolil()
                     tmp_f = sp.lil_matrix(K.shape, dtype='bool')
-                    for i in xrange(K.shape[0]):
-                        for j in xrange(len(h_set)):
+                    for i in range(K.shape[0]):
+                        for j in range(len(h_set)):
                             if p_set[i, h_set[j]] and tmp[i, h_set[j]]:
                                 tmp_f[i, h_set[j]] = True
                     idx_f = find(tmp_f[:, h_set])
@@ -342,7 +342,7 @@ class Snmf(nmf_std.Nmf_std):
                         l_1n = i_f
                         l_2n = [h_set[e] for e in j_f]
                     t_d = D[l_1n, l_2n] / (D[l_1n, l_2n] - K[l_1n, l_2n])
-                    for i in xrange(len(i_f)):
+                    for i in range(len(i_f)):
                         alpha[i_f[i], j_f[i]] = t_d.todense().flatten()[0, i]
                     alpha_min, min_idx = argmin(alpha[:, :n_h_set], axis=0)
                     min_idx = min_idx.tolist()[0]
@@ -359,7 +359,7 @@ class Snmf(nmf_std.Nmf_std):
             # optimality
             W[:, f_set] = CtA[:, f_set] - dot(CtC, K[:, f_set])
             tmp = sp.lil_matrix(p_set.shape, dtype='bool')
-            for i in xrange(p_set.shape[0]):
+            for i in range(p_set.shape[0]):
                 for j in f_set:
                     if not p_set[i, j]:
                         tmp[i, j] = True
@@ -371,7 +371,7 @@ class Snmf(nmf_std.Nmf_std):
             # for non-optimal solutions, add the appropriate variable to Pset
             if len(f_set) > 0:
                 tmp = sp.lil_matrix(p_set.shape, dtype='bool')
-                for i in xrange(p_set.shape[0]):
+                for i in range(p_set.shape[0]):
                     for j in f_set:
                         if not p_set[i, j]:
                             tmp[i, j] = True
@@ -393,25 +393,25 @@ class Snmf(nmf_std.Nmf_std):
         K = sp.lil_matrix(CtA.shape)
         if p_set == None or p_set.size == 0 or all(p_set):
             # equivalent if CtC is square matrix
-            for k in xrange(CtA.shape[1]):
+            for k in range(CtA.shape[1]):
                 ls = sp.linalg.gmres(CtC, CtA[:, k].toarray())[0]
                 K[:, k] = sp.lil_matrix(np.mat(ls).T)
             # K = dot(np.linalg.pinv(CtC), CtA)
         else:
             l_var, p_rhs = p_set.shape
             coded_p_set = dot(
-                sp.lil_matrix(np.mat(2 ** np.array(range(l_var - 1, -1, -1)))), p_set)
+                sp.lil_matrix(np.mat(2 ** np.array(list(range(l_var - 1, -1, -1))))), p_set)
             sorted_p_set, sorted_idx_set = sort(coded_p_set.todense())
             breaks = diff(np.mat(sorted_p_set))
             break_idx = [-1] + find(np.mat(breaks)) + [p_rhs]
-            for k in xrange(len(break_idx) - 1):
+            for k in range(len(break_idx) - 1):
                 cols2solve = sorted_idx_set[
                     break_idx[k] + 1: break_idx[k + 1] + 1]
                 vars = p_set[:, sorted_idx_set[break_idx[k] + 1]]
-                vars = [i for i in xrange(vars.shape[0]) if vars[i, 0]]
+                vars = [i for i in range(vars.shape[0]) if vars[i, 0]]
                 tmp_ls = CtA[:, cols2solve][vars, :]
                 sol = sp.lil_matrix(K.shape)
-                for k in xrange(tmp_ls.shape[1]):
+                for k in range(tmp_ls.shape[1]):
                     ls = sp.linalg.gmres(CtC[:, vars][vars, :], tmp_ls[:, k].toarray())[0]
                     sol[:, k] = sp.lil_matrix(np.mat(ls).T)
                 i = 0
@@ -480,7 +480,7 @@ class Snmf(nmf_std.Nmf_std):
                     idx_f = find(
                         np.logical_and(p_set[:, h_set], K[:, h_set] < 0))
                     i_f = [l % p_set.shape[0] for l in idx_f]
-                    j_f = [l / p_set.shape[0] for l in idx_f]
+                    j_f = [l // p_set.shape[0] for l in idx_f]
                     if len(i_f) == 0:
                         break
                     if n_h_set == 1:
@@ -491,7 +491,7 @@ class Snmf(nmf_std.Nmf_std):
                         l_1n = i_f
                         l_2n = [h_set[e] for e in j_f]
                     t_d = D[l_1n, l_2n] / (D[l_1n, l_2n] - K[l_1n, l_2n])
-                    for i in xrange(len(i_f)):
+                    for i in range(len(i_f)):
                         alpha[i_f[i], j_f[i]] = t_d.flatten()[0, i]
                     alpha_min, min_idx = argmin(alpha[:, :n_h_set], axis=0)
                     min_idx = min_idx.tolist()[0]
@@ -535,15 +535,15 @@ class Snmf(nmf_std.Nmf_std):
         else:
             l_var, p_rhs = p_set.shape
             coded_p_set = dot(
-                np.mat(2 ** np.array(range(l_var - 1, -1, -1))), p_set)
+                np.mat(2 ** np.array(list(range(l_var - 1, -1, -1)))), p_set)
             sorted_p_set, sorted_idx_set = sort(coded_p_set)
             breaks = diff(np.mat(sorted_p_set))
             break_idx = [-1] + find(np.mat(breaks)) + [p_rhs]
-            for k in xrange(len(break_idx) - 1):
+            for k in range(len(break_idx) - 1):
                 cols2solve = sorted_idx_set[
                     break_idx[k] + 1: break_idx[k + 1] + 1]
                 vars = p_set[:, sorted_idx_set[break_idx[k] + 1]]
-                vars = [i for i in xrange(vars.shape[0]) if vars[i, 0]]
+                vars = [i for i in range(vars.shape[0]) if vars[i, 0]]
                 if vars != [] and cols2solve != []:
                     A = CtC[:, vars][vars, :]
                     B = CtA[:, cols2solve][vars,:]

@@ -3,8 +3,8 @@
     This package contains implementations of the MF algorithms and seeding methods.
 """
 
-import factorization
-import seeding
+from . import factorization
+from . import seeding
 
 
 def list_mf_methods():

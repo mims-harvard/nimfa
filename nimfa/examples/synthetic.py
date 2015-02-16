@@ -58,29 +58,29 @@ def print_info(fit, idx=None):
                 multiple NMF model.
     :type idx: `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
     """
-    print "================================================================================================="
-    print "Factorization method:", fit.fit
-    print "Initialization method:", fit.fit.seed
-    print "Basis matrix W: "
-    print __fact_factor(fit.basis())
-    print "Mixture (Coefficient) matrix H%d: " % (idx if idx != None else 0)
-    print __fact_factor(fit.coef(idx))
-    print "Distance (Euclidean): ", fit.distance(metric='euclidean', idx=idx)
+    print("=================================================================================================")
+    print("Factorization method:", fit.fit)
+    print("Initialization method:", fit.fit.seed)
+    print("Basis matrix W: ")
+    print(__fact_factor(fit.basis()))
+    print("Mixture (Coefficient) matrix H%d: " % (idx if idx != None else 0))
+    print(__fact_factor(fit.coef(idx)))
+    print("Distance (Euclidean): ", fit.distance(metric='euclidean', idx=idx))
     # We can access actual number of iteration directly through fitted model.
     # fit.fit.n_iter
-    print "Actual number of iterations: ", fit.summary(idx)['n_iter']
+    print("Actual number of iterations: ", fit.summary(idx)['n_iter'])
     # We can access sparseness measure directly through fitted model.
     # fit.fit.sparseness()
-    print "Sparseness basis: %7.4f, Sparseness mixture: %7.4f" % (fit.summary(idx)['sparseness'][0], fit.summary(idx)['sparseness'][1])
+    print("Sparseness basis: %7.4f, Sparseness mixture: %7.4f" % (fit.summary(idx)['sparseness'][0], fit.summary(idx)['sparseness'][1]))
     # We can access explained variance directly through fitted model.
     # fit.fit.evar()
-    print "Explained variance: ", fit.summary(idx)['evar']
+    print("Explained variance: ", fit.summary(idx)['evar'])
     # We can access residual sum of squares directly through fitted model.
     # fit.fit.rss()
-    print "Residual sum of squares: ", fit.summary(idx)['rss']
+    print("Residual sum of squares: ", fit.summary(idx)['rss'])
     # There are many more ... but just cannot print out everything =] and some measures need additional data or more runs
     # e.g. entropy, predict, purity, coph_cor, consensus, select_features, score_features, connectivity
-    print "================================================================================================="
+    print("=================================================================================================")
 
 
 def run_snmnmf(V, V1):

@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'nimfa - A Python Library for Nonnegative Matrix Factorization Techniques'
-copyright = u'2011, Marinka Zitnik'
+project = 'nimfa - A Python Library for Nonnegative Matrix Factorization Techniques'
+copyright = '2011, Marinka Zitnik'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -178,8 +178,8 @@ htmlhelp_basename = 'nimfa-APythonLibraryforNonnegativeMatrixFactorizationTechni
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'nimfa-APythonLibraryforNonnegativeMatrixFactorizationTechniques.tex', u'nimfa - A Python Library for Nonnegative Matrix Factorization Techniques Documentation',
-   u'Marinka Zitnik', 'manual'),
+  ('index', 'nimfa-APythonLibraryforNonnegativeMatrixFactorizationTechniques.tex', 'nimfa - A Python Library for Nonnegative Matrix Factorization Techniques Documentation',
+   'Marinka Zitnik', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -211,8 +211,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'nimfa-APythonLibraryforNonnegativeMatrixFactorizationTechniques', u'nimfa - A Python Library for Nonnegative Matrix Factorization Techniques Documentation',
-     [u'Marinka Zitnik'], 1)
+    ('index', 'nimfa-APythonLibraryforNonnegativeMatrixFactorizationTechniques', 'nimfa - A Python Library for Nonnegative Matrix Factorization Techniques Documentation',
+     ['Marinka Zitnik'], 1)
 ]
 
 

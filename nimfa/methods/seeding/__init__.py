@@ -3,11 +3,11 @@
     This package contains implementations of initialization methods for matrix factorization.
 """
 
-import nndsvd
-import random
-import fixed
-import random_c
-import random_vcol
+from . import nndsvd
+from . import random
+from . import fixed
+from . import random_c
+from . import random_vcol
 
 methods = {"random": random.Random,
            "fixed": fixed.Fixed,

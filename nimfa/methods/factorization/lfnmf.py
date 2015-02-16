@@ -69,7 +69,7 @@ class Lfnmf(nmf_std.Nmf_std):
         
         Return fitted factorization model.
         """
-        for run in xrange(self.n_run):
+        for run in range(self.n_run):
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)
             self.Sw, self.Sb = np.mat(
@@ -148,25 +148,25 @@ class Lfnmf(nmf_std.Nmf_std):
         C = len(c2m)
         ksi = 1.
         # update mixture matrix H
-        for k in xrange(self.H.shape[0]):
-            for l in xrange(self.H.shape[1]):
+        for k in range(self.H.shape[0]):
+            for l in range(self.H.shape[1]):
                 n_r = len(c2m[idxH[0, l]])
                 u_c = avgs[idxH[0, l]][k, 0]
                 t_1 = (2 * u_c - 1.) / (4 * ksi)
                 t_2 = (1. - 2 * u_c) ** 2 + 8 * ksi * self.H[k, l] * sum(self.W[i, k] * self.V[i, l] /
-                      (dot(self.W[i, :], self.H[:, l])[0, 0] + 1e-5) for i in xrange(self.W.shape[0]))
+                      (dot(self.W[i, :], self.H[:, l])[0, 0] + 1e-5) for i in range(self.W.shape[0]))
                 self.H[k, l] = t_1 + sqrt(t_2) / (4 * ksi)
         # update basis matrix W
-        for i in xrange(self.W.shape[0]):
-            for k in xrange(self.W.shape[1]):
+        for i in range(self.W.shape[0]):
+            for k in range(self.W.shape[1]):
                 w_1 = sum(self.H[k, j] * self.V[i, j] / (dot(self.W[i, :], self.H[:, j])[0, 0] + 1e-5)
-                          for j in xrange(self.V.shape[0]))
+                          for j in range(self.V.shape[0]))
                 self.W[i, k] = self.W[i, k] * w_1 / self.H[k, :].sum()
         W2 = repmat(self.W.sum(axis=0), self.V.shape[0], 1)
         self.W = elop(self.W, W2, div)
         # update within class scatter and between class
         self.Sw = sum(sum(dot(self.H[:, c2m[i][j]] - avgs[i], (self.H[:, c2m[i][j]] - avgs[i]).T)
-                          for j in xrange(len(c2m[i]))) for i in c2m)
+                          for j in range(len(c2m[i]))) for i in c2m)
         avgs_t = np.mat(np.zeros((self.rank, 1)))
         for k in avgs:
             avgs_t += avgs[k]
@@ -177,7 +177,7 @@ class Lfnmf(nmf_std.Nmf_std):
         """Compute class membership and mean class value of encoding (mixture) matrix H."""
         c2m = {}
         avgs = {}
-        for i in xrange(idxH.shape[1]):
+        for i in range(idxH.shape[1]):
             # group columns of encoding matrix H by class membership
             c2m.setdefault(idxH[0, i], [])
             c2m[idxH[0, i]].append(i)

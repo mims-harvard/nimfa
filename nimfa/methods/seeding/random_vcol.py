@@ -56,7 +56,7 @@ class Random_vcol(object):
         else:
             self.W = np.mat(np.zeros((V.shape[0], self.rank)))
             self.H = np.mat(np.zeros((self.rank, V.shape[1])))
-        for i in xrange(self.rank):
+        for i in range(self.rank):
             self.W[:, i] = V[:, self.prng.randint(
                 low=0, high=V.shape[1], size=self.p_c)].mean(axis=1)
             self.H[i, :] = V[

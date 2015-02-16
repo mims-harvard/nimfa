@@ -48,7 +48,7 @@ class Pmf(nmf_std.Nmf_std):
          
         Return fitted factorization model.
         """
-        for run in xrange(self.n_run):
+        for run in range(self.n_run):
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)
             self.W = elop(
@@ -58,7 +58,7 @@ class Pmf(nmf_std.Nmf_std):
             self.v_factor = self.V.sum()
             self.V_n = sop(self.V.copy(), self.v_factor, div)
             self.P = sp.spdiags(
-                [1. / self.rank for _ in xrange(self.rank)], 0, self.rank, self.rank, 'csr')
+                [1. / self.rank for _ in range(self.rank)], 0, self.rank, self.rank, 'csr')
             self.sqrt_P = sop(self.P, s=None, op=np.sqrt)
             p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
@@ -143,7 +143,7 @@ class Pmf(nmf_std.Nmf_std):
         algorithm. """
         # E step
         Qnorm = dot(dot(self.W, self.P), self.H)
-        for k in xrange(self.rank):
+        for k in range(self.rank):
             # E-step
             Q = elop(self.P[k, k] * dot(self.W[:, k], self.H[k, :]), sop(
                 Qnorm, np.finfo(Qnorm.dtype).eps, add), div)
@@ -151,11 +151,11 @@ class Pmf(nmf_std.Nmf_std):
             # M-step
             dum = V_nQ.sum(axis=1)
             s_dum = dum.sum()
-            for i in xrange(self.W.shape[0]):
+            for i in range(self.W.shape[0]):
                 self.W[i, k] = dum[i, 0] / s_dum
             dum = V_nQ.sum(axis=0)
             s_dum = dum.sum()
-            for i in xrange(self.H.shape[1]):
+            for i in range(self.H.shape[1]):
                 self.H[k, i] = dum[0, i] / s_dum
 
     def objective(self):
