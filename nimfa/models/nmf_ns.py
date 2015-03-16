@@ -9,7 +9,6 @@ from .nmf import *
 
 
 class Nmf_ns(Nmf):
-
     """
     Implementation of the alternative model to manage factorizations that follow
     nonstandard NMF model. This modification is required by the Nonsmooth NMF
@@ -37,7 +36,6 @@ class Nmf_ns(Nmf):
     parameter theta which can be specified as algorithm specific model option. For detailed
     explanation of the NSNMF algorithm see :mod:`methods.factorization.nsnmf`.
     """
-
     def __init__(self, params):
         """
         Construct factorization model that manages nonsmooth NMF models.
@@ -48,8 +46,10 @@ class Nmf_ns(Nmf):
            factorization method.
         :type params: `dict`
         """
-        super().__init__(params)
         self.model_name = "ns"
+        self.V1 = None
+        self.H1 = None
+        super().__init__(params)
         if sp.isspmatrix(self.V) and (self.V.data < 0).any() or not sp.isspmatrix(self.V) and (self.V < 0).any():
             raise utils.MFError("The input matrix contains negative elements.")
 

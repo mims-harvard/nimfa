@@ -5,7 +5,6 @@ Utils (``utils.utils``)
 #########################
 """
 
-
 class MFError(Exception):
 
     """

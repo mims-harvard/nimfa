@@ -48,18 +48,75 @@ from nimfa.utils.linalg import *
 
 
 class Bd(nmf_std.Nmf_std):
-
     """
-    For detailed explanation of the general model parameters see :mod:`mf_run`.
-    
-    If ``max_iter`` of the underlying model is not specified, default
-    value of ``max_iter`` 30 is set. The meaning of ``max_iter`` for
-    BD is the number of Gibbs samples to compute. Sequence of Gibbs samples
-    converges to a sample from the joint posterior.
-    
-    The following are algorithm specific model options which can be passed with
-    values as keyword arguments.
-    
+    :param V: The target matrix to estimate.
+    :type V: Instance of the :class:`scipy.sparse` sparse matrices types,
+       :class:`numpy.ndarray`, :class:`numpy.matrix` or tuple of instances of
+       the latter classes.
+
+    :param seed: Specify method to seed the computation of a factorization. If
+       specified :param:`W` and :param:`H` seeding must be None. If neither seeding
+       method or initial fixed factorization is specified, random initialization is
+       used.
+    :type seed: `str` naming the method or :class:`methods.seeding.nndsvd.Nndsvd`
+       or None
+
+    :param W: Specify initial factorization of basis matrix W. Default is None.
+       When specified, :param:`seed` must be None.
+    :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or
+       :class:`numpy.matrix` or None
+
+    :param H: Specify initial factorization of mixture matrix H. Default is None.
+       When specified, :param:`seed` must be None.
+    :type H: Instance of the :class:`scipy.sparse` sparse matrices types,
+       :class:`numpy.ndarray`, :class:`numpy.matrix`, tuple of instances of the
+       latter classes or None
+
+    :param rank: The factorization rank to achieve. Default is 30.
+    :type rank: `int`
+
+    :param n_run: It specifies the number of runs of the algorithm. Default is
+       1. If multiple runs are performed, fitted factorization model with the
+       lowest objective function value is retained.
+    :type n_run: `int`
+
+    :param callback: Pass a callback function that is called after each run when
+       performing multiple runs. This is useful if one wants to save summary
+       measures or process the result before it gets discarded. The callback
+       function is called with only one argument :class:`models.mf_fit.Mf_fit` that
+       contains the fitted model. Default is None.
+    :type callback: `function`
+
+    :param callback_init: Pass a callback function that is called after each
+       initialization of the matrix factors. In case of multiple runs the function
+       is called before each run (more precisely after initialization and before
+       the factorization of each run). In case of single run, the passed callback
+       function is called after the only initialization of the matrix factors.
+       This is useful if one wants to obtain the initialized matrix factors for
+       further analysis or additional info about initialized factorization model.
+       The callback function is called with only one argument
+       :class:`models.mf_fit.Mf_fit` that (among others) contains also initialized
+       matrix factors. Default is None.
+    :type callback_init: `function`
+
+    :param track_factor: When :param:`track_factor` is specified, the fitted
+        factorization model is tracked during multiple runs of the algorithm. This
+        option is taken into account only when multiple runs are executed
+        (:param:`n_run` > 1). From each run of the factorization all matrix factors
+        are retained, which can be very space consuming. If space is the problem
+        setting the callback function with :param:`callback` is advised which is
+        executed after each run. Tracking is useful for performing some quality or
+        performance measures (e.g. cophenetic correlation, consensus matrix,
+        dispersion). By default fitted model is not tracked.
+    :type track_factor: `bool`
+
+    :param track_error: Tracking the residuals error. Only the residuals from
+        each iteration of the factorization are retained. Error tracking is not
+        space consuming. By default residuals are not tracked and only the final
+        residuals are saved. It can be used for plotting the trajectory of the
+        residuals.
+    :type track_error: `bool`
+
     :param alpha: The prior for basis matrix (W) of proper dimensions. Default
        is zeros matrix prior.
     :type alpha: :class:`scipy.sparse.csr_matrix` or :class:`numpy.matrix`
@@ -75,7 +132,7 @@ class Bd(nmf_std.Nmf_std):
     :type k: `float`
 
     :param sigma: Initial value for noise variance (sigma**2). Default is 1.
-    :type sigma: `float`  
+    :type sigma: `float`
 
     :param skip: Number of initial samples to skip. Default is 100.
     :type skip: `int`
@@ -97,14 +154,48 @@ class Bd(nmf_std.Nmf_std):
 
     :param n_sigma: Method does not sample from ``sigma``. By default
        sampling is done.
-    :type n_sigma: `bool`    
-    """
+    :type n_sigma: `bool`
 
-    def __init__(self, **params):
+    **Stopping criterion**
+
+    Factorization terminates if any of the specified criteria is satisfied.
+
+    :param max_iter: Maximum number of factorization iterations. Note that the
+       number of iterations depends on the speed of method convergence. Default
+       is 30.
+    :type max_iter: `int`
+
+    :param min_residuals: Minimal required improvement of the residuals from the
+       previous iteration. They are computed between the target matrix and its MF
+       estimate using the objective function associated to the MF algorithm.
+       Default is None.
+    :type min_residuals: `float`
+
+    :param test_conv: It indicates how often convergence test is done. By
+       default convergence is tested each iteration.
+    :type test_conv: `int`
+    """
+    def __init__(self, V, seed=None, W=None, H=None, rank=30, max_iter=30,
+                 min_residuals=1e-5, test_conv=None, n_run=1, callback=None,
+                 callback_init=None, track_factor=False, track_error=False,
+                 alpha=None, beta=None, theta=0., k=0., sigma=1., skip=100,
+                 stride=1, n_w=None, n_h=None, n_sigma=False,
+                 **options):
         self.name = "bd"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(params)
-        self.set_params()
+        super().__init__(vars())
+        if not self.alpha:
+            self.alpha = sp.csr_matrix((self.V.shape[0], self.rank))
+        self.alpha = self.alpha.tocsr() if sp.isspmatrix(self.alpha) else np.mat(self.alpha)
+        if not self.beta:
+            self.beta = sp.csr_matrix((self.rank, self.V.shape[1]))
+        self.beta = self.beta.tocsr() if sp.isspmatrix(self.beta) else np.mat(self.beta)
+        if not self.n_w:
+            self.n_w = np.zeros((self.rank, 1))
+        if not self.n_h:
+            self.n_h = np.zeros((self.rank, 1))
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 \
+                                              or self.track_error else None
 
     def factorize(self):
         """
@@ -175,35 +266,6 @@ class Bd(nmf_std.Nmf_std):
         if iter > 0 and c_obj > p_obj:
             return False
         return True
-
-    def set_params(self):
-        """Set algorithm specific model options."""
-        if not self.max_iter:
-            self.max_iter = 30
-        self.alpha = self.options.get(
-            'alpha', sp.csr_matrix((self.V.shape[0], self.rank)))
-        if sp.isspmatrix(self.alpha):
-            self.alpha = self.alpha.tocsr()
-        else:
-            self.alpha = np.mat(self.alpha)
-        self.beta = self.options.get(
-            'beta', sp.csr_matrix((self.rank, self.V.shape[1])))
-        if sp.isspmatrix(self.beta):
-            self.beta = self.beta.tocsr()
-        else:
-            self.beta = np.mat(self.beta)
-        self.theta = self.options.get('theta', .0)
-        self.k = self.options.get('k', .0)
-        self.sigma = self.options.get('sigma', 1.)
-        self.skip = self.options.get('skip', 100)
-        self.stride = self.options.get('stride', 1)
-        self.n_w = self.options.get('n_w', np.zeros((self.rank, 1)))
-        self.n_h = self.options.get('n_h', np.zeros((self.rank, 1)))
-        self.n_sigma = self.options.get('n_sigma', False)
-        self.track_factor = self.options.get('track_factor', False)
-        self.track_error = self.options.get('track_error', False)
-        self.tracker = mf_track.Mf_track(
-        ) if self.track_factor and self.n_run > 1 or self.track_error else None
 
     def update(self, iter):
         """Update basis and mixture matrix."""

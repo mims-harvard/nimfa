@@ -8,10 +8,10 @@
 import nimfa.utils.utils as utils
 from nimfa.utils.linalg import *
 from nimfa.models import mf_track
+from nimfa.methods import seeding
 
 
 class Nmf(object):
-
     """
     This class defines a common interface / model to handle NMF models in a generic way.
     
@@ -71,7 +71,6 @@ class Nmf(object):
         
         Indication how often convergence test is done.
     """
-
     def __init__(self, params):
         """
         Construct generic factorization model.
@@ -82,51 +81,37 @@ class Nmf(object):
         :type params: `dict`
         """
         self.__dict__.update(params)
-        # check if tuples of target and factor matrices are passed
-        if isinstance(self.V, tuple):
-            if len(self.V) > 2:
-                raise utils.MFError("Multiple NMF uses two target matrices.")
-            else:
-                self.V1 = self.V[1]
-                self.V = self.V[0]
-        if isinstance(self.H, tuple):
-            if len(self.H) > 2:
-                raise utils.MFError("Multiple NMF uses two mixture matrices.")
-            else:
-                self.H1 = self.H[1]
-                self.H = self.H[0]
-        if isinstance(self.W, tuple):
-            raise utils.MFError("Multiple NMF uses one basis matrix.")
         # do not copy target and factor matrices into the program
         if sp.isspmatrix(self.V):
             self.V = self.V.tocsr().astype('d')
         else:
             self.V = np.asmatrix(self.V) if self.V.dtype == np.dtype(
                 float) else np.asmatrix(self.V, dtype='d')
-        if hasattr(self, "V1"):
+        if self.V1 is not None:
             if sp.isspmatrix(self.V1):
                 self.V1 = self.V1.tocsr().astype('d')
             else:
                 self.V1 = np.asmatrix(self.V1) if self.V1.dtype == np.dtype(
                     float) else np.asmatrix(self.V1, dtype='d')
-        if self.W != None:
+        if self.W is not None:
             if sp.isspmatrix(self.W):
                 self.W = self.W.tocsr().astype('d')
             else:
                 self.W = np.asmatrix(self.W) if self.W.dtype == np.dtype(
                     float) else np.asmatrix(self.W, dtype='d')
-        if self.H != None:
+        if self.H is not None:
             if sp.isspmatrix(self.H):
                 self.H = self.H.tocsr().astype('d')
             else:
                 self.H = np.asmatrix(self.H) if self.H.dtype == np.dtype(
                     float) else np.asmatrix(self.H, dtype='d')
-        if self.H1 != None:
+        if self.H1 is not None:
             if sp.isspmatrix(self.H1):
                 self.H1 = self.H1.tocsr().astype('d')
             else:
                 self.H1 = np.asmatrix(self.H1) if self.H1.dtype == np.dtype(
                     float) else np.asmatrix(self.H1, dtype='d')
+        self._compatibility()
 
     def run(self):
         """Run the specified MF algorithm."""
@@ -586,3 +571,41 @@ class Nmf(object):
                         summaries[rank][measure] = _measures(
                             measure)(idx=idx)
         return summaries
+
+    def _compatibility(self):
+        """
+        Check if chosen seeding method is compatible with chosen factorization
+        method or fixed initialization is passed.
+
+        :param mf_model: The underlying initialized model of matrix factorization.
+        :type mf_model: Class inheriting :class:`models.nmf.Nmf`
+        """
+        W = self.basis()
+        H = self.coef(0)
+        H1 = self.coef(1) if self.model_name == 'mm' else None
+        if self.seed == None and W == None and H == None and H1 == None:
+            self.seed = None if "none" in self.aseeds else "random"
+        if W != None and H != None:
+            if self.seed != None and self.seed != "fixed":
+                raise utils.MFError("Initial factorization is fixed.")
+            else:
+                self.seed = seeding.fixed.Fixed()
+                self.seed._set_fixed(W=W, H=H, H1=H1)
+        self.__is_smdefined()
+        self.__compatibility()
+
+    def __is_smdefined(self):
+        """Check if MF and seeding methods are well defined."""
+        if isinstance(self.seed, str):
+            if self.seed in seeding.methods:
+                self.seed = seeding.methods[self.seed]()
+            else:
+                raise utils.MFError("Unrecognized seeding method.")
+        else:
+            if not str(self.seed).lower() in seeding.methods:
+                raise utils.MFError("Unrecognized seeding method.")
+
+    def __compatibility(self):
+        """Check if MF model is compatible with the seeding method."""
+        if not str(self.seed).lower() in self.aseeds:
+            raise utils.MFError("MF model is incompatible with the seeding method.")

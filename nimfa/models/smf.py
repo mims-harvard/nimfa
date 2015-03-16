@@ -9,7 +9,6 @@ from nimfa.utils.linalg import *
 
 
 class Smf(object):
-
     """
     This class defines a common interface / model to handle standard MF models in
     a generic way.
@@ -18,9 +17,11 @@ class Smf(object):
     common computations and matrix factorizations. Besides it contains some quality
     and performance measures about factorizations.
     """
-
     def __init__(self, params):
+        self.model_name = "smf"
         self.__dict__.update(params)
+        self.V1 = None
+        self.H1 = None
         # do not copy target and factor matrices into the program
         if sp.isspmatrix(self.V):
             self.V = self.V.tocsr().astype('d')
@@ -30,7 +31,6 @@ class Smf(object):
         if self.W != None or self.H != None or self.H1 != None:
             raise MFError(
                 "Passing fixed initialized factors is not supported in SMF model.")
-        self.model_name = "smf"
 
     def run(self):
         """Run the specified MF algorithm."""

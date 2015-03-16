@@ -9,7 +9,6 @@ from .nmf import *
 
 
 class Nmf_std(Nmf):
-
     """
     Implementation of the standard model to manage factorizations that follow standard NMF model.
      
@@ -24,7 +23,6 @@ class Nmf_std(Nmf):
     
         Mixture matrix -- the second matrix factor in standard factorization
     """
-
     def __init__(self, params):
         """
         Construct factorization model that manages standard NMF models.
@@ -34,8 +32,10 @@ class Nmf_std(Nmf):
            algorithm specific model options see documentation of chosen factorization method.
         :type params: `dict`
         """
-        super().__init__(params)
         self.model_name = "std"
+        self.V1 = None
+        self.H1 = None
+        super().__init__(params)
         if sp.isspmatrix(self.V) and (self.V.data < 0).any() or not sp.isspmatrix(self.V) and (self.V < 0).any():
             raise utils.MFError("The input matrix contains negative elements.")
 

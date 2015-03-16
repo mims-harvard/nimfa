@@ -34,17 +34,75 @@ from nimfa.utils.linalg import *
 
 
 class Snmf(nmf_std.Nmf_std):
-
     """
-    For detailed explanation of the general model parameters see :mod:`mf_run`.
-    
-    The parameter ``min_residuals`` of the underlying model is used as KKT
-    convergence test and should have positive value. If not specified, value
-    1e-4 is used.
-    
-    The following are algorithm specific model options which can be passed with
-    values as keyword arguments.
-    
+    :param V: The target matrix to estimate.
+    :type V: Instance of the :class:`scipy.sparse` sparse matrices types,
+       :class:`numpy.ndarray`, :class:`numpy.matrix` or tuple of instances of
+       the latter classes.
+
+    :param seed: Specify method to seed the computation of a factorization. If
+       specified :param:`W` and :param:`H` seeding must be None. If neither seeding
+       method or initial fixed factorization is specified, random initialization is
+       used.
+    :type seed: `str` naming the method or :class:`methods.seeding.nndsvd.Nndsvd`
+       or None
+
+    :param W: Specify initial factorization of basis matrix W. Default is None.
+       When specified, :param:`seed` must be None.
+    :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or
+       :class:`numpy.matrix` or None
+
+    :param H: Specify initial factorization of mixture matrix H. Default is None.
+       When specified, :param:`seed` must be None.
+    :type H: Instance of the :class:`scipy.sparse` sparse matrices types,
+       :class:`numpy.ndarray`, :class:`numpy.matrix`, tuple of instances of the
+       latter classes or None
+
+    :param rank: The factorization rank to achieve. Default is 30.
+    :type rank: `int`
+
+    :param n_run: It specifies the number of runs of the algorithm. Default is
+       1. If multiple runs are performed, fitted factorization model with the
+       lowest objective function value is retained.
+    :type n_run: `int`
+
+    :param callback: Pass a callback function that is called after each run when
+       performing multiple runs. This is useful if one wants to save summary
+       measures or process the result before it gets discarded. The callback
+       function is called with only one argument :class:`models.mf_fit.Mf_fit` that
+       contains the fitted model. Default is None.
+    :type callback: `function`
+
+    :param callback_init: Pass a callback function that is called after each
+       initialization of the matrix factors. In case of multiple runs the function
+       is called before each run (more precisely after initialization and before
+       the factorization of each run). In case of single run, the passed callback
+       function is called after the only initialization of the matrix factors.
+       This is useful if one wants to obtain the initialized matrix factors for
+       further analysis or additional info about initialized factorization model.
+       The callback function is called with only one argument
+       :class:`models.mf_fit.Mf_fit` that (among others) contains also initialized
+       matrix factors. Default is None.
+    :type callback_init: `function`
+
+    :param track_factor: When :param:`track_factor` is specified, the fitted
+        factorization model is tracked during multiple runs of the algorithm. This
+        option is taken into account only when multiple runs are executed
+        (:param:`n_run` > 1). From each run of the factorization all matrix factors
+        are retained, which can be very space consuming. If space is the problem
+        setting the callback function with :param:`callback` is advised which is
+        executed after each run. Tracking is useful for performing some quality or
+        performance measures (e.g. cophenetic correlation, consensus matrix,
+        dispersion). By default fitted model is not tracked.
+    :type track_factor: `bool`
+
+    :param track_error: Tracking the residuals error. Only the residuals from
+        each iteration of the factorization are retained. Error tracking is not
+        space consuming. By default residuals are not tracked and only the final
+        residuals are saved. It can be used for plotting the trajectory of the
+        residuals.
+    :type track_error: `bool`
+
     :param version: Specifiy version of the SNMF algorithm. it has two accepting
        values, 'r' and 'l' for SNMF/R and SNMF/L, respectively. Default choice is
        SNMF/R.
@@ -70,13 +128,41 @@ class Snmf(nmf_std.Nmf_std):
        the minimal allowance of the change of row clusters. It should have
        nonnegative value. Default value is 0.
     :type w_min_change: `int`
-    """
 
-    def __init__(self, **params):
+    **Stopping criterion**
+
+    Factorization terminates if any of specified criteria is satisfied.
+
+    :param max_iter: Maximum number of factorization iterations. Note that the
+       number of iterations depends on the speed of method convergence. Default
+       is 30.
+    :type max_iter: `int`
+
+    :param min_residuals: Minimal required improvement of the residuals from the
+       previous iteration. They are computed between the target matrix and its MF
+       estimate using the objective function associated to the MF algorithm.
+       Default is None.
+    :type min_residuals: `float`
+
+    :param test_conv: It indicates how often convergence test is done. By
+       default convergence is tested each iteration.
+    :type test_conv: `int`
+    """
+    def __init__(self, V, seed=None, W=None, H=None, H1=None,
+                 rank=30, max_iter=30, min_residuals=1e-5, test_conv=None,
+                 n_run=1, callback=None, callback_init=None, track_factor=False,
+                 track_error=False, version='r', eta=None, beta=1e-4,
+                 i_conv=10, w_min_change=0, **options):
         self.name = "snmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(params)
-        self.set_params()
+        super().__init__(vars())
+        if not self.eta:
+            self.eta = np.max(self.V) if not sp.isspmatrix(self.V) else np.max(self.V.data)
+        if self.eta < 0:
+            self.eta = np.max(self.V) if not sp.isspmatrix(self.V) else 0.
+        self.min_residuals = 1e-4 if not self.min_residuals else self.min_residuals
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 \
+                                              or self.track_error else None
 
     def factorize(self):
         """
@@ -156,22 +242,6 @@ class Snmf(nmf_std.Nmf_std):
 
         mffit.fit.tracker = self.tracker
         return mffit
-
-    def set_params(self):
-        """Set algorithm specific model options."""
-        self.version = self.options.get('version', 'r')
-        self.eta = self.options.get(
-            'eta', np.max(self.V) if not sp.isspmatrix(self.V) else np.max(self.V.data))
-        if self.eta < 0:
-            self.eta = np.max(self.V) if not sp.isspmatrix(self.V) else 0.
-        self.beta = self.options.get('beta', 1e-4)
-        self.i_conv = self.options.get('i_conv', 10)
-        self.w_min_change = self.options.get('w_min_change', 0)
-        self.min_residuals = self.min_residuals if self.min_residuals else 1e-4
-        self.track_factor = self.options.get('track_factor', False)
-        self.track_error = self.options.get('track_error', False)
-        self.tracker = mf_track.Mf_track(
-        ) if self.track_factor and self.n_run > 1 or self.track_error else None
 
     def is_satisfied(self, c_obj, iter):
         """

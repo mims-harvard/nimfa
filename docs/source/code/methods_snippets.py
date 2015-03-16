@@ -1,6 +1,6 @@
 
 # Example call of SNMNMF with algorithm specific parameters set
-fctr = nimfa.mf(target=(V, V1),
+fctr = nimfa.mf(V=V, V1=V1,
                 seed="random_c",
                 rank=10,
                 method="snmnmf",

@@ -39,13 +39,75 @@ from nimfa.utils.linalg import *
 
 
 class Nmf(nmf_std.Nmf_std):
-
     """
-    For detailed explanation of the general model parameters see :mod:`mf_run`.
-    
-    The following are algorithm specific model options which can be passed with
-    values as keyword arguments.
-    
+    :param V: The target matrix to estimate.
+    :type V: Instance of the :class:`scipy.sparse` sparse matrices types,
+       :class:`numpy.ndarray`, :class:`numpy.matrix` or tuple of instances of
+       the latter classes.
+
+    :param seed: Specify method to seed the computation of a factorization. If
+       specified :param:`W` and :param:`H` seeding must be None. If neither seeding
+       method or initial fixed factorization is specified, random initialization is
+       used.
+    :type seed: `str` naming the method or :class:`methods.seeding.nndsvd.Nndsvd`
+       or None
+
+    :param W: Specify initial factorization of basis matrix W. Default is None.
+       When specified, :param:`seed` must be None.
+    :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or
+       :class:`numpy.matrix` or None
+
+    :param H: Specify initial factorization of mixture matrix H. Default is None.
+       When specified, :param:`seed` must be None.
+    :type H: Instance of the :class:`scipy.sparse` sparse matrices types,
+       :class:`numpy.ndarray`, :class:`numpy.matrix`, tuple of instances of the
+       latter classes or None
+
+    :param rank: The factorization rank to achieve. Default is 30.
+    :type rank: `int`
+
+    :param n_run: It specifies the number of runs of the algorithm. Default is
+       1. If multiple runs are performed, fitted factorization model with the
+       lowest objective function value is retained.
+    :type n_run: `int`
+
+    :param callback: Pass a callback function that is called after each run when
+       performing multiple runs. This is useful if one wants to save summary
+       measures or process the result before it gets discarded. The callback
+       function is called with only one argument :class:`models.mf_fit.Mf_fit` that
+       contains the fitted model. Default is None.
+    :type callback: `function`
+
+    :param callback_init: Pass a callback function that is called after each
+       initialization of the matrix factors. In case of multiple runs the function
+       is called before each run (more precisely after initialization and before
+       the factorization of each run). In case of single run, the passed callback
+       function is called after the only initialization of the matrix factors.
+       This is useful if one wants to obtain the initialized matrix factors for
+       further analysis or additional info about initialized factorization model.
+       The callback function is called with only one argument
+       :class:`models.mf_fit.Mf_fit` that (among others) contains also initialized
+       matrix factors. Default is None.
+    :type callback_init: `function`
+
+    :param track_factor: When :param:`track_factor` is specified, the fitted
+        factorization model is tracked during multiple runs of the algorithm. This
+        option is taken into account only when multiple runs are executed
+        (:param:`n_run` > 1). From each run of the factorization all matrix factors
+        are retained, which can be very space consuming. If space is the problem
+        setting the callback function with :param:`callback` is advised which is
+        executed after each run. Tracking is useful for performing some quality or
+        performance measures (e.g. cophenetic correlation, consensus matrix,
+        dispersion). By default fitted model is not tracked.
+    :type track_factor: `bool`
+
+    :param track_error: Tracking the residuals error. Only the residuals from
+        each iteration of the factorization are retained. Error tracking is not
+        space consuming. By default residuals are not tracked and only the final
+        residuals are saved. It can be used for plotting the trajectory of the
+        residuals.
+    :type track_error: `bool`
+
     :param update: Type of update equations used in factorization. When specifying
        model parameter ``update`` can be assigned to:
 
@@ -72,13 +134,40 @@ class Nmf(nmf_std.Nmf_std):
        required of consecutive iterations in which the connectivity matrix has not
        changed. Default value is 30.
     :type conn_change: `int`
-    """
 
-    def __init__(self, **params):
+    **Stopping criterion**
+
+    Factorization terminates if any of specified criteria is satisfied.
+
+    :param max_iter: Maximum number of factorization iterations. Note that the
+       number of iterations depends on the speed of method convergence. Default
+       is 30.
+    :type max_iter: `int`
+
+    :param min_residuals: Minimal required improvement of the residuals from the
+       previous iteration. They are computed between the target matrix and its MF
+       estimate using the objective function associated to the MF algorithm.
+       Default is None.
+    :type min_residuals: `float`
+
+    :param test_conv: It indicates how often convergence test is done. By
+       default convergence is tested each iteration.
+    :type test_conv: `int`
+    """
+    def __init__(self, V, seed=None, W=None, H=None, rank=30, max_iter=30,
+                 min_residuals=1e-5, test_conv=None, n_run=1, callback=None,
+                 callback_init=None, track_factor=False, track_error=False,
+                 update='euclidean', objective='fro', conn_change=30, **options):
         self.name = "nmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(params)
-        self.set_params()
+        super().__init__(vars())
+        if 'conn' not in self.objective:
+            self.conn_change = None
+        self._conn_change = 0
+        self.update = getattr(self, self.update)
+        self.objective = getattr(self, self.objective)
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 \
+                                              or self.track_error else None
 
     def factorize(self):
         """
@@ -175,28 +264,14 @@ class Nmf(nmf_std.Nmf_std):
         self.H = max(self.H, np.finfo(self.H.dtype).eps)
         self.W = max(self.W, np.finfo(self.W.dtype).eps)
 
-    def set_params(self):
-        """Set algorithm specific model options."""
-        self.update = getattr(
-            self, self.options.get('update', 'euclidean') + '_update')
-        self.objective = getattr(
-            self, self.options.get('objective', 'fro') + '_objective')
-        self.conn_change = self.options.get(
-            'conn_change', 30) if 'conn' in self.objective.__name__ else None
-        self._conn_change = 0
-        self.track_factor = self.options.get('track_factor', False)
-        self.track_error = self.options.get('track_error', False)
-        self.tracker = mf_track.Mf_track(
-        ) if self.track_factor and self.n_run > 1 or self.track_error else None
-
-    def euclidean_update(self):
+    def euclidean(self):
         """Update basis and mixture matrix based on Euclidean distance multiplicative update rules."""
         self.H = multiply(
             self.H, elop(dot(self.W.T, self.V), dot(self.W.T, dot(self.W, self.H)), div))
         self.W = multiply(
             self.W, elop(dot(self.V, self.H.T), dot(self.W, dot(self.H, self.H.T)), div))
 
-    def divergence_update(self):
+    def divergence(self):
         """Update basis and mixture matrix based on divergence multiplicative update rules."""
         H1 = repmat(self.W.sum(0).T, 1, self.V.shape[1])
         self.H = multiply(
@@ -205,17 +280,17 @@ class Nmf(nmf_std.Nmf_std):
         self.W = multiply(
             self.W, elop(dot(elop(self.V, dot(self.W, self.H), div), self.H.T), W1, div))
 
-    def fro_objective(self):
+    def fro(self):
         """Compute squared Frobenius norm of a target matrix and its NMF estimate."""
         R = self.V - dot(self.W, self.H)
         return multiply(R, R).sum()
 
-    def div_objective(self):
+    def div(self):
         """Compute divergence of target matrix from its NMF estimate."""
         Va = dot(self.W, self.H)
         return (multiply(self.V, sop(elop(self.V, Va, div), op=np.log)) - self.V + Va).sum()
 
-    def conn_objective(self):
+    def conn(self):
         """
         Compute connectivity matrix and compare it to connectivity matrix
         from previous iteration.
@@ -237,7 +312,7 @@ class Nmf(nmf_std.Nmf_std):
         return conn_change > 0
 
     def __str__(self):
-        return self.name + " - update: " + self.options.get('update', 'euclidean') + " - obj: " + self.options.get('objective', 'fro')
+        return '%s - update: %s obj: %s' % (self.name, self.update, self.objective)
 
     def __repr__(self):
         return self.name

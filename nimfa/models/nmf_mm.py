@@ -9,7 +9,6 @@ from .nmf import *
 
 
 class Nmf_mm(Nmf):
-
     """
     Implementation of the alternative model to manage factorizations that follow N
     MF nonstandard model. This modification is required by the Multiple NMF
@@ -47,7 +46,6 @@ class Nmf_mm(Nmf):
     Currently, in implemented multiple NMF method V, V1 and H, H1 are needed. There is only
     one basis matrix (W).
     """
-
     def __init__(self, params):
         """
         Construct factorization model that manages multiple NMF models.
@@ -57,8 +55,8 @@ class Nmf_mm(Nmf):
            specific model options see documentation of chosen factorization method.
         :type params: `dict`
         """
-        super().__init__(params)
         self.model_name = "mm"
+        super().__init__(params)
         if sp.isspmatrix(self.V) and (self.V.data < 0).any() or not sp.isspmatrix(self.V) and (self.V < 0).any():
             raise utils.MFError("The input matrix contains negative elements.")
         if sp.isspmatrix(self.V1) and (self.V1.data < 0).any() or not sp.isspmatrix(self.V1) and (self.V1 < 0).any():

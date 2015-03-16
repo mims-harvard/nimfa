@@ -7,7 +7,6 @@
 
 
 class Mf_track():
-
     """
     Base class for tracking MF fitted model across multiple runs of the factorizations or tracking
     the residuals error across iterations of single/multiple runs. 
@@ -27,7 +26,6 @@ class Mf_track():
     The purpose of this class is to store residuals across iterations which can then be used for plotting the trajectory 
     of the residuals track or estimating proper number of iterations. 
     """
-
     def __init__(self):
         """
         Construct model for tracking fitted factorization model across multiple runs or tracking the residuals error across iterations. 

@@ -7,7 +7,6 @@
 
 
 class Mf_fit():
-
     """
     Base class for storing MF results.
     
@@ -43,7 +42,6 @@ class Mf_fit():
 
         Extra parameters specific to the algorithm used to fit the model.
     """
-
     def __init__(self, fit):
         """
         Construct fitted factorization model. 

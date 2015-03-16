@@ -62,22 +62,88 @@ from nimfa.utils.linalg import *
 
 
 class Snmnmf(nmf_mm.Nmf_mm):
-
     """
-    For detailed explanation of the general model parameters see :mod:`mf_run`.
-    
-    The following are algorithm specific model options which can be passed with
-    values as keyword arguments.
-    
+    :param V: The target matrix to estimate.
+    :type V: Instance of the :class:`scipy.sparse` sparse matrices types,
+       :class:`numpy.ndarray`, :class:`numpy.matrix` or tuple of instances of
+       the latter classes.
+
+    :param V1: The target matrix to estimate. Used by algorithms that consider
+       more than one target matrix.
+    :type V1: Instance of the :class:`scipy.sparse` sparse matrices types,
+       :class:`numpy.ndarray`, :class:`numpy.matrix` or tuple of instances of
+       the latter classes.
+
+    :param seed: Specify method to seed the computation of a factorization. If
+       specified :param:`W` and :param:`H` seeding must be None. If neither seeding
+       method or initial fixed factorization is specified, random initialization is
+       used.
+    :type seed: `str` naming the method or :class:`methods.seeding.nndsvd.Nndsvd`
+       or None
+
+    :param W: Specify initial factorization of basis matrix W. Default is None.
+       When specified, :param:`seed` must be None.
+    :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or
+       :class:`numpy.matrix` or None
+
+    :param H: Specify initial factorization of mixture matrix H. Default is None.
+       When specified, :param:`seed` must be None.
+    :type H: Instance of the :class:`scipy.sparse` sparse matrices types,
+       :class:`numpy.ndarray`, :class:`numpy.matrix`, tuple of instances of the
+       latter classes or None
+
+    :param rank: The factorization rank to achieve. Default is 30.
+    :type rank: `int`
+
+    :param n_run: It specifies the number of runs of the algorithm. Default is
+       1. If multiple runs are performed, fitted factorization model with the
+       lowest objective function value is retained.
+    :type n_run: `int`
+
+    :param callback: Pass a callback function that is called after each run when
+       performing multiple runs. This is useful if one wants to save summary
+       measures or process the result before it gets discarded. The callback
+       function is called with only one argument :class:`models.mf_fit.Mf_fit` that
+       contains the fitted model. Default is None.
+    :type callback: `function`
+
+    :param callback_init: Pass a callback function that is called after each
+       initialization of the matrix factors. In case of multiple runs the function
+       is called before each run (more precisely after initialization and before
+       the factorization of each run). In case of single run, the passed callback
+       function is called after the only initialization of the matrix factors.
+       This is useful if one wants to obtain the initialized matrix factors for
+       further analysis or additional info about initialized factorization model.
+       The callback function is called with only one argument
+       :class:`models.mf_fit.Mf_fit` that (among others) contains also initialized
+       matrix factors. Default is None.
+    :type callback_init: `function`
+
+    :param track_factor: When :param:`track_factor` is specified, the fitted
+        factorization model is tracked during multiple runs of the algorithm. This
+        option is taken into account only when multiple runs are executed
+        (:param:`n_run` > 1). From each run of the factorization all matrix factors
+        are retained, which can be very space consuming. If space is the problem
+        setting the callback function with :param:`callback` is advised which is
+        executed after each run. Tracking is useful for performing some quality or
+        performance measures (e.g. cophenetic correlation, consensus matrix,
+        dispersion). By default fitted model is not tracked.
+    :type track_factor: `bool`
+
+    :param track_error: Tracking the residuals error. Only the residuals from
+        each iteration of the factorization are retained. Error tracking is not
+        space consuming. By default residuals are not tracked and only the final
+        residuals are saved. It can be used for plotting the trajectory of the
+        residuals.
+    :type track_error: `bool`
+
     :param A: Adjacency matrix of gene-gene interaction network (dimension:
-       V1.shape[1] x V1.shape[1]). It should be nonnegative. Default is scipy.sparse
-       CSR matrix of density 0.7.
+       V1.shape[1] x V1.shape[1]).
     :type A: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia
        or :class:`numpy.matrix`
 
     :param B: Adjacency matrix of a bipartite miRNA-gene network, predicted
-       miRNA-target interactions (dimension: V.shape[1] x V1.shape[1]). It should be
-       nonnegative. Default is scipy.sparse CSR matrix of density 0.7.
+       miRNA-target interactions (dimension: V.shape[1] x V1.shape[1]).
     :type B: :class:`scipy.sparse` of format csr, csc, coo, bsr, dok, lil, dia or
        :class:`numpy.matrix`
 
@@ -95,13 +161,42 @@ class Snmnmf(nmf_mm.Nmf_mm):
     :param lamb_1: Weight for the must-link constraints define in ``B``.
        Default is 0.01.
     :type lamb_1: `float`
-    """
 
-    def __init__(self, **params):
+    **Stopping criterion**
+
+    Factorization terminates if any of specified criteria is satisfied.
+
+    :param max_iter: Maximum number of factorization iterations. Note that the
+       number of iterations depends on the speed of method convergence. Default
+       is 30.
+    :type max_iter: `int`
+
+    :param min_residuals: Minimal required improvement of the residuals from the
+       previous iteration. They are computed between the target matrix and its MF
+       estimate using the objective function associated to the MF algorithm.
+       Default is None.
+    :type min_residuals: `float`
+
+    :param test_conv: It indicates how often convergence test is done. By
+       default convergence is tested each iteration.
+    :type test_conv: `int`
+    """
+    def __init__(self, V, V1, seed=None, W=None, H=None, H1=None,
+                 rank=30, max_iter=30, min_residuals=1e-5, test_conv=None,
+                 n_run=1, callback=None, callback_init=None, track_factor=False,
+                 track_error=False, A=None, B=None, gamma=0.01, gamma_1=0.01,
+                 lamb=0.01, lamb_1=0.01, **options):
         self.name = "snmnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(params)
-        self.set_params()
+        super().__init__(vars())
+        if not self.A:
+            self.A = sp.csr_matrix((self.V1.shape[1], self.V1.shape[1]))
+        self.A = self.A.tocsr() if sp.isspmatrix(self.A) else np.mat(self.A)
+        if not self.B:
+            self.B = sp.csr_matrix((self.V.shape[1], self.V1.shape[1]))
+        self.B = self.B.tocsr() if sp.isspmatrix(self.B) else np.mat(self.B)
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 \
+                                              or self.track_error else None
 
     def factorize(self):
         """
@@ -183,29 +278,6 @@ class Snmnmf(nmf_mm.Nmf_mm):
             return False
         return True
 
-    def set_params(self):
-        """Set algorithm specific model options."""
-        self.A = self.options.get(
-            'A', abs(sp.rand(self.V1.shape[1], self.V1.shape[1], density=0.7, format='csr')))
-        if sp.isspmatrix(self.A):
-            self.A = self.A.tocsr()
-        else:
-            self.A = np.mat(self.A)
-        self.B = self.options.get(
-            'B', abs(sp.rand(self.V.shape[1], self.V1.shape[1], density=0.7, format='csr')))
-        if sp.isspmatrix(self.B):
-            self.B = self.B.tocsr()
-        else:
-            self.B = np.mat(self.B)
-        self.gamma = self.options.get('gamma', 0.01)
-        self.gamma_1 = self.options.get('gamma_1', 0.01)
-        self.lamb = self.options.get('lamb', 0.01)
-        self.lamb_1 = self.options.get('lamb_1', 0.01)
-        self.track_factor = self.options.get('track_factor', False)
-        self.track_error = self.options.get('track_error', False)
-        self.tracker = mf_track.Mf_track(
-        ) if self.track_factor and self.n_run > 1 or self.track_error else None
-
     def update(self, iter):
         """Update basis and mixture matrix."""
         # update basis matrix
@@ -239,7 +311,8 @@ class Snmnmf(nmf_mm.Nmf_mm):
         tr2 = trace(dot(dot(self.H, self.B), self.H1.T))
         s1 = multiply(self.W, self.W).sum()
         s2 = multiply(self.H, self.H).sum() + multiply(self.H1, self.H1).sum()
-        return eucl1 + eucl2 - self.lamb * tr1 - self.lamb_1 * tr2 + self.gamma * s1 + self.gamma_1 * s2
+        reg = - self.lamb * tr1 - self.lamb_1 * tr2 + self.gamma * s1 + self.gamma_1 * s2
+        return eucl1 + eucl2  + reg
 
     def __str__(self):
         return self.name

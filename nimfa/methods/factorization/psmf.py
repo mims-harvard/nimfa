@@ -46,38 +46,123 @@ expression data is described in [Li2007]_.
 
 """
 
+import numbers
+
 from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
 
 class Psmf(nmf_std.Nmf_std):
-
     """
-    For detailed explanation of the general model parameters see :mod:`mf_run`.
-    
-    The following are algorithm specific model options which can be passed with
-    values as keyword arguments.
-    
-    PSMF overrides default frequency of convergence tests. By default convergence
-    is tested every 5th iteration. This behavior can be changed by setting
-    ``test_conv``. See :mod:`mf_run` Stopping criteria section.
-    
-    :param prior: The prior on the number of factors explaining each vector and
+    :param V: The target matrix to estimate.
+    :type V: Instance of the :class:`scipy.sparse` sparse matrices types,
+       :class:`numpy.ndarray`, :class:`numpy.matrix` or tuple of instances of
+       the latter classes.
+
+    :param seed: Specify method to seed the computation of a factorization. If
+       specified :param:`W` and :param:`H` seeding must be None. If neither seeding
+       method or initial fixed factorization is specified, random initialization is
+       used.
+    :type seed: `str` naming the method or :class:`methods.seeding.nndsvd.Nndsvd`
+       or None
+
+    :param W: Specify initial factorization of basis matrix W. Default is None.
+       When specified, :param:`seed` must be None.
+    :type W: :class:`scipy.sparse` or :class:`numpy.ndarray` or
+       :class:`numpy.matrix` or None
+
+    :param H: Specify initial factorization of mixture matrix H. Default is None.
+       When specified, :param:`seed` must be None.
+    :type H: Instance of the :class:`scipy.sparse` sparse matrices types,
+       :class:`numpy.ndarray`, :class:`numpy.matrix`, tuple of instances of the
+       latter classes or None
+
+    :param rank: The factorization rank to achieve. Default is 30.
+    :type rank: `int`
+
+    :param n_run: It specifies the number of runs of the algorithm. Default is
+       1. If multiple runs are performed, fitted factorization model with the
+       lowest objective function value is retained.
+    :type n_run: `int`
+
+    :param callback: Pass a callback function that is called after each run when
+       performing multiple runs. This is useful if one wants to save summary
+       measures or process the result before it gets discarded. The callback
+       function is called with only one argument :class:`models.mf_fit.Mf_fit` that
+       contains the fitted model. Default is None.
+    :type callback: `function`
+
+    :param callback_init: Pass a callback function that is called after each
+       initialization of the matrix factors. In case of multiple runs the function
+       is called before each run (more precisely after initialization and before
+       the factorization of each run). In case of single run, the passed callback
+       function is called after the only initialization of the matrix factors.
+       This is useful if one wants to obtain the initialized matrix factors for
+       further analysis or additional info about initialized factorization model.
+       The callback function is called with only one argument
+       :class:`models.mf_fit.Mf_fit` that (among others) contains also initialized
+       matrix factors. Default is None.
+    :type callback_init: `function`
+
+    :param track_factor: When :param:`track_factor` is specified, the fitted
+        factorization model is tracked during multiple runs of the algorithm. This
+        option is taken into account only when multiple runs are executed
+        (:param:`n_run` > 1). From each run of the factorization all matrix factors
+        are retained, which can be very space consuming. If space is the problem
+        setting the callback function with :param:`callback` is advised which is
+        executed after each run. Tracking is useful for performing some quality or
+        performance measures (e.g. cophenetic correlation, consensus matrix,
+        dispersion). By default fitted model is not tracked.
+    :type track_factor: `bool`
+
+    :param track_error: Tracking the residuals error. Only the residuals from
+        each iteration of the factorization are retained. Error tracking is not
+        space consuming. By default residuals are not tracked and only the final
+        residuals are saved. It can be used for plotting the trajectory of the
+        residuals.
+    :type track_error: `bool`
+
+    :param prior: The prior on the number of factors explaining each vector. It
        should be a positive row vector. The ``prior`` can be passed as a
        list, formatted as prior = [P(r_g = 1), P(r_g = 2), ... P(r_q = N)] or as a
        scalar N, in which case uniform prior is taken, prior = 1. / (1:N),
        reflecting no knowledge about the distribution and giving equal preference to
        all values of a particular r_g. Default value for :param:`prior` is
-       factorization rank, e. g. ordinary low-rank approximations is performed.
+       factorization rank.
     :type prior: `list` or `float`
-    """
 
-    def __init__(self, **params):
+    **Stopping criterion**
+
+    Factorization terminates if any of specified criteria is satisfied.
+
+    :param max_iter: Maximum number of factorization iterations. Note that the
+       number of iterations depends on the speed of method convergence. Default
+       is 30.
+    :type max_iter: `int`
+
+    :param min_residuals: Minimal required improvement of the residuals from the
+       previous iteration. They are computed between the target matrix and its MF
+       estimate using the objective function associated to the MF algorithm.
+       Default is None.
+    :type min_residuals: `float`
+
+    :param test_conv: It indicates how often convergence test is done. By
+       default convergence is tested each iteration.
+    :type test_conv: `int`
+    """
+    def __init__(self, V, seed=None, W=None, H=None, H1=None,
+                 rank=30, max_iter=30, min_residuals=1e-5, test_conv=None,
+                 n_run=1, callback=None, callback_init=None, track_factor=False,
+                 track_error=False, prior=20, **options):
         self.name = "psmf"
         self.aseeds = ["none"]
-        super().__init__(params)
-        self.set_params()
+        super().__init__(vars())
+        self.test_conv = 5 if not self.test_conv else self.test_conv
+        if isinstance(self.prior, numbers.Real):
+            self.prior = np.ones(int(self.prior)) / self.prior
+        self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 \
+                                              or self.track_error else None
 
     def factorize(self):
         """
@@ -187,21 +272,6 @@ class Psmf(nmf_std.Nmf_std):
         if iter > 0 and c_obj > p_obj:
             return False
         return True
-
-    def set_params(self):
-        """Set algorithm specific model options."""
-        if not self.test_conv:
-            self.test_conv = 5
-        self.prior = self.options.get('prior', self.rank)
-        try:
-            self.prior = [
-                1. / self.prior for _ in range(int(round(self.prior)))]
-        except TypeError:
-            self.prior = self.options['prior']
-        self.track_factor = self.options.get('track_factor', False)
-        self.track_error = self.options.get('track_error', False)
-        self.tracker = mf_track.Mf_track(
-        ) if self.track_factor and self.n_run > 1 or self.track_error else None
 
     def update(self):
         """Update basis and mixture matrix."""
