@@ -100,7 +100,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
     def __init__(self, **params):
         self.name = "snmnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        nmf_mm.Nmf_mm.__init__(self, params)
+        super().__init__(params)
         self.set_params()
 
     def factorize(self):

@@ -75,7 +75,7 @@ class Snmf(nmf_std.Nmf_std):
     def __init__(self, **params):
         self.name = "snmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        nmf_std.Nmf_std.__init__(self, params)
+        super().__init__(params)
         self.set_params()
 
     def factorize(self):

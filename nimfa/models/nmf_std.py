@@ -34,7 +34,7 @@ class Nmf_std(Nmf):
            algorithm specific model options see documentation of chosen factorization method.
         :type params: `dict`
         """
-        Nmf.__init__(self, params)
+        super().__init__(params)
         self.model_name = "std"
         if sp.isspmatrix(self.V) and (self.V.data < 0).any() or not sp.isspmatrix(self.V) and (self.V < 0).any():
             raise utils.MFError("The input matrix contains negative elements.")

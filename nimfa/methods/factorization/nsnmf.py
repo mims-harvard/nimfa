@@ -60,7 +60,7 @@ class Nsnmf(nmf_ns.Nmf_ns):
     def __init__(self, **params):
         self.name = "nsnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        nmf_ns.Nmf_ns.__init__(self, params)
+        super().__init__(params)
         self.set_params()
 
     def factorize(self):

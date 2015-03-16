@@ -29,10 +29,11 @@ utilities or as initialization to another factorization method.
 from .utils import *
 
 from . import examples
+from .methods.factorization import *
 from . import methods
 
-l_factorization = methods.list_mf_methods()
-l_seed = methods.list_seeding_methods()
+factor_models = methods.list_mf_methods()
+init_models = methods.list_seeding_methods()
 
 
 def mf(target, seed=None, W=None, H=None,
@@ -185,12 +186,12 @@ def mf(target, seed=None, W=None, H=None,
        default convergence is tested each iteration.
     :type test_conv: `int`
     """
-    if seed.__str__().lower() not in l_seed:
+    if seed.__str__().lower() not in init_models:
         raise utils.MFError(
-            "Unrecognized seeding method. Choose from: %s" % ", ".join(l_seed))
-    if method.__str__().lower() not in l_factorization:
+            "Unrecognized seeding method. Choose from: %s" % ", ".join(init_models))
+    if method.__str__().lower() not in factor_models:
         raise utils.MFError(
-            "Unrecognized MF method. Choose from: %s" % ", ".join(l_factorization))
+            "Unrecognized MF method. Choose from: %s" % ", ".join(factor_models))
     mf_model = None
     # Construct factorization model
     try:
@@ -228,7 +229,7 @@ def mf_run(mf_model):
     :param mf_model: The underlying initialized model of matrix factorization.
     :type mf_model: Class inheriting :class:`models.nmf.Nmf`
     """
-    if repr(mf_model) not in l_factorization:
+    if repr(mf_model) not in factor_models:
         raise utils.MFError("Unrecognized MF method.")
     return mf_model.run()
 
