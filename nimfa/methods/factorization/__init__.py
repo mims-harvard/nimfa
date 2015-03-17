@@ -3,29 +3,29 @@
     This package contains implementations of matrix factorization algorithms. 
 """
 
-from . import bd
-from . import icm
-from . import lfnmf
-from . import lsnmf
-from . import nmf
-from . import nsnmf
-from . import pmf
-from . import psmf
-from . import snmf
-from . import bmf
-from . import snmnmf
-from . import pmfcc
+from .bd import *
+from .icm import *
+from .lfnmf import *
+from .lsnmf import *
+from .nmf import *
+from .nsnmf import *
+from .pmf import *
+from .psmf import *
+from .snmf import *
+from .bmf import *
+from .snmnmf import *
+from .pmfcc import *
 
-methods = {"bd": bd.Bd,
-           "icm": icm.Icm,
-           "lfnmf": lfnmf.Lfnmf,
-           "lsnmf": lsnmf.Lsnmf,
-           "nmf": nmf.Nmf,
-           "nsnmf": nsnmf.Nsnmf,
-           "pmf": pmf.Pmf,
-           "psmf": psmf.Psmf,
-           "snmf": snmf.Snmf,
-           "bmf": bmf.Bmf,
-           "snmnmf": snmnmf.Snmnmf,
-           "pmfcc": pmfcc.Pmfcc,
+methods = {"bd": Bd,
+           "icm": Icm,
+           "lfnmf": Lfnmf,
+           "lsnmf": Lsnmf,
+           "nmf": Nmf,
+           "nsnmf": Nsnmf,
+           "pmf": Pmf,
+           "psmf": Psmf,
+           "snmf": Snmf,
+           "bmf": Bmf,
+           "snmnmf": Snmnmf,
+           "pmfcc": Pmfcc,
            "none": None}

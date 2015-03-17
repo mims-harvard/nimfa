@@ -13,6 +13,7 @@ default density parameter of 0.01.
 
 from nimfa.utils.linalg import *
 
+__all__ = ['Random']
 
 class Random(object):
 

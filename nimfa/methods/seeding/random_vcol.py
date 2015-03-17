@@ -19,6 +19,8 @@ initialization, which is built from the centroid decomposition.
 
 from nimfa.utils.linalg import *
 
+__all__ = ['Random_vcol']
+
 
 class Random_vcol(object):
 

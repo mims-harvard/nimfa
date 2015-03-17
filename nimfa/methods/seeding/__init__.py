@@ -3,15 +3,15 @@
     This package contains implementations of initialization methods for matrix factorization.
 """
 
-from . import nndsvd
-from . import random
-from . import fixed
-from . import random_c
-from . import random_vcol
+from .nndsvd import *
+from .random import *
+from .fixed import *
+from .random_c import *
+from .random_vcol import *
 
-methods = {"random": random.Random,
-           "fixed": fixed.Fixed,
-           "nndsvd": nndsvd.Nndsvd,
-           "random_c": random_c.Random_c,
-           "random_vcol": random_vcol.Random_vcol,
+methods = {"random": Random,
+           "fixed": Fixed,
+           "nndsvd": Nndsvd,
+           "random_c": Random_c,
+           "random_vcol": Random_vcol,
            "none": None}

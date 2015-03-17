@@ -10,6 +10,8 @@ factorization by passing values for matrix factors.
 
 from nimfa.utils.linalg import *
 
+__all__ = ['Fixed']
+
 
 class Fixed(object):
 

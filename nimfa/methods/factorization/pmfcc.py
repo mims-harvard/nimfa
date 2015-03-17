@@ -24,12 +24,14 @@ is the inclusion of the penalty term.
     :lines: 191-199
     
 """
+import operator
 
 from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
-import operator
+__all__ = ['Pmfcc']
+
 
 class Pmfcc(smf.Smf):
     """

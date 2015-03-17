@@ -55,6 +55,8 @@ from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
+__all__ = ['Bmf']
+
 
 class Bmf(nmf_std.Nmf_std):
     """

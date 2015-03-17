@@ -20,6 +20,8 @@ approximation error of many NMF algorithms. By setting algorithm options
 from nimfa.utils.utils import *
 from nimfa.utils.linalg import *
 
+__all__ = ['Nndsvd']
+
 
 class Nndsvd(object):
 

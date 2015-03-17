@@ -18,6 +18,8 @@ of mixture matrix is similar except for row operations.
 
 from nimfa.utils.linalg import *
 
+__all__ = ['Random_c']
+
 
 class Random_c(object):
 

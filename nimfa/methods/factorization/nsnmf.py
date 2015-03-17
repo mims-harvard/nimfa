@@ -41,6 +41,8 @@ from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
+__all__ = ['Nsnmf']
+
 
 class Nsnmf(nmf_ns.Nmf_ns):
     """

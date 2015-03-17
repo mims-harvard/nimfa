@@ -19,6 +19,8 @@ from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
+__all__ = ['Pmf']
+
 
 class Pmf(nmf_std.Nmf_std):
     """

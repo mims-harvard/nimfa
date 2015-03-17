@@ -60,6 +60,8 @@ from nimfa.models import *
 from nimfa.utils import *
 from nimfa.utils.linalg import *
 
+__all__ = ['Snmnmf']
+
 
 class Snmnmf(nmf_mm.Nmf_mm):
     """
