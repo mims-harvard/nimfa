@@ -600,7 +600,7 @@ class Snmf(nmf_std.Nmf_std):
         using the fast combinatorial approach (van Benthem and Keenan, 2004).
         """
         K = np.mat(np.zeros(CtA.shape))
-        if p_set == None or p_set.size == 0 or all(p_set):
+        if p_set is None or p_set.size == 0 or all(p_set):
             # equivalent if CtC is square matrix
             K = np.linalg.lstsq(CtC, CtA)[0]
             # K = dot(np.linalg.pinv(CtC), CtA)

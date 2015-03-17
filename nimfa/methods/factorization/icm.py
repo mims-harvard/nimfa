@@ -161,10 +161,10 @@ class Icm(nmf_std.Nmf_std):
         self.name = "icm"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         super().__init__(vars())
-        if not self.alpha:
+        if self.alpha is not None:
             self.alpha = sp.rand(self.V.shape[0], self.rank, density=0.8, format='csr')
         self.alpha= self.alpha.tocsr() if sp.isspmatrix(self.alpha) else np.mat(self.alpha)
-        if not self.beta:
+        if self.beta is not None:
             self.beta = sp.rand(self.rank, self.V.shape[1], density=0.8, format='csr')
         self.beta = self.beta.tocsr() if sp.isspmatrix(self.beta) else np.mat(self.beta)
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 \

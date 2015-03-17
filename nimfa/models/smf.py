@@ -6,6 +6,7 @@
 
 import nimfa.utils.utils as utils
 from nimfa.utils.linalg import *
+from nimfa.methods import seeding
 
 
 class Smf(object):
@@ -28,11 +29,11 @@ class Smf(object):
         else:
             self.V = np.asmatrix(self.V) if self.V.dtype == np.dtype(
                 float) else np.asmatrix(self.V, dtype='d')
-        if self.W != None or self.H != None or self.H1 != None:
-            raise MFError(
-                "Passing fixed initialized factors is not supported in SMF model.")
+        if self.W is not None or self.H is not None or self.H1 is not None:
+            raise MFError("Fixed initialized is not supported by SMF model.")
+        self._compatibility()
 
-    def run(self):
+    def __call__(self):
         """Run the specified MF algorithm."""
         return self.factorize()
 
@@ -95,3 +96,41 @@ class Smf(object):
         :type idx: None
         """
         return self.V - dot(self.W, self.H)
+
+    def _compatibility(self):
+        """
+        Check if chosen seeding method is compatible with chosen factorization
+        method or fixed initialization is passed.
+
+        :param mf_model: The underlying initialized model of matrix factorization.
+        :type mf_model: Class inheriting :class:`models.nmf.Nmf`
+        """
+        W = self.basis()
+        H = self.coef(0)
+        H1 = self.coef(1) if self.model_name == 'mm' else None
+        if self.seed is None and W is None and H is None and H1 is None:
+            self.seed = None if "none" in self.aseeds else "random"
+        if W is not None and H is not None:
+            if self.seed is not None and self.seed is not "fixed":
+                raise utils.MFError("Initial factorization is fixed.")
+            else:
+                self.seed = seeding.fixed.Fixed()
+                self.seed._set_fixed(W=W, H=H, H1=H1)
+        self.__is_smdefined()
+        self.__compatibility()
+
+    def __is_smdefined(self):
+        """Check if MF and seeding methods are well defined."""
+        if isinstance(self.seed, str):
+            if self.seed in seeding.methods:
+                self.seed = seeding.methods[self.seed]()
+            else:
+                raise utils.MFError("Unrecognized seeding method.")
+        else:
+            if not str(self.seed).lower() in seeding.methods:
+                raise utils.MFError("Unrecognized seeding method.")
+
+    def __compatibility(self):
+        """Check if MF model is compatible with the seeding method."""
+        if not str(self.seed).lower() in self.aseeds:
+            raise utils.MFError("MF model is incompatible with the seeding method.")

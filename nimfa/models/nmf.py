@@ -583,10 +583,10 @@ class Nmf(object):
         W = self.basis()
         H = self.coef(0)
         H1 = self.coef(1) if self.model_name == 'mm' else None
-        if self.seed == None and W == None and H == None and H1 == None:
+        if self.seed is None and W is None and H is None and H1 is None:
             self.seed = None if "none" in self.aseeds else "random"
-        if W != None and H != None:
-            if self.seed != None and self.seed != "fixed":
+        if W is not None and H is not None:
+            if self.seed is not None and self.seed is not "fixed":
                 raise utils.MFError("Initial factorization is fixed.")
             else:
                 self.seed = seeding.fixed.Fixed()
