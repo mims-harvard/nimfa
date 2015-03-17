@@ -91,7 +91,7 @@
 """
 
 from os.path import dirname, abspath
-from os.path import join as pjoin
+from os.path import join
 from warnings import warn
 
 import numpy as np
@@ -131,23 +131,15 @@ def factorize(V):
     :param V: The ORL faces data matrix. 
     :type V: `numpy.matrix`
     """
-    model = nimfa.mf(V,
-                     seed="random_vcol",
-                     rank=25,
-                     method="lsnmf",
-                     max_iter=50,
-                     initialize_only=True,
-                     sub_iter=10,
-                     inner_sub_iter=10,
-                     beta=0.1,
-                     min_residuals=1e-8)
-    print("Performing %s %s %d factorization ..." % (model, model.seed, model.rank))
-    fit = nimfa.mf_run(model)
-    print("... Finished")
+    lsnmf = nimfa.Lsnmf(V, seed="random_vcol", rank=25, max_iter=50, sub_iter=10,
+                        inner_sub_iter=10, beta=0.1, min_residuals=1e-8)
+    print("Algorithm: %s\nInitialization: %s\nRank: %d" % (lsnmf, lsnmf.seed, lsnmf.rank))
+    fit = lsnmf()
     print("""Stats:
             - iterations: %d
             - final projected gradients norm: %5.3f
-            - Euclidean distance: %5.3f""" % (fit.fit.n_iter, fit.distance(), fit.distance(metric='euclidean')))
+            - Euclidean distance: %5.3f""" % (fit.fit.n_iter, fit.distance(),
+                                              fit.distance(metric='euclidean')))
     return fit.basis(), fit.coef()
 
 
@@ -159,16 +151,15 @@ def read():
     
     Return the ORL faces data matrix. 
     """
-    print("Reading ORL faces database ...")
-    dir = pjoin(dirname(dirname(abspath(__file__))), 'datasets', 'ORL_faces', 's')
+    print("Reading ORL faces database")
+    dir = join(dirname(dirname(abspath(__file__))), 'datasets', 'ORL_faces', 's')
     V = np.matrix(np.zeros((46 * 56, 400)))
     for subject in range(40):
         for image in range(10):
-            im = open(pjoin(dir + str(subject + 1), str(image + 1) + ".pgm"))
+            im = open(join(dir + str(subject + 1), str(image + 1) + ".pgm"))
             # reduce the size of the image
             im = im.resize((46, 56))
             V[:, image * subject + image] = np.mat(np.asarray(im).flatten()).T
-    print("... Finished.")
     return V
 
 
@@ -181,14 +172,11 @@ def preprocess(V):
     :param V: The ORL faces data matrix. 
     :type V: `numpy.matrix`
     """
-    print("Preprocessing data matrix ...")
+    print("Data preprocessing")
     min_val = V.min(axis=0)
     V = V - np.mat(np.ones((V.shape[0], 1))) * min_val
     max_val = V.max(axis=0) + 1e-4
-    V = (255. * V) / (np.mat(np.ones((V.shape[0], 1))) * max_val)
-    # avoid too large values
-    V = V / 100.
-    print("... Finished.")
+    V = (255. * V) / (np.mat(np.ones((V.shape[0], 1))) * max_val) / 100.
     return V
 
 
@@ -211,6 +199,7 @@ def plot(W):
             blank.paste(ima.copy(), (j * 46 + j, i * 56 + i))
     imshow(blank)
     savefig("orl_faces.png")
+
 
 if __name__ == "__main__":
     """Run the ORL faces example."""

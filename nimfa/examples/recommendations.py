@@ -41,10 +41,9 @@
 """
 
 from os.path import dirname, abspath
-from os.path import join as pjoin
+from os.path import join
 from warnings import warn
 
-import scipy.sparse as sp
 import numpy as np
 
 import nimfa
@@ -65,14 +64,9 @@ def run():
     in the test set. 
     """
     for data_set in ['ua', 'ub']:
-        # read ratings from MovieLens data set
         V = read(data_set)
-        # preprocess MovieLens data matrix
-        V, maxs = preprocess(V)
-        # run factorization
-        W, H = factorize(V.todense())
-        # plot RMSE rate on MovieLens data set.
-        plot(W, H, data_set, maxs)
+        W, H = factorize(V)
+        rmse(W, H, data_set)
 
 
 def factorize(V):
@@ -82,27 +76,19 @@ def factorize(V):
     Return basis and mixture matrices of the fitted factorization model. 
     
     :param V: The MovieLens data matrix. 
-    :type V: `scipy.sparse.csr_matrix`
+    :type V: `numpy.matrix`
     """
-    model = nimfa.mf(V,
-                     seed="random_vcol",
-                     rank=12,
-                     method="snmf",
-                     max_iter=15,
-                     initialize_only=True,
-                     version='r',
-                     eta=1.,
-                     beta=1e-4,
-                     i_conv=10,
-                     w_min_change=0)
-    print("Performing %s %s %d factorization ..." % (model, model.seed, model.rank))
-    fit = nimfa.mf_run(model)
-    print("... Finished")
+    snmf = nimfa.Snmf(V, seed="random_vcol", rank=30, max_iter=30, version='r', eta=1.,
+                      beta=1e-4, i_conv=10, w_min_change=0)
+    print("Algorithm: %s\nInitialization: %s\nRank: %d" % (snmf, snmf.seed, snmf.rank))
+    fit = snmf()
     sparse_w, sparse_h = fit.fit.sparseness()
     print("""Stats:
             - iterations: %d
             - Euclidean distance: %5.3f
-            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter, fit.distance(metric='euclidean'), sparse_w, sparse_h))
+            - Sparseness basis: %5.3f, mixture: %5.3f""" % (fit.fit.n_iter,
+                                                            fit.distance(metric='euclidean'),
+                                                            sparse_w, sparse_h))
     return fit.basis(), fit.coef()
 
 
@@ -110,73 +96,37 @@ def read(data_set):
     """
     Read movies' ratings data from MovieLens data set. 
     
-    Construct a user-by-item matrix. This matrix is sparse, therefore ``scipy.sparse`` format is used. For construction
-    LIL sparse format is used, which is an efficient structure for constructing sparse matrices incrementally. 
-    
-    Return the MovieLens sparse data matrix in LIL format. 
-    
-    :param data_set: Name of the split data set to be read. 
+    :param data_set: Name of the split data set to be read.
     :type data_set: `str`
     """
-    print("Reading MovieLens ratings data set ...")
-    dir = pjoin(dirname(dirname(abspath(__file__))), 'datasets', 'MovieLens', data_set + '.base')
-    V = sp.lil_matrix((943, 1682))
-    for line in open(dir):
+    print("Read MovieLens data set")
+    fname = join(dirname(dirname(abspath(__file__))), "datasets", "MovieLens", "%s.base" % data_set)
+    V = np.ones((943, 1682)) * 2.5
+    for line in open(fname):
         u, i, r, _ = list(map(int, line.split()))
         V[u - 1, i - 1] = r
-    print("... Finished.")
     return V
 
 
-def preprocess(V):
+def rmse(W, H, data_set):
     """
-    Preprocess MovieLens data matrix. Normalize data.
-    
-    Return preprocessed target sparse data matrix in CSR format and users' maximum ratings. Returned matrix's shape is 943 (users) x 1682 (movies). 
-    The sparse data matrix is converted to CSR format for fast arithmetic and matrix vector operations. 
-    
-    :param V: The MovieLens data matrix. 
-    :type V: `scipy.sparse.lil_matrix`
-    """
-    print("Preprocessing data matrix ...")
-    V = V.tocsr()
-    maxs = [np.max(V[i, :].todense()) for i in range(V.shape[0])]
-    now = 0
-    for row in range(V.shape[0]):
-        upto = V.indptr[row + 1]
-        while now < upto:
-            col = V.indices[now]
-            V.data[now] /= maxs[row]
-            now += 1
-    print("... Finished.")
-    return V, maxs
-
-
-def plot(W, H, data_set, maxs):
-    """
-    Plot the RMSE error rate on MovieLens data set. 
+    Compute the RMSE error rate on MovieLens data set.
     
     :param W: Basis matrix of the fitted factorization model.
-    :type W: `scipy.sparse.csr_matrix`
+    :type W: `numpy.matrix`
     :param H: Mixture matrix of the fitted factorization model.
-    :type H: `scipy.sparse.csr_matrix`
+    :type H: `numpy.matrix`
     :param data_set: Name of the split data set to be read. 
     :type data_set: `str`
-    :param maxs: Users' maximum ratings (used in normalization). 
-    :type maxs: `list`
     """
-    print("Plotting RMSE rates ...")
-    dir = dirname(dirname(abspath(__file__))) + sep + \
-        'datasets' + sep + 'MovieLens' + sep + data_set + '.test'
-    rmse = 0
-    n = 0
-    for line in open(dir):
+    fname = join(dirname(dirname(abspath(__file__))), "datasets", "MovieLens", "%s.test" % data_set)
+    rmse = []
+    for line in open(fname):
         u, i, r, _ = list(map(int, line.split()))
-        rmse += ((W[u - 1, :] * H[:, i - 1])[0, 0] + maxs[u - 1] - r) ** 2
-        n += 1
-    rmse /= n
-    print(rmse)
-    print("... Finished.")
+        sc = max(min((W[u - 1, :] * H[:, i - 1])[0, 0], 5), 1)
+        rmse.append((sc - r) ** 2)
+    print("RMSE: %5.3f" % np.mean(rmse))
+
 
 if __name__ == "__main__":
     """Run the Recommendations example."""

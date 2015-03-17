@@ -94,7 +94,7 @@
 """
 
 from os.path import dirname, abspath
-from os.path import join as pjoin
+from os.path import join
 from warnings import warn
 
 from scipy.cluster.hierarchy import linkage, leaves_list
@@ -135,20 +135,11 @@ def run_one(V, rank):
         # does not change. For a backup we also specify the maximum number of iterations. Note that the satisfiability
         # of one stopping criteria terminates the run (there is no chance for
         # divergence).
-        model = nimfa.mf(V,
-                         method="nmf",
-                         rank=rank,
-                         seed="random_vcol",
-                         max_iter=200,
-                         update='euclidean',
-                         objective='conn',
-                         conn_change=40,
-                         initialize_only=True)
-        fit = nimfa.mf_run(model)
-        print("%2d / 50 :: %s - init: %s ran with  ... %3d / 200 iters ..." % (i + 1, fit.fit, fit.fit.seed, fit.fit.n_iter))
+        nmf = nimfa.Nmf(V, rank=rank, seed="random_vcol", max_iter=200, update='euclidean',
+                         objective='conn', conn_change=40)
+        fit = nmf()
+        print("Algorithm: %s\nInitialization: %s\nRank: %d" % (nmf, nmf.seed, nmf.rank))
         # Compute connectivity matrix of factorization.
-        # Again, we could use multiple runs support of the nimfa library, track factorization model across 50 runs and then
-        # just call fit.consensus()
         consensus += fit.fit.connectivity()
     # averaging connectivity matrices
     consensus /= 50.
@@ -169,7 +160,7 @@ def plot(C, rank):
     """
     set_cmap("RdBu_r")
     imshow(np.array(C))
-    savefig("medulloblastoma_consensus" + str(rank) + ".png")
+    savefig("medulloblastoma_consensus_%s.png" % rank)
 
 
 def reorder(C):
@@ -191,23 +182,17 @@ def reorder(C):
     return C[:, ivl][ivl, :]
 
 
-def read(normalize=False):
+def read():
     """
     Read the medulloblastoma gene expression data. The matrix's shape is 5893 (genes) x 34 (samples). 
     It contains only positive data.
     
     Return the gene expression data matrix. 
     """
-    V = np.matrix(np.zeros((5893, 34)))
-    i = 0
-    path = pjoin(dirname(dirname(abspath(__file__))), 'datasets', 'Medulloblastoma',  'Medulloblastoma_data.txt')
-    for line in open(path):
-        V[i, :] = list(map(float, line.split('\t')))
-        i += 1
-    if normalize:
-        V -= V.min()
-        V /= V.max()
+    fname = join(dirname(dirname(abspath(__file__))), 'datasets', 'Medulloblastoma',  'Medulloblastoma_data.txt')
+    V = np.loadtxt(fname)
     return V
+
 
 if __name__ == "__main__":
     """Run the medulloblastoma example."""
