@@ -103,7 +103,7 @@
     .. note:: This example uses ``matplotlib`` library for producing a heatmap of a consensus matrix.
 """
 
-from os.path import dirname, abspath, sep
+from os.path import dirname, abspath, join
 from warnings import warn
 
 from scipy.cluster.hierarchy import linkage, leaves_list
@@ -136,7 +136,7 @@ def run_one(V, rank):
     :type rank: `int`
     """
     print("================= Rank = %d =================" % rank)
-    consensus = np.mat(np.zeros((V.shape[1], V.shape[1])))
+    consensus = np.zeros((V.shape[1], V.shape[1]))
     for i in range(50):
         # Standard NMF with Euclidean update equations is used. For initialization random Vcol method is used.
         # Objective function is the number of consecutive iterations in which the connectivity matrix has not changed.
@@ -144,20 +144,11 @@ def run_one(V, rank):
         # does not change. For a backup we also specify the maximum number of iterations. Note that the satisfiability
         # of one stopping criteria terminates the run (there is no chance for
         # divergence).
-        model = nimfa.mf(V,
-                         method="nmf",
-                         rank=rank,
-                         seed="random_vcol",
-                         max_iter=200,
-                         update='euclidean',
-                         objective='conn',
-                         conn_change=40,
-                         initialize_only=True)
-        fit = nimfa.mf_run(model)
-        print("%2d / 50 :: %s - init: %s ran with  ... %3d / 200 iters ..." % (i + 1, fit.fit, fit.fit.seed, fit.fit.n_iter))
+        nmf = nimfa.Nmf(V, method="nmf", rank=rank, seed="random_vcol", max_iter=200,
+                          update='euclidean', objective='conn', conn_change=40)
+        fit = nmf()
+        print("%2d/50 : %s - init: %s (%3d/200 iterations)" % (i + 1, fit.fit, fit.fit.seed, fit.fit.n_iter))
         # Compute connectivity matrix of factorization.
-        # Again, we could use multiple runs support of the nimfa library, track factorization model across 50 runs and then
-        # just call fit.consensus()
         consensus += fit.fit.connectivity()
     # averaging connectivity matrices
     consensus /= 50.
@@ -178,7 +169,7 @@ def plot(C, rank):
     """
     imshow(np.array(C))
     set_cmap("RdBu_r")
-    savefig("all_aml_consensus" + str(rank) + ".png")
+    savefig("all_aml_consensus_%d.png" % rank)
 
 
 def reorder(C):
@@ -207,12 +198,10 @@ def read():
 
     Return the gene expression data matrix.
     """
-    V = np.matrix(np.zeros((5000, 38)))
-    i = 0
-    for line in open(dirname(dirname(abspath(__file__))) + sep + 'datasets' + sep + 'ALL_AML' + sep + 'ALL_AML_data.txt'):
-        V[i, :] = list(map(float, line.split('\t')))
-        i += 1
+    fname = join(dirname(dirname(abspath(__file__))), 'datasets', 'ALL_AML', 'ALL_AML_data.txt')
+    V = np.loadtxt(fname)
     return V
+
 
 if __name__ == "__main__":
     """Run the ALL AML example."""

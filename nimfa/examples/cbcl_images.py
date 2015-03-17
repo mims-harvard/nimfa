@@ -79,7 +79,7 @@
     
 """
 from os.path import dirname, abspath
-from os.path import join as pjoin
+from os.path import join
 from warnings import warn
 
 import numpy as np
@@ -100,13 +100,9 @@ except ImportError as exc:
 
 def run():
     """Run LSNMF on CBCL faces data set."""
-    # read face image data from ORL database
     V = read()
-    # preprocess ORL faces data matrix
     V = preprocess(V)
-    # run factorization
     W, _ = factorize(V)
-    # plot parts-based representation
     plot(W)
 
 
@@ -119,19 +115,10 @@ def factorize(V):
     :param V: The CBCL faces data matrix. 
     :type V: `numpy.matrix`
     """
-    model = nimfa.mf(V,
-                     seed="random_vcol",
-                     rank=49,
-                     method="lsnmf",
-                     max_iter=50,
-                     initialize_only=True,
-                     sub_iter=10,
-                     inner_sub_iter=10,
-                     beta=0.1,
-                     min_residuals=1e-8)
-    print("Performing %s %s %d factorization ..." % (model, model.seed, model.rank))
-    fit = nimfa.mf_run(model)
-    print("... Finished")
+    lsnmf = nimfa.Lsnmf(V, seed="random_vcol", rank=49, max_iter=50, sub_iter=10,
+                        inner_sub_iter=10, beta=0.1, min_residuals=1e-8)
+    print("Algorithm: %s\nInitialization: %s\nRank: %d" % (lsnmf, lsnmf.seed, lsnmf.rank))
+    fit = lsnmf()
     sparse_w, sparse_h = fit.fit.sparseness()
     print("""Stats:
             - iterations: %d
@@ -152,13 +139,12 @@ def read():
     
     Return the CBCL faces data matrix. 
     """
-    print("Reading CBCL faces database ...")
-    dir = pjoin(dirname(dirname(abspath(__file__))), 'datasets', 'CBCL_faces', 'face')
-    V = np.matrix(np.zeros((19 * 19, 2429)))
+    print("Reading CBCL faces database")
+    dir = join(dirname(dirname(abspath(__file__))), 'datasets', 'CBCL_faces', 'face')
+    V = np.zeros((19 * 19, 2429))
     for image in range(2429):
-        im = open(pjoin(dir, "face0" + str(image + 1).zfill(4) + ".pgm"))
-        V[:, image] = np.mat(np.asarray(im).flatten()).T
-    print("... Finished.")
+        im = open(join(dir, "face0%s.pgm" % str(image + 1).zfill(4)))
+        V[:, image] = np.asarray(im).flatten()
     return V
 
 
@@ -171,14 +157,9 @@ def preprocess(V):
     :param V: The CBCL faces data matrix. 
     :type V: `numpy.matrix`
     """
-    print("Preprocessing data matrix ...")
-    V = V - V.mean()
-    V = V / np.sqrt(np.multiply(V, V).mean())
-    V = V + 0.25
-    V = V * 0.25
-    V = np.minimum(V, 1)
-    V = np.maximum(V, 0)
-    print("... Finished.")
+    print("Data preprocessing")
+    V = (V - V.mean()) / np.sqrt(np.multiply(V, V).mean())
+    V = np.maximum(np.minimum((V + 0.25) * 0.25, 1), 0)
     return V
 
 
@@ -202,6 +183,7 @@ def plot(W):
             blank.paste(ima.copy(), (j * 19 + j, i * 19 + i))
     imshow(blank)
     savefig("cbcl_faces.png")
+
 
 if __name__ == "__main__":
     """Run the CBCL faces example."""

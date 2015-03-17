@@ -110,7 +110,7 @@ class Nmf(nmf_std.Nmf_std):
     :param update: Type of update equations used in factorization. When specifying
        model parameter ``update`` can be assigned to:
 
-           #. 'euclidean' for classic Euclidean distance update
+           #. 'uclidean' for classic Euclidean distance update
               equations,
            #. 'divergence' for divergence update equations.
        By default Euclidean update equations are used.
@@ -190,8 +190,8 @@ class Nmf(nmf_std.Nmf_std):
                 self.update()
                 self._adjustment()
                 iter += 1
-                c_obj = self.objective(
-                ) if not self.test_conv or iter % self.test_conv == 0 else c_obj
+                if not self.test_conv or iter % self.test_conv == 0:
+                    c_obj = self.objective()
                 if self.track_error:
                     self.tracker.track_error(run, c_obj)
             if self.callback:
@@ -231,7 +231,7 @@ class Nmf(nmf_std.Nmf_std):
             return False
         if self.test_conv and iter % self.test_conv != 0:
             return True
-        if self.conn_change != None:
+        if self.conn_change is not None:
             return self.__is_satisfied(p_obj, c_obj, iter)
         if self.min_residuals and iter > 0 and p_obj - c_obj < self.min_residuals:
             return False
@@ -311,7 +311,7 @@ class Nmf(nmf_std.Nmf_std):
         return conn_change > 0
 
     def __str__(self):
-        return '%s - update: %s obj: %s' % (self.name, self.update, self.objective)
+        return '%s - update: %s obj: %s' % (self.name, self.update.__name__, self.objective.__name__)
 
     def __repr__(self):
         return self.name
