@@ -113,7 +113,7 @@ class Nmf(object):
                     float) else np.asmatrix(self.H1, dtype='d')
         self._compatibility()
 
-    def run(self):
+    def __call__(self):
         """Run the specified MF algorithm."""
         return self.factorize()
 
