@@ -160,10 +160,10 @@ class Icm(nmf_std.Nmf_std):
         self.name = "icm"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
         super().__init__(vars())
-        if self.alpha is not None:
+        if self.alpha is None:
             self.alpha = sp.rand(self.V.shape[0], self.rank, density=0.8, format='csr')
         self.alpha= self.alpha.tocsr() if sp.isspmatrix(self.alpha) else np.mat(self.alpha)
-        if self.beta is not None:
+        if self.beta is None:
             self.beta = sp.rand(self.rank, self.V.shape[1], density=0.8, format='csr')
         self.beta = self.beta.tocsr() if sp.isspmatrix(self.beta) else np.mat(self.beta)
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 \
@@ -247,8 +247,9 @@ class Icm(nmf_std.Nmf_std):
         for _ in range(self.iiter):
             for n in range(self.rank):
                 nn = list(range(n)) + list(range(n + 1, self.rank))
-                temp = max(
-                    sop(D[:, n] - dot(self.W[:, nn], C[nn, n]) - self.sigma * self.alpha[:, n], C[n, n] + np.finfo(C.dtype).eps, div), 0.)
+                op1 = D[:, n] - dot(self.W[:, nn], C[nn, n]) - self.sigma * self.alpha[:, n]
+                op2 = C[n, n] + np.finfo(C.dtype).eps
+                temp = max(sop(op1, op2, div), 0.)
                 if not sp.isspmatrix(self.W):
                     self.W[:, n] = temp
                 else:
@@ -268,8 +269,9 @@ class Icm(nmf_std.Nmf_std):
         for _ in range(self.iiter):
             for n in range(self.rank):
                 nn = list(range(n)) + list(range(n + 1, self.rank))
-                temp = max(
-                    sop(F[n, :] - dot(E[n, nn], self.H[nn, :]) - self.sigma * self.beta[n, :], E[n, n] + np.finfo(E.dtype).eps, div), 0.)
+                op1 = F[n, :] - dot(E[n, nn], self.H[nn, :]) - self.sigma * self.beta[n, :]
+                op2 = E[n, n] + np.finfo(E.dtype).eps
+                temp = max(sop(op1, op2, div), 0.)
                 if not sp.isspmatrix(self.H):
                     self.H[n, :] = temp
                 else:

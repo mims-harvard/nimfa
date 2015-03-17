@@ -177,7 +177,7 @@ class Nmf(object):
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         V = self.target(idx)
-        H = self.coef(idx) if H == None else H
+        H = self.coef(idx) if H is None else H
         _, idx = argmax(H, axis=0)
         mat1 = repmat(idx, V.shape[1], 1)
         mat2 = repmat(idx.T, 1, V.shape[1])
@@ -280,14 +280,14 @@ class Nmf(object):
         """
         X = self.coef(idx) if what == "samples" else self.basis(
         ).T if what == "features" else None
-        if X == None:
+        if X is None:
             raise utils.MFError(
                 "Dominant basis components can be computed for samples or features.")
         eX, idxX = argmax(X, axis=0)
         if not prob:
             return idxX
         sums = X.sum(axis=0)
-        prob = [e / sums[0, s] for e, s in zip(eX, list(range(X.shape[1])))]
+        prob = [e / (sums[0, s] + 1e-5) for e, s in zip(eX, list(range(X.shape[1])))]
         return idxX, prob
 
     def evar(self, idx=None):
