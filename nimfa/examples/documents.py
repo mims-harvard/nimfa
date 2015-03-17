@@ -97,7 +97,7 @@
 """
 
 from os.path import dirname, abspath
-from os.path import join as pjoin
+from os.path import join
 from operator import itemgetter
 from warnings import warn
 
@@ -114,13 +114,9 @@ except ImportError as exc:
 
 def run():
     """Run NMF - Divergence on the Medlars data set."""
-    # read medical abstracts from Medlars data set
     V, term2idx, idx2term = read()
-    # preprocess Medlars data matrix
     V, term2idx, idx2term = preprocess(V, term2idx, idx2term)
-    # run factorization
     W, _ = factorize(V)
-    # plot interpretation of NMF basis vectors on Medlars data set.
     plot(W, idx2term)
 
 
@@ -133,17 +129,10 @@ def factorize(V):
     :param V: The Medlars data matrix. 
     :type V: `scipy.sparse.csr_matrix`
     """
-    model = nimfa.mf(V,
-                     seed="random_vcol",
-                     rank=12,
-                     method="nmf",
-                     max_iter=15,
-                     initialize_only=True,
-                     update='divergence',
-                     objective='div')
-    print("Performing %s %s %d factorization ..." % (model, model.seed, model.rank))
-    fit = nimfa.mf_run(model)
-    print("... Finished")
+    nmf = nimfa.Nmf(V, seed="random_vcol", rank=12, method="nmf", max_iter=15,
+                    update="divergence", objective="div")
+    print("Algorithm: %s\nInitialization: %s\nRank: %d" % (nmf, nmf.seed, nmf.rank))
+    fit = nmf()
     sparse_w, sparse_h = fit.fit.sparseness()
     print("""Stats:
             - iterations: %d
@@ -163,8 +152,8 @@ def read():
     Return the Medlars sparse data matrix in LIL format, term-to-index `dict` translator and index-to-term 
     `dict` translator. 
     """
-    print("Reading Medlars medical abstracts data set ...")
-    dir = pjoin(dirname(dirname(abspath(__file__))), 'datasets', 'Medlars', 'med.all')
+    print("Read Medlars medical abstracts data set")
+    dir = join(dirname(dirname(abspath(__file__))), "datasets", "Medlars", "med.all")
     doc = open(dir)
     V = sp.lil_matrix((16017, 1033))
     term2idx = {}
@@ -185,7 +174,6 @@ def read():
                     n_free += 1
                 V[term2idx[term], ii - 1] += 1
             line = doc.readline().strip()
-    print("... Finished.")
     return V, term2idx, idx2term
 
 
@@ -205,7 +193,7 @@ def preprocess(V, term2idx, idx2term):
     :param idx2term: Index-to-term translator.
     :type idx2term: `dict`
     """
-    print("Preprocessing data matrix ...")
+    print("Data preprocessing")
     # remove stop words, digits, too short words
     rem = set()
     for term in term2idx:
@@ -224,7 +212,6 @@ def preprocess(V, term2idx, idx2term):
         idx2term[n_free] = idx2term[r]
         V1[n_free, :] = V[r,:] 
         n_free += 1
-    print("... Finished.")
     return V1.tocsr(), term2idx, idx2term
 
 
@@ -237,36 +224,39 @@ def plot(W, idx2term):
     :param idx2term: Index-to-term translator.
     :type idx2term: `dict`
     """
-    print("Plotting highest weighted terms in basis vectors ...")
+    print("Plot highest weighted terms in basis vectors")
     for c in range(W.shape[1]):
         if sp.isspmatrix(W):
-            top10 = sorted(
-                enumerate(W[:, c].todense().ravel().tolist()[0]), key=itemgetter(1), reverse=True)[:10]
+            top10 = np.argsort(np.asarray(W[:, c].todense()).flatten())[-10:]
+            val = W[top10, c].todense()
         else:
-            top10 = sorted(
-                enumerate(W[:, c].ravel().tolist()[0]), key=itemgetter(1), reverse=True)[:10]
-        pos = np.arange(10) + .5
-        val = list(zip(*top10))[1][::-1]
+            top10 = np.argsort(np.asarray(W[:, c]).flatten())[-10:]
+            val = W[top10, c]
         plb.figure(c + 1)
-        plb.barh(pos, val, color="yellow", align="center")
-        plb.yticks(pos, [idx2term[idx] for idx in list(zip(*top10))[0]][::-1])
+        plb.barh(np.arange(10) + .5, val, color="yellow", align="center")
+        plb.yticks(np.arange(10) + .5, [idx2term[idx] for idx in top10][::-1])
         plb.xlabel("Weight")
         plb.ylabel("Term")
         plb.title("Highest Weighted Terms in Basis Vector W%d" % (c + 1))
         plb.grid(True)
         plb.savefig("documents_basisW%d.png" % (c + 1), bbox_inches="tight")
-    print("... Finished.")
+
 
 stop_words = [
-    "a", "able", "about", "across", "after", "all", "almost", "also", "am", "among", "an", "and", "any", "are", "as", "at", "be",
-    "because", "been", "but", "by", "can", "cannot", "could", "dear", "did", "do", "does", "either", "else", "ever", "every",
-    "for", "from", "get", "got", "had", "has", "have", "he", "her", "hers", "him", "his", "how", "however", "i", "if", "in",
-    "into", "is", "it", "its", "just", "least", "let", "like", "likely", "may", "me", "might", "most", "must", "my", "neither",
-    "no", "nor", "not", "of", "off", "often", "on", "only", "or", "other", "our", "own", "rather", "said", "say", "says", "she",
-    "should", "since", "so", "some", "than", "that", "the", "their", "them", "then", "there", "these", "they", "this", "tis",
-    "to", "too", "twas", "us", "wants", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom", "why",
-    "will", "with", "would", "yet", "you", "your", ".", " ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "during", "changes",
-    "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)", "usually", "involved", "labeled"]
+    "a", "able", "about", "across", "after", "all", "almost", "also", "am", "among", "an",
+    "and", "any", "are", "as", "at", "be", "because", "been", "but", "by", "can", "cannot",
+    "could", "dear", "did", "do", "does", "either", "else", "ever", "every", "for", "from",
+    "get", "got", "had", "has", "have", "he", "her", "hers", "him", "his", "how", "however",
+    "i", "if", "in", "into", "is", "it", "its", "just", "least", "let", "like", "likely",
+    "may", "me", "might", "most", "must", "my", "neither", "no", "nor", "not", "of", "off",
+    "often", "on", "only", "or", "other", "our", "own", "rather", "said", "say", "says", "she",
+    "should", "since", "so", "some", "than", "that", "the", "their", "them", "then", "there",
+    "these", "they", "this", "tis", "to", "too", "twas", "us", "wants", "was", "we", "were",
+    "what", "when", "where", "which", "while", "who", "whom", "why", "will", "with", "would",
+    "yet", "you", "your", ".", " ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "during",
+    "changes", "(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)", "(9)", "usually", "involved",
+    "labeled"]
+
 
 if __name__ == "__main__":
     """Run the Medlars example."""
