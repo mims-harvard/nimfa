@@ -2,7 +2,7 @@ import nimfa
 
 V = nimfa.examples.medulloblastoma.read(normalize=True)
 
-lsnmf = nimfa.Lsnmf(V, seed='random_c', rank=50, max_iter=100)
+lsnmf = nimfa.Lsnmf(V, seed='random_vcol', rank=50, max_iter=100)
 lsnmf_fit = lsnmf()
 
 print('Rss: %5.4f' % lsnmf_fit.fit.rss())

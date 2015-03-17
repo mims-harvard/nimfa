@@ -182,7 +182,7 @@ def reorder(C):
     return C[:, ivl][ivl, :]
 
 
-def read():
+def read(normalize=False):
     """
     Read the medulloblastoma gene expression data. The matrix's shape is 5893 (genes) x 34 (samples). 
     It contains only positive data.
@@ -191,6 +191,8 @@ def read():
     """
     fname = join(dirname(dirname(abspath(__file__))), 'datasets', 'Medulloblastoma',  'Medulloblastoma_data.txt')
     V = np.loadtxt(fname)
+    if normalize:
+        V = (V - V.min()) / (V.max() - V.min())
     return V
 
 
