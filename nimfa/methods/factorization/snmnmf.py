@@ -51,9 +51,8 @@ coefficient matrices sparse.
 .. note:: In [Zhang2011]_ ``H1`` and ``H2`` notation corresponds to the ``H``
 and ``H1`` here, respectively.
 
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 2-15
-    
+.. literalinclude:: /code/snippet_snmnmf.py
+
 """
 
 from nimfa.models import *

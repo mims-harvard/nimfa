@@ -46,9 +46,8 @@ factorization model. In step 3, the update rule is derived by taking the longest
 step that can maintain the nonnegativity of the basis, mixture matrix during the
 iterative process.
 
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 38-47
-         
+.. literalinclude:: /code/snippet_bmf.py
+
 """
 
 from nimfa.models import *

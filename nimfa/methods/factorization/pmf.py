@@ -10,9 +10,8 @@ PMF interprets target matrix (V) as samples from a multinomial [Laurberg2008]_,
 [Hansen2008]_ and uses Euclidean distance for convergence test. Factorization
 is guided by an expectation maximization algorithm.
 
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 140-148
-    
+.. literalinclude:: /code/snippet_pmf.py
+
 """
 
 from nimfa.models import *

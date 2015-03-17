@@ -32,9 +32,8 @@ operator S. Due to the multiplicative nature of the model, strong smoothing in
 S forces strong sparseness in both the basis and the encoding vectors. Therefore,
 the parameter theta controls the sparseness of the model.
 
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 129-137
-       
+.. literalinclude:: /code/snippet_nmf_nsnmf.py
+
 """
 
 from nimfa.models import *

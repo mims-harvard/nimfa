@@ -16,7 +16,6 @@ factorization with projected gradient method for subproblems [Lin2007]_ and Rand
 fitted factorization model through which user can access matrix factors and estimate quality measures.
     
    	.. literalinclude:: /code/usage.py
-   		:lines: 1-11
 
 Running this script produces the following output, where slight differences in reported scores across different 
 runs can be attributed to randomness of the Random Vcol initialization method::

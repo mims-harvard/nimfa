@@ -23,9 +23,8 @@ In alternating least squares, each subproblem involves an optimization procedure
 and requires a stopping condition. A common way to check whether current solution
 is close to a stationary point is the form of the projected gradient [Lin2007]_.
 
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 79-89
-      
+.. literalinclude:: /code/snippet_lsnmf.py
+
 """
 
 from nimfa.models import *

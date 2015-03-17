@@ -20,12 +20,10 @@ function is coercive on the feasible set. It can be shown (Grippo and Sciandrome
 is a critical point of the corresponding problem. Similarly, the algorithm SNMF/L
 converges to a stationary point.
 
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 162-174
-    
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 177-189
-    
+.. literalinclude:: /code/snippet_snmf_l.py
+
+.. literalinclude:: /code/snippet_snmf_r.py
+
 """
 
 from nimfa.models import *

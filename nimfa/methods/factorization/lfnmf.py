@@ -30,9 +30,8 @@ Example usages are pattern recognition problems in classification, feature
 generation and extraction for diagnostic classification purposes, face
 recognition etc.
 
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 66-76
-         
+.. literalinclude:: /code/snippet_lfnmf.py
+
 """
 
 from nimfa.models import *

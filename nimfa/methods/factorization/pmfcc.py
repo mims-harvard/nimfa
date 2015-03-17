@@ -20,9 +20,8 @@ Cost function includes centroid distortions and any associated constraint
 violations. Compared to the traditional NMF cost function, the only difference
 is the inclusion of the penalty term.
 
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 191-199
-    
+.. literalinclude:: /code/snippet_pmfcc.py
+
 """
 import operator
 

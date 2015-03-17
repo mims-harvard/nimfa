@@ -22,15 +22,12 @@ of gene expression in complex biological systems.
 Besides usages in bioinformatics NMF can be applied to text analysis,
 image processing, multiway clustering, environmetrics etc.
 
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 92-101
-    
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 104-113
-    
-.. literalinclude:: /code/methods_snippets.py
-    :lines: 116-126
-    
+.. literalinclude:: /code/snippet_nmf_fro.py
+
+.. literalinclude:: /code/snippet_nmf_div.py
+
+.. literalinclude:: /code/snippet_nmf_conn.py
+
 """
 
 from nimfa.models import *
