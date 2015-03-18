@@ -118,8 +118,7 @@ except ImportError as exc:
 
 
 def run():
-    """Run Standard NMF on leukemia data set. For each rank 50 Standard NMF runs are performed. """
-    # read gene expression data
+    """Run Standard NMF on leukemia data set. """
     V = read()
     for rank in range(2, 4):
         run_one(V, rank)
@@ -131,30 +130,20 @@ def run_one(V, rank):
     averages all 50 connectivity matrices.
 
     :param V: Target matrix with gene expression data.
-    :type V: `numpy.matrix` (of course it could be any format of scipy.sparse, but we will use numpy here)
+    :type V: `numpy.ndarray`
     :param rank: Factorization rank.
     :type rank: `int`
     """
     print("================= Rank = %d =================" % rank)
     consensus = np.zeros((V.shape[1], V.shape[1]))
     for i in range(50):
-        # Standard NMF with Euclidean update equations is used. For initialization random Vcol method is used.
-        # Objective function is the number of consecutive iterations in which the connectivity matrix has not changed.
-        # We demand that factorization does not terminate before 30 consecutive iterations in which connectivity matrix
-        # does not change. For a backup we also specify the maximum number of iterations. Note that the satisfiability
-        # of one stopping criteria terminates the run (there is no chance for
-        # divergence).
         nmf = nimfa.Nmf(V, method="nmf", rank=rank, seed="random_vcol", max_iter=200,
                           update='euclidean', objective='conn', conn_change=40)
         fit = nmf()
         print("%2d/50 : %s - init: %s (%3d/200 iterations)" % (i + 1, fit.fit, fit.fit.seed, fit.fit.n_iter))
-        # Compute connectivity matrix of factorization.
         consensus += fit.fit.connectivity()
-    # averaging connectivity matrices
     consensus /= 50.
-    # reorder consensus matrix
     p_consensus = reorder(consensus)
-    # plot reordered consensus matrix
     plot(p_consensus, rank)
 
 
@@ -163,11 +152,11 @@ def plot(C, rank):
     Plot reordered consensus matrix.
 
     :param C: Reordered consensus matrix.
-    :type C: `numpy.matrix`
+    :type C: numpy.ndarray`
     :param rank: Factorization rank.
     :type rank: `int`
     """
-    imshow(np.array(C))
+    imshow(C)
     set_cmap("RdBu_r")
     savefig("all_aml_consensus_%d.png" % rank)
 
@@ -177,7 +166,7 @@ def reorder(C):
     Reorder consensus matrix.
 
     :param C: Consensus matrix.
-    :type C: `numpy.matrix`
+    :type C: `numpy.ndarray`
     """
     c_vec = np.array([C[i, j] for i in range(C.shape[0] - 1)
                      for j in range(i + 1, C.shape[1])])
