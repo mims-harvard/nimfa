@@ -129,8 +129,8 @@ def factorize(V):
     :param V: The Medlars data matrix. 
     :type V: `scipy.sparse.csr_matrix`
     """
-    nmf = nimfa.Nmf(V, seed="random_vcol", rank=12, method="nmf", max_iter=15,
-                    update="divergence", objective="div")
+    nmf = nimfa.Nmf(V, seed="random_vcol", rank=12, max_iter=15, update="divergence",
+                    objective="div")
     print("Algorithm: %s\nInitialization: %s\nRank: %d" % (nmf, nmf.seed, nmf.rank))
     fit = nmf()
     sparse_w, sparse_h = fit.fit.sparseness()

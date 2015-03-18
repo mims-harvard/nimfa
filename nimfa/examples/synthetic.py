@@ -194,8 +194,8 @@ def run_nmf(V):
     fit = nmf()
     print_info(fit)
     # divergence
-    nmf = nimfa.Nmf(V, seed="random_vcol", rank=rank, method="nmf", max_iter=12,
-                    initialize_only=True, update='divergence', objective='div')
+    nmf = nimfa.Nmf(V, seed="random_vcol", rank=rank, max_iter=12, initialize_only=True,
+                    update='divergence', objective='div')
     fit = nmf()
     print_info(fit)
 

@@ -137,10 +137,11 @@ def run_one(V, rank):
     print("================= Rank = %d =================" % rank)
     consensus = np.zeros((V.shape[1], V.shape[1]))
     for i in range(50):
-        nmf = nimfa.Nmf(V, method="nmf", rank=rank, seed="random_vcol", max_iter=200,
-                          update='euclidean', objective='conn', conn_change=40)
+        nmf = nimfa.Nmf(V, rank=rank, seed="random_vcol", max_iter=200, update='euclidean',
+                        objective='conn', conn_change=40)
         fit = nmf()
-        print("%2d/50 : %s - init: %s (%3d/200 iterations)" % (i + 1, fit.fit, fit.fit.seed, fit.fit.n_iter))
+        print("%2d/50 : %s - init: %s (%3d/200 iterations)" % (i + 1, fit.fit,
+                                                               fit.fit.seed, fit.fit.n_iter))
         consensus += fit.fit.connectivity()
     consensus /= 50.
     p_consensus = reorder(consensus)
