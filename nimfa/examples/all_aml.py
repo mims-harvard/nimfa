@@ -169,13 +169,8 @@ def reorder(C):
     :param C: Consensus matrix.
     :type C: `numpy.ndarray`
     """
-    c_vec = np.array([C[i, j] for i in range(C.shape[0] - 1)
-                     for j in range(i + 1, C.shape[1])])
-    # convert similarities to distances
-    Y = 1 - c_vec
+    Y = 1 - C
     Z = linkage(Y, method='average')
-    # get node ids as they appear in the tree from left to right(corresponding
-    # to observation vector idx)
     ivl = leaves_list(Z)
     ivl = ivl[::-1]
     return C[:, ivl][ivl, :]
