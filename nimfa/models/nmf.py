@@ -552,7 +552,7 @@ class Nmf(object):
         summaries = {}
         for rank in range:
             self.rank = rank
-            fctr = self.run()
+            fctr = self()
             if what == 'all':
                 summaries[rank] = fctr.summary(idx)
             else:
