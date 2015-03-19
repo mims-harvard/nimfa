@@ -315,7 +315,7 @@ class Nmf(object):
         investigate features that have strong component-specific membership values
         to the latent components.
         
-        Return the list of feature scores. Feature scores are real-valued from interval [0,1].
+        Return array with feature scores. Feature scores are real-valued from interval [0,1].
         Higher value indicates greater feature specificity.
 
         :param idx: Used in the multiple NMF model. In standard NMF model or nonsmooth NMF model
@@ -345,19 +345,20 @@ class Nmf(object):
            the corresponding row of the basis matrix (W)) is larger
            than the median of all contributions (i.e. of all elements of basis matrix (W)).
         
-        Return list of retained features' indices.  
+        Return a boolean array indicating whether features were selected.
         
-        :param idx: Used in the multiple NMF model. In factorizations following
-           standard NMF model or nonsmooth NMF model ``idx`` is always None.
+        :param idx: Used in the multiple NMF model. In standard NMF model or nonsmooth NMF
+           model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         scores = self.score_features(idx=idx)
-        u = np.median(scores)
-        s = np.median(abs(scores - u))
-        res = [i for i in range(len(scores)) if scores[i] > u + 3. * s]
+        th = np.median(scores) + 3 * np.median(abs(scores - np.median(scores)))
+        sel = scores > th
         W = self.basis()
         m = np.median(W.toarray() if sp.isspmatrix(W) else W.tolist())
-        return [i for i in res if np.max(W[i, :].toarray() if sp.isspmatrix(W) else W[i,:]) > m]
+        sel = np.array([sel[i] and np.max(W[i, :].toarray() if sp.isspmatrix(W) else W[i,:]) > m
+               for i in range(W.shape[0])])
+        return sel
 
     def purity(self, membership=None, idx=None):
         """
