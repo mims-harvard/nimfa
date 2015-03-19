@@ -415,17 +415,18 @@ class Nmf(object):
     def sparseness(self, idx=None):
         """
         Compute sparseness of matrix (basis vectors matrix, mixture coefficients) [Hoyer2004]_.
-        This sparseness measure quantifies how much energy of a vector is packed into only
-        few components. The sparseness of a vector is a real number in [0, 1]. Sparser vector
-        has value closer to 1. The measure is 1 iff vector contains single
-        nonzero component and the measure is equal to 0 iff all components are equal. 
+
+        Sparseness of a vector quantifies how much energy is packed into its components.
+        The sparseness of a vector is a real number in [0, 1], where sparser vector
+        has value closer to 1. Sparseness is 1 iff the vector contains a single
+        nonzero component and is equal to 0 iff all components of the vector are equal.
         
-        Sparseness of a matrix is the mean sparseness of its column vectors. 
+        Sparseness of a matrix is mean sparseness of its column vectors.
         
         Return tuple that contains sparseness of the basis and mixture coefficients matrices. 
         
-        :param idx: Used in the multiple NMF model. In factorizations following
-           standard NMF model or nonsmooth NMF model ``idx`` is always None.
+        :param idx: Used in the multiple NMF model. In standard NMF model or nonsmooth NMF
+           model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         def sparseness(x):
@@ -436,7 +437,9 @@ class Nmf(object):
             return x1 / x2
         W = self.basis()
         H = self.coef(idx)
-        return np.mean([sparseness(W[:, i]) for i in range(W.shape[1])]), np.mean([sparseness(H[:, i]) for i in range(H.shape[1])])
+        spars_W = np.mean([sparseness(W[:, i]) for i in range(W.shape[1])])
+        spars_H = np.mean([sparseness(H[:, i]) for i in range(H.shape[1])])
+        return spars_W, spars_H
 
     def coph_cor(self, idx=None):
         """
