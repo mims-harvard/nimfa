@@ -308,32 +308,28 @@ class Nmf(object):
 
     def score_features(self, idx=None):
         """
-        Compute the score for each feature that represents its specificity to one of the
-        basis vector [Park2007]_.
+        Score features in terms of their specificity to the basis vectors [Park2007]_.
         
-        A row vector of the basis matrix (W) indicates the contributions of a gene
-        to the r (i.e. columns of W) biological pathways or processes. As genes can
-        participate in more than one biological process, it is beneficial to
-        investigate genes that have relatively large coefficient in each
-        biological process.
+        A row vector of the basis matrix (W) indicates contributions of a feature
+        to the r (i.e. columns of W) latent components. It might be informative to
+        investigate features that have strong component-specific membership values
+        to the latent components.
         
-        Return the list containing score for each feature. The feature scores
-        are real values in [0,1]. The higher the feature score the more
-        basis-specific the corresponding feature.  
+        Return the list of feature scores. Feature scores are real-valued from interval [0,1].
+        Higher value indicates greater feature specificity.
 
-        :param idx: Used in the multiple NMF model. In factorizations following
-           standard NMF model or nonsmooth NMF model ``idx`` is always None.
+        :param idx: Used in the multiple NMF model. In standard NMF model or nonsmooth NMF model
+           ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         W = self.basis()
-        def prob(i, q):
-            """Return probability that the i-th feature contributes to the basis q."""
-            return W[i, q] / (W[i, :].sum() + np.finfo(W.dtype).eps)
-        res = []
+        scores = np.zeros(W.shape[0])
         for f in range(W.shape[0]):
-            res.append(1. + 1. / log(W.shape[1], 2) * sum(
-                prob(f, q) * log(prob(f, q) + np.finfo(W.dtype).eps, 2) for q in range(W.shape[1])))
-        return res
+            # probability that the i-th feature contributes to q-th basis vector.
+            prob = W[f, :] / (W[f, :].sum() + np.finfo(W.dtype).eps)
+            scores[f] = np.dot(prob, np.log2(prob + np.finfo(W.dtype).eps).T)
+        scores = 1. + 1. / np.log2(W.shape[1]) * scores
+        return scores
 
     def select_features(self, idx=None):
         """
