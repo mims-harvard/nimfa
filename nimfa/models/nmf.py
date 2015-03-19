@@ -326,7 +326,6 @@ class Nmf(object):
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         W = self.basis()
-
         def prob(i, q):
             """Return probability that the i-th feature contributes to the basis q."""
             return W[i, q] / (W[i, :].sum() + np.finfo(W.dtype).eps)
@@ -474,25 +473,23 @@ class Nmf(object):
 
     def dispersion(self, idx=None):
         """
-        Compute the dispersion coefficient of consensus matrix, generally obtained from multiple
-        NMF runs.
+        Compute dispersion coefficient of consensus matrix
         
-        The dispersion coefficient is based on the average of connectivity matrices [Park2007]_.
-        It measures the reproducibility of the clusters obtained from multiple NMF runs.
+        Dispersion coefficient [Park2007]_ measures the reproducibility of clusters obtained
+        from multiple NMF runs.
         
-        Return the real value in [0,1]. Dispersion is 1 iff for a perfect consensus matrix,
-        where all entries are 0 or 1. A perfect consensus matrix is obtained only when all
-        the connectivity matrices are the same, meaning that the algorithm gave the same
-        clusters at each run.
-        
-        :param idx: Used in the multiple NMF model. In factorizations following
-           standard NMF model or nonsmooth NMF model ``idx`` is always None.
+        Return the real value in [0,1]. Dispersion is 1 for a perfect consensus matrix and
+        has value in [0,0] for a scattered consensus matrix.
+
+        :param idx: Used in the multiple NMF model. In standard NMF model or nonsmooth NMF
+           model ``idx`` is always None.
         :type idx: None or `str` with values 'coef' or 'coef1' (`int` value of 0 or 1, respectively) 
         """
         C = self.consensus(idx=idx)
-        return sum(sum(4 * (C[i, j] - 0.5) ** 2 for j in range(C.shape[1])) for i in range(C.shape[0]))
+        dispersion = np.sum(4 * np.multiply(C - 0.5, C - 0.5)) / C.size
+        return dispersion
 
-    def estimate_rank(self, range=range(30, 51), n_run=10, idx=0, what='all'):
+    def estimate_rank(self, rank_range=range(30, 51), n_run=10, idx=0, what='all'):
         """
         Choosing factorization parameters carefully is vital for success of a factorization.
         However, the most critical parameter is factorization rank. This method tries
@@ -509,8 +506,8 @@ class Nmf(object):
         of quality measures for each value in rank's range. This can be passed to the
         visualization model, from which estimated rank can be established.
         
-        :param range: Range of factorization ranks to try. Default is ``xrange(30, 51)``.
-        :type range: list or tuple like range of `int`
+        :param rank_range: Range of factorization ranks to try. Default is ``range(30, 51)``.
+        :type rank_range: list or tuple like range of `int`
 
         :param n_run: The number of runs to be performed for each value in range. Default is 10.  
         :type n_run: `int`
@@ -550,7 +547,7 @@ class Nmf(object):
                 'cophenetic': fctr.fit.coph_cor,
                 'consensus': fctr.fit.consensus}[measure]
         summaries = {}
-        for rank in range:
+        for rank in rank_range:
             self.rank = rank
             fctr = self()
             if what == 'all':
