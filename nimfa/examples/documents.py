@@ -98,7 +98,6 @@
 
 from os.path import dirname, abspath
 from os.path import join
-from operator import itemgetter
 from warnings import warn
 
 import scipy.sparse as sp
