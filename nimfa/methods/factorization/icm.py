@@ -159,7 +159,7 @@ class Icm(nmf_std.Nmf_std):
                  k=0., sigma=1., **options):
         self.name = "icm"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(vars())
+        nmf_std.Nmf_std.__init__(self, vars())
         if self.alpha is None:
             self.alpha = sp.rand(self.V.shape[0], self.rank, density=0.8, format='csr')
         self.alpha= self.alpha.tocsr() if sp.isspmatrix(self.alpha) else np.mat(self.alpha)

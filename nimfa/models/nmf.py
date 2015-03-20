@@ -327,6 +327,7 @@ class Nmf(object):
         for f in range(W.shape[0]):
             # probability that the i-th feature contributes to q-th basis vector.
             prob = W[f, :] / (W[f, :].sum() + np.finfo(W.dtype).eps)
+            prob = prob.todense() if sp.isspmatrix(prob) else prob
             scores[f] = np.dot(prob, np.log2(prob + np.finfo(W.dtype).eps).T)
         scores = 1. + 1. / np.log2(W.shape[1]) * scores
         return scores

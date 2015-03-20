@@ -49,7 +49,7 @@ class Nmf_ns(Nmf):
         self.model_name = "ns"
         self.V1 = None
         self.H1 = None
-        super().__init__(params)
+        Nmf.__init__(self, params)
         if sp.isspmatrix(self.V) and (self.V.data < 0).any() or not sp.isspmatrix(self.V) and (self.V < 0).any():
             raise utils.MFError("The input matrix contains negative elements.")
 

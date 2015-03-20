@@ -144,7 +144,7 @@ class Lfnmf(nmf_std.Nmf_std):
                  track_error=False, alpha=0.01, **options):
         self.name = "lfnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(vars())
+        nmf_std.Nmf_std.__init__(self, vars())
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 \
                                               or self.track_error else None
 

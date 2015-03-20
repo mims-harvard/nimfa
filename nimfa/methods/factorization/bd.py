@@ -184,7 +184,7 @@ class Bd(nmf_std.Nmf_std):
                  **options):
         self.name = "bd"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(vars())
+        nmf_std.Nmf_std.__init__(self, vars())
         if self.alpha is not None:
             self.alpha = sp.csr_matrix((self.V.shape[0], self.rank))
         self.alpha = self.alpha.tocsr() if sp.isspmatrix(self.alpha) else np.mat(self.alpha)

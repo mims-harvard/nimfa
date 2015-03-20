@@ -131,7 +131,7 @@ class Pmfcc(smf.Smf):
                  Theta=None, **options):
         self.name = "pmfcc"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(vars())
+        smf.Smf.__init__(self, vars())
         if not self.Theta:
             self.Theta = np.mat(np.zeros((self.V.shape[1], self.V.shape[1])))
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 \

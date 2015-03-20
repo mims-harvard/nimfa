@@ -174,7 +174,7 @@ class Bmf(nmf_std.Nmf_std):
                  lambda_w=1.1, lambda_h=1.1, **options):
         self.name = "bmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(vars())
+        nmf_std.Nmf_std.__init__(self, vars())
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 \
                                               or self.track_error else None
 

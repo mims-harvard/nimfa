@@ -56,7 +56,7 @@ class Nmf_mm(Nmf):
         :type params: `dict`
         """
         self.model_name = "mm"
-        super().__init__(params)
+        Nmf.__init__(self, params)
         if sp.isspmatrix(self.V) and (self.V.data < 0).any() or not sp.isspmatrix(self.V) and (self.V < 0).any():
             raise utils.MFError("The input matrix contains negative elements.")
         if sp.isspmatrix(self.V1) and (self.V1.data < 0).any() or not sp.isspmatrix(self.V1) and (self.V1 < 0).any():

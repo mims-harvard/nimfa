@@ -158,7 +158,7 @@ class Psmf(nmf_std.Nmf_std):
                  track_error=False, prior=20, **options):
         self.name = "psmf"
         self.aseeds = ["none"]
-        super().__init__(vars())
+        nmf_std.Nmf_std.__init__(self, vars())
         self.test_conv = 5 if not self.test_conv else self.test_conv
         if isinstance(self.prior, numbers.Real):
             self.prior = np.ones(int(self.prior)) / self.prior

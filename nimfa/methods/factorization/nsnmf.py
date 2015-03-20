@@ -144,7 +144,7 @@ class Nsnmf(nmf_ns.Nmf_ns):
                  theta=0.5, **options):
         self.name = "nsnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(vars())
+        nmf_ns.Nmf_ns.__init__(self, vars())
         self.tracker = mf_track.Mf_track() if self.track_factor and self.n_run > 1 \
                                               or self.track_error else None
 

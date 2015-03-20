@@ -155,7 +155,7 @@ class Snmf(nmf_std.Nmf_std):
                  i_conv=10, w_min_change=0, **options):
         self.name = "snmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(vars())
+        nmf_std.Nmf_std.__init__(self, vars())
         if not self.eta:
             self.eta = np.max(self.V) if not sp.isspmatrix(self.V) else np.max(self.V.data)
         if self.eta < 0:

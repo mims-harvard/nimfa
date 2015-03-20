@@ -159,7 +159,7 @@ class Nmf(nmf_std.Nmf_std):
                  update='euclidean', objective='fro', conn_change=30, **options):
         self.name = "nmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(vars())
+        nmf_std.Nmf_std.__init__(self, vars())
         if 'conn' not in self.objective:
             self.conn_change = None
         self._conn_change = 0

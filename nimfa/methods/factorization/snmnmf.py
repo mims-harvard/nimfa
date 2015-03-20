@@ -189,7 +189,7 @@ class Snmnmf(nmf_mm.Nmf_mm):
                  lamb=0.01, lamb_1=0.01, **options):
         self.name = "snmnmf"
         self.aseeds = ["random", "fixed", "nndsvd", "random_c", "random_vcol"]
-        super().__init__(vars())
+        nmf_mm.Nmf_mm.__init__(self, vars())
         if self.A is not None:
             self.A = sp.csr_matrix((self.V1.shape[1], self.V1.shape[1]))
         self.A = self.A.tocsr() if sp.isspmatrix(self.A) else np.mat(self.A)
