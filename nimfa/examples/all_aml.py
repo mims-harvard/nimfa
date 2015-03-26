@@ -107,6 +107,7 @@ from os.path import dirname, abspath, join
 from warnings import warn
 
 from scipy.cluster.hierarchy import linkage, leaves_list
+from scipy.spatial.distance import squareform
 import numpy as np
 
 import nimfa
@@ -170,7 +171,7 @@ def reorder(C):
     :type C: `numpy.ndarray`
     """
     Y = 1 - C
-    Z = linkage(Y, method='average')
+    Z = linkage(squareform(Y), method='average')
     ivl = leaves_list(Z)
     ivl = ivl[::-1]
     return C[:, ivl][ivl, :]
