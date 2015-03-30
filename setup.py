@@ -27,7 +27,7 @@ def get_data_files(dest, source):
 
 setup(
     name = NAME,
-    version = "1.1",
+    version = "1.2.1",
     author = "Marinka Zitnik",
     author_email = "marinka.zitnik@fri.uni-lj.si",
     description = "A Python Library for Nonnegative Matrix Factorization Techniques",
@@ -39,7 +39,6 @@ setup(
     license = "OSI Approved :: GNU General Public License (GPL)",
     long_description = read("README.rst"),
     classifiers = [
-        "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Natural Language :: English",
         "Programming Language :: Python",
