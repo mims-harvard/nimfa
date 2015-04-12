@@ -1,7 +1,7 @@
 Nimfa
 -----
 
-Nimfa is an open-source Python library that implements a number of nonnegative matrix factorization algorithms.
+Nimfa is a Python library that implements a number of nonnegative matrix factorization algorithms.
 
 Documentation with examples on real-world data is at `nimfa website`_.
 
@@ -11,7 +11,7 @@ Documentation with examples on real-world data is at `nimfa website`_.
 Usage
 -----
 
-Fitting network-guided matrix completion with default parameters::
+Run alternating least squares nonnegative matrix factorization with projected gradients and Random Vcol initialization algorithm on medulloblastoma gene expression data::
 
     >>> import nimfa
     >>> V = nimfa.examples.medulloblastoma.read(normalize=True)
