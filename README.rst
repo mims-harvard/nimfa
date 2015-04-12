@@ -3,9 +3,9 @@ Nimfa
 
 Nimfa is a Python library that implements a number of nonnegative matrix factorization algorithms.
 
-Documentation with examples on real-world data is at `nimfa website`_.
+Documentation with examples on real-world data is at `Nimfa website`_.
 
-.. _nimfa website: http://nimfa.biolab.si
+.. _Nimfa website: http://nimfa.biolab.si
 
 
 Usage
