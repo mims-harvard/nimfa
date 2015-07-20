@@ -157,11 +157,7 @@ class Nsnmf(nmf_ns.Nmf_ns):
         for run in range(self.n_run):
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)
-            self.S = sop(
-                (1 - self.theta) * sp.spdiags(
-                    [1 for _ in range(
-                        self.rank)], 0, self.rank, self.rank, 'csr'),
-                self.theta / self.rank, add)
+            self.S = np.diag(np.ones(self.rank) - self.theta) + self.theta / self.rank
             p_obj = c_obj = sys.float_info.max
             best_obj = c_obj if run == 0 else best_obj
             iter = 0
@@ -229,8 +225,8 @@ class Nsnmf(nmf_ns.Nmf_ns):
         H1 = repmat(W.sum(0).T, 1, self.V.shape[1])
         self.H = multiply(
             self.H, elop(dot(W.T, elop(self.V, dot(W, self.H), div)), H1, div))
-        # update basis matrix W
         H = dot(self.S, self.H)
+        # update basis matrix W
         W1 = repmat(H.sum(1).T, self.V.shape[0], 1)
         self.W = multiply(
             self.W, elop(dot(elop(self.V, dot(self.W, H), div), H.T), W1, div))

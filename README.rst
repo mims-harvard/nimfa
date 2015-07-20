@@ -10,10 +10,11 @@ Documentation and examples on real-world data are at `Nimfa website`_.
 ****
 
 `Hidden patients and hidden genes - Understanding cancer data with matrix factorization`_ is
-a tutorial on how one can use Nimfa to analyze breast cancer transcriptome data sets from The
-International Cancer Genome Consortium (ICGC).
+a tutorial-like IPython notebook on how one can use Nimfa to analyze breast cancer transcriptome data sets from The
+International Cancer Genome Consortium (`ICGC`_).
 
 .. _Hidden patients and hidden genes - Understanding cancer data with matrix factorization: http://nbviewer.ipython.org/github/marinkaz/nimfa-ipynb/blob/master/ICGC%20and%20Nimfa.ipynb
+.. _ICGC: https://dcc.icgc.org
 
 Usage
 -----
