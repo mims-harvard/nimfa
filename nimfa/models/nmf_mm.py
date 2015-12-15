@@ -10,8 +10,8 @@ from .nmf import *
 
 class Nmf_mm(Nmf):
     """
-    Implementation of the alternative model to manage factorizations that follow N
-    MF nonstandard model. This modification is required by the Multiple NMF
+    Implementation of the alternative model to manage factorizations that follow
+    NMF nonstandard model. This modification is required by the Multiple NMF
     algorithms (e. g. SNMNMF [Zhang2011]_). The Multiple NMF algorithms modify the
     standard divergence or Euclidean based NMF methods by introducing multiple
     mixture (coefficients) matrices and target matrices.
