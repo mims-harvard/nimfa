@@ -30,7 +30,7 @@ class Smf(object):
             self.V = np.asmatrix(self.V) if self.V.dtype == np.dtype(
                 float) else np.asmatrix(self.V, dtype='d')
         if self.W is not None or self.H is not None or self.H1 is not None:
-            raise MFError("Fixed initialized is not supported by SMF model.")
+            raise utils.MFError("Fixed initialized is not supported by SMF model.")
         self._compatibility()
 
     def __call__(self):

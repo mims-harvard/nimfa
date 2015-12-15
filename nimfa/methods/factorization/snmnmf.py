@@ -40,7 +40,7 @@ Gene and miRNA expression matrices are simultaneously factored into a common
 basis matrix (W) and two coefficients matrices (H and H1). Additional knowledge
 is incorporated into this framework with network regularized constraints.
 Because of the imposed sparsity constraints easily interpretable solution is
-obtained. In [Zhang2011]_ decomposed matrix componentsare used to provide
+obtained. In [Zhang2011]_ decomposed matrix components are used to provide
 information about miRNA-gene regulatory comodules. They identified the comodules
 based on shared components (a column in basis matrix W) with significant
 association values in the corresponding rows of coefficients matrices, H1 and H2.
