@@ -10,23 +10,27 @@ cache:
 addons:
   apt:
     packages:
-      - libatlas3gf-base
-      - libatlas-dev
-      - python-scipy
-
+    - libatlas-dev
+    - libatlas-base-dev
+    - liblapack-dev
 python:
   - "2.7"
   - "3.4"
   - "3.5"
 
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda update --yes conda
+
 install:
-  - travis_retry pip install -q coveralls
-  - pip install -r requirements-tests.txt
-  - pip install -e .
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy scipy pytest
+  - pip install pep8 python-coveralls pytest-cov
+  - pip install .
 
 script:
-  - py.test nimfa
-  - python setup.py install  # test installation
+  - py.test --cov=nimfa
 
 after_success:
   - coveralls
