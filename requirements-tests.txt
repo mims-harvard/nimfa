@@ -1,0 +1,3 @@
+# do not explicitly install base requirements via pip
+# -r requirements.txt
+pytest
