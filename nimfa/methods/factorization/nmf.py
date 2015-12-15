@@ -110,7 +110,7 @@ class Nmf(nmf_std.Nmf_std):
     :param update: Type of update equations used in factorization. When specifying
        model parameter ``update`` can be assigned to:
 
-           #. 'uclidean' for classic Euclidean distance update
+           #. 'euclidean' for classic Euclidean distance update
               equations,
            #. 'divergence' for divergence update equations.
        By default Euclidean update equations are used.
