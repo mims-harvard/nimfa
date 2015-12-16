@@ -1,6 +1,11 @@
 Nimfa
 -----
 
+|Travis|_
+
+.. |Travis| image:: https://travis-ci.org/marinkaz/nimfa.svg?branch=master
+.. _Travis: https://travis-ci.org/marinkaz/nimfa
+
 Nimfa is a Python module that implements many algorithms for nonnegative matrix factorization.
 
 Documentation and examples are at `Nimfa website`_.
