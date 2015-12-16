@@ -1,0 +1,50 @@
+# vim ft=yaml
+# travis-ci.org definition for Nimfa tests
+language: python
+
+sudo: false
+
+cache:
+ apt: true
+
+addons:
+  apt:
+    packages:
+    - libatlas-dev
+    - libatlas-base-dev
+    - liblapack-dev
+python:
+  - "2.7"
+  - "3.4"
+  - "3.5"
+
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda update --yes conda
+
+install:
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy scipy pytest
+  - pip install pep8 python-coveralls pytest-cov
+  - pip install -e .
+
+script:
+  - py.test --cov=nimfa
+
+after_success:
+  - coveralls
+
+# TODO Later if you decide to upload tagged releases to pypi automagically
+# see https://docs.travis-ci.com/user/deployment/pypi/ for details
+#deploy:
+#  provider: pypi
+#  distributions: sdist
+#  user: YOURUSERNAME
+#  password:
+#    secure: YOUR_ENCRYPTED_WITH_TRAVISTOOLS_PASSWORD_FOR_PYPI
+#  on:
+#    tags: true
+#    branch: master
+#    repo: YOURGITHUBLOGIN/nimfa
+#    condition: "$TRAVIS_PYTHON_VERSION == 2.7 && $TRAVIS_TAG =~ ^v[0-9]*[.][.0-9]*"
