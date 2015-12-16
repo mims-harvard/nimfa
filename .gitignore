@@ -1,0 +1,39 @@
+# Ignore temporary editor files.
+*.swp
+*~
+
+# Ignore project files
+*.pyproj
+
+# Ignore dot files.
+.*
+
+# Ignore backup files.
+*.orig
+*.bak
+
+# Ignore temporary editor files.
+*.swp
+*~
+
+# Ignore binaries.
+*.py[cod]
+*.so
+*.dll
+
+# Ignore built documentation
+html
+
+# Ignore files created by setup.py.
+build
+dist
+MANIFEST
+*.egg-info
+*.egg
+distribute*.tar.gz
+
+# Ignore virtualenv folder
+venv
+
+# Ignore datasets
+nimfa/datasets/*
