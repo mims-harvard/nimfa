@@ -27,7 +27,7 @@ before_install:
 install:
   - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy scipy pytest
   - pip install pep8 python-coveralls pytest-cov
-  - pip install .
+  - pip install -e .
 
 script:
   - py.test --cov=nimfa
