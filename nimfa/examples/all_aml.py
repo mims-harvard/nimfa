@@ -1,8 +1,8 @@
 
 """
-    #################################################
-    ALL AML Leukemia Data Sets (``examples.aml_all``)
-    #################################################
+    #######################################
+    ALL AML Leukemia (``examples.aml_all``)
+    #######################################
     
     This module demonstrates the ability of NMF to recover meaningful biological information from 
     cancer related microarray data. NMF appears to have advantages over other methods such as HC or SOM. 

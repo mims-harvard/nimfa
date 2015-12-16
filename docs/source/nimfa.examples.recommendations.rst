@@ -4,6 +4,6 @@
 	:inherited-members:
 	:show-inheritance:
 	
-.. literalinclude:: ../../nimfa/examples/recommendations.py 
+.. comment literalinclude:: ../../nimfa/examples/recommendations.py
 	:lines: 43-173
 	:linenos:

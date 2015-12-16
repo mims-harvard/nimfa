@@ -4,6 +4,6 @@
 	:inherited-members:
 	:show-inheritance:
 	
-.. literalinclude:: ../../nimfa/examples/orl_images.py 
+.. comment literalinclude:: ../../nimfa/examples/orl_images.py
 	:lines: 93-209
 	:linenos:

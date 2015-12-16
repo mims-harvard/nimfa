@@ -4,6 +4,6 @@
 	:inherited-members:
 	:show-inheritance:
 	
-.. literalinclude:: ../../nimfa/examples/cbcl_images.py 
+.. comment literalinclude:: ../../nimfa/examples/cbcl_images.py
 	:lines: 82-198
 	:linenos:

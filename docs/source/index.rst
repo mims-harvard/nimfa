@@ -1,21 +1,15 @@
-.. nimfa - A Python Library for Nonnegative Matrix Factorization Techniques documentation master file, created by
-   sphinx-quickstart on Tue Aug 23 13:23:27 2011.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
- 
 
-nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
-================================================================================
+Welcome to Nimfa
+================
 
-**Nimfa** is an open-source Python library that provides a unified interface to nonnegative matrix factorization algorithms. 
-It includes implementations of state-of-the-art factorization methods, initialization approaches, and quality scoring. 
+Nimfa is a Python library for nonnegative matrix factorization. It includes implementations of several factorization methods, initialization approaches, and quality scoring.
 Both dense and sparse matrix representation are supported.
 
 The sample script using Nimfa on medulloblastoma gene expression data is given below. It uses alternating least squares nonnegative matrix 
 factorization with projected gradient method for subproblems [Lin2007]_ and Random Vcol [Albright2006]_ initialization algorithm. An object returned by ``nimfa.mf_run`` is 
 fitted factorization model through which user can access matrix factors and estimate quality measures.
     
-   	.. literalinclude:: /code/usage.py
+.. literalinclude:: /code/usage.py
 
 Running this script produces the following output, where slight differences in reported scores across different 
 runs can be attributed to randomness of the Random Vcol initialization method::
@@ -25,20 +19,17 @@ runs can be attributed to randomness of the Random Vcol initialization method::
 	K-L divergence: 38.8744
 	Sparseness, W: 0.7297, H: 0.8796
 
-Further real-world examples and demonstrations of library capabilities are provided in the `Examples section`_ and in `sample scripts on this page`_.
+....
 
-.. note:: See also a `short presentation about nimfa.`_ 
-	
- 
+See also `Examples`_, `sample scripts on this page`_ and `a short presentation about nimfa.`_
+
 .. _A Python Library for Nonnegative Matrix Factorization, Journal of Machine Learning Research: http://jmlr.csail.mit.edu/papers/v13/zitnik12a.html
 
-.. _Examples section: nimfa.examples.html
+.. _Examples: nimfa.examples.html
 
 .. _sample scripts on this page: http://nimfa.biolab.si/#usage
 
-.. _Orange: http://orange.biolab.si
-
-.. _short presentation about nimfa.: http://helikoid.si/mf/GSoC_MF.pdf
+.. _a short presentation about nimfa.: http://helikoid.si/mf/GSoC_MF.pdf
 
 ###################
 Scripting Reference
@@ -77,9 +68,9 @@ Initialization Methods
 
 .. include:: /content-initialization.rst
 
-********************************
+****************
 Quality Measures
-********************************
+****************
 
 .. include:: /content-quality-performance.rst
 
@@ -95,44 +86,27 @@ Utils
 Installation
 ############
 
-******
-Source
-******
+Nimfa is compatible with Python 2 and Python 3 versions.
+The recommended way to install Nimfa is by issuing::
 
-No special installation procedure is specified. However, the nimfa library makes extensive use of `SciPy`_ and `NumPy`_ 
+	pip install nimfa
+
+from the command line.
+
+Nimfa makes extensive use of `SciPy`_ and `NumPy`_
 libraries for fast and convenient dense and sparse matrix manipulation and some linear
-algebra operations. There are not any additional prerequisites. Nimfa is compatible with Python 2 and Python 3 versions.
+algebra operations. There are not any additional prerequisites.
 
 .. _SciPy: http://www.scipy.org/
 .. _NumPy: http://numpy.scipy.org/
 
-Download source code (zipped archive) from `Github repository`_.
+Alternatively, you can download source code from `Github`_.
 
-.. _Github repository: http://github.com/marinkaz/mf
+.. _Github: http://github.com/marinkaz/mf
 
 Unzip the archive. To build and install run::
 	
 	python setup.py install
-
-*************
-Documentation
-*************
-
-For building the documentation use Sphinx 1.0 or newer. Sphinx is available at `Sphinx home page`_ and
-nimfa library documentation sources are available at `Github repository`_. Before building documentation, 
-please install the nimfa library.
-
-Documentation can be built by issuing::
-
-	sphinx-build -b html -E <source dir [docs/source]>  <build dir [html]>
-	    
-from the nimfa root directory. After completion, the documentation should reside in the `html` directory. The built documentation
-should resemble closely the one you are currently reading.  
-
-.. note:: The nimfa library documentation is contained in ``docs`` source directory and and scripts are in ``nimfa`` directory.  
-
-.. _Sphinx home page: http://sphinx.pocoo.org
-
 
 
 
@@ -153,39 +127,36 @@ For details and descriptions on algorithm specific options see specific algorith
 Usage
 #####
 
-Following are basic usage examples that employ different implemented factorization algorithms. For examples with real world
-applications see Examples section and methods' documentation. 
-
-.. note:: Consider these examples as Hello World examples for the nimfa library.
+Following are basic usage examples that employ different implemented factorization algorithms.
 
 Standard NMF - Divergence on ``scipy.sparse`` matrix with matrix factors estimation. 
 
-	.. literalinclude:: /code/usage1.py
+.. literalinclude:: /code/usage1.py
 
 
 LSNMF on ``numpy`` dense matrix with quality and performance measures.
 
-	.. literalinclude:: /code/usage2.py
+.. literalinclude:: /code/usage2.py
 
 
 LSNMF with Random VCol initialization and error tracking.
 
-    .. literalinclude:: /code/usage3.py
+.. literalinclude:: /code/usage3.py
 
    		
 ICM with Random C initialization and passed callback initialization function.
    
-    .. literalinclude:: /code/usage4.py
+.. literalinclude:: /code/usage4.py
 
    		
 BMF with default parameters, multiple runs and factor tracking for consensus matrix computation.
    
-    .. literalinclude:: /code/usage5.py
+.. literalinclude:: /code/usage5.py
 
 
 Standard NMF - Euclidean update equations and fixed initialization (passed matrix factors).
 
-	.. literalinclude:: /code/usag6.py
+.. literalinclude:: /code/usage6.py
 
 
 ##########
@@ -250,33 +221,25 @@ Acknowledgements
 We would like to acknowledge support for this project from the Google Summer of Code 2011 program and 
 from the Slovenian Research Agency grants P2-0209, J2-9699, and L2-1112.
 
-The nimfa - A Python Library for Nonnegative Matrix Factorization Techniques was part of the Google Summer of Code 2011 (`Orange`_). It is authored by `Marinka Zitnik`_, advised by `Blaz Zupan, Ph.D.`_.
+The nimfa - A Python Library for Nonnegative Matrix Factorization Techniques was part of the Google Summer of Code 2011. It is authored by `Marinka Zitnik`_ and `Blaz Zupan`_.
 
-.. _Blaz Zupan, Ph.D.: http://www.biolab.si/en/blaz/
+.. _Blaz Zupan: http://www.biolab.si/en/blaz/
 .. _Marinka Zitnik: http://helikoid.si
 
-.. image:: /images/base/orange-logo.png
-	:target: http://orange.biolab.si
-	
-
-.. image:: /images/base/google-logo.png
-	:target: http://code.google.com/soc/
-	:scale: 50 %
-	
 ########
 Citation
 ########
 
-	.. code-block:: none
-	
-		@article{ZitnikZ12,
-		  author    = {Marinka Zitnik and Blaz Zupan},
-		  title     = {NIMFA: A Python Library for Nonnegative Matrix Factorization},
-		  journal   = {Journal of Machine Learning Research},
-		  volume    = {13},
-		  year      = {2012},
-		  pages     = {849-853},
-		}
+.. code-block:: none
+
+	@article{ZitnikZ12,
+	  author    = {Marinka Zitnik and Blaz Zupan},
+	  title     = {NIMFA: A Python Library for Nonnegative Matrix Factorization},
+	  journal   = {Journal of Machine Learning Research},
+	  volume    = {13},
+	  year      = {2012},
+	  pages     = {849-853},
+	}
 
 	
 ##########
@@ -292,7 +255,7 @@ License
 #######
 
 nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
-Copyright (C) 2011-2015 Marinka Zitnik and Blaz Zupan
+Copyright (C) 2011-2015 Marinka Zitnik and Blaz Zupan.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -312,4 +275,3 @@ Index and Search
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

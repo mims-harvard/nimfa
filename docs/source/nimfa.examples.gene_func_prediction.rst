@@ -4,6 +4,6 @@
 	:inherited-members:
 	:show-inheritance:
 	
-.. literalinclude:: ../../nimfa/examples/gene_func_prediction.py 
+.. comment literalinclude:: ../../nimfa/examples/gene_func_prediction.py
 	:lines: 57-461
 	:linenos:

@@ -4,6 +4,6 @@
 	:inherited-members:
 	:show-inheritance:
 	
-.. literalinclude:: ../../nimfa/examples/synthetic.py 
+.. comment literalinclude:: ../../nimfa/examples/synthetic.py
 	:lines: 35-378
 	:linenos:

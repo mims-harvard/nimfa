@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # nimfa - A Python Library for Nonnegative Matrix Factorization Techniques documentation build configuration file, created by
-# sphinx-quickstart on Tue Aug 23 13:23:27 2011.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -12,6 +11,7 @@
 # serve to show the default.
 
 import sys, os
+import alabaster
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -25,7 +25,9 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.ifconfig']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest',
+              'sphinx.ext.intersphinx', 'sphinx.ext.ifconfig',
+              'alabaster']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -40,8 +42,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'nimfa - A Python Library for Nonnegative Matrix Factorization Techniques'
-copyright = '2011, Marinka Zitnik'
+project = 'Nimfa'
+copyright = '2015, Marinka Zitnik'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -89,14 +91,32 @@ pygments_style = 'sphinx'
 
 # -- Options for HTML output ---------------------------------------------------
 
+html_theme_path = [alabaster.get_path()]
+html_theme = 'alabaster'
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+        'donate.html',
+    ]
+}
+
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'nature'
+# html_theme = 'nature'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    'github_user': 'marinkaz',
+    'github_repo': 'nimfa',
+    'github_button': True,
+    'github_banner': True,
+    'sidebar_width': '250px',
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
