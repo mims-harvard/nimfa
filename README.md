@@ -2,7 +2,7 @@ Nimfa
 -----
 
 [![build: passing](https://img.shields.io/travis/marinkaz/nimfa.svg)](https://travis-ci.org/marinkaz/nimfa)
-[![codecov.io](https://codecov.io/github/marinkaz/nimfa/coverage.svg?branch=master)](https://codecov.io/github/marinkaz/nimfa?branch=master)
+[![Coverage Status](https://coveralls.io/repos/marinkaz/nimfa/badge.svg?branch=master&service=github)](https://coveralls.io/github/marinkaz/nimfa?branch=master)
 
 Nimfa is a Python module that implements many algorithms for nonnegative matrix factorization.
 
