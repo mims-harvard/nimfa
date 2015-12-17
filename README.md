@@ -1,32 +1,24 @@
 Nimfa
 -----
 
-|Travis|_
-
-.. |Travis| image:: https://travis-ci.org/marinkaz/nimfa.svg?branch=master
-.. _Travis: https://travis-ci.org/marinkaz/nimfa
+[![build: passing](https://img.shields.io/travis/marinkaz/nimfa.svg)](https://travis-ci.org/marinkaz/nimfa)
+[![codecov.io](https://codecov.io/github/marinkaz/nimfa/coverage.svg?branch=master)](https://codecov.io/github/marinkaz/nimfa?branch=master)
 
 Nimfa is a Python module that implements many algorithms for nonnegative matrix factorization.
 
-Documentation and examples are at `Nimfa website`_.
-
-.. _Nimfa website: http://nimfa.biolab.si
+Documentation and examples are at [Nimfa website.](http://nimfa.biolab.si)
 
 ****
 
-`Hidden patients and hidden genes - Understanding cancer data with matrix factorization`_ is
+[Hidden patients and hidden genes - Understanding cancer data with matrix factorization](http://nbviewer.ipython.org/github/marinkaz/nimfa-ipynb/blob/master/ICGC%20and%20Nimfa.ipynb) is
 a tutorial-like IPython notebook on how one can use Nimfa to analyze breast cancer transcriptome data sets from The
-International Cancer Genome Consortium (`ICGC`_). A column about the analysis of cancer data using Nimfa recently
-appearead in the `ACM XRDS magazine`_.
-
-.. _Hidden patients and hidden genes - Understanding cancer data with matrix factorization: http://nbviewer.ipython.org/github/marinkaz/nimfa-ipynb/blob/master/ICGC%20and%20Nimfa.ipynb
-.. _ICGC: https://dcc.icgc.org
-.. _ACM XRDS magazine: http://dl.acm.org/citation.cfm?id=2809623.2788526&coll=portal&dl=ACM
+International Cancer Genome Consortium ([ICGC](https://dcc.icgc.org)). A column about the analysis of cancer data using Nimfa recently
+appeared in the [ACM XRDS magazine](http://dl.acm.org/citation.cfm?id=2809623.2788526&coll=portal&dl=ACM).
 
 Usage
 -----
 
-Run alternating least squares nonnegative matrix factorization with projected gradients and Random Vcol initialization algorithm on medulloblastoma gene expression data::
+Run alternating least squares nonnegative matrix factorization with projected gradients and Random Vcol initialization algorithm on medulloblastoma gene expression data:
 
     >>> import nimfa
     >>> V = nimfa.examples.medulloblastoma.read(normalize=True)
@@ -44,8 +36,6 @@ Run alternating least squares nonnegative matrix factorization with projected gr
 
 Citing
 ------
-
-::
 
     @article{Zitnik2012,
       title     = {Nimfa: A Python Library for Nonnegative Matrix Factorization},
