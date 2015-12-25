@@ -34,3 +34,4 @@ def test_synthetic(synth_run, monkeypatch):
         synth_run(V)
     # for paranoid monkeypatching people, to make sure that the patch worked
     assert ran_funcs != [], "we must have ran our check"
+    print "just checking"
