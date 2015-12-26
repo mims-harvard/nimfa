@@ -39,6 +39,7 @@ def test_synthetic(synth_run, monkeypatch):
     # for paranoid monkeypatching people, to make sure that the patch worked
     assert ran_funcs != [], "we must have ran our check"
 
+#Check if the example datasets run
 @pytest.mark.slow
 def test_orl():
     orl_images.run()
