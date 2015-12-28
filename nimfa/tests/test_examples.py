@@ -54,10 +54,10 @@ def test_aml():
 def test_medulloblastoma():
     medulloblastoma.run()    
 
-@pytest.mark.slow
-def test_recommendations():
-    recommendations.run()    
-
 #@pytest.mark.slow
-#def test_cbcl():
-#    cbcl_images.run()    
+#def test_recommendations():
+#    recommendations.run()    
+
+@pytest.mark.slow
+def test_cbcl():
+    cbcl_images.run()    
