@@ -28,7 +28,6 @@ install:
   - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy scipy pytest matplotlib Pillow
   - pip install pep8 python-coveralls pytest-cov
   - pip install -e .
-  - travis_wait 
 
 before_script:
   - "export DISPLAY=:99.0"
