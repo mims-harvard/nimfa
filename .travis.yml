@@ -28,13 +28,18 @@ install:
   - conda install --yes python=$TRAVIS_PYTHON_VERSION pip numpy scipy pytest matplotlib Pillow
   - pip install pep8 python-coveralls pytest-cov
   - pip install -e .
+  - travis_wait mvn install
 
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
+#  - sleep 3 # give xvfb some time to start
   - wget http://files.grouplens.org/datasets/movielens/ml-100k.zip -P nimfa/datasets/MovieLens/
   - unzip -j nimfa/datasets/MovieLens/ml-100k.zip -d  nimfa/datasets/MovieLens/
+  - wget http://cbcl.mit.edu/projects/cbcl/software-datasets/faces.tar.gz -P nimfa/datasets/CBCL_faces/
+  - tar zxvf nimfa/datasets/CBCL_faces/faces.tar.gz -C nimfa/datasets/CBCL_faces/
+  - tar zxvf nimfa/datasets/CBCL_faces/face.train.tar.gz -C nimfa/datasets/CBCL_faces/
+  - mv nimfa/datasets/CBCL_faces/train/face/ nimfa/datasets/CBCL_faces/
 
 script:
   - py.test --cov=nimfa

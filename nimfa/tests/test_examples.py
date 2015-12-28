@@ -7,6 +7,7 @@ from nimfa.examples import orl_images
 from nimfa.examples import all_aml
 from nimfa.examples import medulloblastoma
 from nimfa.examples import recommendations
+from nimfa.examples import cbcl_images
 
 
 import pytest
@@ -56,3 +57,7 @@ def test_medulloblastoma():
 @pytest.mark.slow
 def test_recommendations():
     recommendations.run()    
+
+@pytest.mark.slow
+def test_cbcl():
+    cbcl_images.run()    
