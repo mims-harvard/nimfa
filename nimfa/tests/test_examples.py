@@ -6,6 +6,7 @@ from nimfa.examples import synthetic
 from nimfa.examples import orl_images
 from nimfa.examples import all_aml
 from nimfa.examples import medulloblastoma
+from nimfa.examples import recommendations
 
 
 import pytest
@@ -51,3 +52,7 @@ def test_aml():
 @pytest.mark.slow
 def test_medulloblastoma():
     medulloblastoma.run()    
+
+@pytest.mark.slow
+def test_recommendations():
+    recommendations.run()    
