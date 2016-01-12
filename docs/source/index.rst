@@ -143,6 +143,11 @@ LSNMF with Random VCol initialization and error tracking.
 
 .. literalinclude:: /code/usage3.py
 
+
+LSNMF with Random VCol initialization and rank estimation.
+
+.. literalinclude:: /code/usage7.py
+
    		
 ICM with Random C initialization and passed callback initialization function.
    
