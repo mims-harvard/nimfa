@@ -15,7 +15,7 @@ DOWNLOAD_URL = 'http://github.com/marinkaz/nimfa'
 KEYWORDS = ['matrix factorization', 'nonnegative matrix factorization',
             'bioinformatics', 'data mining']
 LICENSE = 'GPLv3'
-VERSION = '1.2.2'
+VERSION = '1.2.3'
 ISRELEASED = True
 
 INSTALL_REQUIRES = (
