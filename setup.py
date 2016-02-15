@@ -9,13 +9,13 @@ DISTNAME = 'nimfa'
 MAINTAINER = 'Marinka Zitnik'
 MAINTAINER_EMAIL = 'marinka.zitnik@fri.uni-lj.si'
 DESCRIPTION = 'A Python module for nonnegative matrix factorization'
-LONG_DESCRIPTION = open('README.md').read()
+LONG_DESCRIPTION = open('README.rst').read()
 URL = 'http://nimfa.biolab.si'
 DOWNLOAD_URL = 'http://github.com/marinkaz/nimfa'
 KEYWORDS = ['matrix factorization', 'nonnegative matrix factorization',
             'bioinformatics', 'data mining']
 LICENSE = 'GPLv3'
-VERSION = '1.2.2'
+VERSION = '1.2.3'
 ISRELEASED = True
 
 INSTALL_REQUIRES = (
