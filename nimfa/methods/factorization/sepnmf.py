@@ -213,7 +213,7 @@ class SepNmf(nmf_std.Nmf_std):
         x = elop(V, colnorms, div)
         cols = []
         m, n = x.shape
-        for _ in xrange(self.rank):
+        for _ in range(self.rank):
             col_norms = norm_axis(x, axis=0)
             col_norms[0, cols] = -1
             _, col_ind = argmax(col_norms)
@@ -222,15 +222,12 @@ class SepNmf(nmf_std.Nmf_std):
             x = dot(np.eye(m) - dot(col, col.T) / col_norms[0, col_ind], x)
         return cols
 
-
     def xray(self, V):
         """
         X-ray algorithm for extreme column selection in separable NMF.
         :param V: The data matrix.
         :type V: Instance of the :class:`scipy.sparse` sparse matrices
         types, :class:`numpy.ndarray`, or :class:`numpy.matrix`.
-        :param rank: The target rank.
-        :type rank: `int`
         :return: The indices of the columns chosen by X-ray.
         :rtype: List of ints.
         """
@@ -260,8 +257,6 @@ class SepNmf(nmf_std.Nmf_std):
         :param V: The data matrix.
         :type V: Instance of the :class:`scipy.sparse` sparse matrices
         types, :class:`numpy.ndarray`, or :class:`numpy.matrix`.
-        :param rank: The target rank.
-        :type rank: `int`
         :return: The indices of the columns chosen by X-ray.
         :rtype: List of ints.
         """
