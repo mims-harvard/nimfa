@@ -15,6 +15,7 @@ from .snmf import *
 from .bmf import *
 from .snmnmf import *
 from .pmfcc import *
+from .sepnmf import *
 
 methods = {"bd": Bd,
            "icm": Icm,
@@ -28,4 +29,5 @@ methods = {"bd": Bd,
            "bmf": Bmf,
            "snmnmf": Snmnmf,
            "pmfcc": Pmfcc,
+           "sepnmf": SepNmf,
            "none": None}
