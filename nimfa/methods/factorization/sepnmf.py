@@ -119,7 +119,7 @@ class SepNmf(nmf_std.Nmf_std):
     def factorize(self):
         """
         Compute matrix factorization.
-         
+
         Return fitted factorization model.
         """
         for run in range(self.n_run):
@@ -213,7 +213,7 @@ class SepNmf(nmf_std.Nmf_std):
         x = elop(V, colnorms, div)
         cols = []
         m, n = x.shape
-        for _ in xrange(self.rank):
+        for _ in range(self.rank):
             col_norms = norm_axis(x, axis=0)
             col_norms[0, cols] = -1
             _, col_ind = argmax(col_norms)
