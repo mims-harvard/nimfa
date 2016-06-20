@@ -87,7 +87,7 @@ def any(X, axis=None):
     """
     if sp.isspmatrix(X):
         X = X.tocsr()
-        assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
+        assert axis == 0 or axis == 1 or axis is None, "Incorrect axis number."
         if axis is None:
             return len(X.data) != X.shape[0] * X.shape[1]
         res = [0 for _ in range(X.shape[1 - axis])]
@@ -125,7 +125,7 @@ def all(X, axis=None):
     """
     if sp.isspmatrix(X):
         X = X.tocsr()
-        assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
+        assert axis == 0 or axis == 1 or axis is None, "Incorrect axis number."
         if axis is None:
             return len(X.data) == X.shape[0] * X.shape[1]
         res = [0 for _ in range(X.shape[1 - axis])]
@@ -221,9 +221,9 @@ def std(X, axis=None, ddof=0):
     :type ddof: `float`
     """
     assert len(X.shape) == 2, "Input matrix X should be 2-D."
-    assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
+    assert axis == 0 or axis == 1 or axis is None, "Incorrect axis number."
     if sp.isspmatrix(X):
-        if axis == None:
+        if axis is None:
             mean = X.mean()
             no = X.shape[0] * X.shape[1]
             return sqrt(1. / (no - ddof) * sum((x - mean) ** 2 for x in X.data) + (no - len(X.data) * mean ** 2))
@@ -249,7 +249,7 @@ def argmax(X, axis=None):
     """
     if sp.isspmatrix(X):
         X = X.tocsr()
-        assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
+        assert axis == 0 or axis == 1 or axis is None, "Incorrect axis number."
         res = [[float('-inf'), 0]
                for _ in range(X.shape[1 - axis])] if axis is not None else [float('-inf'), 0]
 
@@ -268,7 +268,7 @@ def argmax(X, axis=None):
         check = _caxis if axis == 0 else _raxis if axis == 1 else _naxis
         [check(row, col) for row in range(X.shape[0])
          for col in range(X.shape[1])]
-        if axis == None:
+        if axis is None:
             return res
         elif axis == 0:
             t = list(zip(*res))
@@ -278,7 +278,7 @@ def argmax(X, axis=None):
             return list(t[0]), np.mat(t[1]).T
     else:
         idxX = np.asmatrix(X).argmax(axis)
-        if axis == None:
+        if axis is None:
             eX = X[idxX / X.shape[1], idxX % X.shape[1]]
         elif axis == 0:
             eX = [X[idxX[0, idx], col]
@@ -303,7 +303,7 @@ def argmin(X, axis=None):
     """
     if sp.isspmatrix(X):
         X = X.tocsr()
-        assert axis == 0 or axis == 1 or axis == None, "Incorrect axis number."
+        assert axis == 0 or axis == 1 or axis is None, "Incorrect axis number."
         res = [[float('inf'), 0]
                for _ in range(X.shape[1 - axis])] if axis is not None else [float('inf'), 0]
 
@@ -322,7 +322,7 @@ def argmin(X, axis=None):
         check = _caxis if axis == 0 else _raxis if axis == 1 else _naxis
         [check(row, col) for row in range(X.shape[0])
          for col in range(X.shape[1])]
-        if axis == None:
+        if axis is None:
             return res
         elif axis == 0:
             t = list(zip(*res))
@@ -332,7 +332,7 @@ def argmin(X, axis=None):
             return list(t[0]), np.mat(t[1]).T
     else:
         idxX = np.asmatrix(X).argmin(axis)
-        if axis == None:
+        if axis is None:
             eX = X[idxX / X.shape[1], idxX % X.shape[1]]
         elif axis == 0:
             eX = [X[idxX[0, idx], col]
@@ -583,7 +583,7 @@ def _sop_spmatrix(X, s=None, op=None):
     for row in range(R.shape[0]):
         upto = R.indptr[row + 1]
         while now < upto:
-            R.data[now] = op(R.data[now] + eps, s) if s != None else op(
+            R.data[now] = op(R.data[now] + eps, s) if s is not None else op(
                 R.data[now] + eps)
             now += 1
     return R
@@ -602,7 +602,7 @@ def _sop_matrix(X, s=None, op=None):
     :type op: `func`
     """
     eps = np.finfo(X.dtype).eps if not 'int' in str(X.dtype) else 0
-    return op(X + eps, s) if s != None else op(X + eps)
+    return op(X + eps, s) if s is not None else op(X + eps)
 
 
 def elop(X, Y, op):
@@ -755,8 +755,8 @@ def vstack(X, format=None, dtype=None):
     """
     if len([0 for x in X if not sp.isspmatrix(x)]) == 0:
         # scipy.sparse bug
-        # return sp.vstack(X, format = X[0].getformat() if format == None else
-        # format, dtype = X[0].dtype if dtype == None else dtype)
+        # return sp.vstack(X, format = X[0].getformat() if format is None else
+        # format, dtype = X[0].dtype if dtype is None else dtype)
         return sp.vstack(X)
     else:
         return np.vstack(X)
@@ -772,8 +772,8 @@ def hstack(X, format=None, dtype=None):
     """
     if len([0 for x in X if not sp.isspmatrix(x)]) == 0:
         # scipy.sparse bug
-        # return sp.hstack(X, format = X[0].getformat() if format == None else
-        # format, dtype = X[0].dtyoe if dtype == None else dtype)
+        # return sp.hstack(X, format = X[0].getformat() if format is None else
+        # format, dtype = X[0].dtyoe if dtype is None else dtype)
         return sp.hstack(X)
     else:
         return np.hstack(X)
