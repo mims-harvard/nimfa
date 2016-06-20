@@ -29,6 +29,13 @@ image processing, multiway clustering, environmetrics etc.
 .. literalinclude:: /code/snippet_nmf_conn.py
 
 """
+try:
+    from future_builtins import zip
+except ImportError: # not 2.6+ or is 3.x
+    try:
+        from itertools import izip as zip # < 2.5 or 3.x
+    except ImportError:
+        pass
 import collections
 import scipy.optimize as optimize
 import scipy.sparse as sp
@@ -263,7 +270,7 @@ class SepNmf(nmf_std.Nmf_std):
         idx = collections.Counter()
         idx.update(argmax(V, axis=0)[1].tolist()[0])
         idx.update(argmin(V, axis=0)[1].tolist()[0])
-        return zip(*idx.most_common(self.rank))[0]
+        return next(zip(*idx.most_common(self.rank)))
 
 
 def objective(V, W, H):
