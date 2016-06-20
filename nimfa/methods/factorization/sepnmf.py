@@ -119,7 +119,7 @@ class SepNmf(nmf_std.Nmf_std):
     def factorize(self):
         """
         Compute matrix factorization.
-         
+
         Return fitted factorization model.
         """
         for run in range(self.n_run):
