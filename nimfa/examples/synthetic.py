@@ -260,6 +260,58 @@ def run_snmf(V):
     print_info(fit)
 
 
+def run_sepnmf(V):
+    """
+    Run standard nonnegative matrix factorization.
+
+    :param V: Target matrix to estimate.
+    :type V: :class:`numpy.matrix`
+    """
+    # Euclidean
+    rank = 10
+
+    sepnmf = nimfa.SepNmf(V, rank=rank, selection='spa')
+    fit = sepnmf()
+    print_info(fit)
+
+    sepnmf = nimfa.SepNmf(V, rank=rank, selection='xray')
+    fit = sepnmf()
+    print_info(fit)
+
+    sepnmf = nimfa.SepNmf(V, rank=rank, compression='qr', selection='xray')
+    fit = sepnmf()
+    print_info(fit)
+
+    sepnmf = nimfa.SepNmf(V, rank=rank, compression='qr', selection='spa')
+    fit = sepnmf()
+    print_info(fit)
+
+    sepnmf = nimfa.SepNmf(V, rank=rank, compression='structured',
+                          selection='xray')
+    fit = sepnmf()
+    print_info(fit)
+
+    sepnmf = nimfa.SepNmf(V, rank=rank, compression='structured',
+                          selection='xray')
+    fit = sepnmf()
+    print_info(fit)
+
+    sepnmf = nimfa.SepNmf(V, rank=rank, compression='count_gauss',
+                          selection='xray')
+    fit = sepnmf()
+    print_info(fit)
+
+    sepnmf = nimfa.SepNmf(V, rank=rank, compression='count_gauss',
+                          selection='spa')
+    fit = sepnmf()
+    print_info(fit)
+
+    sepnmf = nimfa.SepNmf(V, rank=rank, compression='count_gauss',
+                          selection='none')
+    fit = sepnmf()
+    print_info(fit)
+
+
 def run(V=None, V1=None):
     """
     Run examples.
@@ -285,6 +337,7 @@ def run(V=None, V1=None):
     run_pmf(V)
     run_psmf(V)
     run_snmf(V)
+    run_sepnmf(V)
 
 
 if __name__ == "__main__":
