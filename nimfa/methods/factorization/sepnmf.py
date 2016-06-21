@@ -4,29 +4,13 @@
 Nmf (``methods.factorization.sepnmf``)
 ###################################
 
-**Separable Nonnegative Matrix Factorization (NMF)** [Lee2001]_, [Lee1999].
+**Separable Nonnegative Matrix Factorization (NMF)** [damle2014random]_, [benson2014scalable], [kumar2013fast], [gillis2014fast], [tepper2015compressed],
+[Kapralov2016fake]
 
-Based on Kullback-Leibler divergence, it uses simple multiplicative updates
-[Lee2001]_, [Lee1999], enhanced to avoid numerical underflow [Brunet2004]_.
-Based on Euclidean distance, it uses simple multiplicative updates [Lee2001]_.
-Different objective functions can be used, namely Euclidean distance, divergence
-or connectivity matrix convergence.
+Separable NMF was introduced by Donoho and Stodden (2003) and polynomial time algorithms were given by Arora et al 2012.
+Other algorithms such as XRAY [gillis2014fast], SPA [kumar2013fast] and more recently SC [tepper2015compressed and CG [Kapralov2016fake] have been proposed.
 
-Together with a novel model selection mechanism, NMF is an efficient method for
-identification of distinct molecular patterns and provides a powerful method for
-class discovery. It appears to have higher resolution such as HC or SOM and to
-be less sensitive to a priori selection of genes. Rather than separating gene
-clusters based on distance computation, NMF detects context-dependent patterns
-of gene expression in complex biological systems.
-
-Besides usages in bioinformatics NMF can be applied to text analysis,
-image processing, multiway clustering, environmetrics etc.
-
-.. literalinclude:: /code/snippet_nmf_fro.py
-
-.. literalinclude:: /code/snippet_nmf_div.py
-
-.. literalinclude:: /code/snippet_nmf_conn.py
+Can be used for problems which satisfy the ``pure-pixel'' assumption which occurs in hyper-spectral imaging and  document analysis settings.
 
 """
 try:
