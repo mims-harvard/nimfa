@@ -12,20 +12,43 @@ Nimfa
 
 Nimfa is a Python module that implements many algorithms for nonnegative matrix factorization.
 
-Documentation and examples are at `Nimfa website`_.
+The project was started in 2011 by Marinka Zitnik as a Google Summer of Code project, and since
+then many volunteers have contributed. See the AUTHORS.rst file for a complete list of contributors.
 
-.. _Nimfa website: http://nimfa.biolab.si
+It is currently maintained by a team of volunteers.
 
-****
+Important links
+---------------
 
-`Hidden patients and hidden genes - Understanding cancer data with matrix factorization`_ is
-a tutorial-like IPython notebook on how one can use Nimfa to analyze breast cancer transcriptome data sets from The
-International Cancer Genome Consortium (`ICGC`_). A column about the analysis of cancer data using Nimfa recently
-appearead in the `ACM XRDS magazine`_.
+- Official source code repo: https://github.com/marinkaz/nimfa
+- HTML documentation (stable release): http://nimfa.biolab.si
+- Download releases: http://github.com/marinkaz/nimfa/releases
+- Issue tracker: http://github.com/marinkaz/nimfa/issues
 
-.. _Hidden patients and hidden genes - Understanding cancer data with matrix factorization: http://nbviewer.ipython.org/github/marinkaz/nimfa-ipynb/blob/master/ICGC%20and%20Nimfa.ipynb
-.. _ICGC: https://dcc.icgc.org
-.. _ACM XRDS magazine: http://dl.acm.org/citation.cfm?id=2809623.2788526&coll=portal&dl=ACM
+Dependencies
+------------
+
+Nimfa is tested to work under Python 2.6, Python 2.7, and Python 3.4.
+
+The required dependencies to build the software are NumPy >= 1.7.0,
+SciPy >= 0.12.0.
+
+For running the examples Matplotlib >= 1.1.1 is required.
+
+Install
+-------
+
+This package uses setuptools, which is a common way of installing
+python modules. To install in your home directory, use::
+
+  python setup.py install --user
+
+To install for all users on Unix/Linux::
+
+  sudo python setup.py install
+
+For more detailed installation instructions,
+see the web page http://nimfa.biolab.si
 
 Usage
 -----
@@ -53,7 +76,7 @@ Citing
 
     @article{Zitnik2012,
       title     = {Nimfa: A Python Library for Nonnegative Matrix Factorization},
-      author    = {{\v{Z}}itnik, Marinka and Zupan, Bla{\v{z}}},
+      author    = {Zitnik, Marinka and Zupan, Blaz},
       journal   = {Journal of Machine Learning Research},
       volume    = {13},
       pages     = {849-853},
@@ -65,7 +88,7 @@ License
 -------
 
 nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
-Copyright (C) 2011-2015 Marinka Zitnik and Blaz Zupan
+Copyright (C) 2011-2016
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
