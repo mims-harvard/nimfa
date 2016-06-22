@@ -4,12 +4,12 @@
 SepNmf (``methods.factorization.sepnmf``)
 #########################################
 
-**Separable Nonnegative Matrix Factorization (SepNMF)** [Damle2014random]_, [Benson2014scalable]_,
-[Kumar2013fast]_, [Gillis2014fast]_, [Tepper2015compressed]_, [Kapralov2016fake]_
+**Separable Nonnegative Matrix Factorization (SepNMF)** [Damle2014]_, [Benson2014]_,
+[Kumar2013]_, [Gillis2014]_, [Tepper2015]_, [Kapralov2016]_
 
 Separable NMF was introduced by Donoho and Stodden (2003) and polynomial time algorithms were given by Arora et al 2012.
-Other algorithms such as XRAY [Gillis2014fast]_, SPA [Kumar2013fast]_ and more recently SC
-[Tepper2015compressed]_ and CG [Kapralov2016fake]_ have been proposed.
+Other algorithms such as XRAY [Gillis2014]_, SPA [Kumar2013]_ and more recently SC
+[Tepper2015]_ and CG [Kapralov2016]_ have been proposed.
 
 SepNMF can be used for problems which satisfy the ``pure-pixel'' assumption which occurs in
 hyper-spectral imaging and document analysis settings.

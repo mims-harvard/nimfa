@@ -21,4 +21,6 @@
     
  * **SNMNMF** - Sparse network-regularized multiple nonnegative matrix factorization [Zhang2011]_
  
- * **PMFCC** - Penalized Matrix Factorization for Constrained Clustering [FWang2008]_
+ * **PMFCC** - Penalized matrix factorization for constrained clustering [FWang2008]_
+
+ * **SepNMF** - Separable nonnegative matrix factorization [Gillis2014]_, [Kumar2013]_, [Tepper2015]_, [Kapralov2016]_

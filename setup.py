@@ -13,7 +13,7 @@ LONG_DESCRIPTION = open('README.rst').read()
 URL = 'http://nimfa.biolab.si'
 DOWNLOAD_URL = 'http://github.com/marinkaz/nimfa'
 KEYWORDS = ['matrix factorization', 'nonnegative matrix factorization',
-            'bioinformatics', 'data mining']
+            'bioinformatics', 'data mining', 'machine learning']
 LICENSE = 'GPLv3'
 VERSION = '1.2.3'
 ISRELEASED = True

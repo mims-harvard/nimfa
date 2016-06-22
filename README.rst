@@ -87,7 +87,7 @@ Cite
 License
 -------
 
-Nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
+Nimfa - A Python Library for Nonnegative Matrix Factorization
 Copyright (C) 2011-2016
 
 This program is free software: you can redistribute it and/or modify
