@@ -7,7 +7,7 @@ import imp
 
 DISTNAME = 'nimfa'
 MAINTAINER = 'Marinka Zitnik'
-MAINTAINER_EMAIL = 'marinka.zitnik@fri.uni-lj.si'
+MAINTAINER_EMAIL = 'marinka@cs.stanford.edu'
 DESCRIPTION = 'A Python module for nonnegative matrix factorization'
 LONG_DESCRIPTION = open('README.rst').read()
 URL = 'http://nimfa.biolab.si'

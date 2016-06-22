@@ -1,4 +1,4 @@
-Copyright (c) 2011-2015 Marinka Zitnik and Blaz Zupan.
+Copyright (c) 2011-2016
 
 All rights reserved.
 

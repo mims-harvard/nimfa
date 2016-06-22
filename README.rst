@@ -50,8 +50,8 @@ To install for all users on Unix/Linux::
 For more detailed installation instructions,
 see the web page http://nimfa.biolab.si
 
-Usage
------
+Use
+---
 
 Run alternating least squares nonnegative matrix factorization with projected gradients and Random Vcol initialization algorithm on medulloblastoma gene expression data::
 
@@ -69,8 +69,8 @@ Run alternating least squares nonnegative matrix factorization with projected gr
     Sparseness, W: 0.7297, H: 0.8796
 
 
-Citing
-------
+Cite
+----
 
 ::
 
@@ -87,7 +87,7 @@ Citing
 License
 -------
 
-nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
+Nimfa - A Python Library for Nonnegative Matrix Factorization Techniques
 Copyright (C) 2011-2016
 
 This program is free software: you can redistribute it and/or modify
