@@ -14,7 +14,7 @@ URL = 'http://nimfa.biolab.si'
 DOWNLOAD_URL = 'http://github.com/marinkaz/nimfa'
 KEYWORDS = ['matrix factorization', 'nonnegative matrix factorization',
             'bioinformatics', 'data mining', 'machine learning']
-LICENSE = 'GPLv3'
+LICENSE = 'BSD'
 VERSION = '1.3.0'
 ISRELEASED = True
 

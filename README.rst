@@ -10,7 +10,7 @@ Nimfa
 .. |Coverage| image:: https://coveralls.io/repos/marinkaz/nimfa/badge.svg?branch=master&service=github
 .. _Coverage: https://coveralls.io/github/marinkaz/nimfa?branch=master
 
-Nimfa is a Python module that implements many algorithms for nonnegative matrix factorization.
+Nimfa is a Python module that implements many algorithms for nonnegative matrix factorization. Nimfa is distributed under the BSD license.
 
 The project was started in 2011 by Marinka Zitnik as a Google Summer of Code project, and since
 then many volunteers have contributed. See the AUTHORS.rst file for a complete list of contributors.
@@ -82,33 +82,3 @@ Cite
       pages     = {849-853},
       year      = {2012}
     }
-
-
-License
--------
-
-Nimfa - A Python Library for Nonnegative Matrix Factorization
-Copyright (C) 2011-2016
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-
-JMLR Warranty
--------------
-
-THIS SOURCE CODE IS SUPPLIED "AS IS" WITHOUT WARRANTY OF ANY KIND, AND ITS AUTHOR AND THE JOURNAL OF MACHINE LEARNING RESEARCH (JMLR) 
-AND JMLR'S PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL WARRANTIES, INCLUDING BUT NOT LIMITED TO ANY IMPLIED WARRANTIES OF 
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND ANY WARRANTIES OR NON INFRINGEMENT. THE USER ASSUMES ALL LIABILITY 
-AND RESPONSIBILITY FOR USE OF THIS SOURCE CODE, AND NEITHER THE AUTHOR NOR JMLR, NOR JMLR'S PUBLISHERS AND DISTRIBUTORS, WILL BE 
-LIABLE FOR DAMAGES OF ANY KIND RESULTING FROM ITS USE. 
-
-Without limiting the generality of the foregoing, neither the author, nor JMLR, nor JMLR's publishers and distributors, warrant that 
-the Source Code will be error-free, will operate without interruption, or will meet the needs of the user.

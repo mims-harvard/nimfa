@@ -11,11 +11,10 @@ The library represents a unified and efficient interface to matrix
 factorization algorithms and methods.
 """
 
-__author__ = "Marinka Zitnik"
-__license__ = "GPL"
-__version__ = "3.0"
-__maintainer__ = "Marinka Zitnik"
-__email__ = "marinka.zitnik@fri.uni-lj.si"
+__license__ = 'BSD'
+__version__ = '1.3.0'
+__maintainer__ = 'Marinka Zitnik'
+__email__ = 'marinka@cs.stanford.edu'
 
 
 from nimfa import examples
