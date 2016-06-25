@@ -15,7 +15,7 @@ DOWNLOAD_URL = 'http://github.com/marinkaz/nimfa'
 KEYWORDS = ['matrix factorization', 'nonnegative matrix factorization',
             'bioinformatics', 'data mining', 'machine learning']
 LICENSE = 'BSD'
-VERSION = '1.3.0'
+VERSION = '1.3.1'
 ISRELEASED = True
 
 INSTALL_REQUIRES = (

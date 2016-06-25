@@ -5,6 +5,10 @@ Welcome to Nimfa
 `Nimfa`_ is a Python library for nonnegative matrix factorization. It includes implementations of several factorization methods, initialization approaches, and quality scoring.
 Both dense and sparse matrix representation are supported.
 
+Nimfa is distributed under the BSD license.
+
+****
+
 The sample script using Nimfa on medulloblastoma gene expression data is given below. It uses alternating least squares nonnegative matrix 
 factorization with projected gradient method for subproblems [Lin2007]_ and Random Vcol [Albright2006]_ initialization algorithm. An object returned by ``nimfa.mf_run`` is 
 fitted factorization model through which user can access matrix factors and estimate quality measures.
@@ -253,30 +257,4 @@ Disclaimer
 	
 This software and data is provided as-is, and there are no guarantees
 that it fits your purposes or that it is bug-free. Use it at your own 
-risk! 
-
-#######
-License
-#######
-
-Nimfa - A Python Library for Nonnegative Matrix Factorization
-Copyright (C) 2011-2016
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-		
-################
-Index and Search
-################
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+risk!
