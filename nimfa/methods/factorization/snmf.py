@@ -170,12 +170,14 @@ class Snmf(nmf_std.Nmf_std):
                 
         Return fitted factorization model.
         """
-        # in version SNMF/L, V is transposed while W and H are swapped and
-        # transposed.
-        if self.version == 'l':
-            self.V = self.V.T
+        
 
         for run in range(self.n_run):
+            # in version SNMF/L, V is transposed while W and H are swapped and
+            # transposed.
+            if self.version == 'l':
+                self.V = self.V.T
+            
             self.W, self.H = self.seed.initialize(
                 self.V, self.rank, self.options)
             if sp.isspmatrix(self.W):
