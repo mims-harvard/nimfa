@@ -9,13 +9,13 @@ DISTNAME = 'nimfa'
 MAINTAINER = 'Marinka Zitnik'
 MAINTAINER_EMAIL = 'marinka@cs.stanford.edu'
 DESCRIPTION = 'A Python module for nonnegative matrix factorization'
-LONG_DESCRIPTION = open('README.rst').read()
+LONG_DESCRIPTION = open('README.md').read()
 URL = 'http://nimfa.biolab.si'
 DOWNLOAD_URL = 'http://github.com/marinkaz/nimfa'
 KEYWORDS = ['matrix factorization', 'nonnegative matrix factorization',
             'bioinformatics', 'data mining', 'machine learning']
 LICENSE = 'BSD'
-VERSION = '1.3.1'
+VERSION = '1.3.2'
 ISRELEASED = True
 
 INSTALL_REQUIRES = (
@@ -90,10 +90,10 @@ if not release:
         GIT_REVISION = git_version()
     elif os.path.exists('nimfa/version.py'):
         # must be a source distribution, use existing version file
-        version = imp.load_source("nimfa.version", "nimfa/version.py")
+        version = imp.load_source('nimfa.version', 'nimfa/version.py')
         GIT_REVISION = version.git_revision
     else:
-        GIT_REVISION = "Unknown"
+        GIT_REVISION = 'Unknown'
 
     if not ISRELEASED:
         FULLVERSION += '.dev0+' + GIT_REVISION[:7]
@@ -124,8 +124,8 @@ def setup_package():
         keywords=KEYWORDS,
         install_requires=INSTALL_REQUIRES,
         packages=find_packages(),
-        package_dir={DISTNAME: "./nimfa"},
-        package_data={DISTNAME: get_package_data("datasets")},
+        package_dir={DISTNAME: './nimfa'},
+        package_data={DISTNAME: get_package_data('datasets')},
         license=LICENSE,
         long_description=LONG_DESCRIPTION,
         classifiers=['Intended Audience :: Science/Research',

@@ -1,9 +1,9 @@
 recursive-include docs *
 recursive-include nimfa/datasets/ALL_AML *
-recursive-include nimfa/datasets/CBCL_faces placeholder*
-recursive-include nimfa/datasets/Medlars placeholder*
+recursive-include nimfa/datasets/CBCL_faces/README.md
+recursive-include nimfa/datasets/Medlars/README.md
 recursive-include nimfa/datasets/Medulloblastoma *
-recursive-include nimfa/datasets/MovieLens placeholder*
+recursive-include nimfa/datasets/MovieLens/README.md
 recursive-include nimfa/datasets/ORL_faces *
-recursive-include nimfa/datasets/S_cerevisiae_FC placeholder*
-include *.py *.txt *.rst
+recursive-include nimfa/datasets/S_cerevisiae_FC/README.md
+include *.py *.txt *.rst *.md

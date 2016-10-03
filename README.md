@@ -1,19 +1,13 @@
 Nimfa
 -----
 
-|Travis|_
-|Coverage|_
-
-.. |Travis| image:: https://travis-ci.org/marinkaz/nimfa.svg?branch=master
-.. _Travis: https://travis-ci.org/marinkaz/nimfa
-
-.. |Coverage| image:: https://coveralls.io/repos/marinkaz/nimfa/badge.svg?branch=master&service=github
-.. _Coverage: https://coveralls.io/github/marinkaz/nimfa?branch=master
+[![build: passing](https://img.shields.io/travis/marinkaz/nimfa.svg)](https://travis-ci.org/marinkaz/nimfa)
+[![build: passing](https://coveralls.io/repos/marinkaz/nimfa/badge.svg)](https://coveralls.io/github/marinkaz/nimfa?branch=master)
 
 Nimfa is a Python module that implements many algorithms for nonnegative matrix factorization. Nimfa is distributed under the BSD license.
 
 The project was started in 2011 by Marinka Zitnik as a Google Summer of Code project, and since
-then many volunteers have contributed. See the AUTHORS.rst file for a complete list of contributors.
+then many volunteers have contributed. See AUTHORS file for a complete list of contributors.
 
 It is currently maintained by a team of volunteers.
 
@@ -28,7 +22,7 @@ Important links
 Dependencies
 ------------
 
-Nimfa is tested to work under Python 2.6, Python 2.7, and Python 3.4.
+Nimfa is tested to work under Python 2.7 and Python 3.4.
 
 The required dependencies to build the software are NumPy >= 1.7.0,
 SciPy >= 0.12.0.
@@ -39,13 +33,13 @@ Install
 -------
 
 This package uses setuptools, which is a common way of installing
-python modules. To install in your home directory, use::
+python modules. To install in your home directory, use:
 
-  python setup.py install --user
+    python setup.py install --user
 
-To install for all users on Unix/Linux::
-
-  sudo python setup.py install
+To install for all users on Unix/Linux:
+    
+    sudo python setup.py install
 
 For more detailed installation instructions,
 see the web page http://nimfa.biolab.si
@@ -71,8 +65,6 @@ Run alternating least squares nonnegative matrix factorization with projected gr
 
 Cite
 ----
-
-::
 
     @article{Zitnik2012,
       title     = {Nimfa: A Python Library for Nonnegative Matrix Factorization},
