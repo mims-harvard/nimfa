@@ -8,7 +8,7 @@ SepNmf (``methods.factorization.sepnmf``)
 [Kumar2013]_, [Gillis2014]_, [Tepper2015]_, [Kapralov2016]_
 
 Separable NMF was introduced by Donoho and Stodden (2003) and polynomial time algorithms were given by Arora et al 2012.
-Other algorithms such as XRAY [Gillis2014]_, SPA [Kumar2013]_ and more recently SC
+Other algorithms such as XRAY [Kumar2013]_, SPA [Gillis2014]_ and more recently SC
 [Tepper2015]_ and CG [Kapralov2016]_ have been proposed.
 
 SepNMF can be used for problems which satisfy the ``pure-pixel'' assumption which occurs in

@@ -10,7 +10,7 @@ Nimfa is distributed under the BSD license.
 ****
 
 The sample script using Nimfa on medulloblastoma gene expression data is given below. It uses alternating least squares nonnegative matrix 
-factorization with projected gradient method for subproblems [Lin2007]_ and Random Vcol [Albright2006]_ initialization algorithm. An object returned by ``nimfa.mf_run`` is 
+factorization with projected gradient method for subproblems [Lin2007]_ and Random Vcol [Albright2006]_ initialization algorithm. The returned object is
 fitted factorization model through which user can access matrix factors and estimate quality measures.
     
 .. literalinclude:: /code/usage.py
@@ -40,8 +40,6 @@ Scripting Reference
 
 .. toctree::
    :maxdepth: 3
-
-   nimfa.mf_run
 
    nimfa.models
    
@@ -122,7 +120,7 @@ Methods configuration goes through:
 	#. runtime specific options (e. g. tracking fitted model across multiple runs, tracking residuals across iterations, etc.);
 	#. algorithm specific options (e. g. prior information with PSMF, type of update equations with NMF, initial value for noise variance with ICM, etc.). 
 
-For details and descriptions on algorithm specific options see specific algorithm documentation. For details on runtime specific options and explanation of the general model parameters see :mod:`mf_run`.
+For details and descriptions on algorithm specific options see specific algorithm documentation.
 
 
 
