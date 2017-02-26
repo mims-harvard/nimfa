@@ -125,7 +125,7 @@ def rmse(W, H, data_set):
         u, i, r, _ = list(map(int, line.split()))
         sc = max(min((W[u - 1, :] * H[:, i - 1])[0, 0], 5), 1)
         rmse.append((sc - r) ** 2)
-    print("RMSE: %5.3f" % np.mean(rmse))
+    print("RMSE: %5.3f" % np.sqrt(np.mean(rmse)))
 
 
 if __name__ == "__main__":
