@@ -403,7 +403,7 @@ class Snmf(nmf_std.Nmf_std):
                                 tmp_f[i, h_set[j]] = True
                     idx_f = find(tmp_f[:, h_set])
                     i_f = [l % p_set.shape[0] for l in idx_f]
-                    j_f = [l / p_set.shape[0] for l in idx_f]
+                    j_f = [l // p_set.shape[0] for l in idx_f]
                     if len(i_f) == 0:
                         break
                     if n_h_set == 1:

@@ -279,7 +279,7 @@ def argmax(X, axis=None):
     else:
         idxX = np.asmatrix(X).argmax(axis)
         if axis is None:
-            eX = X[idxX / X.shape[1], idxX % X.shape[1]]
+            eX = X[idxX // X.shape[1], idxX % X.shape[1]]
         elif axis == 0:
             eX = [X[idxX[0, idx], col]
                   for idx, col in zip(range(X.shape[1]), range(X.shape[1]))]
@@ -333,7 +333,7 @@ def argmin(X, axis=None):
     else:
         idxX = np.asmatrix(X).argmin(axis)
         if axis is None:
-            eX = X[idxX / X.shape[1], idxX % X.shape[1]]
+            eX = X[idxX // X.shape[1], idxX % X.shape[1]]
         elif axis == 0:
             eX = [X[idxX[0, idx], col]
                   for idx, col in zip(range(X.shape[1]), range(X.shape[1]))]

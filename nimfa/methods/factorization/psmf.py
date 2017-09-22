@@ -336,8 +336,8 @@ class Psmf(nmf_std.Nmf_std):
                 locs = sub2ind(
                     (self.V.shape[0], self.rank), locs, self.s[locs, n])
                 for l in locs:
-                    self.W[l % self.V.shape[0], l / self.V.shape[0]] = self.lamb[
-                        l % self.V.shape[0], l / self.V.shape[0]]
+                    self.W[l % self.V.shape[0], l // self.V.shape[0]] = self.lamb[
+                        l % self.V.shape[0], l // self.V.shape[0]]
         self.W = self.W.tocsr()
         self._cross_terms()
 
