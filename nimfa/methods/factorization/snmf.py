@@ -602,7 +602,7 @@ class Snmf(nmf_std.Nmf_std):
         K = np.mat(np.zeros(CtA.shape))
         if p_set is None or p_set.size == 0 or all(p_set):
             # equivalent if CtC is square matrix
-            K = np.linalg.lstsq(CtC, CtA)[0]
+            K = np.linalg.lstsq(CtC, CtA, rcond=-1)[0]
             # K = dot(np.linalg.pinv(CtC), CtA)
         else:
             l_var, p_rhs = p_set.shape
@@ -619,7 +619,7 @@ class Snmf(nmf_std.Nmf_std):
                 if vars != [] and cols2solve != []:
                     A = CtC[:, vars][vars, :]
                     B = CtA[:, cols2solve][vars,:]
-                    sol = np.linalg.lstsq(A, B)[0]
+                    sol = np.linalg.lstsq(A, B, rcond=-1)[0]
                     i = 0
                     for c in cols2solve:
                         j = 0
