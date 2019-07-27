@@ -159,7 +159,7 @@ def read():
             im = open(join(dir + str(subject + 1), str(image + 1) + ".pgm"))
             # reduce the size of the image
             im = im.resize((46, 56))
-            V[:, image * subject + image] = np.mat(np.asarray(im).flatten()).T
+            V[:, 10 * subject + image] = np.mat(np.asarray(im).flatten()).T
     return V
 
 
