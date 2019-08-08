@@ -15,7 +15,7 @@ Important links
 ---------------
 
 - Official source code repo: https://github.com/marinkaz/nimfa
-- HTML documentation (stable release): http://nimfa.biolab.si
+- HTML documentation (stable release): http://stanford.edu/~marinka/nimfa
 - Download releases: http://github.com/marinkaz/nimfa/releases
 - Issue tracker: http://github.com/marinkaz/nimfa/issues
 
@@ -42,7 +42,7 @@ To install for all users on Unix/Linux:
     sudo python setup.py install
 
 For more detailed installation instructions,
-see the web page http://nimfa.biolab.si
+see the web page http://stanford.edu/~marinka/nimfa
 
 Use
 ---
