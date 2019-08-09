@@ -246,7 +246,7 @@ class Nmf(object):
             raise utils.MFError(
                 "Known class membership for each sample is not specified.")
         n = V.shape[1]
-        mbs = self.predict(what="samples", prob=False, idx=idx)
+        mbs = np.array(self.predict(what="samples", prob=False, idx=idx)).squeeze()
         dmbs, dmembership = {}, {}
         [dmbs.setdefault(mbs[i], set()).add(i) for i in range(len(mbs))]
         [dmembership.setdefault(membership[i], set()).add(i)
@@ -383,7 +383,7 @@ class Nmf(object):
             raise utils.MFError(
                 "Known class membership for each sample is not specified.")
         n = V.shape[1]
-        mbs = self.predict(what="samples", prob=False, idx=idx)
+        mbs = np.array(self.predict(what="samples", prob=False, idx=idx)).squeeze()
         dmbs, dmembership = {}, {}
         [dmbs.setdefault(mbs[i], set()).add(i) for i in range(len(mbs))]
         [dmembership.setdefault(membership[i], set()).add(i)
