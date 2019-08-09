@@ -249,10 +249,13 @@ class Nmf(object):
         mbs = np.array(self.predict(what="samples", prob=False, idx=idx)).squeeze()
         dmbs, dmembership = {}, {}
         [dmbs.setdefault(mbs[i], set()).add(i) for i in range(len(mbs))]
-        [dmembership.setdefault(membership[i], set()).add(i)
-         for i in range(len(membership))]
-        return -1. / (n * log(len(dmembership), 2)) * sum(sum(len(dmbs[k].intersection(dmembership[j])) *
-                                                              log(len(dmbs[k].intersection(dmembership[j])) / float(len(dmbs[k])), 2) for j in dmembership) for k in dmbs)
+        [dmembership.setdefault(membership[i], set()).add(i) for i in range(len(membership))]
+        entropy = 0.
+        for k in dmbs:
+            for j in dmembership:
+                entropy += len(dmbs[k].intersection(dmembership[j])) * np.log2(len(dmbs[k].intersection(dmembership[j])) / float(len(dmbs[k])))
+        entropy *=  -1. / (n * np.log2(len(dmembership)))
+        return entropy
 
     def predict(self, what='samples', prob=False, idx=None):
         """
@@ -386,9 +389,8 @@ class Nmf(object):
         mbs = np.array(self.predict(what="samples", prob=False, idx=idx)).squeeze()
         dmbs, dmembership = {}, {}
         [dmbs.setdefault(mbs[i], set()).add(i) for i in range(len(mbs))]
-        [dmembership.setdefault(membership[i], set()).add(i)
-         for i in range(len(membership))]
-        return 1. / n * sum(max(len(dmbs[k].intersection(dmembership[j])) for j in dmembership) for k in dmbs)
+        [dmembership.setdefault(membership[i], set()).add(i) for i in range(len(membership))]
+        return 1. / n * sum(np.max([len(dmbs[k].intersection(dmembership[j])) for j in dmembership]) for k in dmbs)
 
     def rss(self, idx=None):
         """
