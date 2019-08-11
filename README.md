@@ -3,6 +3,8 @@ Nimfa
 
 [![build: passing](https://img.shields.io/travis/marinkaz/nimfa.svg)](https://travis-ci.org/marinkaz/nimfa)
 [![build: passing](https://coveralls.io/repos/marinkaz/nimfa/badge.svg)](https://coveralls.io/github/marinkaz/nimfa?branch=master)
+[![GitHub release](https://img.shields.io/github/release/marinkaz/nimfa.svg)](https://GitHub.com/marinkaz/nimfa/releases/)
+[![BSD license](https://img.shields.io/badge/License-BSD-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 Nimfa is a Python module that implements many algorithms for nonnegative matrix factorization. Nimfa is distributed under the BSD license.
 
