@@ -49,7 +49,7 @@ class Fixed(object):
         if self.idx == 0:
             return self.W, self.H
         else:
-            self.W, getattr(self, 'H' + str(self.idx))
+            return self.W, getattr(self, 'H' + str(self.idx))
 
     def __repr__(self):
         return "fixed.Fixed()"
