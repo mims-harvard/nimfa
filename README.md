@@ -17,7 +17,7 @@ Important links
 ---------------
 
 - Official source code repo: https://github.com/marinkaz/nimfa
-- HTML documentation (stable release): http://stanford.edu/~marinka/nimfa
+- HTML documentation (stable release): http://ai.stanford.edu/~marinka/nimfa
 - Download releases: http://github.com/marinkaz/nimfa/releases
 - Issue tracker: http://github.com/marinkaz/nimfa/issues
 
@@ -44,7 +44,7 @@ To install for all users on Unix/Linux:
     sudo python setup.py install
 
 For more detailed installation instructions,
-see the web page http://stanford.edu/~marinka/nimfa
+see the web page http://ai.stanford.edu/~marinka/nimfa
 
 Use
 ---
