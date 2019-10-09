@@ -15,7 +15,7 @@ DOWNLOAD_URL = 'http://github.com/marinkaz/nimfa'
 KEYWORDS = ['matrix factorization', 'nonnegative matrix factorization',
             'bioinformatics', 'data mining', 'machine learning']
 LICENSE = 'BSD'
-VERSION = '1.3.5'
+VERSION = '1.4.0'
 ISRELEASED = True
 
 INSTALL_REQUIRES = (
@@ -127,6 +127,7 @@ def setup_package():
         package_dir={DISTNAME: './nimfa'},
         package_data={DISTNAME: get_package_data('datasets')},
         license=LICENSE,
+        long_description_content_type='text/markdown',
         long_description=LONG_DESCRIPTION,
         classifiers=['Intended Audience :: Science/Research',
                      'Intended Audience :: Developers',

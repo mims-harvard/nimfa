@@ -9,7 +9,6 @@ from nimfa.examples import medulloblastoma
 from nimfa.examples import recommendations
 from nimfa.examples import cbcl_images
 
-
 import pytest
 
 synthetic_runs = [getattr(synthetic, f) for f in dir(synthetic) if f.startswith('run_')]
