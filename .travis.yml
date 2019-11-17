@@ -4,15 +4,13 @@ language: python
 
 sudo: false
 
-cache:
- apt: true
-
 addons:
   apt:
     packages:
     - libatlas-dev
     - libatlas-base-dev
     - liblapack-dev
+
 python:
   - "2.7"
 #  - "3.4"
