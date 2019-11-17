@@ -13,6 +13,8 @@ then many volunteers have contributed. See AUTHORS file for a complete list of c
 
 It is currently maintained by a team of volunteers.
 
+[**[News:]**](https://github.com/marinkaz/scikit-fusion) Implementations of collective latent factor models and large-scale joint matrix factorization algorithms for data fusion and learning over heterogeneous data.
+
 Important links
 ---------------
 
@@ -44,12 +46,12 @@ To install for all users on Unix/Linux:
     sudo python setup.py install
 
 For more detailed installation instructions,
-see the web page http://ai.stanford.edu/~marinka/nimfa
+see the web page http://ai.stanford.edu/~marinka/nimfa.
 
 Use
 ---
 
-Run alternating least squares nonnegative matrix factorization with projected gradients and Random Vcol initialization algorithm on medulloblastoma gene expression data::
+Run alternating least squares nonnegative matrix factorization with projected gradients and Random Vcol initialization algorithm on medulloblastoma gene expression data:
 
     >>> import nimfa
     >>> V = nimfa.examples.medulloblastoma.read(normalize=True)
@@ -76,3 +78,27 @@ Cite
       pages     = {849-853},
       year      = {2012}
     }
+
+Selected publications (Methods)
+------------------------------
+
+- Data fusion by matrix factorization: http://dx.doi.org/10.1109/TPAMI.2014.2343973
+- Jumping across biomedical contexts using compressive data fusion: https://academic.oup.com/bioinformatics/article/32/12/i90/2240593
+- Survival regression by data fusion: http://www.tandfonline.com/doi/abs/10.1080/21628130.2015.1016702
+- Gene network inference by fusing data from diverse distributions: https://academic.oup.com/bioinformatics/article/31/12/i230/216398
+- Fast optimization of non-negative matrix tri-factorization: https://doi.org/10.1371/journal.pone.0217994
+
+Selected publications (Applications)
+------------------------------------
+
+- A comprehensive structural, biochemical and biological profiling of the human NUDIX hydrolase family: https://www.nature.com/articles/s41467-017-01642-w
+- Gene prioritization by compressive data fusion and chaining: http://dx.doi.org/10.1371/journal.pcbi.1004552
+- Discovering disease-disease associations by fusing systems-level molecular data: http://www.nature.com/srep/2013/131115/srep03202/full/srep03202.html
+- Matrix factorization-based data fusion for gene function prediction in baker's yeast and slime mold: http://www.worldscientific.com/doi/pdf/10.1142/9789814583220_0038
+- Matrix factorization-based data fusion for drug-induced liver injury prediction: http://www.tandfonline.com/doi/abs/10.4161/sysb.29072
+- Collective pairwise classification for multi-way analysis of disease and drug data: https://doi.org/10.1142/9789814749411_0008
+
+Tutorials
+---------
+
+- Hidden Genes: Understanding cancer data with matrix factorization, ACM XRDS: Crossroads: https://dl.acm.org/citation.cfm?id=2809623.2788526 [[Jupyter Notebook]](https://nbviewer.jupyter.org/github/marinkaz/nimfa-ipynb/blob/master/ICGC%20and%20Nimfa.ipynb)
