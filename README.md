@@ -13,7 +13,7 @@ then many volunteers have contributed. See AUTHORS file for a complete list of c
 
 It is currently maintained by a team of volunteers.
 
-[**[News:]**](https://github.com/marinkaz/scikit-fusion) Implementations of collective latent factor models and large-scale joint matrix factorization algorithms for data fusion and learning over heterogeneous data.
+[**[News:]**](https://github.com/marinkaz/scikit-fusion) Scikit-fusion, implementations of collective latent factor models and large-scale joint matrix factorization algorithms for data fusion and learning over heterogeneous data.
 
 Important links
 ---------------
@@ -102,3 +102,7 @@ Tutorials
 ---------
 
 - Hidden Genes: Understanding cancer data with matrix factorization, ACM XRDS: Crossroads: https://dl.acm.org/citation.cfm?id=2809623.2788526 [[Jupyter Notebook]](https://nbviewer.jupyter.org/github/marinkaz/nimfa-ipynb/blob/master/ICGC%20and%20Nimfa.ipynb)
+
+<p align="center">
+<img src="https://github.com/marinkaz/nimfa/blob/master/tutorial-diseases.png" width="800" align="center">
+</p>
