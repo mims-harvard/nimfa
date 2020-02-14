@@ -13,7 +13,9 @@ then many volunteers have contributed. See AUTHORS file for a complete list of c
 
 It is currently maintained by a team of volunteers.
 
-[**[News:]**](https://github.com/marinkaz/scikit-fusion) Scikit-fusion, implementations of collective latent factor models and large-scale joint matrix factorization algorithms for data fusion and learning over heterogeneous data.
+[**[News:]**](https://github.com/marinkaz/scikit-fusion) [Scikit-fusion](https://github.com/marinkaz/scikit-fusion), collective latent factor models, matrix factorization for data fusion and learning over heterogeneous data.
+
+[**[News:]**](https://github.com/mims-harvard/fastGNMF) [fastGNMF](https://github.com/mims-harvard/fastGNMF), fast implementation of graph-regularized non-negative matrix factorization using [Facebook FAISS](https://github.com/facebookresearch/faiss).
 
 Important links
 ---------------
